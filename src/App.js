@@ -7,7 +7,6 @@ const App = () => {
         <ActiveStepProvider>
             <main>
                 <Content />
-                <h1>"hello world"</h1>
             </main>
         </ActiveStepProvider>
     )
