@@ -17,7 +17,7 @@ You will also see any lint errors in the console.
 If you do not have node_modules installed, use:
 
 
-### 'npm i && start'
+### `npm i && start`
 
 ### `npm test`
 
