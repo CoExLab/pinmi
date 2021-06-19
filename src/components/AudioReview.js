@@ -9,6 +9,8 @@ import pin from '../other/pin.svg';
 import {formatTime} from '../helper/index';
 // context
 import { useActiveStepValue } from "../context";
+// firebase hook
+import { usePins } from '../hooks/index';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,14 +30,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr}) => {
-    // fetch pin data here
-    // todo...
-
     const classes = useStyles();
     const {curActiveStep} = useActiveStepValue();
 
+    // fetch pin data here
+    const { pins, setPins } = usePins();
+
+    const tempPlayTimeArr = pins.map(pin => pin.PinTime);
+    // setPlayTimeArr(tempPlayTimeArr);
     useEffect( () => {
-    });
+        setPlayTimeArr(tempPlayTimeArr);
+    },[]);
 
     const player = useRef(null);
 
@@ -75,8 +80,6 @@ const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr})
                 handleLastPin(curPinIndex - 1) : 
                 handleNextPin(curPinIndex + 1);
             }
-
-
         } else {
             // add current playtime as a new pin
             newPlayTimeArr.push(curTime);
@@ -124,7 +127,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr})
                     </Fab>
 
                     <Typography>{"Current Pin Time: " + formatTime(playTimeArr[curPinIndex])}</Typography>
-                    <Typography>{"Pin Array in seconds: " + playTimeArr}</Typography>
+                    <Typography>{playTimeArr}</Typography>
                 </div>
             </Paper>
         </Grid>
