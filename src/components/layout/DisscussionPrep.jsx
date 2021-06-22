@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 const DisscussionPrep = () => {
   const classes = useStyles();
   const [curPinIndex, setCurPinIndex] = useState(-1);
-  const [playTimeArr, setPlayTimeArr] = useState([10, 20, 30]);
 
   return (
     <div className={classes.root}>
@@ -36,15 +35,10 @@ const DisscussionPrep = () => {
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
-            playTimeArr = {playTimeArr}
-            setPlayTimeArr = {setPlayTimeArr}
           />
           <Transcription />
           <Notetaking 
-            curPinIndex = {curPinIndex} 
-            setCurPinIndex = {setCurPinIndex}
-            playTimeArr = {playTimeArr}
-            setPlayTimeArr = {setPlayTimeArr}/>
+            curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
     </div>

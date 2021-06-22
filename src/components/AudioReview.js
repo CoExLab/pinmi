@@ -1,16 +1,20 @@
-import React, { useEffect, useRef} from 'react';
+import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, Paper, Icon, Fab } from '@material-ui/core';
+import { Typography, Grid, Paper, Icon, Fab, CircularProgress } from '@material-ui/core';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ReactPlayer from 'react-player';
 import audio from '../other/audio.mp3';
 import pin from '../other/pin.svg';
-import {formatTime} from '../helper/index';
+import {formatTime, generatePushId} from '../helper/index';
+
 // context
 import { useActiveStepValue } from "../context";
+
 // firebase hook
 import { usePins } from '../hooks/index';
+import { firebase } from "../hooks/firebase";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,63 +33,103 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr}) => {
+const AudioReview = ({curPinIndex, setCurPinIndex}) => {
+    // const {pinBtnActive, setPinBtnActive} = useState(true)
+
     const classes = useStyles();
-    const {curActiveStep} = useActiveStepValue();
-
-    // fetch pin data here
-    const { pins, setPins } = usePins();
-
-    const tempPlayTimeArr = pins.map(pin => pin.PinTime);
-    // setPlayTimeArr(tempPlayTimeArr);
-    useEffect( () => {
-        setPlayTimeArr(tempPlayTimeArr);
-    },[]);
-
     const player = useRef(null);
+    const {curActiveStep} = useActiveStepValue();
+    // fetch raw pin data here
+    const { pins, setPins } = usePins();
+    // get document ID
+    const pinID = generatePushId();
 
-    const handleLastPin = (index) => {        
+    const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
+    // const test = true;
+    
+    let playTimeArr = pins.map(pin => pin.pinTime);
+
+    const handleLastPin = (index) => {   
         if(curPinIndex > 0){
             setCurPinIndex(index);
-            player.current.seekTo(parseFloat(playTimeArr[index]));
+            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
         }
     };
 
     const handleNextPin = (index) => {
-        if(curPinIndex < playTimeArr.length - 1){
+        if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
             setCurPinIndex(index);
-            player.current.seekTo(parseFloat(playTimeArr[index]));
+            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
         }
     };
 
+    const addPin = (curTime) => {
+        firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
+            pinID,
+            pinTime: curTime,
+            pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
+        })        
+        .then( () => {
+            setPins([...pins]);
+        })
+        .then(() => {
+            console.log("Document successfully written!");
+        })
+        .catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+    }
+
+    const deletePin = (docId) => {
+        firebase
+          .firestore()
+          .collection("Pins")
+          .doc(docId)
+          .delete()
+          .then(() => {
+            setPins([...pins]);
+        })
+        .then(() => {
+            console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+        // ui on
+        setPinBtnDisabled(true);
+        // ui off
+        setTimeout(() => {
+            setPinBtnDisabled(false);
+        }, 1000);
+    };
+
     const handlePin = () => {
-        let newPlayTimeArr = [...playTimeArr];
         const curTime = Math.round(player.current.getCurrentTime());
         let index = playTimeArr.indexOf(curTime);
-        if (playTimeArr.indexOf(Math.round(player.current.getCurrentTime())) !== -1) {
+        if (pins.map(pin => pin.pinTime).indexOf(curTime) !== -1) {
             // remove current pin
-            newPlayTimeArr.splice(index, 1);
-            newPlayTimeArr.sort((a,b) => a - b);
+            deletePin(pins.map(pin => pin.docId)[index]);
             // auto jump to next available pin point
-            if(playTimeArr.length === 0) {
+            if(pins.map(pin => pin.pinTime).length === 0) {
                 player.current.seekTo(parseFloat(0));
+                console.log("1");
             }
-            else if(playTimeArr.length === 2){
+            else if(pins.map(pin => pin.pinTime).length === 2){
                 curPinIndex === 0 ? 
-                player.current.seekTo(parseFloat(playTimeArr[1])) : 
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
                 handleLastPin(curPinIndex - 1)
+                console.log("2");
             }
             else{
-                curPinIndex === playTimeArr.length - 2 || curPinIndex === playTimeArr.length - 1 ? 
+                curPinIndex === pins.map(pin => pin.pinTime).length - 2 || curPinIndex === pins.map(pin => pin.pinTime).length - 1 ? 
                 handleLastPin(curPinIndex - 1) : 
                 handleNextPin(curPinIndex + 1);
+                console.log("3");
             }
         } else {
             // add current playtime as a new pin
-            newPlayTimeArr.push(curTime);
-            newPlayTimeArr.sort((a,b) => a - b);
+            addPin(curTime);
         }
-        setPlayTimeArr(newPlayTimeArr);
     };
 
     return (
@@ -112,11 +156,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr})
                 />
                 <div className={classes.root} >
                     <Fab color="default" aria-label="last" className={classes.fab} 
-                         onClick={() => handleLastPin(curPinIndex - 1)}>
+                         onClick={() => handleLastPin(curPinIndex - 1)} >
                         <NavigateBeforeIcon />
                     </Fab>
                     <Fab color="default" aria-label="addPin"
-                          onClick={() => handlePin()}>
+                          onClick={() => handlePin()} disabled = {pinBtnDisabled}>
                         <Icon classes={{ root: classes.iconRoot }}>
                             <img className={classes.imageIcon} src={pin} alt="" />
                         </Icon>          
@@ -126,8 +170,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex, playTimeArr, setPlayTimeArr})
                         <NavigateNextIcon />      
                     </Fab>
 
-                    <Typography>{"Current Pin Time: " + formatTime(playTimeArr[curPinIndex])}</Typography>
-                    <Typography>{playTimeArr}</Typography>
+                    {pinBtnDisabled ? <CircularProgress /> : null}
+                    <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
+                    <Typography>{"New Pins from database: " + pins.map(pin => pin.pinTime)}</Typography>
+                    <Typography>{"Current pin index: " + curPinIndex}</Typography>
                 </div>
             </Paper>
         </Grid>
