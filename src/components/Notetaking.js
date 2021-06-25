@@ -55,7 +55,6 @@ const Notetaking = ({curPinIndex}) => {
         } else if(infoName === "pinInfos.pinCategory"){
             setPinType(doc);
         } else if(infoName === "pinInfos.pinSkill"){
-            console.log(doc);
             setCurSkillInfo(doc);
         } 
     }

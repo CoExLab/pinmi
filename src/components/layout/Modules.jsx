@@ -5,6 +5,8 @@ import Collaboration from  './Collaboration';
 // context
 import { useActiveStepValue } from "../../context";
 
+import { usePins } from '../../hooks/index';
+
 function getStepContent(step) {
     switch (step) {
       case 0:
@@ -26,6 +28,8 @@ function getStepContent(step) {
 
 const Modules = () => {    
     const {curActiveStep} = useActiveStepValue();
+    const { pins } = usePins();
+    
     return (  
         <div>
             {getStepContent(curActiveStep)}

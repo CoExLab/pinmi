@@ -10,6 +10,7 @@ export const usePins = () => {
         .collection("Pins")
         .orderBy("pinTime")
 
+        // console.log("get data from firebase");
         unsubscribe = unsubscribe.onSnapshot((snapshot) => {
           const allPins = snapshot.docs.map((pin) => ({
             ...pin.data(),
@@ -19,7 +20,9 @@ export const usePins = () => {
             setPins(allPins);
           }
         });
-        return () => unsubscribe();
+        return () => {
+          unsubscribe();
+        }
     }, [pins]);
   
     return { pins, setPins };

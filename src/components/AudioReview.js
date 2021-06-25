@@ -8,13 +8,14 @@ import audio from '../other/audio.mp3';
 import pin from '../other/pin.svg';
 import {formatTime, generatePushId} from '../helper/index';
 
+import SliderBar from './SliderBar';
+
 // context
 import { useActiveStepValue } from "../context";
 
 // firebase hook
 import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,12 +31,14 @@ const useStyles = makeStyles((theme) => ({
     },
     fab: {
         marginLeft: 500,
+    },    
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(5),
     },
 }));
 
 const AudioReview = ({curPinIndex, setCurPinIndex}) => {
-    // const {pinBtnActive, setPinBtnActive} = useState(true)
-
     const classes = useStyles();
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
@@ -44,8 +47,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     // get document ID
     const pinID = generatePushId();
 
-    const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
-    // const test = true;
+    const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
+    const [pinBtnColor, setPinBtnColor] = useState("");   
+    const [audioLen, setAudioLen] = useState(100);
+    const [audioProgress, setAudioProgress] = useState(0);
     
     let playTimeArr = pins.map(pin => pin.pinTime);
 
@@ -56,31 +61,54 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         }
     };
 
-    const handleNextPin = (index) => {
+    const handleNextPin = (index, remove = false) => {
         if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
-            setCurPinIndex(index);
-            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+            if(!remove){
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                setCurPinIndex(index);
+            } else{                
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                setCurPinIndex(index - 1);
+            }
         }
     };
 
-    const addPin = (curTime) => {
-        firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
+    const addPin = async (curTime) => {
+        // ui on
+        setPinBtnDisabled(true);
+        setPinBtnColor("primary");
+        // ui off
+        setTimeout(() => {
+            setPinBtnDisabled(false);
+        }, 800);
+
+        await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
             pinID,
             pinTime: curTime,
             pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
         })        
         .then( () => {
-            setPins([...pins]);
+            setPins([...pins, ]);
         })
         .then(() => {
-            console.log("Document successfully written!");
+            console.log("Document successfully written!");    
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
-        });
+        });  
+        console.log("finished writing")      
+        console.log(curTime); 
+        //seek to
+        let dummyPlayTimeArr = [...pins, {
+            pinID,
+            pinTime: curTime,
+            pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
+        }].sort((a, b) => a.pinTime - b.pinTime);
+
+        setCurPinIndex(dummyPlayTimeArr.map(pin => pin.pinTime).indexOf(curTime));   
     }
 
-    const deletePin = (docId) => {
+    const deletePin = async (docId) => {
         firebase
           .firestore()
           .collection("Pins")
@@ -97,10 +125,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         });
         // ui on
         setPinBtnDisabled(true);
+        setPinBtnColor("secondary");
         // ui off
         setTimeout(() => {
             setPinBtnDisabled(false);
-        }, 1000);
+        }, 800);
     };
 
     const handlePin = () => {
@@ -110,24 +139,23 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             // remove current pin
             deletePin(pins.map(pin => pin.docId)[index]);
             // auto jump to next available pin point
+            console.log(pins.length);
             if(pins.map(pin => pin.pinTime).length === 0) {
                 player.current.seekTo(parseFloat(0));
-                console.log("1");
             }
             else if(pins.map(pin => pin.pinTime).length === 2){
                 curPinIndex === 0 ? 
                 player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
                 handleLastPin(curPinIndex - 1)
-                console.log("2");
             }
             else{
-                curPinIndex === pins.map(pin => pin.pinTime).length - 2 || curPinIndex === pins.map(pin => pin.pinTime).length - 1 ? 
+                curPinIndex === pins.map(pin => pin.pinTime).length - 1 || 
+                curPinIndex === pins.map(pin => pin.pinTime).length ? 
                 handleLastPin(curPinIndex - 1) : 
-                handleNextPin(curPinIndex + 1);
-                console.log("3");
+                handleNextPin(curPinIndex + 1, true);
             }
         } else {
-            // add current playtime as a new pin
+            // add current playtime as a new pin and seek to it
             addPin(curTime);
         }
     };
@@ -145,7 +173,13 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 </Typography> 
             ) 
             }
-            <Paper variant='outlined' style={{ padding: 10, marginTop: 10 }}>
+            <Paper variant='outlined' style={{ padding: 10, marginTop: 10 }}>         
+                <SliderBar 
+                    maxValue = {audioLen} 
+                    curValue = {audioProgress} 
+                    pinMarks = {pins.map(pin => pin.pinTime)}
+                    canClick = {pinBtnDisabled}
+                />
                 <ReactPlayer
                     ref={player}
                     url={audio}
@@ -153,6 +187,16 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     width="100%"
                     height="55px"
                     style={{ marginBottom: 8 }}
+                    onDuration={(duration) => setAudioLen (duration)}
+                    onSeek={(e) => {
+                        setAudioProgress(e); 
+                        const curTime = Math.round(player.current.getCurrentTime());
+                        let index = playTimeArr.indexOf(curTime);
+                        if(index != -1){
+                            setCurPinIndex(index);
+                            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                        }
+                    }}
                 />
                 <div className={classes.root} >
                     <Fab color="default" aria-label="last" className={classes.fab} 
@@ -161,18 +205,21 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     </Fab>
                     <Fab color="default" aria-label="addPin"
                           onClick={() => handlePin()} disabled = {pinBtnDisabled}>
+                        {pinBtnDisabled 
+                        ? 
+                        <CircularProgress color={pinBtnColor} /> 
+                        :                         
                         <Icon classes={{ root: classes.iconRoot }}>
                             <img className={classes.imageIcon} src={pin} alt="" />
-                        </Icon>          
+                        </Icon>   
+                        }
                     </Fab>
                     <Fab color="default" aria-label="next" 
                           onClick={() => handleNextPin(curPinIndex + 1)} >
-                        <NavigateNextIcon />      
+                        <NavigateNextIcon />    
                     </Fab>
-
-                    {pinBtnDisabled ? <CircularProgress /> : null}
                     <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
-                    <Typography>{"New Pins from database: " + pins.map(pin => pin.pinTime)}</Typography>
+                    <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
                     <Typography>{"Current pin index: " + curPinIndex}</Typography>
                 </div>
             </Paper>
