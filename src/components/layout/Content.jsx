@@ -5,7 +5,7 @@ import Modules from './Modules';
 
 const Content = () => {
     return (
-        <section>            
+        <section>    
             <Steppers />
             <Modules />
             <ButtonUI />
