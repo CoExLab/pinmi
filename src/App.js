@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActiveStepProvider, PinsProvider} from './context/index'
+import {ActiveStepProvider, PinsProvider, SessionProvider} from './context/index'
 import Content from './components/layout/Content';
 import { Provider } from "react-redux";
 import { store } from "./components/Store";
@@ -9,13 +9,15 @@ import { store } from "./components/Store";
 const App = () => {
     return (
         <Provider store={store}>
-            <ActiveStepProvider>
-                <PinsProvider>
-                    <main>
-                        <Content />
-                    </main>
-                </PinsProvider>
-            </ActiveStepProvider>
+            <SessionProvider>
+                <ActiveStepProvider>
+                    <PinsProvider>
+                        <main>
+                            <Content />
+                        </main>
+                    </PinsProvider>
+                </ActiveStepProvider>
+            </SessionProvider>
         </Provider>
     )
 }

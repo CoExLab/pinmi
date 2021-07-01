@@ -19,8 +19,11 @@ import {
   stopStreaming,
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
+ 
 
-function VideoChatComponent() {
+
+
+function VideoChatComponent(props) {
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -33,7 +36,7 @@ function VideoChatComponent() {
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
+      ? initializeSession(props.apiKey, props.sessionId, props.token)
       : stopStreaming();
   }, [isInterviewStarted]);
 
