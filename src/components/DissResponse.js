@@ -1,28 +1,130 @@
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import {Box, Grid, Paper, TextField } from '@material-ui/core';
+import { Box, Grid, Paper, TextField, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import MISkillsSheet from './layout/MISkillsSheet';
+import { makeStyles } from '@material-ui/core/styles';
+
+// firebase hook
+import { usePins } from '../hooks/index';
+import { firebase } from "../hooks/firebase";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      '& > *': {
+        margin: theme.spacing(2),
+        width: '45ch',
+      },
+    },
+  }));
+
+const DissResponse = ({curPinIndex}) => {   
+    // temp user mode switcher
+    const [userMode, setUserMode] = useState("caller");
+
+    const handleUserModeSwitch = () => {
+        if(userMode === "caller"){
+            setUserMode("callee");
+        } else{
+            setUserMode("caller");
+        }
+    }
+    
+    const classes = useStyles();
+    
+    //creating a refernce for TextField Component
+    const noteValueRef = useRef('') 
+
+    // fetch raw pin data here
+    const { pins } = usePins();
+
+    // set up states for four different questions
+    const [curNoteInfo, setCurNoteInfo] = useState('');
+
+    const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState('');
+    const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState('');
+
+    const [pinType1, setPinType1] = useState('');
+    const [pinType2, setPinType2] = useState('');
 
 
-const Notetaking = ({curPinIndex, playTimeArr}) => {
-    // fetch pin data here
-    // todo...
+    const [curSkillInfo1, setCurSkillInfo1] = useState('');
+    const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
-    const [pinType, setPinType] = React.useState('');
+    useEffect(() => {
+        fetchCurTextVal(`${userMode}PinInfos.pinNote`);
+        fetchCurTextVal(`callerPinInfos.pinPerspective`);
+        fetchCurTextVal(`calleePinInfos.pinPerspective`);
+        fetchCurTextVal(`callerPinInfos.pinCategory`);
+        fetchCurTextVal(`calleePinInfos.pinCategory`);
+        fetchCurTextVal(`callerPinInfos.pinSkill`);
+        fetchCurTextVal(`calleePinInfos.pinSkill`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [curPinIndex, userMode])
 
-    const handleAlignment = (event, newAlignment) => {
-        setPinType(newAlignment);
-    };
+    // for updating and fetching current text field value
+    const fetchCurTextVal = async (infoName) => {
+        const docRef = await firebase.firestore().collection("Pins").doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]));
+        const infos = infoName.split(".");
+        let curInfo = "";
+        const doc = await docRef.get().then((doc) => {
+            if (doc.exists) {
+                curInfo = doc.data()[infos[0]][infos[1]];
+                return curInfo;
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        })
+        .catch((error) => {
+            console.log("Error getting document:", error);
+        });
+        if(infoName === `${userMode}PinInfos.pinNote`){
+            setCurNoteInfo(doc);
+        } else if(infoName === `callerPinInfos.pinPerspective`){
+            setCurPerspectiveInfo1(doc);
+        } else if(infoName === `calleePinInfos.pinPerspective`){
+            setCurPerspectiveInfo2(doc);
+        } else if(infoName === `callerPinInfos.pinCategory`){
+            setPinType1(doc);
+        } else if(infoName === `calleePinInfos.pinCategory`){
+            setPinType2(doc);
+        } else if(infoName === `callerPinInfos.pinSkill`){
+            setCurSkillInfo1(doc);
+        } else if(infoName === `calleePinInfos.pinSkill`){
+            setCurSkillInfo2(doc);
+        }
+    }
+
+    // for pin information modifying
+    const handlePinInfo = (infoName, input) => {
+        if(infoName === `${userMode}PinInfos.pinNote`){
+            setCurNoteInfo(input);
+        }
+        let usersUpdate = {};
+        usersUpdate[`${infoName}`] = input;
+        firebase
+            .firestore()
+            .collection("Pins")
+            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
+            .update(usersUpdate)    
+            .then(() => {
+                console.log("Document successfully updated!");
+            })
+            .catch((error) => {
+                // The document probably doesn't exist.
+                console.error("Error updating document: ", error);
+            });
+    }
 
     return (
         <Grid item xs={12} sm={8}>
             <Paper >
-                <Box m={2} height={600}>
+                <h2>{userMode}</h2>
+                <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button>
+                <Box m={2} height={700} >
                     <Box fontStyle="italic" fontSize={18}>
-                        The session was pinned at {formatTime(playTimeArr[curPinIndex])}
-                    </Box>
-                    <Box textAlign="center" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
-                        Would you like to take some notes for this pin?
+                        Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                     </Box>
                     <TextField
                         id="outlined-secondary"
@@ -30,40 +132,88 @@ const Notetaking = ({curPinIndex, playTimeArr}) => {
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={4}
+                        rows={3}
                         margin="normal"
+                        value = {curNoteInfo}
+                        inputRef={noteValueRef}
+                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
                     />
-                    <Box my={1} fontStyle="italic" fontSize={18}> To share with your peer:</Box>
-                    <Box textAlign="center" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
+                    <Box my={1} fontStyle="italic" fontSize={18}> Talk with your peer about:</Box>
+                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         What is your perspective of what happened at this pin? 
                     </Box>
+                    <form className={classes.root} noValidate autoComplete="off">
+                    <TextField
+                        id="outlined-secondary"
+                        label="caller's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                        margin="normal"                        
+                        value = {curPerspectiveInfo1}
+                    />
+                    <TextField
+                        id="outlined-secondary"
+                        label="callee's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                        margin="normal"                        
+                        value = {curPerspectiveInfo2}
+                    />
+                    </form>
+                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
+                        What would you categorize this pin as?
+                    </Box>       
+                    <form className={classes.root} noValidate autoComplete="off">
+                        <ToggleButton >
+                            {pinType1}
+                        </ToggleButton>
+                        <ToggleButton >
+                            {pinType2}
+                        </ToggleButton>
+                    </form>
+                    <MISkillsSheet />
+                    <form className={classes.root} noValidate autoComplete="off">
+                        <TextField
+                            id="outlined-secondary"
+                            label="caller's MI skill"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rows={1}
+                            margin="normal"                        
+                            value = {curSkillInfo1}
+                        />
+                        <TextField
+                            id="outlined-secondary"
+                            label="callee's MI skill"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rows={1}
+                            margin="normal"                        
+                            value = {curSkillInfo2}
+                        />
+                    </form>
+
+                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
+                        Why was the pinned situation effective?
+                    </Box>  
                     <TextField
                         id="outlined-secondary"
                         label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={4}
-                        margin="normal"
+                        rows={1}
+                        margin="normal"                        
+                        // value = {curSkillInfo}
+                        // inputRef={skillValueRef}
+                        // onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}
                     />
-                    <Box textAlign="center" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
-                        What would you categorize this pin as?
-                    </Box>       
-                    <Box align="center" m = {3}>          
-                        <ToggleButtonGroup
-                            value={pinType}
-                            exclusive
-                            onChange={handleAlignment}
-                            size = "large"
-                        >
-                            <ToggleButton value="strength" >
-                                Strength
-                            </ToggleButton>
-                            <ToggleButton value="opportunity">
-                                Opportunity
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </Box>   
                 </Box>
             </Paper>
 
@@ -71,4 +221,4 @@ const Notetaking = ({curPinIndex, playTimeArr}) => {
     );
 };
 
-export default Notetaking;
+export default DissResponse;
