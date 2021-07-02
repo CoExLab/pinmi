@@ -46,7 +46,7 @@ const MISkillsSheet = () => {
 
     return (
         <div>
-            <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
+            <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
                 What   
                 <Link href="#" onClick={() => {handleClickOpen()}}>
                     {" MI skills "}

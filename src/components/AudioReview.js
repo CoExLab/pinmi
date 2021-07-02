@@ -47,6 +47,9 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     // get document ID
     const pinID = generatePushId();
 
+    // hard-coded sessionID here
+    const MiTrainingSessionID = "123";
+
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");   
     const [audioLen, setAudioLen] = useState(100);
@@ -85,7 +88,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
             pinID,
             pinTime: curTime,
-            pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
+            // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            sessionID: MiTrainingSessionID,
+            callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         })        
         .then( () => {
             setPins([...pins, ]);
@@ -160,6 +166,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         }
     };
 
+    const handleProgress = state => {
+        setAudioProgress(Math.round(state.playedSeconds)); 
+    }
+
     return (
         <Grid item xs={12}>
             { curActiveStep === 2 ? 
@@ -188,15 +198,16 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     height="55px"
                     style={{ marginBottom: 8 }}
                     onDuration={(duration) => setAudioLen (duration)}
-                    onSeek={(e) => {
-                        setAudioProgress(e); 
-                        const curTime = Math.round(player.current.getCurrentTime());
-                        let index = playTimeArr.indexOf(curTime);
-                        if(index != -1){
-                            setCurPinIndex(index);
-                            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                        }
-                    }}
+                    onProgress = {handleProgress}
+                    // onSeek={(e) => {
+                    //     setAudioProgress(e); 
+                    //     // const curTime = Math.round(player.current.getCurrentTime());
+                    //     // let index = playTimeArr.indexOf(curTime);
+                    //     // if(index !== -1){
+                    //     //     setCurPinIndex(index);
+                    //     //     player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                    //     // }
+                    // }}
                 />
                 <div className={classes.root} >
                     <Fab color="default" aria-label="last" className={classes.fab} 

@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField } from '@material-ui/core';
+import { Box, Grid, Paper, TextField, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import MISkillsSheet from './layout/MISkillsSheet';
 
@@ -23,13 +23,24 @@ const Notetaking = ({curPinIndex}) => {
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
 
+    // temp user mode switcher
+    const [userMode, setUserMode] = useState("caller");
+
+    const handleUserModeSwitch = () => {
+        if(userMode === "caller"){
+            setUserMode("callee");
+        } else{
+            setUserMode("caller");
+        }
+    }
+
     useEffect(() => {
-        fetchCurTextVal("pinInfos.pinNote");
-        fetchCurTextVal("pinInfos.pinPerspective");
-        fetchCurTextVal("pinInfos.pinCategory");
-        fetchCurTextVal("pinInfos.pinSkill");
+        fetchCurTextVal(`${userMode}PinInfos.pinNote`);
+        fetchCurTextVal(`${userMode}PinInfos.pinPerspective`);
+        fetchCurTextVal(`${userMode}PinInfos.pinCategory`);
+        fetchCurTextVal(`${userMode}PinInfos.pinSkill`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [curPinIndex])
+    }, [curPinIndex, userMode])
 
     // for updating and fetching current text field value
     const fetchCurTextVal = async (infoName) => {
@@ -48,24 +59,24 @@ const Notetaking = ({curPinIndex}) => {
         .catch((error) => {
             console.log("Error getting document:", error);
         });
-        if(infoName === "pinInfos.pinNote"){
+        if(infoName === `${userMode}PinInfos.pinNote`){
             setCurNoteInfo(doc);
-        } else if(infoName === "pinInfos.pinPerspective"){
+        } else if(infoName === `${userMode}PinInfos.pinPerspective`){
             setCurPerspectiveInfo(doc);
-        } else if(infoName === "pinInfos.pinCategory"){
+        } else if(infoName === `${userMode}PinInfos.pinCategory`){
             setPinType(doc);
-        } else if(infoName === "pinInfos.pinSkill"){
+        } else if(infoName === `${userMode}PinInfos.pinSkill`){
             setCurSkillInfo(doc);
         } 
     }
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
-        if(infoName === "pinInfos.pinNote"){
+        if(infoName === `${userMode}PinInfos.pinNote`){
             setCurNoteInfo(input);
-        } else if(infoName === "pinInfos.pinPerspective"){
+        } else if(infoName === `${userMode}PinInfos.pinPerspective`){
             setCurPerspectiveInfo(input);
-        } else if(infoName === "pinInfos.pinSkill"){
+        } else if(infoName === `${userMode}PinInfos.pinSkill`){
             setCurSkillInfo(input);
         } 
         let usersUpdate = {};
@@ -87,12 +98,14 @@ const Notetaking = ({curPinIndex}) => {
     // for handling pin tyep switching
     const handlePinType = (event, newPinType) => {
         setPinType(newPinType);
-        handlePinInfo("pinInfos.pinCategory", newPinType);
+        handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
     };  
 
     return (
         <Grid item xs={12} sm={8}>
             <Paper >
+                <h2>{userMode}</h2>
+                <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button>
                 <Box m={2} height={700} >
                     <Box fontStyle="italic" fontSize={18}>
                         The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
@@ -109,8 +122,8 @@ const Notetaking = ({curPinIndex}) => {
                         rows={3}
                         margin="normal"
                         value = {curNoteInfo}
-                        inputRef={noteValueRef}
-                        onChange = {() => handlePinInfo("pinInfos.pinNote", noteValueRef.current.value)}
+                        inputRef={noteValueRef}  
+                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
                     />
                     <Box my={1} fontStyle="italic" fontSize={18}> To share with your peer:</Box>
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
@@ -126,7 +139,7 @@ const Notetaking = ({curPinIndex}) => {
                         margin="normal"                        
                         value = {curPerspectiveInfo}
                         inputRef={perspectiveValueRef}
-                        onChange = {() => handlePinInfo("pinInfos.pinPerspective", perspectiveValueRef.current.value)}
+                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinPerspective`, perspectiveValueRef.current.value)}
                     />
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         What would you categorize this pin as?
@@ -157,7 +170,7 @@ const Notetaking = ({curPinIndex}) => {
                         margin="normal"                        
                         value = {curSkillInfo}
                         inputRef={skillValueRef}
-                        onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}
+                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinSkill`, skillValueRef.current.value)}
                     />
                 </Box>
             </Paper>

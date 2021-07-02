@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Slider from "@material-ui/core/Slider";
-import { Container, Button } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { formatTime } from '../helper/index'
 
 import './SliderBar.css';
