@@ -19,9 +19,6 @@ import {
   stopStreaming,
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
- 
-
-
 
 function VideoChatComponent(props) {
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);

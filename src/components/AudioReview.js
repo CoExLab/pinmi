@@ -192,7 +192,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                         setAudioProgress(e); 
                         const curTime = Math.round(player.current.getCurrentTime());
                         let index = playTimeArr.indexOf(curTime);
-                        if(index != -1){
+                        if(index !== -1){
                             setCurPinIndex(index);
                             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
                         }
