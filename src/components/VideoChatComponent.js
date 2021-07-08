@@ -10,6 +10,10 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
+import { Icon, Fab } from '@material-ui/core';
+import pin from '../other/pin.svg';
+import { makeStyles } from '@material-ui/core/styles';
+
 import {
   toggleAudio,
   toggleVideo,
@@ -19,6 +23,26 @@ import {
   stopStreaming,
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
+
+
+import {formatTime, generatePushId} from '../helper/index';
+import { firebase } from "../hooks/firebase";
+import { usePins } from '../hooks/index';
+const useStyles = makeStyles((theme) => ({
+  imageIcon: {
+      height: '120%'
+  },
+  iconRoot: {
+      textAlign: 'center'
+  },
+  fab: {
+      marginLeft: 550,
+  },    
+  display: 'flex',
+  '& > * + *': {
+    marginLeft: theme.spacing(5),
+  },
+}));
 
 function VideoChatComponent(props) {
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -30,6 +54,10 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
+
+  // self-made timer
+  const [videoCallTimer, setVideoCallTimer] = useState(0);
+  const classes = useStyles();
 
   useEffect(() => {
     isInterviewStarted
@@ -57,6 +85,37 @@ function VideoChatComponent(props) {
     setIsVideoSubscribed(action);
     toggleVideoSubscription(action);
   };
+
+
+  // fetch raw pin data here
+  const { pins, setPins } = usePins();
+  // get document ID
+  const pinID = generatePushId();
+  // hard-coded sessionID here
+  const MiTrainingSessionID = "123";
+
+  const addPin = async (curTime) => {
+    await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
+        pinID,
+        pinTime: curTime,
+        // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        sessionID: MiTrainingSessionID,
+        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+    })        
+    .then( () => {
+        setPins([...pins, ]);
+    })
+    .then(() => {
+        console.log("Document successfully written!");    
+    })
+    .catch((error) => {
+        console.error("Error writing document: ", error);
+    });  
+    console.log("finished writing")      
+    console.log(curTime);  
+  }
+
 
   const renderToolbar = () => {
     return (
@@ -93,7 +152,6 @@ function VideoChatComponent(props) {
                 />
               </Tooltip>
             )}
-
             {isStreamSubscribed && (
               <>
                 {isAudioSubscribed ? (
@@ -130,15 +188,26 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
+        <Fab color="default" aria-label="addPin" className = 'pin-Btn'
+          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>                      
+          <Icon classes={{ root: classes.iconRoot }}>
+              <img className={classes.imageIcon} src={pin} alt="" />
+          </Icon>   
+        </Fab>
       </>
     );
   };
 
+  const handleStartChat = () => {
+    setIsInterviewStarted(true);
+    setVideoCallTimer(Date.now());
+  }
+
   return (
-    <>
+    <>          
       <div className='actions-btns'>
       <Button
-        onClick={() => setIsInterviewStarted(true)}
+        onClick={() => handleStartChat()}
         disabled={isInterviewStarted}
         color='primary'
         variant="contained"
