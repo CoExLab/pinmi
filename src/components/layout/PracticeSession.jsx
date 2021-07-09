@@ -1,5 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import VideoChatComponent from "../VideoChatComponent.js";
+import { useReactMediaRecorder } from "react-media-recorder";
+
+//context
+import { useSessionValue } from "../../context";
 
 const PracticeSession = () => {
     const [room, setRoom] = useState("hello");
@@ -8,9 +12,17 @@ const PracticeSession = () => {
     const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
     const [token, setToken] = useState("YOUR_TOKEN");
     const [readyMessage, setReadyMessage] = useState("video is not ready");
+    const {status, startRecording, stopRecording, mediaBlobUrl} 
+    =useReactMediaRecorder({ video: false, audio: true });
+
+    //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
+    const {setMediaUrl} = useSessionValue();
+    useEffect(() => {
+        setMediaUrl(mediaBlobUrl);
+    }, [mediaBlobUrl]);
 
     const fetchServerRes = (setApiKey, setSessionId, setToken, baseURL) => {
-        setReadyMessage("preparing video cal for you now...");
+        setReadyMessage("preparing video call for you now...");
         fetch(baseURL).then(function(res) {
             return res.json()
           }).then(function(res) {
@@ -32,8 +44,9 @@ const PracticeSession = () => {
             <h1>sessionId: {sessionId}</h1>
             <h1>token: {token}</h1> */}
             <h3>{readyMessage} </h3>
-            
-            <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token}/>
+            <h3>Recording status: {status}</h3>
+            {/* Passing in start and stop recording functions that are handled by buttons inside of this component */}
+            <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} startRec = {startRecording} stopRec = {stopRecording}/>
         </div>
     );
 }

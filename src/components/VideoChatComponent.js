@@ -201,6 +201,12 @@ function VideoChatComponent(props) {
   const handleStartChat = () => {
     setIsInterviewStarted(true);
     setVideoCallTimer(Date.now());
+    props.startRec()
+  }
+
+  const handleFinishChat = () => {
+    setIsInterviewStarted(false);
+    props.stopRec();
   }
 
   return (
@@ -215,7 +221,7 @@ function VideoChatComponent(props) {
         Start chat
       </Button>
       <Button
-        onClick={() => setIsInterviewStarted(false)}
+        onClick={() => handleFinishChat()}
         disabled={!isInterviewStarted}
         color='secondary'
         variant="contained"
