@@ -12,6 +12,7 @@ import SliderBar from './SliderBar';
 
 // context
 import { useActiveStepValue } from "../context";
+import { useSessionValue } from "../context";
 
 // firebase hook
 import { usePins } from '../hooks/index';
@@ -54,6 +55,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnColor, setPinBtnColor] = useState("");   
     const [audioLen, setAudioLen] = useState(100);
     const [audioProgress, setAudioProgress] = useState(0);
+    const {mediaUrl} = useSessionValue()
     
     let playTimeArr = pins.map(pin => pin.pinTime);
 
@@ -192,7 +194,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 />
                 <ReactPlayer
                     ref={player}
-                    url={audio}
+                    url={mediaUrl}
                     controls = {true}
                     width="100%"
                     height="55px"

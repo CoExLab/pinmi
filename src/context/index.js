@@ -25,13 +25,28 @@ export const PinsProvider = ({ children }) => {
 };
 export const usePinsValue = () => useContext(PinsContext);
 
+// export const SessionContext = createContext();
+// export const SessionProvider = ({ children }) => {
+//   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+//   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+//   const [token, setToken] = useState("YOUR_TOKEN");
+//   return (
+//     <SessionContext.Provider value={[apiKey, setApiKey, sessionId, setSessionId, token, setToken]}>
+//       {children}
+//     </SessionContext.Provider>
+//   );
+// };
+// export const useSessionValue = () => useContext(SessionContext);
+
+
 export const SessionContext = createContext();
 export const SessionProvider = ({ children }) => {
-  const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  const [token, setToken] = useState("YOUR_TOKEN");
+  // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  // const [token, setToken] = useState("YOUR_TOKEN");
+  const [mediaUrl, setMediaUrl] = useState("MEDIA_BLOB");
   return (
-    <SessionContext.Provider value={[apiKey, setApiKey, sessionId, setSessionId, token, setToken]}>
+    <SessionContext.Provider value={{mediaUrl, setMediaUrl}}>
       {children}
     </SessionContext.Provider>
   );
