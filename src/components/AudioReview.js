@@ -229,9 +229,9 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                           onClick={() => handleNextPin(curPinIndex + 1)} >
                         <NavigateNextIcon />    
                     </Fab>
-                    <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
+                    {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
                     <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
-                    <Typography>{"Current pin index: " + curPinIndex}</Typography>
+                    <Typography>{"Current pin index: " + curPinIndex}</Typography> */}
                 </div>
             </Paper>
         </Grid>

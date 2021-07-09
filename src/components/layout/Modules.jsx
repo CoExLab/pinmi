@@ -2,6 +2,8 @@ import React from 'react';
 import DisscussionPrep from './DisscussionPrep';
 import PracticeSession from './PracticeSession';
 import Collaboration from  './Collaboration';
+import Refresher from './Refresher';
+import SelfReflection from './SelfReflection';
 // context
 import { useActiveStepValue } from "../../context";
 
@@ -10,7 +12,7 @@ import { usePins } from '../../hooks/index';
 function getStepContent(step) {
     switch (step) {
       case 0:
-        return <div>refresher</div>;
+        return <Refresher />
       case 1:
         return <PracticeSession />;
       case 2:
@@ -18,7 +20,7 @@ function getStepContent(step) {
       case 3:
         return <Collaboration />;
       case 4:
-        return <div>reflection</div>;
+        return <SelfReflection />;
       case 5:
         return <div>complete</div>;
       default:
