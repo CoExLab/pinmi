@@ -53,7 +53,7 @@ const Refresher = () => {
                                 </div>
                                 {question1Ans === '' ? null :
                                 <Box fontStyle="italic" pl = {3.5} textAlign="left" fontSize={16} fontWeight="fontWeightMedium">
-                                    You are {question1Ans === "true" ? "right!" : "wrong!"} OARS are not unique to MI and are often already in practitioners’ skill repertoire. The unique aspect of OARS in MI is the deployment of those skills in a directive manner.
+                                    {question1Ans === "true" ? "Correct!" : "Sorry, try again."} OARS are not unique to MI and are often already in practitioners’ skill repertoire. The unique aspect of OARS in MI is the deployment of those skills in a directive manner.
                                 </Box>}
                                 <div style={{ display: 'flex' }}>
                                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={3.5}> 
@@ -76,7 +76,7 @@ const Refresher = () => {
                                 </div>
                                 {question2Ans === '' ? null :
                                 <Box fontStyle="italic" pl = {3.5} textAlign="left" fontSize={16} fontWeight="fontWeightMedium">
-                                    You are {question2Ans === "true" ? "right!" : "wrong!"} If we simply hold up the mirror, then we aren’t helping clients become unstuck. In addition to helping clients hear again what they’re told us, we also selectively attend to certain elements and not to others and then present that information back in a manner that helps them attain greater understanding of their situation
+                                    {question2Ans === "true" ? "Correct!" : "Sorry, try again."} If we simply hold up the mirror, then we aren’t helping clients become unstuck. In addition to helping clients hear again what they’re told us, we also selectively attend to certain elements and not to others and then present that information back in a manner that helps them attain greater understanding of their situation
                                 </Box>}
 
                                 <Box pt = {1} fontStyle="normal" fontSize={20} textAlign="center" fontWeight="fontWeightBold" >
