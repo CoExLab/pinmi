@@ -13,6 +13,7 @@ import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import { makeStyles } from '@material-ui/core/styles';
+import useSpeechToText from './transcript';
 
 import {
   toggleAudio,
@@ -54,10 +55,11 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
-
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
+
+  
 
   useEffect(() => {
     isInterviewStarted
@@ -114,6 +116,38 @@ function VideoChatComponent(props) {
     });  
     console.log("finished writing")      
     console.log(curTime);  
+  }
+
+  const {
+    error,
+    interimResult,
+    isRecording,
+    results,
+    startSpeechToText,
+    stopSpeechToText
+  } = useSpeechToText({
+    continuous: true,
+    crossBrowser: true,
+    googleApiKey: process.env.REACT_APP_API_KEY,
+    speechRecognitionProperties: { interimResults: true },
+    timeout: 10000
+  });
+
+  if (error) {
+    return (
+      <div
+        style={{
+          maxWidth: '600px',
+          margin: '100px auto',
+          textAlign: 'center'
+        }}
+      >
+        <p>
+          {error}
+          <span style={{ fontSize: '3rem' }}>🤷‍</span>
+        </p>
+      </div>
+    );
   }
 
 
@@ -201,6 +235,13 @@ function VideoChatComponent(props) {
   const handleStartChat = () => {
     setIsInterviewStarted(true);
     setVideoCallTimer(Date.now());
+    startSpeechToText();
+  }
+
+  const handleStopChat = () => {
+    setIsInterviewStarted(false);
+    stopSpeechToText();
+    console.log(results);
   }
 
   return (
@@ -215,7 +256,7 @@ function VideoChatComponent(props) {
         Start chat
       </Button>
       <Button
-        onClick={() => setIsInterviewStarted(false)}
+        onClick={() => handleStopChat()}
         disabled={!isInterviewStarted}
         color='secondary'
         variant="contained"
