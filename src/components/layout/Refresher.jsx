@@ -88,7 +88,7 @@ const Refresher = () => {
                                 <Box pl = {3.5} width = {900} >
                                     <TextField
                                             id="outlined-secondary"
-                                            label="What have you been working on today?"
+                                            label="Convert the closed question to open-ended..."
                                             fullWidth
                                             variant="outlined"
                                             multiline
@@ -102,7 +102,7 @@ const Refresher = () => {
                                 <Box pl = {3.5} width = {900} >
                                     <TextField
                                             id="outlined-secondary"
-                                            label="can you tell me how your evening would go on a typical drink occasion?"
+                                            label="Convert the closed question to open-ended..."
                                             fullWidth
                                             variant="outlined"
                                             multiline
@@ -116,7 +116,7 @@ const Refresher = () => {
                                 <Box pl = {3.5} width = {900} >
                                     <TextField
                                             id="outlined-secondary"
-                                            label="Where do you feel that you need more clarification?"
+                                            label="Form a question in response to the client statement..."
                                             fullWidth
                                             variant="outlined"
                                             multiline
@@ -130,7 +130,7 @@ const Refresher = () => {
                                 <Box pl = {3.5} width = {900} >
                                     <TextField
                                             id="outlined-secondary"
-                                            label="can you tell me more about the things that you do that you shouldn’t"
+                                            label="Form a question in response to the client statement..."
                                             fullWidth
                                             variant="outlined"
                                             multiline
