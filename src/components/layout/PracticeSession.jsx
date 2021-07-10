@@ -19,20 +19,21 @@ const PracticeSession = () => {
     const {setMediaUrl} = useSessionValue();
     useEffect(() => {
         setMediaUrl(mediaBlobUrl);
+        window.scrollTo(0,0);
     }, [mediaBlobUrl]);
 
-    const fetchServerRes = (setApiKey, setSessionId, setToken, baseURL) => {
-        setReadyMessage("preparing video call for you now...");
-        fetch(baseURL).then(function(res) {
-            return res.json()
-          }).then(function(res) {
-            console.log("got server info");
-            setApiKey(res.apiKey);
-            setSessionId(res.sessionId);
-            setToken(res.token);
-            setReadyMessage("video call is ready now");
-          }).catch((error) => {console.log(error)});
-    }
+    // const fetchServerRes = (setApiKey, setSessionId, setToken, baseURL) => {
+    //     setReadyMessage("preparing video call for you now...");
+    //     fetch(baseURL).then(function(res) {
+    //         return res.json()
+    //       }).then(function(res) {
+    //         console.log("got server info");
+    //         setApiKey(res.apiKey);
+    //         setSessionId(res.sessionId);
+    //         setToken(res.token);
+    //         setReadyMessage("video call is ready now");
+    //       }).catch((error) => {console.log(error)});
+    // }
 
     return (  
         <div>
@@ -43,15 +44,15 @@ const PracticeSession = () => {
                 <li>instances of effective MI use</li>
             </ul>
             <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
-            
-            <button onClick = 
+            {/* <button onClick = 
             {() => {fetchServerRes(setApiKey, setSessionId, setToken, baseURL)}}
-            >Click me for getting video call ready</button>
+            >Click me for getting video call ready
+            </button> */}
             {/* <h1>apiKeys: {apiKey}</h1>
             <h1>sessionId: {sessionId}</h1>
             <h1>token: {token}</h1> */}
-            <h3>{readyMessage} </h3>
-            <h3>Recording status: {status}</h3>
+            {/* <h3>{readyMessage} </h3>
+            <h3>Recording status: {status}</h3> */}
             {/* Passing in start and stop recording functions that are handled by buttons inside of this component */}
             <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} startRec = {startRecording} stopRec = {stopRecording}/>
         </div>

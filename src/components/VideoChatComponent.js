@@ -8,7 +8,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
@@ -55,13 +55,22 @@ function VideoChatComponent(props) {
     (state) => state.videoChat.isStreamSubscribed
   );
 
+  // needed vonage info
+  const [room, setRoom] = useState("hello");
+  const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+  const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  const [token, setToken] = useState("YOUR_TOKEN");
+
+  const [loadingStatus, setLoadingStatus] = useState(false);
+
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(props.apiKey, props.sessionId, props.token)
+      ? initializeSession(apiKey, sessionId, token)
       : stopStreaming();
   }, [isInterviewStarted]);
 
@@ -198,10 +207,27 @@ function VideoChatComponent(props) {
     );
   };
 
-  const handleStartChat = () => {
-    setIsInterviewStarted(true);
-    setVideoCallTimer(Date.now());
-    props.startRec()
+  const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
+    console.log("loading info now...");
+    setLoadingStatus(true);
+    await fetch(baseURL)
+    .then(function(res) {
+      return res.json()
+    })
+    .then(function(res) {
+      console.log("got server info");
+      setApiKey(res.apiKey);
+      setSessionId(res.sessionId);
+      setToken(res.token);
+    }).then( () => {
+
+      setLoadingStatus(false);
+      console.log("start chat now");
+      setIsInterviewStarted(true);
+      setVideoCallTimer(Date.now());
+      props.startRec();
+    }) 
+    .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = () => {
@@ -210,24 +236,27 @@ function VideoChatComponent(props) {
   }
 
   return (
-    <>          
+    <>              
+      <Box pt = {10}>
+        {loadingStatus ? <LinearProgress /> : null}
+      </Box>    
       <div className='actions-btns'>
-      <Button
-        onClick={() => handleStartChat()}
-        disabled={isInterviewStarted}
-        color='primary'
-        variant="contained"
-      >
-        Start chat
-      </Button>
-      <Button
-        onClick={() => handleFinishChat()}
-        disabled={!isInterviewStarted}
-        color='secondary'
-        variant="contained"
-      >
-        Finish chat
-      </Button>
+        <Button
+          onClick={() => handleStartChat(setApiKey, setSessionId, setToken, baseURL)}
+          disabled={isInterviewStarted}
+          color='primary'
+          variant="contained"
+        >
+          Start chat
+        </Button>
+        <Button
+          onClick={() => handleFinishChat()}
+          disabled={!isInterviewStarted}
+          color='secondary'
+          variant="contained"
+        >
+          Finish chat
+        </Button>
       </div>
       <div className="video-container">
         <div
