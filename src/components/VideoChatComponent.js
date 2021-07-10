@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import MicIcon from "@material-ui/icons/Mic";
-import MicOffIcon from "@material-ui/icons/MicOff";
-import VideocamIcon from "@material-ui/icons/Videocam";
-import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import { makeStyles } from '@material-ui/core/styles';
+import MicIcon from "@material-ui/icons/MicNone";
+import MicOffIcon from "@material-ui/icons/MicOffOutlined";
+import VideocamIcon from "@material-ui/icons/VideocamOutlined";
+import VideocamOffIcon from "@material-ui/icons/VideocamOffOutlined";
 import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
@@ -12,7 +13,6 @@ import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
-import { makeStyles } from '@material-ui/core/styles';
 
 import {
   toggleAudio,
@@ -133,64 +133,97 @@ function VideoChatComponent(props) {
           <div className="video-toolbar">
             {isAudioEnabled ? (
               <Tooltip title="mic on">
-                <MicIcon
-                  onClick={() => onToggleAudio(false)}
-                  className="on-icon"
-                />
+                <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                  <Button>
+                  <MicIcon classes={{root: classes.iconRoot}}
+                    onClick={() => onToggleAudio(false)}
+                    className="on-icon">
+                  </MicIcon>
+                  </Button>
+                </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
-                <MicOffIcon
-                  onClick={() => onToggleAudio(true)}
-                  className="off-icon"
-                />
+                <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                  <Button color="#616161">
+                  <MicOffIcon classes={{root: classes.iconRoot}}
+                    onClick={() => onToggleAudio(true)}
+                    className="off-icon">
+                  </MicOffIcon>
+                  </Button>
+                </Fab>
               </Tooltip>
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
-                <VideocamIcon
-                  onClick={() => onToggleVideo(false)}
-                  className="on-icon"
-                />
+                <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                  <Button>
+                  <VideocamIcon classes={{root: classes.iconRoot}}
+                    onClick={() => onToggleVideo(false)}
+                    className="on-icon">
+                  </VideocamIcon>
+                  </Button>
+                </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
-                <VideocamOffIcon
-                  onClick={() => onToggleVideo(true)}
-                  className="off-icon"
-                />
+                <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                  <Button>
+                  <VideocamOffIcon classes={{root: classes.iconRoot}}
+                    onClick={() => onToggleVideo(true)}
+                    className="off-icon">
+                  </VideocamOffIcon>
+                  </Button>
+                </Fab>
               </Tooltip>
             )}
+
             {isStreamSubscribed && (
               <>
                 {isAudioSubscribed ? (
                   <Tooltip title="sound on">
-                    <VolumeUpIcon
-                      onClick={() => onToggleAudioSubscription(false)}
-                      className="on-icon"
-                    />
+                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                      <Button>
+                        <VolumeUpIcon classes={{root: classes.iconRoot}}
+                        onClick={() => onToggleAudioSubscription(false)}
+                        className="on-icon">
+                        </VolumeUpIcon>
+                      </Button>
+                    </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="sound off">
-                    <VolumeOffIcon
-                      onClick={() => onToggleAudioSubscription(true)}
-                      className="off-icon"
-                    />
+                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                      <Button>
+                        <VolumeOffIcon classes={{root: classes.iconRoot}}
+                        onClick={() => onToggleAudioSubscription(true)}
+                        className="off-icon">
+                        </VolumeOffIcon>
+                      </Button>
+                    </Fab>
                   </Tooltip>
                 )}
                 {isVideoSubscribed ? (
                   <Tooltip title="screen on">
-                    <VisibilityIcon
-                      onClick={() => onToggleVideoSubscription(false)}
-                      className="on-icon"
-                    />
+                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                      <Button>
+                        <VisibilityIcon classes={{root: classes.iconRoot}}
+                        onClick={() => onToggleVideoSubscription(false)}
+                        className="on-icon">
+                        </VisibilityIcon>
+                      </Button>
+                    </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="screen off">
-                    <VisibilityOffIcon
-                      onClick={() => onToggleVideoSubscription(true)}
-                      className="off-icon"
-                    />
+                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                      <Button>
+                        <VisibilityOffIcon classes={{root: classes.iconRoot}}
+                        onClick={() => onToggleVideoSubscription(true)}
+                        className="off-icon">
+                        </VisibilityOffIcon>
+                      </Button>
+                    </Fab>
                   </Tooltip>
                 )}
               </>
