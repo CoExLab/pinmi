@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 // Components
 import Notetaking from '../Notetaking';
 import AudioReview from '../AudioReview';
@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
 const DisscussionPrep = () => {
   const classes = useStyles();
   const [curPinIndex, setCurPinIndex] = useState(-1);
+  useEffect(() => {
+    window.scrollTo(0,0);
+  }, [])
+
 
   return (
     <div className={classes.root}>

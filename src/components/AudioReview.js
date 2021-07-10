@@ -60,6 +60,9 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     let playTimeArr = pins.map(pin => pin.pinTime);
 
     const handleLastPin = (index) => {   
+        console.log(mediaUrl);
+        console.log(audioLen);
+        console.log(audioProgress);
         if(curPinIndex > 0){
             setCurPinIndex(index);
             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
@@ -92,8 +95,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             pinTime: curTime,
             // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
             sessionID: MiTrainingSessionID,
-            callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            trainerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            traineePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         })        
         .then( () => {
             setPins([...pins, ]);
@@ -194,7 +197,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 />
                 <ReactPlayer
                     ref={player}
-                    url={mediaUrl}
+                    url={audio}
                     controls = {true}
                     width="100%"
                     height="55px"
