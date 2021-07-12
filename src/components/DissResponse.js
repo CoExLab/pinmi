@@ -9,6 +9,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
+//context
+import { useUserModeValue } from '../context';
+
 const useStyles = makeStyles((theme) => ({
     root: {
       '& > *': {
@@ -19,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const DissResponse = ({curPinIndex}) => {   
-    // temp user mode switcher
-    const [userMode, setUserMode] = useState("caller");
+    // user mode switcher
+    const {userMode, setUserMode} = useUserModeValue();
 
     const handleUserModeSwitch = () => {
         if(userMode === "caller"){
@@ -121,8 +124,8 @@ const DissResponse = ({curPinIndex}) => {
         <Grid item xs={12} sm={8}>
             <Paper >
                 <h2>{userMode}</h2>
-                <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button>
-                <Box m={2} height={700} >
+                {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
+                <Box m={2} height={750} >
                     <Box fontStyle="italic" fontSize={18}>
                         Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                     </Box>

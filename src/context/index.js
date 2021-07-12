@@ -13,6 +13,17 @@ export const ActiveStepProvider = ({children}) => {
 }
 export const useActiveStepValue = () => useContext(ActiveStepContext);
 
+export const UserModeContext = createContext();
+export const UserModeProvider = ({children}) => {
+    const [userMode, setUserMode] = useState("");
+
+    return  (
+        <UserModeContext.Provider value = {{userMode, setUserMode}}>
+            {children}
+        </UserModeContext.Provider>
+    )
+}
+export const useUserModeValue = () => useContext(UserModeContext);
 
 export const PinsContext = createContext();
 export const PinsProvider = ({ children }) => {

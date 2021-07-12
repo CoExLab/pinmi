@@ -8,6 +8,9 @@ import MISkillsSheet from './layout/MISkillsSheet';
 import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
+//context
+import { useUserModeValue } from '../context';
+
 const Notetaking = ({curPinIndex}) => {    
     //creating a refernce for TextField Component
     const noteValueRef = useRef('') 
@@ -23,16 +26,16 @@ const Notetaking = ({curPinIndex}) => {
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
 
-    // temp user mode switcher
-    const [userMode, setUserMode] = useState("caller");
+    // user mode switcher
+    const {userMode, setUserMode} = useUserModeValue();
 
-    const handleUserModeSwitch = () => {
-        if(userMode === "caller"){
-            setUserMode("callee");
-        } else{
-            setUserMode("caller");
-        }
-    }
+    // const handleUserModeSwitch = () => {
+    //     if(userMode === "caller"){
+    //         setUserMode("callee");
+    //     } else{
+    //         setUserMode("caller");
+    //     }
+    // }
 
     useEffect(() => {
         fetchCurTextVal(`${userMode}PinInfos.pinNote`);
@@ -105,7 +108,7 @@ const Notetaking = ({curPinIndex}) => {
         <Grid item xs={12} sm={8}>
             <Paper >
                 <h2>{userMode}</h2>
-                <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button>
+                {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
                 <Box m={2} height={700} >
                     {curPinIndex !== -1 ? 
                         <Box fontStyle="italic" fontSize={18}>

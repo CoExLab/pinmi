@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActiveStepProvider, PinsProvider, SessionProvider} from './context/index'
+import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} from './context/index'
 import Content from './components/layout/Content';
 import { Provider } from "react-redux";
 import { store } from "./components/Store";
@@ -12,9 +12,11 @@ const App = () => {
             <SessionProvider>
                 <ActiveStepProvider>
                     <PinsProvider>
-                        <main>
-                            <Content />
-                        </main>
+                        <UserModeProvider>
+                            <main>
+                                <Content />
+                            </main>
+                        </UserModeProvider>
                     </PinsProvider>
                 </ActiveStepProvider>
             </SessionProvider>
