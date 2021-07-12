@@ -1,13 +1,21 @@
 import React, {useState} from 'react';
 import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
-
 import { Fragment } from 'react';
+import { useUserModeValue } from '../../context';
 
 const Refresher = () => {
 
     const [question1Ans, setQuestion1Ans] = useState('');
     const [question2Ans, setQuestion2Ans] = useState('');
+
+    const {userMode, setUserMode} = useUserModeValue();
+
+    const handleUserMode = (event, newMode) => {
+        if (newMode !== null) {
+            setUserMode(newMode);
+        }
+    };
 
     const handleQestion1 = (event, newAns) => {
       if (newAns !== null) {
@@ -29,6 +37,20 @@ const Refresher = () => {
                     <Paper >
                         <Grid container spacing={1}>
                             <Box m={2} height={800} width = {1000}>
+                                <Box align="left" m = {2}>          
+                                    <ToggleButtonGroup
+                                        value={userMode}
+                                        exclusive
+                                        onChange={handleUserMode}
+                                    >
+                                        <ToggleButton value="caller" aria-label="left aligned">
+                                            caller
+                                        </ToggleButton>
+                                        <ToggleButton value="callee" aria-label="centered">
+                                            callee
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Box>  
                                 <Box fontStyle="normal" fontSize={25} textAlign="center" fontWeight="fontWeightBold" >
                                     Complete the exercises to unlock today's session!
                                 </Box>
