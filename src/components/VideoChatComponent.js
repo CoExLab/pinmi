@@ -313,14 +313,15 @@ function VideoChatComponent(props) {
       console.log("start chat now");
       setIsInterviewStarted(true);
       setVideoCallTimer(Date.now());
-      props.startRec();
+      startSpeechToText();
     }) 
     .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = () => {
     setIsInterviewStarted(false);
-    props.stopRec();
+    stopSpeechToText();
+    addTranscript();
   }
 
   return (
