@@ -13,7 +13,6 @@ import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
-import useSpeechToText from './transcript';
 
 import {
   toggleAudio,
@@ -69,8 +68,6 @@ function VideoChatComponent(props) {
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
-  
-
   useEffect(() => {
     isInterviewStarted
       ? initializeSession(apiKey, sessionId, token)
@@ -103,8 +100,6 @@ function VideoChatComponent(props) {
   const { pins, setPins } = usePins();
   // get document ID
   const pinID = generatePushId();
-  // get trans ID
-  const transID = generatePushId();
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
 
@@ -128,56 +123,6 @@ function VideoChatComponent(props) {
     });  
     console.log("finished writing")      
     console.log(curTime);  
-  }
-
-  const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
-    })
-    .then( () => {
-        setPins([...pins, ]);
-    })
-    .then(() => {
-        console.log("Document successfully written!");    
-    })
-    .catch((error) => {
-        console.error("Error writing document: ", error);
-    });  
-    console.log("finished writing transcript")    
-  }
-
-
-
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
   }
 
 
