@@ -12,6 +12,7 @@ const PracticeSession = () => {
     const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
     const [token, setToken] = useState("YOUR_TOKEN");
     const [readyMessage, setReadyMessage] = useState("video is not ready");
+    const isRecording = true;
     const {status, startRecording, stopRecording, mediaBlobUrl} 
     =useReactMediaRecorder({ video: false, audio: true });
 
@@ -54,7 +55,7 @@ const PracticeSession = () => {
             {/* <h3>{readyMessage} </h3>
             <h3>Recording status: {status}</h3> */}
             {/* Passing in start and stop recording functions that are handled by buttons inside of this component */}
-            <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} startRec = {startRecording} stopRec = {stopRecording}/>
+            <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording} startRec = {startRecording} stopRec = {stopRecording}/>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 // Components
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
 import VideoChatComponent from '../VideoChatComponent';
 import {apiKey, sessionId, token} from '../constants';
+import { useSessionValue } from "../../context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,10 +31,40 @@ const Collaboration = () => {
   const classes = useStyles();
   const [curPinIndex, setCurPinIndex] = useState(-1);
 
+  const [room, setRoom] = useState("hello");
+    const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+    const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+    const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+    const [token, setToken] = useState("YOUR_TOKEN");
+    const [readyMessage, setReadyMessage] = useState("video is not ready");
+    const isRecording = false;
+
+    //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
+    // const {setMediaUrl} = useSessionValue();
+    // useEffect(() => {
+    //     setMediaUrl(mediaBlobUrl);
+    //     window.scrollTo(0,0);
+    // }, [mediaBlobUrl]);
+
+    // const fetchServerRes = (setApiKey, setSessionId, setToken, baseURL) => {
+    //     setReadyMessage("preparing video call for you now...");
+    //     fetch(baseURL).then(function(res) {
+    //         return res.json()
+    //       }).then(function(res) {
+    //         console.log("got server info");
+    //         setApiKey(res.apiKey);
+    //         setSessionId(res.sessionId);
+    //         setToken(res.token);
+    //         setReadyMessage("video call is ready now");
+    //       }).catch((error) => {console.log(error)});
+    // }
+
   return (
     <div className={classes.root}>
       <Container>
-        {/* <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token}/> */}
+        {/* <Grid item xs={6} sm={6} container spacing={2}> */}
+          <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording}/>
+        {/* </Grid> */}
         <Grid container spacing={2}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
