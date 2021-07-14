@@ -62,9 +62,6 @@ const Collaboration = () => {
   return (
     <div className={classes.root}>
       <Container>
-        {/* <Grid item xs={6} sm={6} container spacing={2}> */}
-          <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording}/>
-        {/* </Grid> */}
         <Grid container spacing={2}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
