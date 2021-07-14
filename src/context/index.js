@@ -56,8 +56,9 @@ export const SessionProvider = ({ children }) => {
   // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   // const [token, setToken] = useState("YOUR_TOKEN");
   const [mediaUrl, setMediaUrl] = useState("MEDIA_BLOB");
+  const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   return (
-    <SessionContext.Provider value={{mediaUrl, setMediaUrl}}>
+    <SessionContext.Provider value={{mediaUrl, setMediaUrl, mediaDuration, setMediaDuration}}>
       {children}
     </SessionContext.Provider>
   );
