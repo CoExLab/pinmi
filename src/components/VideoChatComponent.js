@@ -25,7 +25,7 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-
+import { useSessionValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -97,7 +97,8 @@ function VideoChatComponent(props) {
     setIsVideoSubscribed(action);
     toggleVideoSubscription(action);
   };
-
+  //get setter for media duration
+  const {setMediaDuration} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -324,6 +325,8 @@ function VideoChatComponent(props) {
   const handleFinishChat = () => {
     setIsInterviewStarted(false);
     if(props.isRecording) {
+      //setting mediaDuration to be used in AudioReview
+      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       props.stopRec();
       console.log("stop recording");
     }
