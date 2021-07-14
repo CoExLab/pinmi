@@ -95,6 +95,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
 
+  const isRecording = props.isRecording;
 
   // fetch raw pin data here
   const { pins, setPins } = usePins();
@@ -258,14 +259,20 @@ function VideoChatComponent(props) {
       console.log("start chat now");
       setIsInterviewStarted(true);
       setVideoCallTimer(Date.now());
-      props.startRec();
+      if(props.isRecording) {
+        props.startRec();
+        console.log("start recording");
+      }
     }) 
     .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = () => {
     setIsInterviewStarted(false);
-    props.stopRec();
+    if(props.isRecording) {
+      props.stopRec();
+      console.log("stop recording");
+    }
   }
 
   return (
@@ -291,13 +298,13 @@ function VideoChatComponent(props) {
           Finish chat
         </Button>
       </div>
-      <div className="video-container">
+      <div className="video-container"> 
         <div
           id="subscriber"
           className={`${
             isStreamSubscribed ? "main-video" : "additional-video"
           }`}
-        >
+          >
           {isStreamSubscribed && renderToolbar()}
         </div>
         <div
@@ -305,10 +312,9 @@ function VideoChatComponent(props) {
           className={`${
             isStreamSubscribed ? "additional-video" : "main-video"
           }`}
-        >
+          >
           {!isStreamSubscribed && renderToolbar()}
-        </div>
-      </div>
+          </div> </div>
     </>
   );
 }
