@@ -4,7 +4,7 @@ import { Typography, Grid, Paper, Icon, Fab, CircularProgress } from '@material-
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ReactPlayer from 'react-player';
-import audio from '../other/audio.mp3';
+//import audio from '../other/audio.mp3';
 import pin from '../other/pin.svg';
 import {formatTime, generatePushId} from '../helper/index';
 
@@ -53,14 +53,15 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
 
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");   
-    const [audioLen, setAudioLen] = useState(100);
+    //const [audioLen, setAudioLen] = useState(100);
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl} = useSessionValue()
+    const {mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
+
     
     let playTimeArr = pins.map(pin => pin.pinTime);
 
     const handleLastPin = (index) => {   
-        console.log(mediaUrl);
+        console.log(audio);
         console.log(audioLen);
         console.log(audioProgress);
         if(curPinIndex > 0){
@@ -202,7 +203,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     width="100%"
                     height="55px"
                     style={{ marginBottom: 8 }}
-                    onDuration={(duration) => setAudioLen (duration)}
+                    // onDuration={(duration) => setAudioLen (duration)}
                     onProgress = {handleProgress}
                     // onSeek={(e) => {
                     //     setAudioProgress(e); 

@@ -60,5 +60,22 @@ const PracticeSession = () => {
     );
 }
 
+//NOT FUNCTIONAL YET. DO NOT USE
+function startArchive(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    var sessionId = {"sessionId" : "2_MX40NzI1ODU3NH5-MTYyNjE5NjI3OTgwOH5ieXZaRktvWm9ITE9pYlArYThxdk9PazF-fg"}
+    xhr.onreadystatechange = function() { // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            console.log("I posted :)");
+        }
+    }
+    xhr.send(sessionId);
+    // $.post("https://pinmi-test.herokuapp.com/" + '/archive/start', {'sessionId': sessionId}, null, 'json');
+    // $('#start').hide();
+    // $('#stop').show();
+  }
+
 
 export default PracticeSession;
