@@ -98,8 +98,6 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
 
-  const isRecording = props.isRecording;
-
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
