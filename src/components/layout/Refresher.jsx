@@ -56,7 +56,7 @@ const Refresher = () => {
                                 </Box>
                                 <div style={{ display: 'flex' }}>
                                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={3.5}> 
-                                        OARS are basic skills practitioners often have in their clinical toolbox already?
+                                        OARS are basic skills practitioners often have in their clinical toolbox already.
                                     </Box>
                                     <Box align="left" m = {2}>          
                                         <ToggleButtonGroup
