@@ -79,7 +79,7 @@ const Refresher = () => {
                                 </Box>}
                                 <div style={{ display: 'flex' }}>
                                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={3.5}> 
-                                        We use OARS to help clients not only see what they're told us, but to also help organize and understand their experience.
+                                        We use OARS to help clients not only see what they've told us, but to also help organize and understand their experience.
                                     </Box>
                                     <Box align="left" m = {2}>          
                                         <ToggleButtonGroup

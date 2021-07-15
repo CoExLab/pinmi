@@ -87,7 +87,7 @@ const SelfReflection = () => {
                                     />
                                 </Box>
                                 <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What else would I like to keep reelecting on during the next week?                               
+                                    What else would I like to keep reflecting on during the next week?                               
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
                                     <TextField
