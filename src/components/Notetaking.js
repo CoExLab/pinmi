@@ -109,7 +109,7 @@ const Notetaking = ({curPinIndex}) => {
             <Paper >
                 <h2>{userMode}</h2>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={700} >
+                <Box m={2} height={700} overflow="auto">
                     {curPinIndex !== -1 ? 
                         <Box fontStyle="italic" fontSize={18}>
                             The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
@@ -164,14 +164,14 @@ const Notetaking = ({curPinIndex}) => {
                             </ToggleButton>
                         </ToggleButtonGroup>
                     </Box>   
-                    <MISkillsSheet />
+                    <MISkillsSheet pinType = {pinType}/>
                     <TextField
                         id="outlined-secondary"
                         label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={1}
+                        rowsMax={2}
                         margin="normal"                        
                         value = {curSkillInfo}
                         inputRef={skillValueRef}

@@ -21,6 +21,7 @@
     "firebase": "^8.6.7",
     "hark": "^1.2.3",
     "inline-worker": "^1.1.0",
+    "material-ui-popup-state": "^1.8.4",
     "node-sass": "^4.14.1",
     "opentok": "^2.11.0",
     "prettier": "^2.0.5",

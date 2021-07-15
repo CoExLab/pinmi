@@ -8,7 +8,7 @@ const SelfReflection = () => {
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
                     <Paper >
                         <Grid container spacing={1}>
-                            <Box m={2} height={800} width = {1000}>
+                            <Box m={2} height={800} width = {1000} overflow="auto">
                                 <Box fontStyle="normal" fontSize={25} textAlign="center" fontWeight="fontWeightBold" >
                                     Reflect on how the session went and how you felt.
                                 </Box>
@@ -24,7 +24,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -37,7 +37,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -53,7 +53,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -66,7 +66,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -82,7 +82,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -95,7 +95,7 @@ const SelfReflection = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>

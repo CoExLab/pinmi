@@ -125,7 +125,7 @@ const DissResponse = ({curPinIndex}) => {
             <Paper >
                 <h2>{userMode}</h2>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={750} >
+                <Box m={2} height={700} width = {800} overflow="auto" >
                     <Box fontStyle="italic" fontSize={18}>
                         Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                     </Box>
@@ -211,7 +211,7 @@ const DissResponse = ({curPinIndex}) => {
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={1}
+                        rowsMax={2}
                         margin="normal"                        
                         // value = {curSkillInfo}
                         // inputRef={skillValueRef}
