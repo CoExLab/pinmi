@@ -5,10 +5,11 @@ import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-const MISkillsSheet = () => {
+const MISkillsSheet = ({pinType}) => {
 
     const [skillInfoOpened, setSkillInfoOpened] = React.useState(false);
-
+    const str1 = "were used here? ";
+    const str2 = "could have been used here? ";
     const styles = (theme) => ({
         root: {
           margin: 0,
@@ -38,6 +39,7 @@ const MISkillsSheet = () => {
 
     const handleClose = () => {
         setSkillInfoOpened(false);
+        console.log(pinType);
     };
 
     const handleClickOpen = () => {
@@ -46,16 +48,19 @@ const MISkillsSheet = () => {
 
     return (
         <div>
+            {pinType === undefined ? null : 
+            <div>
             <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
                 What   
                 <Link href="#" onClick={() => {handleClickOpen()}}>
                     {" MI skills "}
                 </Link>
-                were used here? 
+                
+                {pinType === "strength" ? str1 : str2}
             </Box>   
             <Dialog onClose={handleClose} open={skillInfoOpened}>
                 <DialogTitle onClose={handleClose} align="center">
-                    <Box fontWeight="fontWeightBold"> What are the four core MI skills? </Box>
+                    <Box fontWeight="fontWeightBold">  What are the four core MI skills? </Box>
                 </DialogTitle>
                 <DialogContent dividers>
                     <Box m={0.5} height={500} overflow="auto">
@@ -325,7 +330,8 @@ const MISkillsSheet = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
-                    
+            </div>
+            }
         </div>
     );
 };

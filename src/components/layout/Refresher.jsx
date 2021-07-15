@@ -36,7 +36,7 @@ const Refresher = () => {
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
                     <Paper >
                         <Grid container spacing={1}>
-                            <Box m={2} height={800} width = {1000}>
+                            <Box m={2} height={700} width = {1000} overflow="auto">
                                 <Box align="left" m = {2}>          
                                     <ToggleButtonGroup
                                         value={userMode}
@@ -114,7 +114,7 @@ const Refresher = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -128,7 +128,7 @@ const Refresher = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -142,7 +142,7 @@ const Refresher = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>
@@ -156,7 +156,7 @@ const Refresher = () => {
                                             fullWidth
                                             variant="outlined"
                                             multiline
-                                            rows={1}
+                                            rowsMax={2}
                                             margin="normal"                        
                                     />
                                 </Box>

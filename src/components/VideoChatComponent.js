@@ -11,7 +11,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
-import { Icon, Fab } from '@material-ui/core';
+import { Icon, Fab, CircularProgress } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 
@@ -65,6 +65,9 @@ function VideoChatComponent(props) {
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
+  const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
+  const [pinBtnColor, setPinBtnColor] = useState("");   
+
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
@@ -109,6 +112,20 @@ function VideoChatComponent(props) {
   const MiTrainingSessionID = "123";
 
   const addPin = async (curTime) => {
+      // ui on
+      setPinBtnDisabled(true);        
+      setPinBtnColor("primary");
+      // ui off
+      setTimeout(() => {
+          setPinBtnDisabled(false);
+      }, 800);
+
+      if(curTime > 10){
+        curTime -= 10;
+      } else{
+        curTime = 0;
+      }
+
     await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
         pinID,
         pinTime: curTime,
@@ -286,10 +303,15 @@ function VideoChatComponent(props) {
           </div>
         )}
         <Fab color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>                      
+          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>    
+          {pinBtnDisabled 
+          ? 
+          <CircularProgress color={pinBtnColor} /> 
+          :                         
           <Icon classes={{ root: classes.iconRoot }}>
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
+          } 
         </Fab>
       </>
     );
