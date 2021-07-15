@@ -116,11 +116,11 @@ const Notetaking = ({curPinIndex}) => {
                         </Box>
                     : null}
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
-                        Would you like to take some notes for this pin?
+                        Personal Notes
                     </Box>
                     <TextField
                         id="outlined-secondary"
-                        label="Personal Notes..."
+                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
