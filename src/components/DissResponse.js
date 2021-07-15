@@ -203,7 +203,7 @@ const DissResponse = ({curPinIndex}) => {
                     </form>
 
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
-                        Why was the pinned situation effective?
+                        Why was the pinned situation effective or ineffective?
                     </Box>  
                     <TextField
                         id="outlined-secondary"
