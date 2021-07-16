@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField, Button } from '@material-ui/core';
+import { Box, Grid, Paper, TextField } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import MISkillsSheet from './layout/MISkillsSheet';
 
@@ -27,15 +27,7 @@ const Notetaking = ({curPinIndex}) => {
     const [curSkillInfo, setCurSkillInfo] = useState('');
 
     // user mode switcher
-    const {userMode, setUserMode} = useUserModeValue();
-
-    // const handleUserModeSwitch = () => {
-    //     if(userMode === "caller"){
-    //         setUserMode("callee");
-    //     } else{
-    //         setUserMode("caller");
-    //     }
-    // }
+    const {userMode} = useUserModeValue();
 
     useEffect(() => {
         fetchCurTextVal(`${userMode}PinInfos.pinNote`);

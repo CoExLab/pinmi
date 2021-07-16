@@ -1,6 +1,8 @@
 import { firebase } from "../hooks/firebase";
 import { useState, useEffect } from 'react';
 
+// pin hook
+
 export const usePins = () => {
     const [pins, setPins] = useState([]);
   
