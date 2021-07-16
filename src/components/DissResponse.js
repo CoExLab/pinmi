@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField, Button } from '@material-ui/core';
-import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { Box, Grid, Paper, TextField } from '@material-ui/core';
+import {ToggleButton } from '@material-ui/lab';
 import MISkillsSheet from './layout/MISkillsSheet';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -23,15 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DissResponse = ({curPinIndex}) => {   
     // user mode switcher
-    const {userMode, setUserMode} = useUserModeValue();
-
-    const handleUserModeSwitch = () => {
-        if(userMode === "caller"){
-            setUserMode("callee");
-        } else{
-            setUserMode("caller");
-        }
-    }
+    const {userMode} = useUserModeValue();
     
     const classes = useStyles();
     

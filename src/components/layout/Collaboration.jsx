@@ -39,26 +39,6 @@ const Collaboration = () => {
     const [readyMessage, setReadyMessage] = useState("video is not ready");
     const isRecording = false;
 
-    //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
-    // const {setMediaUrl} = useSessionValue();
-    // useEffect(() => {
-    //     setMediaUrl(mediaBlobUrl);
-    //     window.scrollTo(0,0);
-    // }, [mediaBlobUrl]);
-
-    // const fetchServerRes = (setApiKey, setSessionId, setToken, baseURL) => {
-    //     setReadyMessage("preparing video call for you now...");
-    //     fetch(baseURL).then(function(res) {
-    //         return res.json()
-    //       }).then(function(res) {
-    //         console.log("got server info");
-    //         setApiKey(res.apiKey);
-    //         setSessionId(res.sessionId);
-    //         setToken(res.token);
-    //         setReadyMessage("video call is ready now");
-    //       }).catch((error) => {console.log(error)});
-    // }
-
   return (
     <div className={classes.root}>
       <Container>

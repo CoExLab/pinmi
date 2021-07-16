@@ -47,19 +47,17 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const { pins, setPins } = usePins();
     // get document ID
     const pinID = generatePushId();
-
     // hard-coded sessionID here
     const MiTrainingSessionID = "123";
 
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
-    const [pinBtnColor, setPinBtnColor] = useState("");   
-    //const [audioLen, setAudioLen] = useState(100);
+    const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
     const {mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
 
-    
     let playTimeArr = pins.map(pin => pin.pinTime);
 
+    // back to last pin
     const handleLastPin = (index) => {   
         console.log(audio);
         console.log(audioLen);
@@ -70,6 +68,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         }
     };
 
+    // go to next pin
     const handleNextPin = (index, remove = false) => {
         if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
             if(!remove){
@@ -235,6 +234,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                           onClick={() => handleNextPin(curPinIndex + 1)} >
                         <NavigateNextIcon />    
                     </Fab>
+                    {/* below are something thing only for debugging */}
                     {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
                     <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
                     <Typography>{"Current pin index: " + curPinIndex}</Typography> */}

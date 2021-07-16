@@ -111,6 +111,8 @@ function VideoChatComponent(props) {
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
 
+  const addPinDelayTime = 20;
+
   const addPin = async (curTime) => {
       // ui on
       setPinBtnDisabled(true);        
@@ -120,10 +122,10 @@ function VideoChatComponent(props) {
           setPinBtnDisabled(false);
       }, 800);
 
-      if(curTime > 10){
-        curTime -= 10;
+      if(curTime > addPinDelayTime){
+        curTime -= addPinDelayTime;
       } else{
-        curTime = 0;
+        curTime = addPinDelayTime;
       }
 
     await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({

@@ -1,6 +1,8 @@
 import firebase from 'firebase/app'
 import "firebase/firestore";
 
+// custom firebase hook
+
 const firebaseConfig = firebase.initializeApp({
     apiKey: "AIzaSyBIuy2AyZ1BbeWsIdXBWPVHbZOOLUKlo4g",
     authDomain: "pin-mi-e430d.firebaseapp.com",

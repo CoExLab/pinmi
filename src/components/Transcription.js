@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Typography, Box, Grid, Paper, Button } from '@material-ui/core';
+import { Typography, Box, Grid, Paper } from '@material-ui/core';
 
 import useSpeechToText from './transcript';
 
@@ -7,7 +7,6 @@ import { firebase } from "../hooks/firebase";
 
 const Transcription = () => {
     const [localTrans, setLocalTrans] = useState([]);
-    const [str, setStr] = useState();
 
     // fetch trans data here
     const fetchTranscript = async (sessionID) => {
