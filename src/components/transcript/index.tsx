@@ -73,10 +73,13 @@ export default function useSpeechToText({
 
   const [results, setResults] = useState<string[]>([]);
   const [interimResult, setInterimResult] = useState<string | undefined>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const timeoutId = useRef<number>();
   const mediaStream = useRef<MediaStream>();
+
+  //startTime to be used to do timestamps
+  const [startTime, setStartTime] = useState(0);
 
   useEffect(() => {
     if (!crossBrowser && !recognition) {
@@ -100,7 +103,9 @@ export default function useSpeechToText({
 
   // Chrome Speech Recognition API:
   // Only supported on Chrome browsers
-  const chromeSpeechRecognition = () => {
+  const chromeSpeechRecognition = (ST: number) => {
+    var startTime = ST
+    console.log("Start time in CSR! ", startTime);
     if (recognition) {
       // Continuous recording after stopped speaking event
       if (continuous) recognition.continuous = true;
@@ -121,24 +126,27 @@ export default function useSpeechToText({
       recognition.onresult = (e) => {
         const result = e.results[e.results.length - 1];
         const { transcript } = result[0];
+        var currentTime = Date.now() - startTime;
+        //const TSArray = [transcript, Date.now]
+        var TSwithDate = (currentTime.toString() + " - " + transcript);
 
         // Allows for realtime speech result UI feedback
         if (interimResults) {
           if (result.isFinal) {
             setInterimResult(undefined);
-            setResults((prevResults) => [...prevResults, transcript]);
+            setResults((prevResults) => [...prevResults, TSwithDate]);
           } else {
             let concatTranscripts = '';
 
             // If continuous: e.results will include previous speech results: need to start loop at the current event resultIndex for proper concatenation
             for (let i = e.resultIndex; i < e.results.length; i++) {
-              concatTranscripts += e.results[i][0].transcript;
+              concatTranscripts += e.results[i][0].transcript + "test2";
             }
 
             setInterimResult(concatTranscripts);
           }
         } else {
-          setResults((prevResults) => [...prevResults, transcript]);
+          setResults((prevResults) => [...prevResults, transcript + "test3"]);
         }
       };
 
@@ -151,10 +159,15 @@ export default function useSpeechToText({
       };
     }
   };
-
+//timeOfStart parameter is in unix system time
   const startSpeechToText = async () => {
     if (!useOnlyGoogleCloud && recognition) {
-      chromeSpeechRecognition();
+      var date = Date.now()
+      console.log("Date.now() ", date);
+      //setStartTime(5);
+      //console.log("Setting start time! ", startTime);
+
+      chromeSpeechRecognition(date);
       return;
     }
 

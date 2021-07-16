@@ -341,7 +341,8 @@ function VideoChatComponent(props) {
         props.startRec();
         console.log("start recording");
       }
-      startSpeechToText();
+      //pass in videoCallTimer so we can create time stamps
+      startSpeechToText(); 
     }) 
     .catch((error) => {console.log(error)});
   }
