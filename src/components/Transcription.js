@@ -28,11 +28,25 @@ const Transcription = () => {
         fetchTranscript("testSessionID");
     }, []);
 
+    const getTimeStamp = (transcriptString) => {
+        var index = transcriptString.indexOf("-");
+        if (index) {
+            return (transcriptString.slice(0,index));
+        }
+    }
+
+    const getText = (transcriptString) => {
+        var index = transcriptString.indexOf("-");
+        if (index) {
+            return (transcriptString.slice(index + 1));
+        }
+    }
+
     const renderTranscript = () => {
         return localTrans.map((item) => (
             <div>
-                <Box fontWeight="bold">{"00:00"}</Box>
-                <Typography> {item}
+                <Box fontWeight="bold">{getTimeStamp(item)}</Box>
+                <Typography> {getText(item)}
                 </Typography>
             </div>
         ));
