@@ -31,8 +31,23 @@ const Transcription = () => {
     const getTimeStamp = (transcriptString) => {
         var index = transcriptString.indexOf("-");
         if (index) {
-            return (transcriptString.slice(0,index));
+            var tempTimeSeconds = (parseInt(transcriptString.slice(0,index), 10)/ 1000);
+
+            return (convertSecondstoTime(tempTimeSeconds));
         }
+    }
+    //https://www.geeksforgeeks.org/how-to-convert-seconds-to-time-string-format-hhmmss-using-javascript/
+    const convertSecondstoTime = (given_seconds) => {
+        var dateObj = new Date(given_seconds * 1000);
+        var hours = dateObj.getUTCHours();
+        var minutes = dateObj.getUTCMinutes();
+        var seconds = dateObj.getSeconds();
+
+        var timeString = (hours.toString().padStart(2, '0')
+            + ':' + minutes.toString().padStart(2, '0')
+            + ':' + seconds.toString().padStart(2, '0'));
+        
+        return timeString;
     }
 
     const getText = (transcriptString) => {
