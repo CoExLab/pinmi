@@ -6,7 +6,7 @@ import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
-import VideoChatComponent from '../VideoChatComponent';
+import VideoChatComponentDiscussion from '../VideoChatComponentDiscussion';
 import {apiKey, sessionId, token} from '../constants';
 import { useSessionValue } from "../../context";
 
@@ -63,7 +63,7 @@ const Collaboration = () => {
     <div className={classes.root}>
       <Container>
         {/* <Grid item xs={6} sm={6} container spacing={2}> */}
-          <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording}/>
+          <VideoChatComponentDiscussion apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording}/>
         {/* </Grid> */}
         <Grid container spacing={2}>
           <AudioReview 

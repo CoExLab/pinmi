@@ -1,0 +1,103 @@
+.actions-btns {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  .MuiButtonBase-root {
+    margin: 0 20px;
+  }
+}
+.video-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  .main-video {
+    position: relative;
+    width: 50%;
+    height: 50%;
+    &:hover {
+      .video-toolbar {
+        opacity: 1;
+      }
+    }
+    .pin-Btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
+      margin: 100px 100px;
+    }
+    .video-toolbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 3em;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+      z-index: 2;
+    }
+    .OT_publisher {
+      z-index: 1;
+    }
+    .MuiSvgIcon-root {
+      font-size: 2rem;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+    .on-icon {
+      color: white;
+    }
+    .off-icon {
+      color: red;
+    }
+  }
+
+  .additional-video {
+    width: 50%;
+    height: 50%;
+    justify-content: right;
+    position: absolute;
+  }
+
+  .discussion-video-other {
+    position: relative;
+    width: 50%;
+    height: 50%;
+    justify-content: left;
+    &:hover {
+      .video-toolbar {
+        opacity: 1;
+      }
+    }
+    .video-toolbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 3em;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+      z-index: 2;
+    }
+    .OT_publisher {
+      z-index: 1;
+    }
+    .MuiSvgIcon-root {
+      font-size: 2rem;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+    .on-icon {
+      color: white;
+    }
+    .off-icon {
+      color: red;
+    }
+  }
+}
