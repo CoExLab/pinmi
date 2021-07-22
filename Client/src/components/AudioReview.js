@@ -202,7 +202,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     width="100%"
                     height="55px"
                     style={{ marginBottom: 8 }}
-                    onDuration={(duration) => setAudioLen (duration)}
+                    //onDuration={(duration) => setAudioLen (duration)}
                     onProgress = {handleProgress}
                     // onSeek={(e) => {
                     //     setAudioProgress(e); 
