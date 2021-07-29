@@ -1,6 +1,7 @@
 import { store } from "./Store";
 import { handleSubscription } from "./Store";
 import OT from "@opentok/client";
+//import { startArchive } from "./VideoChatComponent";
 
 function handleError(error) {
   if (error) {
@@ -10,7 +11,7 @@ function handleError(error) {
 
 let session, publisher, subscriber;
 
-export function initializeSession(apiKey, sessionId, token) {
+export function initializeSession(apiKey, sessionId, token, setArchive) {
   session = OT.initSession(apiKey, sessionId);
 
   // Create a publisher
@@ -41,10 +42,24 @@ export function initializeSession(apiKey, sessionId, token) {
     store.dispatch(handleSubscription(true));
   });
 
+  session.on("connectionCreated", function (event) {
+    console.log("The connection was created from"+ window.navigator.platform);
+    startArchive(sessionId, setArchive);
+  });
+
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
     console.log("The Video chat has ended");
     store.dispatch(handleSubscription(false));
+  });
+
+  session.on('archiveStarted', function (event) {
+    console.log('ARCHIVE-ID:', event.id);
+    console.log('ARCHIVE STARTED');
+  });
+
+  session.on('archiveStopped', function () {
+    console.log('ARCHIVE STOPPED');
   });
 
   // Connect to the session
@@ -74,4 +89,30 @@ export function toggleAudioSubscription(state) {
 }
 export function toggleVideoSubscription(state) {
   subscriber.subscribeToVideo(state);
+}
+
+const startArchive = async (sessionId, setArchiveData) => {
+  //create json to send as the body for post
+  const data = {
+    sessionId: sessionId,
+    resolution: '640x480',
+    outputMode: 'composed',
+    hasVideo: 'false',
+  };
+  //send post request to server
+  await fetch("https://pin-mi-node-server.herokuapp.com/" + 'archive/start', {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json"
+    }, 
+    body: JSON.stringify(data)
+  })
+  //get response from the post request, 
+  //and turn it into json so you can access data from it
+  .then(response => response.json())
+  .then((archiveData) => {
+    console.log(archiveData);
+    setArchiveData(archiveData);
+  })
+  .catch((error) => {console.log(error)})
 }

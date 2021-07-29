@@ -25,10 +25,38 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { useSessionValue } from "../context";
+import { useSessionValue , useUserModeValue } from "../context";
+
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
+
+// export const startArchive = async () => {
+//   //create json to send as the body for post
+//   const data = {
+//     sessionId: sessionId,
+//     resolution: '640x480',
+//     outputMode: 'composed',
+//     hasVideo: 'false',
+//   };
+//   //send post request to server
+//   await fetch(baseURL + 'archive/start', {
+//     method: 'POST',
+//     headers: {
+//       "Content-Type": "application/json"
+//     }, 
+//     body: JSON.stringify(data)
+//   })
+//   //get response from the post request, 
+//   //and turn it into json so you can access data from it
+//   .then(response => response.json())
+//   .then((archiveData) => {
+//     console.log(archiveData);
+//     setArchiveData(archiveData);
+//   })
+//   .catch((error) => {console.log(error)})
+// }
+
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
       height: '120%'
@@ -45,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 function VideoChatComponent(props) {
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -58,10 +87,11 @@ function VideoChatComponent(props) {
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
-  const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+  const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
+  const [archiveData, setArchiveData] = useState({});
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -76,7 +106,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
+      ? initializeSession(apiKey, sessionId, token, setArchiveData)
       : stopStreaming();
   }, [isInterviewStarted]);
 
@@ -101,7 +131,9 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration} = useSessionValue();
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
+  // get user mode (callee/caller)
+  const { userMode } = useUserModeValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -135,7 +167,7 @@ function VideoChatComponent(props) {
         sessionID: MiTrainingSessionID,
         callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-    })        
+    })
     .then( () => {
         setPins([...pins, ]);
     })
@@ -319,10 +351,59 @@ function VideoChatComponent(props) {
     );
   };
 
+  // const startArchive = async () => {
+  //   //create json to send as the body for post
+  //   const data = {
+  //     sessionId: sessionId,
+  //     resolution: '640x480',
+  //     outputMode: 'composed',
+  //     hasVideo: 'false',
+  //   };
+  //   //send post request to server
+  //   await fetch(baseURL + 'archive/start', {
+  //     method: 'POST',
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }, 
+  //     body: JSON.stringify(data)
+  //   })
+  //   //get response from the post request, 
+  //   //and turn it into json so you can access data from it
+  //   .then(response => response.json())
+  //   .then((archiveData) => {
+  //     console.log(archiveData);
+  //     setArchiveData(archiveData);
+  //   })
+  //   .catch((error) => {console.log(error)})
+  // }
+
+  const stopArchive = async () => {
+    var url = baseURL + 'archive/'+ archiveData.id + '/stop';
+    await fetch(url, {
+      method: 'POST', 
+    })
+    .then(res => res.json())
+    .then((res) => {
+      console.log(res);
+
+    })
+  }
+
+  const viewArchive = async () => {
+    var url = baseURL + 'archive/'+ archiveData.id;
+    fetch(url)
+    .then(res => res.json()) //return the res data as a json
+    .then((res) => {
+      setMediaUrl(res.url);
+      console.log(res.url);
+    })
+    .catch((e) => {console.log(e)});
+  }
+
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
     console.log("loading info now...");
     setLoadingStatus(true);
-    await fetch(baseURL)
+    await fetch(baseURL + "room/" + room)
     .then(function(res) {
       return res.json()
     })
@@ -331,19 +412,18 @@ function VideoChatComponent(props) {
       setApiKey(res.apiKey);
       setSessionId(res.sessionId);
       setToken(res.token);
-    }).then( () => {
-
+    }).then(() => {
       setLoadingStatus(false);
       console.log("start chat now");
       setIsInterviewStarted(true);
       setVideoCallTimer(Date.now());
+      startSpeechToText(); 
+    })
+    .then(() => {
       if(props.isRecording) {
-        props.startRec();
         console.log("start recording");
       }
-      //pass in videoCallTimer so we can create time stamps
-      startSpeechToText(); 
-    }) 
+    })
     .catch((error) => {console.log(error)});
   }
 
@@ -352,7 +432,7 @@ function VideoChatComponent(props) {
     if(props.isRecording) {
       //setting mediaDuration to be used in AudioReview
       setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      props.stopRec();
+      stopArchive();
       console.log("stop recording");
     }
     stopSpeechToText();
@@ -372,6 +452,20 @@ function VideoChatComponent(props) {
           variant="contained"
         >
           Start chat
+        </Button>
+        {/* <Button 
+          onClick = {() => startArchive()}
+          color='primary'
+          variant="contained"
+        >
+          Start archive
+        </Button> */}
+        <Button 
+          onClick = {() => viewArchive()}
+          color='primary'
+          variant="contained"
+        >
+          View archive
         </Button>
         <Button
           onClick={() => handleFinishChat()}
