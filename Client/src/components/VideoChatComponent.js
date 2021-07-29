@@ -30,6 +30,33 @@ import { useSessionValue , useUserModeValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
+
+// export const startArchive = async () => {
+//   //create json to send as the body for post
+//   const data = {
+//     sessionId: sessionId,
+//     resolution: '640x480',
+//     outputMode: 'composed',
+//     hasVideo: 'false',
+//   };
+//   //send post request to server
+//   await fetch(baseURL + 'archive/start', {
+//     method: 'POST',
+//     headers: {
+//       "Content-Type": "application/json"
+//     }, 
+//     body: JSON.stringify(data)
+//   })
+//   //get response from the post request, 
+//   //and turn it into json so you can access data from it
+//   .then(response => response.json())
+//   .then((archiveData) => {
+//     console.log(archiveData);
+//     setArchiveData(archiveData);
+//   })
+//   .catch((error) => {console.log(error)})
+// }
+
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
       height: '120%'
@@ -46,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 function VideoChatComponent(props) {
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -59,7 +87,7 @@ function VideoChatComponent(props) {
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
-  const [baseURL, setBaseURL] = useState("http://localhost:8080/");
+  const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
@@ -78,7 +106,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
+      ? initializeSession(apiKey, sessionId, token, setArchiveData)
       : stopStreaming();
   }, [isInterviewStarted]);
 
@@ -323,31 +351,31 @@ function VideoChatComponent(props) {
     );
   };
 
-  const startArchive = async () => {
-    //create json to send as the body for post
-    const data = {
-      sessionId: sessionId,
-      resolution: '640x480',
-      outputMode: 'composed',
-      hasVideo: 'false',
-    };
-    //send post request to server
-    await fetch(baseURL + 'archive/start', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      }, 
-      body: JSON.stringify(data)
-    })
-    //get response from the post request, 
-    //and turn it into json so you can access data from it
-    .then(response => response.json())
-    .then((archiveData) => {
-      console.log(archiveData);
-      setArchiveData(archiveData);
-    })
-    .catch((error) => {console.log(error)})
-  }
+  // const startArchive = async () => {
+  //   //create json to send as the body for post
+  //   const data = {
+  //     sessionId: sessionId,
+  //     resolution: '640x480',
+  //     outputMode: 'composed',
+  //     hasVideo: 'false',
+  //   };
+  //   //send post request to server
+  //   await fetch(baseURL + 'archive/start', {
+  //     method: 'POST',
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }, 
+  //     body: JSON.stringify(data)
+  //   })
+  //   //get response from the post request, 
+  //   //and turn it into json so you can access data from it
+  //   .then(response => response.json())
+  //   .then((archiveData) => {
+  //     console.log(archiveData);
+  //     setArchiveData(archiveData);
+  //   })
+  //   .catch((error) => {console.log(error)})
+  // }
 
   const stopArchive = async () => {
     var url = baseURL + 'archive/'+ archiveData.id + '/stop';
@@ -367,6 +395,7 @@ function VideoChatComponent(props) {
     .then(res => res.json()) //return the res data as a json
     .then((res) => {
       setMediaUrl(res.url);
+      console.log(res.url);
     })
     .catch((e) => {console.log(e)});
   }
@@ -383,22 +412,19 @@ function VideoChatComponent(props) {
       setApiKey(res.apiKey);
       setSessionId(res.sessionId);
       setToken(res.token);
-    }).then( () => {
-
+    }).then(() => {
       setLoadingStatus(false);
       console.log("start chat now");
       setIsInterviewStarted(true);
       setVideoCallTimer(Date.now());
+      startSpeechToText(); 
+    })
+    .then(() => {
       if(props.isRecording) {
         console.log("start recording");
       }
-      startSpeechToText(); 
-    }) 
+    })
     .catch((error) => {console.log(error)});
-    if(props.isRecording) {
-      console.log("start recording");
-      startArchive();
-    };
   }
 
   const handleFinishChat = () => {
@@ -427,13 +453,13 @@ function VideoChatComponent(props) {
         >
           Start chat
         </Button>
-        <Button 
+        {/* <Button 
           onClick = {() => startArchive()}
           color='primary'
           variant="contained"
         >
           Start archive
-        </Button>
+        </Button> */}
         <Button 
           onClick = {() => viewArchive()}
           color='primary'
