@@ -9,7 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box, Grid, Card } from "@material-ui/core";
 import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
@@ -43,6 +43,12 @@ const useStyles = makeStyles((theme) => ({
   '& > * + *': {
     marginLeft: theme.spacing(5),
   },
+  card: {
+    width: "25%",
+    height:"200px",
+    marginLeft: 10,
+    marginBottom: 10,
+  }
 }));
 
 function VideoChatComponentDiscussion(props) {
@@ -184,14 +190,14 @@ function VideoChatComponentDiscussion(props) {
     return (
       <>
         {isInterviewStarted && (
-          <div className="video-toolbar">
+          <div>
             {isAudioEnabled ? (
               <Tooltip title="mic on">
                 <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
                   <Button>
                   <MicIcon classes={{root: classes.iconRoot}}
                     onClick={() => onToggleAudio(false)}
-                    className="on-icon">
+                    >
                   </MicIcon>
                   </Button>
                 </Fab>
@@ -202,7 +208,7 @@ function VideoChatComponentDiscussion(props) {
                   <Button color="#616161">
                   <MicOffIcon classes={{root: classes.iconRoot}}
                     onClick={() => onToggleAudio(true)}
-                    className="off-icon">
+                    >
                   </MicOffIcon>
                   </Button>
                 </Fab>
@@ -214,7 +220,7 @@ function VideoChatComponentDiscussion(props) {
                   <Button>
                   <VideocamIcon classes={{root: classes.iconRoot}}
                     onClick={() => onToggleVideo(false)}
-                    className="on-icon">
+                    >
                   </VideocamIcon>
                   </Button>
                 </Fab>
@@ -225,7 +231,7 @@ function VideoChatComponentDiscussion(props) {
                   <Button>
                   <VideocamOffIcon classes={{root: classes.iconRoot}}
                     onClick={() => onToggleVideo(true)}
-                    className="off-icon">
+                    >
                   </VideocamOffIcon>
                   </Button>
                 </Fab>
@@ -240,7 +246,7 @@ function VideoChatComponentDiscussion(props) {
                       <Button>
                         <VolumeUpIcon classes={{root: classes.iconRoot}}
                         onClick={() => onToggleAudioSubscription(false)}
-                        className="on-icon">
+                        >
                         </VolumeUpIcon>
                       </Button>
                     </Fab>
@@ -251,7 +257,7 @@ function VideoChatComponentDiscussion(props) {
                       <Button>
                         <VolumeOffIcon classes={{root: classes.iconRoot}}
                         onClick={() => onToggleAudioSubscription(true)}
-                        className="off-icon">
+                       >
                         </VolumeOffIcon>
                       </Button>
                     </Fab>
@@ -263,7 +269,7 @@ function VideoChatComponentDiscussion(props) {
                       <Button>
                         <VisibilityIcon classes={{root: classes.iconRoot}}
                         onClick={() => onToggleVideoSubscription(false)}
-                        className="on-icon">
+                        >
                         </VisibilityIcon>
                       </Button>
                     </Fab>
@@ -274,7 +280,7 @@ function VideoChatComponentDiscussion(props) {
                       <Button>
                         <VisibilityOffIcon classes={{root: classes.iconRoot}}
                         onClick={() => onToggleVideoSubscription(true)}
-                        className="off-icon">
+                        >
                         </VisibilityOffIcon>
                       </Button>
                     </Fab>
@@ -284,12 +290,6 @@ function VideoChatComponentDiscussion(props) {
             )}
           </div>
         )}
-        <Fab color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>                      
-          <Icon classes={{ root: classes.iconRoot }}>
-              <img className={classes.imageIcon} src={pin} alt="" />
-          </Icon>   
-        </Fab>
       </>
     );
   };
@@ -336,7 +336,7 @@ function VideoChatComponentDiscussion(props) {
       <Box pt = {10}>
         {loadingStatus ? <LinearProgress /> : null}
       </Box>    
-      <div className='actions-btns'>
+      <div >
         <Button
           onClick={() => handleStartChat(setApiKey, setSessionId, setToken, baseURL)}
           disabled={isInterviewStarted}
@@ -354,8 +354,14 @@ function VideoChatComponentDiscussion(props) {
           Finish chat
         </Button>
       </div>
-      <div className="video-container"> 
-        <div
+      <div className="video-container-dis"> 
+      <Grid
+  container
+  direction="row"
+  justify="flex-end"
+>
+  <Card className={classes.card}>
+  <div
           id="subscriber"
           className={`${
             isStreamSubscribed ? "main-video" : "additional-video"
@@ -363,14 +369,20 @@ function VideoChatComponentDiscussion(props) {
           >
           {isStreamSubscribed && renderToolbar()}
         </div>
+        </Card>
+        <Card className={classes.card}>
         <div
           id="publisher"
           className={`${
-            isStreamSubscribed ? "additional-video" : "main-video"
+            isStreamSubscribed ? "main-video" : "additional-video"
           }`}
           >
           {!isStreamSubscribed && renderToolbar()}
-          </div> </div>
+          </div>
+        </Card>
+</Grid>
+        
+        </div>
     </>
   );
 }

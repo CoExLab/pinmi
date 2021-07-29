@@ -6,27 +6,14 @@
     margin: 0 20px;
   }
 }
-.video-container {
+.video-container-dis {
   position: relative;
-  height: 100vh;
-  width: 100%;
   .main-video {
     position: relative;
-    width: 50%;
-    height: 50%;
     &:hover {
       .video-toolbar {
         opacity: 1;
       }
-    }
-    .pin-Btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      bottom: 0;
-      z-index: 2;
-      margin: 100px 100px;
     }
     .video-toolbar {
       display: flex;
@@ -34,8 +21,8 @@
       align-items: center;
       position: absolute;
       bottom: 0;
-      width: 100%;
-      height: 3em;
+      width: 50%;
+      height: 1em;
       opacity: 0;
       transition: opacity 0.25s ease-in-out;
       z-index: 2;
@@ -57,23 +44,23 @@
   }
 
   .additional-video {
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     justify-content: right;
     position: absolute;
   }
 
   .discussion-video-other {
     position: relative;
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     justify-content: left;
     &:hover {
       .video-toolbar {
         opacity: 1;
       }
     }
-    .video-toolbar {
+    .video-toolbar-dis {
       display: flex;
       justify-content: center;
       align-items: center;
