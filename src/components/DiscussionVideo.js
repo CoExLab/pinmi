@@ -14,11 +14,6 @@ import { apiKey, sessionId, token } from "./constants";
 import { Icon, Fab, CircularProgress } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {
   toggleAudio,
@@ -51,12 +46,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
-  const [open, setOpen] = useState(true);
-
-  const handleClose = () => {
-      setOpen(false);
-  };
-
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -331,7 +320,6 @@ function VideoChatComponent(props) {
   };
 
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
-    setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);
     await fetch(baseURL)
@@ -371,36 +359,29 @@ function VideoChatComponent(props) {
     addTranscript();
   }
 
-  
   return (
     <>              
       <Box pt = {10}>
         {loadingStatus ? <LinearProgress /> : null}
-      </Box>
-      <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"What is pinning for? "}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <p>Click on the pin to create time marks of</p>
-                        <ul>
-                            <li>situations where you struggled to use MI</li>
-                            <li>instances of effective MI use</li>
-                        </ul>
-                        <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleStartChat(setApiKey, setSessionId, setToken, baseURL)} color="primary" autoFocus>
-                        Join Now
-                    </Button>
-                </DialogActions>
-            </Dialog>    
-      
+      </Box>    
+      <div className='actions-btns'>
+        <Button
+          onClick={() => handleStartChat(setApiKey, setSessionId, setToken, baseURL)}
+          disabled={isInterviewStarted}
+          color='primary'
+          variant="contained"
+        >
+          Start chat
+        </Button>
+        <Button
+          onClick={() => handleFinishChat()}
+          disabled={!isInterviewStarted}
+          color='secondary'
+          variant="contained"
+        >
+          Finish chat
+        </Button>
+      </div>
       <div className="video-container"> 
         <div
           id="subscriber"
@@ -417,18 +398,7 @@ function VideoChatComponent(props) {
           }`}
           >
           {!isStreamSubscribed && renderToolbar()}
-          </div> 
-          </div>
-          <div className='actions-btns'>
-        <Button
-          onClick={() => handleFinishChat()}
-          disabled={!isInterviewStarted}
-          color='secondary'
-          variant="contained"
-        >
-          Begin Discussion Prep
-        </Button>
-      </div>
+          </div> </div>
     </>
   );
 }

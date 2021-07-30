@@ -41,7 +41,7 @@ const PracticeSession = () => {
     return (  
         <div>
             {getConditionalContent(page)}
-            <Button onClick={() => setPage(page+1)}>{getConditionalButton(page)}</Button>
+            <Button color='primary' onClick={() => setPage(page+1)}>{getConditionalButton(page)}</Button>
         </div>
     );
 }
