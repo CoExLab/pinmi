@@ -43,11 +43,11 @@ const Refresher = () => {
                                         exclusive
                                         onChange={handleUserMode}
                                     >
-                                        <ToggleButton value="caller" aria-label="left aligned">
-                                            caller
+                                        <ToggleButton value="Interviewer" aria-label="left aligned">
+                                            Interviewer
                                         </ToggleButton>
-                                        <ToggleButton value="callee" aria-label="centered">
-                                            callee
+                                        <ToggleButton value="Client" aria-label="centered">
+                                            Client
                                         </ToggleButton>
                                     </ToggleButtonGroup>
                                 </Box>  

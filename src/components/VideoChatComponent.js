@@ -132,7 +132,7 @@ function VideoChatComponent(props) {
   };
   //get setter for media duration
   const { setMediaDuration, setMediaUrl } = useSessionValue();
-  // get user mode (callee/caller)
+  // get user mode (Client/Interviewer)
   const { userMode } = useUserModeValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
@@ -165,8 +165,8 @@ function VideoChatComponent(props) {
         pinTime: curTime,
         // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         sessionID: MiTrainingSessionID,
-        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        interviewerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        clientPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
     })
     .then( () => {
         setPins([...pins, ]);

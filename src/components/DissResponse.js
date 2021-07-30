@@ -48,12 +48,12 @@ const DissResponse = ({curPinIndex}) => {
 
     useEffect(() => {
         fetchCurTextVal(`${userMode}PinInfos.pinNote`);
-        fetchCurTextVal(`callerPinInfos.pinPerspective`);
-        fetchCurTextVal(`calleePinInfos.pinPerspective`);
-        fetchCurTextVal(`callerPinInfos.pinCategory`);
-        fetchCurTextVal(`calleePinInfos.pinCategory`);
-        fetchCurTextVal(`callerPinInfos.pinSkill`);
-        fetchCurTextVal(`calleePinInfos.pinSkill`);
+        fetchCurTextVal(`InterviewerPinInfos.pinPerspective`);
+        fetchCurTextVal(`ClientPinInfos.pinPerspective`);
+        fetchCurTextVal(`InterviewerPinInfos.pinCategory`);
+        fetchCurTextVal(`ClientPinInfos.pinCategory`);
+        fetchCurTextVal(`InterviewerPinInfos.pinSkill`);
+        fetchCurTextVal(`ClientPinInfos.pinSkill`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [curPinIndex, userMode])
 
@@ -76,17 +76,17 @@ const DissResponse = ({curPinIndex}) => {
         });
         if(infoName === `${userMode}PinInfos.pinNote`){
             setCurNoteInfo(doc);
-        } else if(infoName === `callerPinInfos.pinPerspective`){
+        } else if(infoName === `InterviewerPinInfos.pinPerspective`){
             setCurPerspectiveInfo1(doc);
-        } else if(infoName === `calleePinInfos.pinPerspective`){
+        } else if(infoName === `ClientPinInfos.pinPerspective`){
             setCurPerspectiveInfo2(doc);
-        } else if(infoName === `callerPinInfos.pinCategory`){
+        } else if(infoName === `InterviewerPinInfos.pinCategory`){
             setPinType1(doc);
-        } else if(infoName === `calleePinInfos.pinCategory`){
+        } else if(infoName === `ClientPinInfos.pinCategory`){
             setPinType2(doc);
-        } else if(infoName === `callerPinInfos.pinSkill`){
+        } else if(infoName === `InterviewerPinInfos.pinSkill`){
             setCurSkillInfo1(doc);
-        } else if(infoName === `calleePinInfos.pinSkill`){
+        } else if(infoName === `ClientPinInfos.pinSkill`){
             setCurSkillInfo2(doc);
         }
     }
@@ -140,7 +140,7 @@ const DissResponse = ({curPinIndex}) => {
                     <form className={classes.root} noValidate autoComplete="off">
                     <TextField
                         id="outlined-secondary"
-                        label="caller's perspective"
+                        label="Interviewer's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -150,7 +150,7 @@ const DissResponse = ({curPinIndex}) => {
                     />
                     <TextField
                         id="outlined-secondary"
-                        label="callee's perspective"
+                        label="Client's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -174,7 +174,7 @@ const DissResponse = ({curPinIndex}) => {
                     <form className={classes.root} noValidate autoComplete="off">
                         <TextField
                             id="outlined-secondary"
-                            label="caller's MI skill"
+                            label="Interviewer's MI skill"
                             fullWidth
                             variant="outlined"
                             multiline
@@ -184,7 +184,7 @@ const DissResponse = ({curPinIndex}) => {
                         />
                         <TextField
                             id="outlined-secondary"
-                            label="callee's MI skill"
+                            label="Client's MI skill"
                             fullWidth
                             variant="outlined"
                             multiline

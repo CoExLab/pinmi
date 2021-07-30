@@ -95,8 +95,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             pinTime: curTime,
             // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
             sessionID: MiTrainingSessionID,
-            callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            InterviewerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+            ClientPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         })        
         .then( () => {
             setPins([...pins, ]);
