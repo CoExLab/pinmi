@@ -1,7 +1,7 @@
 import React from 'react';
 import DisscussionPrep from './DisscussionPrep';
 import PracticeSession from './PracticeSession';
-import Collaboration from  './Collaboration';
+import Discussion from  './Discussion';
 import Refresher from './Refresher';
 import SelfReflection from './SelfReflection';
 // context
@@ -20,7 +20,7 @@ function getStepContent(step) {
       case 2:
         return <DisscussionPrep/> ;
       case 3:
-        return <Collaboration />;
+        return <Discussion />;
       case 4:
         return <SelfReflection />;
       case 5:
