@@ -11,7 +11,7 @@ function handleError(error) {
 
 let session, publisher, subscriber;
 
-export function initializeSession(apiKey, sessionId, token, setArchive) {
+export function initializeSession(apiKey, sessionId, token, setArchive, isRecording) {
   session = OT.initSession(apiKey, sessionId);
 
   // Create a publisher
@@ -44,7 +44,9 @@ export function initializeSession(apiKey, sessionId, token, setArchive) {
 
   session.on("connectionCreated", function (event) {
     console.log("The connection was created from"+ window.navigator.platform);
-    startArchive(sessionId, setArchive);
+    if (isRecording){
+      startArchive(sessionId, setArchive);
+    }
   });
 
   // Do some action on destroying the stream
@@ -99,7 +101,8 @@ const startArchive = async (sessionId, setArchiveData) => {
     outputMode: 'composed',
     hasVideo: 'false',
   };
-  //send post request to server
+  //send post request to server 
+  //THIS IS HARDCODED, SO REMEMBER TO FIX IT
   await fetch("https://pin-mi-node-server.herokuapp.com/" + 'archive/start', {
     method: 'POST',
     headers: {

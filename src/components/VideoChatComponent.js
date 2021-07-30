@@ -106,7 +106,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token, setArchiveData)
+      ? initializeSession(apiKey, sessionId, token, setArchiveData, props.isRecording)
       : stopStreaming();
   }, [isInterviewStarted]);
 

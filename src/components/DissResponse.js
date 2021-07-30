@@ -161,7 +161,7 @@ const DissResponse = ({curPinIndex}) => {
                     </form>
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
                         What would you categorize this pin as?
-                    </Box>       
+                    </Box>
                     <form className={classes.root} noValidate autoComplete="off">
                         <ToggleButton >
                             {pinType1}
