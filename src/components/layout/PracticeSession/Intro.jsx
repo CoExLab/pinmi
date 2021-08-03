@@ -12,6 +12,7 @@ import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles({
     table: {
+      width: 600,
     },
   });
 
@@ -32,14 +33,14 @@ const Intro = () => {
       <div>
         <Box align="center" m = {2}>
              <h1>Now, it’s time to step into the practice session and practice using open-ended questions.</h1>
-            <TableContainer component={Paper}>
+            <TableContainer>
       <Table className={classes.table} aria-label="simple table">
         
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {row.name}
+              <Box fontWeight="fontWeightBold">{row.name}</Box>
               </TableCell>
               <TableCell component="th" scope="row">
                 {row.role}
