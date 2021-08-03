@@ -86,27 +86,33 @@ function VideoChatComponent(props) {
   );
 
   // needed vonage info
-  const [room, setRoom] = useState("hello");
+  const [room, setRoom] = useState("helloworld");
   const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
-  const [archiveData, setArchiveData] = useState({});
-
   const [loadingStatus, setLoadingStatus] = useState(false);
+  
+  //archvieData is the data that is returned in the server response when the archive starts
+  const [archiveData, setArchiveData] = useState({});
+  //isArchviving is true when the achrive is actively recording
+  const [isArchiving, setIsArchiving] = useState(false);
 
   const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
-  const [pinBtnColor, setPinBtnColor] = useState("");   
+  const [pinBtnColor, setPinBtnColor] = useState(""); 
 
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
-  
+  const setArchiveAndConLog = (data) => {
+    console.log("setArchiveData is being called with this data: ", data);
+    setArchiveData(data);
+  }
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token, setArchiveData, props.isRecording)
+      ? initializeSession(apiKey, sessionId, token, archiveData, setArchiveAndConLog, isArchiving, setIsArchiving, props.isArchiveHost)
       : stopStreaming();
   }, [isInterviewStarted]);
 
@@ -389,16 +395,16 @@ function VideoChatComponent(props) {
     })
   }
 
-  const viewArchive = async () => {
-    var url = baseURL + 'archive/'+ archiveData.id;
-    fetch(url)
-    .then(res => res.json()) //return the res data as a json
-    .then((res) => {
-      setMediaUrl(res.url);
-      console.log(res.url);
-    })
-    .catch((e) => {console.log(e)});
-  }
+  // const viewArchive = async () => {
+  //   var url = baseURL + 'archive/'+ archiveData.id;
+  //   fetch(url)
+  //   .then(res => res.json()) //return the res data as a json
+  //   .then((res) => {
+  //     setMediaUrl(res.url);
+  //     console.log(res.url);
+  //   })
+  //   .catch((e) => {console.log(e)});
+  // }
 
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
     console.log("loading info now...");
@@ -419,17 +425,17 @@ function VideoChatComponent(props) {
       setVideoCallTimer(Date.now());
       startSpeechToText(); 
     })
-    .then(() => {
-      if(props.isRecording) {
-        console.log("start recording");
-      }
-    })
+    // .then(() => {
+    //   if(props.isArchiveHost) {
+    //     console.log("start recording");
+    //   }
+    // })
     .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = () => {
     setIsInterviewStarted(false);
-    if(props.isRecording) {
+    if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
       setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       stopArchive();
@@ -460,13 +466,13 @@ function VideoChatComponent(props) {
         >
           Start archive
         </Button> */}
-        <Button 
+        {/* <Button 
           onClick = {() => viewArchive()}
           color='primary'
           variant="contained"
         >
           View archive
-        </Button>
+        </Button> */}
         <Button
           onClick={() => handleFinishChat()}
           disabled={!isInterviewStarted}

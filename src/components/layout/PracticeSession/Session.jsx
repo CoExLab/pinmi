@@ -18,9 +18,11 @@ const Session = () => {
     const checkIsRecording = () => {
         console.log("check is recording ran");
         if (userMode == "Interviewer"){
+            console.log("isRecording from check is rec");
             return true;
         }
         else{
+            console.log("not recording from check is rec");
             return false;
         }
     }
@@ -59,7 +61,7 @@ const Session = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <VideoChatComponent isRecording = {checkIsRecording()}/>
+            <VideoChatComponent isRecording = {false}/>
         </div>
     );
 }

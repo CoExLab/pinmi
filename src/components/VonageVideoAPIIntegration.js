@@ -1,7 +1,8 @@
+import React from "react"
 import { store } from "./Store";
 import { handleSubscription } from "./Store";
 import OT from "@opentok/client";
-//import { startArchive } from "./VideoChatComponent";
+
 
 function handleError(error) {
   if (error) {
@@ -11,8 +12,9 @@ function handleError(error) {
 
 let session, publisher, subscriber;
 
-export function initializeSession(apiKey, sessionId, token, setArchive, isRecording) {
+export function initializeSession(apiKey, sessionId, token, archiveData, setArchiveData, isArchiving, setIsArchiving, isArchiveHost) {
   session = OT.initSession(apiKey, sessionId);
+  //const { setMediaUrl } = useSessionValue();
 
   // Create a publisher
   publisher = OT.initPublisher(
@@ -44,11 +46,21 @@ export function initializeSession(apiKey, sessionId, token, setArchive, isRecord
 
   session.on("connectionCreated", function (event) {
     console.log("The connection was created from"+ window.navigator.platform);
-    if (isRecording){
-      startArchive(sessionId, setArchive);
+    if (isArchiveHost && !isArchiving){
+      //set the isArchiving variable to true so that startArchive is only 
+      //called when it is not already archiving. 
+      setIsArchiving(true);
+      startArchive(sessionId, setArchiveData);
     }
   });
+//SessionDisconnectEvent
 
+  session.on("sessionDisconnected", function (event) {
+    console.log("The connection was disconnected from"+ window.navigator.platform);
+    if (isArchiveHost){
+      viewArchive(archiveData);
+    }
+  });
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
     console.log("The Video chat has ended");
@@ -118,4 +130,15 @@ const startArchive = async (sessionId, setArchiveData) => {
     setArchiveData(archiveData);
   })
   .catch((error) => {console.log(error)})
+}
+
+const viewArchive = async (archiveData, setMediaUrl) => {
+  var url = "https://pin-mi-node-server.herokuapp.com/" + 'archive/'+ archiveData.id;
+  fetch(url)
+  .then(res => res.json()) //return the res data as a json
+  .then((res) => {
+    //setMediaUrl(res.url);
+    console.log(res.url);
+  })
+  .catch((e) => {console.log(e)});
 }

@@ -31,8 +31,6 @@ const Refresher = () => {
 
     return (
         <Fragment>
-
-
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
                     <Paper >
                         <Grid container spacing={1}>
