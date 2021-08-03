@@ -19,7 +19,6 @@ const Session = () => {
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
     const {setMediaUrl} = useSessionValue();
-    const {userMode} = useUserModeValue
 
     // const addMediaUrlDB = async (mediaUrl) => {
     //     await firebase.firestore().collection("URL").doc("media").set({
