@@ -1,7 +1,7 @@
 import React from 'react';
 import DisscussionPrep from './DisscussionPrep';
 import PracticeSession from './PracticeSession';
-import Discussion from  './Discussion';
+import Collaboration from  './Collaboration';
 import Refresher from './Refresher';
 import SelfReflection from './SelfReflection';
 // context

@@ -30,7 +30,7 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { useSessionValue } from "../context";
+import { useActiveStepValue, useSessionValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 function VideoChatComponent(props) {
   const [open, setOpen] = useState(true);
+  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
 
   const handleClose = () => {
       setOpen(false);

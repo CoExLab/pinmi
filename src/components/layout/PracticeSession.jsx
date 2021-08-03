@@ -4,6 +4,7 @@ import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
 import Session from "./PracticeSession/Session.jsx"
 
+import { useActiveStepValue, useSessionValue } from "../../context";
 
 
 function getConditionalContent(page) {
@@ -19,12 +20,16 @@ function getConditionalContent(page) {
     }
 }
 
-function getConditionalButton(page, setPage) {
+function getConditionalButton(page, setPage, setButton) {
+  const handleButton = () => {
+    setPage(page+1);
+    if(page == 2) setButton(true);
+}
     switch (page) {
       case 0:
-        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Review Client Information</Button></Box></div>;
+        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => handleButton()}>Review Client Information</Button></Box></div>;
       case 1:
-        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Begin Live Session</Button></Box></div>;
+        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => handleButton()}>Begin Live Session</Button></Box></div>;
       case 2:
         return ;
       default:
@@ -33,15 +38,13 @@ function getConditionalButton(page, setPage) {
 }
 
 const PracticeSession = () => {
-    const [page, setPage] = useState(0);
-    const handleButton = () => {
-        setPage(page+1);
-    }
 
+    const {setButton} = useSessionValue();
+    const [page, setPage] = useState(0);
     return (  
         <div>
             {getConditionalContent(page)}
-            {getConditionalButton(page, setPage)}
+            {getConditionalButton(page, setPage, setButton)}
         </div>
     );
 }
