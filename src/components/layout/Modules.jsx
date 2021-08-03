@@ -20,7 +20,7 @@ function getStepContent(step) {
       case 2:
         return <DisscussionPrep/> ;
       case 3:
-        return <Discussion />;
+        return <Collaboration />;
       case 4:
         return <SelfReflection />;
       case 5:
