@@ -15,7 +15,7 @@ const Session = () => {
     const [open, setOpen] = React.useState(true);
     const { userMode } = useUserModeValue();
 
-    const checkIsRecording = () => {
+    const checkIsArchiveHost = () => {
         console.log("check is recording ran");
         if (userMode == "Interviewer"){
             console.log("isRecording from check is rec");
@@ -61,10 +61,9 @@ const Session = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <VideoChatComponent isRecording = {false}/>
+            <VideoChatComponent isArchiveHost = {checkIsArchiveHost()}/>
         </div>
     );
 }
-
 
 export default Session;
