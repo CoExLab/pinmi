@@ -42,7 +42,7 @@ const Session = () => {
 
         // }
         setMediaUrl(mediaBlobUrl);
-        console.log("mediablobURL: ", (mediaBlobUrl)
+        console.log("mediablobURL: ", mediaBlobUrl);
         window.scrollTo(0,0);
     }, [mediaBlobUrl]);
 
