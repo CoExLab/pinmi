@@ -19,8 +19,30 @@ const Session = () => {
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
     const {setMediaUrl} = useSessionValue();
+    const {userMode} = useUserModeValue
+
+    // const addMediaUrlDB = async (mediaUrl) => {
+    //     await firebase.firestore().collection("URL").doc("media").set({
+    //       URL: mediaUrl
+    //   })
+    //   .then(() => {
+    //       console.log("Document successfully written!");
+    //   })
+    //   .catch((error) => {
+    //       console.error("Error writing document: ", error);
+    //   });
+    //   }
+
     useEffect(() => {
+        // if (userMode == "callee"){
+        //     setMediaUrl(mediaBlobUrl);
+        //     //addMediaUrlDB(mediaBlobUrl)
+        // }
+        // else {
+
+        // }
         setMediaUrl(mediaBlobUrl);
+        console.log("mediablobURL: ", mediaBlobUrl);
         window.scrollTo(0,0);
     }, [mediaBlobUrl]);
 

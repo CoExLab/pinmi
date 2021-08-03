@@ -124,6 +124,8 @@ function VideoChatComponent(props) {
 
   const addPinDelayTime = 20;
 
+
+
   const addPin = async (curTime) => {
       // ui on
       setPinBtnDisabled(true);        
