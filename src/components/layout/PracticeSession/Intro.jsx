@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 
 
 const useStyles = makeStyles({
@@ -28,8 +29,9 @@ function createData(name, role, fat, carbs, protein) {
 const Intro = () => {
     const classes = useStyles();
     return (  
-        <div>
-            <h1> Now, it’s time to step into the practice session and practice using open-ended questions. </h1>
+      <div>
+        <Box align="center" m = {2}>
+             <h1>Now, it’s time to step into the practice session and practice using open-ended questions.</h1>
             <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         
@@ -46,7 +48,8 @@ const Intro = () => {
           ))}
         </TableBody>
       </Table>
-    </TableContainer>    
+    </TableContainer>  
+    </Box>  
         </div>
     );
 }
