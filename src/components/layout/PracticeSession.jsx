@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import React, {useState, useEffect} from 'react';
 import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
@@ -19,14 +19,14 @@ function getConditionalContent(page) {
     }
 }
 
-function getConditionalButton(page) {
+function getConditionalButton(page, setPage) {
     switch (page) {
       case 0:
-        return "Review Client Information"
+        return <div><Box align="center" m = {2}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Review Client Information</Button></Box></div>;
       case 1:
-        return "Begin Live Session";
+        return <div><Box align="center" m = {2}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Begin Live Session</Button></Box></div>;
       case 2:
-        return "Begin Discussion Prep";
+        return ;
       default:
         return <div>Unknown</div>;
     }
@@ -41,7 +41,7 @@ const PracticeSession = () => {
     return (  
         <div>
             {getConditionalContent(page)}
-            <Button color='primary' onClick={() => setPage(page+1)}>{getConditionalButton(page)}</Button>
+            {getConditionalButton(page, setPage)}
         </div>
     );
 }
