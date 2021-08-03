@@ -22,9 +22,9 @@ function getConditionalContent(page) {
 function getConditionalButton(page, setPage) {
     switch (page) {
       case 0:
-        return <div><Box align="center" m = {2}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Review Client Information</Button></Box></div>;
+        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Review Client Information</Button></Box></div>;
       case 1:
-        return <div><Box align="center" m = {2}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Begin Live Session</Button></Box></div>;
+        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => setPage(page+1)}>Begin Live Session</Button></Box></div>;
       case 2:
         return ;
       default:
