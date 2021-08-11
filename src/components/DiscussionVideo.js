@@ -351,8 +351,8 @@ function VideoChatComponent(props) {
     setIsInterviewStarted(false);
     if(props.isRecording) {
       //setting mediaDuration to be used in AudioReview
-      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      props.stopRec();
+      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
+      //props.stopRec();
       console.log("stop recording");
     }
     stopSpeechToText();

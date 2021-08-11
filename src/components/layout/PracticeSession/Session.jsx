@@ -3,11 +3,11 @@ import VideoChatComponent from "../../VideoChatComponent.js";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
-import { useSessionValue } from "../../../context";
+import { useSessionValue, useUserModeValue} from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
-    const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+    const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
     const [apiKey, setApiKey] = useState("YOUR_API_KEY");
     const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
     const [token, setToken] = useState("YOUR_TOKEN");
@@ -32,6 +32,21 @@ const Session = () => {
     //   });
     //   }
 
+    const { userMode } = useUserModeValue();
+
+    //hostName is a string that is the clients usermode that should host the archive. 
+    const checkIsArchiveHost = (hostName) => {
+        console.log("check is recording ran");
+        if (userMode == hostName){
+            console.log("isArchiveHost from check is rec");
+            return true;
+        }
+        else{
+            console.log("not Archive Host from check is rec");
+            return false;
+        }
+    }
+
     useEffect(() => {
         // if (userMode == "callee"){
         //     setMediaUrl(mediaBlobUrl);
@@ -45,10 +60,9 @@ const Session = () => {
         window.scrollTo(0,0);
     }, [mediaBlobUrl]);
 
-    return (  
+    return (
         <div>
-            
-            <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording} startRec = {startRecording} stopRec = {stopRecording}/>
+            <VideoChatComponent isArchiveHost = {checkIsArchiveHost("callee")}/>
         </div>
     );
 }
