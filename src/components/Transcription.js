@@ -1,8 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { Typography, Box, Grid, Paper } from '@material-ui/core';
-
-import useSpeechToText from './transcript';
-
 import { firebase } from "../hooks/firebase";
 
 const Transcription = () => {

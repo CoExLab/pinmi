@@ -1,8 +1,15 @@
 import React, {useState} from 'react';
-import { Paper, Box, TextField, Grid } from '@material-ui/core';
+import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
 import { Fragment } from 'react';
 
+import { useActiveStepValue } from '../../context';
+
 const SelfReflection = () => {
+    const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+    
     return (
         <Fragment>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
@@ -106,6 +113,13 @@ const SelfReflection = () => {
                         </Grid>
                     </Paper>
 
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Button 
+             variant="contained"
+             onClick={handleNext}>
+                Finish Self-Reflection
+            </Button>
             </div>
         </Fragment>
     );

@@ -10,8 +10,7 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
-import { apiKey, sessionId, token } from "./constants";
-import { Icon, Fab, CircularProgress } from '@material-ui/core';
+import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,6 +18,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Popper from '@material-ui/core/Popper';
+
 
 import {
   toggleAudio,
@@ -30,7 +31,7 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { useActiveStepValue, useSessionValue } from "../context";
+import { useSessionValue, useActiveStepValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -51,11 +52,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
-  const [open, setOpen] = useState(true);
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const openPopper = Boolean(anchorEl);
+  const id = openPopper ? 'simple-popper' : undefined;
+
+  const [open, setOpen] = useState(true);
 
   const handleClose = () => {
       setOpen(false);
+  };
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -316,17 +330,15 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>    
-          {pinBtnDisabled 
-          ? 
-          <CircularProgress color={pinBtnColor} /> 
-          :                         
+        <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'pin-Btn'
+          onClick={handleClick}>                    
           <Icon classes={{ root: classes.iconRoot }}>
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
-          } 
         </Fab>
+      <Popper id={id} open={openPopper} anchorEl={anchorEl}>
+        <div className={classes.paper}>The content of the Popper.</div>
+      </Popper>
       </>
     );
   };
@@ -370,6 +382,7 @@ function VideoChatComponent(props) {
     }
     stopSpeechToText();
     addTranscript();
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   }
 
   

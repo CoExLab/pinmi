@@ -1,14 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 // Components
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid } from '@material-ui/core';
+import { Container, Grid, Button } from '@material-ui/core';
 import VideoChatComponent from '../VideoChatComponent';
-import {apiKey, sessionId, token} from '../constants';
-import { useSessionValue } from "../../context";
+import { useSessionValue, useActiveStepValue } from "../../context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Collaboration = () => {
   const classes = useStyles();
+  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   const [curPinIndex, setCurPinIndex] = useState(-1);
 
   const [room, setRoom] = useState("hello");
@@ -38,6 +38,10 @@ const Collaboration = () => {
     const [token, setToken] = useState("YOUR_TOKEN");
     const [readyMessage, setReadyMessage] = useState("video is not ready");
     const isRecording = false;
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
 
   return (
     <div className={classes.root}>
@@ -52,6 +56,13 @@ const Collaboration = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Button 
+             variant="contained"
+             onClick={handleNext}>
+                Begin Self-Reflection
+            </Button>
+            </div>
     </div>
   );
 };
