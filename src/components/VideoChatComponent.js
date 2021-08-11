@@ -84,7 +84,7 @@ function VideoChatComponent(props) {
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
-  const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+  const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
@@ -94,6 +94,11 @@ function VideoChatComponent(props) {
   const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
   const [pinBtnColor, setPinBtnColor] = useState("");   
 
+  //archvieData is the data that is returned in the server response when the archive starts
+  const [archiveData, setArchiveData] = useState({});
+  //isArchviving is true when the achrive is actively recording
+  const [isArchiving, setIsArchiving] = useState(false);
+  
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
@@ -127,7 +132,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration} = useSessionValue();
+  const {setMediaDuration , setMediaUrl} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -347,7 +352,7 @@ function VideoChatComponent(props) {
     setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);
-    await fetch(baseURL)
+    await fetch(baseURL + "room/" + room)
     .then(function(res) {
       return res.json()
     })
@@ -362,8 +367,8 @@ function VideoChatComponent(props) {
       console.log("start chat now");
       setIsInterviewStarted(true);
       setVideoCallTimer(Date.now());
-      if(props.isRecording) {
-        props.startRec();
+      if(props.isArchiveHost) {
+        //props.startRec();
         console.log("start recording");
       }
       //pass in videoCallTimer so we can create time stamps
@@ -372,17 +377,74 @@ function VideoChatComponent(props) {
     .catch((error) => {console.log(error)});
   }
 
-  const handleFinishChat = () => {
+  const handleFinishChat = async () => {
     setIsInterviewStarted(false);
-    if(props.isRecording) {
+    if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
-      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      props.stopRec();
+      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
+      //props.stopRec();
       console.log("stop recording");
     }
-    stopSpeechToText();
-    addTranscript();
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //this fetches the archive url
+    await saveArchiveURL()
+    .then(() => {
+      stopSpeechToText();
+      addTranscript();
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((error) => {console.log(error)});
+  }
+
+
+  const handleStartArchive = async () => {
+    //create json to send as the body for post
+    const data = {
+      sessionId: sessionId,
+      resolution: '640x480',
+      outputMode: 'composed',
+      hasVideo: 'false',
+    };
+    //send post request to server
+    await fetch(baseURL + 'archive/start', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      }, 
+      body: JSON.stringify(data)
+    })
+    //get response from the post request, 
+    //and turn it into json so you can access data from it
+    .then(response => response.json())
+    .then((archiveData) => {
+      console.log(archiveData);
+      setArchiveData(archiveData);
+    })
+    .catch((error) => {console.log(error)})
+  }
+
+  const handleStopArchive = async () => {
+    var url = baseURL + 'archive/'+ archiveData.id + '/stop';
+    await fetch(url, {
+      method: 'POST', 
+    })
+    .then(res => res.json())
+    .then((res) => {
+      console.log(res);
+
+    })
+  }
+
+  const saveArchiveURL = async () => {
+    var url = baseURL + 'archive/'+ archiveData.id;
+    fetch(url)
+    .then(res => res.json()) //return the res data as a json
+    .then((res) => {
+      setMediaDuration(res.duration);
+      setMediaUrl(res.url);
+      console.log("Media Duration:", res.duration);
+      console.log("Media URL:", res.url);
+    })
+    .catch((e) => {console.log(e)});
   }
 
   
@@ -442,6 +504,22 @@ function VideoChatComponent(props) {
         >
           Begin Discussion Prep
         </Button>
+        {props.isArchiveHost ? 
+        <Button 
+          onClick = {() => handleStartArchive()}
+          color='secondary'
+          variant="contained"
+        >Start Recording
+        </Button> :
+        <div></div>}
+        {props.isArchiveHost? 
+        <Button 
+          onClick = {() => handleStopArchive()}
+          color='secondary'
+          variant="contained"
+        >Stop Recording
+        </Button> :
+        <div></div>}
       </div>
     </>
   );
