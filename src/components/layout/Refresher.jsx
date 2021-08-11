@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Fragment } from 'react';
-import { useUserModeValue } from '../../context';
+import { useUserModeValue, useActiveStepValue } from '../../context';
 
 const Refresher = () => {
-
+    const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
     const [question1Ans, setQuestion1Ans] = useState('');
     const [question2Ans, setQuestion2Ans] = useState('');
 
@@ -29,11 +29,15 @@ const Refresher = () => {
         }
       };
 
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
     return (
         <Fragment>
 
 
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                     <Paper >
                         <Grid container spacing={1}>
                             <Box m={2} height={700} width = {1000} overflow="auto">
@@ -168,8 +172,16 @@ const Refresher = () => {
                             </Box>
                         </Grid>
                     </Paper>
-
+                    
             </div>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Button 
+             variant="contained"
+             onClick={handleNext}>
+                Submit
+            </Button>
+            </div>
+            
         </Fragment>
     );
 }

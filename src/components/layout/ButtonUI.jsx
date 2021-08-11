@@ -2,7 +2,7 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {Box, Button, Dialog, DialogActions, DialogTitle} from '@material-ui/core';
 // context
-import { useActiveStepValue, useSessionValue } from "../../context";
+import { useActiveStepValue } from "../../context";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ButtonUI = () => {    
     const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-    const {button, setButton} = useSessionValue()
 
     const classes = useStyles();
 

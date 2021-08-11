@@ -5,7 +5,9 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid } from '@material-ui/core';
+import { Container, Grid, Button } from '@material-ui/core';
+
+import { useActiveStepValue } from '../../context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,11 +28,15 @@ const useStyles = makeStyles((theme) => ({
 
 const DisscussionPrep = () => {
   const classes = useStyles();
+  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   const [curPinIndex, setCurPinIndex] = useState(-1);
   useEffect(() => {
     window.scrollTo(0,0);
   }, [])
 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+};
 
   return (
     <div className={classes.root}>
@@ -45,6 +51,13 @@ const DisscussionPrep = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Button 
+             variant="contained"
+             onClick={handleNext}>
+                Join Discussion
+            </Button>
+            </div>
     </div>
   );
 };
