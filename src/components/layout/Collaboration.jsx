@@ -8,6 +8,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Button } from '@material-ui/core';
 import VideoChatComponent from '../VideoChatComponent';
 import { useSessionValue, useActiveStepValue } from "../../context";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Popper from '@material-ui/core/Popper';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,6 +50,16 @@ const Collaboration = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <div className={classes.root}>
       <Container>
@@ -57,11 +74,32 @@ const Collaboration = () => {
         </Grid>
       </Container>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Begin Self-Reflection
-            </Button>
+      <Button 
+          variant="contained"
+          onClick={handleClickOpen}>
+        Begin Self-Reflection
+      </Button>
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to begin self-reflection?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          You will be ending this call.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+          Continue Discussing on Call
+          </Button>
+          <Button onClick={handleNext} color="primary" autoFocus>
+          Begin Self-Reflection
+          </Button>
+        </DialogActions>
+      </Dialog>
             </div>
     </div>
   );
