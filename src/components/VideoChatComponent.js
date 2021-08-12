@@ -379,10 +379,9 @@ function VideoChatComponent(props) {
       setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       props.stopRec();
       console.log("stop recording");
+      stopSpeechToText();
+      addTranscript();
     }
-    stopSpeechToText();
-    addTranscript();
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   }
 
   
@@ -437,6 +436,14 @@ function VideoChatComponent(props) {
         <Button
           onClick={() => handleFinishChat()}
           disabled={!isInterviewStarted}
+          color='secondary'
+          variant="contained"
+        >
+          End Call
+        </Button>
+        <Button
+          onClick={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}
+          disabled={isInterviewStarted}
           color='secondary'
           variant="contained"
         >
