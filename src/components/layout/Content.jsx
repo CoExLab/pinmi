@@ -10,7 +10,6 @@ const Content = () => {
         <section>    
             <Steppers />
             <Modules />
-            <ButtonUI />
         </section>
     );
 };
