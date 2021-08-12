@@ -3,7 +3,7 @@ import VideoChatComponent from "../../VideoChatComponent.js";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
-import { useSessionValue } from "../../../context";
+import { useSessionValue, useActiveStepValue } from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
@@ -15,6 +15,7 @@ const Session = () => {
     const isRecording = true;
     const {status, startRecording, stopRecording, mediaBlobUrl} 
     =useReactMediaRecorder({ video: false, audio: true });
+    const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
     
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
@@ -42,6 +43,7 @@ const Session = () => {
         // }
         setMediaUrl(mediaBlobUrl);
         console.log("mediablobURL: ", mediaBlobUrl);
+        if(mediaBlobUrl !== null) setActiveStep((prevActiveStep) => prevActiveStep + 1);
         window.scrollTo(0,0);
     }, [mediaBlobUrl]);
 

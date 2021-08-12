@@ -72,6 +72,21 @@ function VideoChatComponent(props) {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleCloseNext = () => {
+    setOpenDialog(false);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1)
+  };
+
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -433,22 +448,35 @@ function VideoChatComponent(props) {
           </div> 
           </div>
           <div className='actions-btns'>
-        <Button
-          onClick={() => handleFinishChat()}
+        <Button 
           disabled={!isInterviewStarted}
           color='secondary'
           variant="contained"
-        >
-          End Call
-        </Button>
-        <Button
-          onClick={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}
-          disabled={isInterviewStarted}
-          color='secondary'
-          variant="contained"
-        >
+          onClick={handleClickOpen}>
+        Begin Discussion Prep
+      </Button>
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to begin the discussion prep?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          
+You will be ending this call.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+          Continue Discussing on Call
+          </Button>
+          <Button onClick={() => handleFinishChat()} color="primary" autoFocus>
           Begin Discussion Prep
-        </Button>
+          </Button>
+        </DialogActions>
+      </Dialog>
       </div>
     </>
   );
