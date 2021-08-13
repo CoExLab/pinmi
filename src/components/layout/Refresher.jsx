@@ -60,7 +60,7 @@ const Refresher = () => {
                                 </Box>
                                 <div style={{ display: 'flex' }}>
                                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={3.5}> 
-                                        OARS are basic skills practitioners often have in their clinical toolbox already.
+                                    Closed questions are bad.
                                     </Box>
                                     <Box align="left" m = {2}>          
                                         <ToggleButtonGroup
@@ -79,11 +79,12 @@ const Refresher = () => {
                                 </div>
                                 {question1Ans === '' ? null :
                                 <Box fontStyle="italic" pl = {3.5} textAlign="left" fontSize={16} fontWeight="fontWeightMedium">
-                                    {question1Ans === "true" ? "Correct!" : "Sorry, try again."} OARS are not unique to MI and are often already in practitioners’ skill repertoire. The unique aspect of OARS in MI is the deployment of those skills in a directive manner.
+                                    {question1Ans === "true" ? "Correct!" : "Sorry, try again."} Closed questions are not “bad.” They simply are limited as a tool, so we try to avoid using them in favor of open-ended questions. However, there are situations in which closed questions are desirable. In general, the aim is to ask more open-ended than closed questions.
+
                                 </Box>}
                                 <div style={{ display: 'flex' }}>
                                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={3.5}> 
-                                        We use OARS to help clients not only see what they've told us, but to also help organize and understand their experience.
+                                        We use reflections and summaries to help clients not only see what they've told us, but to also help organize and understand their experience.
                                     </Box>
                                     <Box align="left" m = {2}>          
                                         <ToggleButtonGroup
@@ -175,11 +176,13 @@ const Refresher = () => {
                     
             </div>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Box m={2}>
             <Button 
              variant="contained"
              onClick={handleNext}>
                 Submit
             </Button>
+            </Box>
             </div>
             
         </Fragment>

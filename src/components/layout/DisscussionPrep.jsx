@@ -5,7 +5,7 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Grid, Button, Box } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -68,6 +68,7 @@ const [openDialog, setOpenDialog] = React.useState(false);
         </Grid>
       </Container>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <Box m={2}>
             <Button 
           variant="contained"
           onClick={handleClickOpen}>
@@ -94,6 +95,7 @@ const [openDialog, setOpenDialog] = React.useState(false);
           </Button>
         </DialogActions>
       </Dialog>
+      </Box>
             </div>
     </div>
   );

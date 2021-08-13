@@ -9,7 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box, CircularProgress } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
@@ -57,6 +57,7 @@ function VideoChatComponent(props) {
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
+    console.log("added pin");
   };
 
   const openPopper = Boolean(anchorEl);
@@ -345,15 +346,17 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={handleClick}>                    
+        <Fab color="default" aria-label="addPin" className = 'pin-Btn'
+          onClick={() => addPin(Math.floor((Date.now() - videoCallTimer) / 1000))}>    
+          {pinBtnDisabled 
+          ? 
+          <CircularProgress color={pinBtnColor} /> 
+          :                         
           <Icon classes={{ root: classes.iconRoot }}>
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
+          } 
         </Fab>
-      <Popper id={id} open={openPopper} anchorEl={anchorEl}>
-        <div className={classes.paper}>The content of the Popper.</div>
-      </Popper>
       </>
     );
   };
@@ -448,6 +451,7 @@ function VideoChatComponent(props) {
           </div> 
           </div>
           <div className='actions-btns'>
+          <Box m={2}>
         <Button 
           disabled={!isInterviewStarted}
           color='secondary'
@@ -477,6 +481,7 @@ You will be ending this call.
           </Button>
         </DialogActions>
       </Dialog>
+      </Box>
       </div>
     </>
   );
