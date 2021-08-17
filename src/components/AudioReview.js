@@ -13,9 +13,10 @@ import SliderBar from './SliderBar';
 // context
 import { useActiveStepValue } from "../context";
 import { useSessionValue } from "../context";
+import { useEffect } from "react";
 
 // firebase hook
-import { usePins } from '../hooks/index';
+import { usePins, useMediaURL } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,12 +51,33 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     // hard-coded sessionID here
     const MiTrainingSessionID = "123";
 
+    //const { mediaURL: audio, setMediaURL } = useMediaURL();
+
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
+    const {mediaUrl: audio, setMediaUrl, mediaDuration: audioLen} = useSessionValue();
+    const [loadURL, setLoadURL] = useState(false)
 
     let playTimeArr = pins.map(pin => pin.pinTime);
+
+    useEffect(() =>{
+        //callback function when useEffect is called
+        let ref = firebase
+        .firestore()
+        .collection("MediaURLs")
+        .doc("test");
+
+        var unsubscribe = ref.onSnapshot((doc) => {
+            let recentURL = doc.data();
+            console.log(recentURL.URL);
+            setMediaUrl(recentURL.URL);
+        })
+        return () => {
+            unsubscribe()
+        };
+    },[loadURL]);
+
 
     // back to last pin
     const handleLastPin = (index) => {   
@@ -214,6 +236,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     //     // }
                     // }}
                 />
+                <button onClick ={() => {setLoadURL(!loadURL)}}>Load URL</button>
                 <div className={classes.root} >
                     <Fab color="default" aria-label="last" className={classes.fab} 
                          onClick={() => handleLastPin(curPinIndex - 1)} >

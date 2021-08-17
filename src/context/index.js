@@ -55,7 +55,7 @@ export const SessionProvider = ({ children }) => {
   // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   // const [token, setToken] = useState("YOUR_TOKEN");
-  const [mediaUrl, setMediaUrl] = useState("MEDIA_BLOB");
+  const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
   return (
