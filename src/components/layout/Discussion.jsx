@@ -44,7 +44,7 @@ const PracticeSession = () => {
     }
 
     const [room, setRoom] = useState("hellooo");
-    const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+    //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
     const [apiKey, setApiKey] = useState("YOUR_API_KEY");
     const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
     const [token, setToken] = useState("YOUR_TOKEN");

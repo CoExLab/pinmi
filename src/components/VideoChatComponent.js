@@ -31,10 +31,14 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
+import { baseURL } from './constants';
+
 import { useSessionValue, useActiveStepValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
+
+
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
       height: '120%'
@@ -84,7 +88,7 @@ function VideoChatComponent(props) {
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
-  const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/");
+  //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
@@ -473,7 +477,8 @@ function VideoChatComponent(props) {
 
   const setDBMediaURL = async (res) => {
     await firebase.firestore().collection("MediaURLs").doc("test").set({
-      URL: res.url
+      URL: res.url,
+      Duration: res.duration
   })
   .then(() => console.log("MediaURL Added to DB"))
   .catch((e) => {console.log(e)});
