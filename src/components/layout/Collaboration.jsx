@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Button } from '@material-ui/core';
 import VideoChatComponent from '../VideoChatComponent';
 import { useSessionValue, useActiveStepValue } from "../../context";
+import { baseURL } from 'constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +33,7 @@ const Collaboration = () => {
   const [curPinIndex, setCurPinIndex] = useState(-1);
 
   const [room, setRoom] = useState("hello");
-    const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+    //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
     const [apiKey, setApiKey] = useState("YOUR_API_KEY");
     const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
     const [token, setToken] = useState("YOUR_TOKEN");

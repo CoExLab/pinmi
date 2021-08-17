@@ -56,7 +56,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, setMediaUrl, mediaDuration: audioLen} = useSessionValue();
+    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
     const [loadURL, setLoadURL] = useState(false)
 
     let playTimeArr = pins.map(pin => pin.pinTime);
@@ -72,6 +72,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             let recentURL = doc.data();
             console.log(recentURL.URL);
             setMediaUrl(recentURL.URL);
+            setMediaDuration(recentURL.Duration);
+
         })
         return () => {
             unsubscribe()
