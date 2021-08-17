@@ -102,7 +102,9 @@ function VideoChatComponent(props) {
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
+  
 
+  
   
 
   useEffect(() => {
@@ -195,8 +197,6 @@ function VideoChatComponent(props) {
     });  
     console.log("finished writing transcript")    
   }
-
-
 
   const {
     error,
@@ -430,22 +430,55 @@ function VideoChatComponent(props) {
     .then(res => res.json())
     .then((res) => {
       console.log(res);
-
     })
   }
 
-  const saveArchiveURL = async () => {
-    var url = baseURL + 'archive/'+ archiveData.id;
-    fetch(url)
-    .then(res => res.json()) //return the res data as a json
+  const getLastestArchive = async () => {
+    let url = 'https://pin-mi-node-server.herokuapp.com/' + 'archive'
+    await fetch(url)
     .then((res) => {
-      setMediaDuration(res.duration);
-      setMediaUrl(res.url);
-      console.log("Media Duration:", res.duration);
-      console.log("Media URL:", res.url);
+      return res.json()
+      //return archives[archives.length - 1];
+    })
+    .then((arc) => {
+      let latestArc = arc[arc.length-1];
+      console.log(latestArc.duration);
+      console.log(latestArc.url);
+      setMediaDuration(latestArc.duration);
+      setMediaUrl(latestArc.url);
     })
     .catch((e) => {console.log(e)});
   }
+
+//if status is available and if timing checks out, and if session id is correct
+  const saveArchiveURL = async () => {
+    if(props.isArchiveHost) {
+      let url = baseURL + 'archive/'+ archiveData.id;
+      await fetch(url)
+      .then(res => res.json()) //return the res data as a json
+      .then((res) => {
+        setMediaDuration(res.duration);
+        setMediaUrl(res.url);
+        console.log("Media Duration:", res.duration);
+        console.log("Media URL:", res.url);  
+        
+        setDBMediaURL(res);
+      })
+      .catch((e) => {console.log(e)});
+    }
+    else { 
+      //getLastestArchive()
+    }
+  }
+
+  const setDBMediaURL = async (res) => {
+    await firebase.firestore().collection("MediaURLs").doc("test").set({
+      URL: res.url
+  })
+  .then(() => console.log("MediaURL Added to DB"))
+  .catch((e) => {console.log(e)});
+  }
+
 
   
   return (

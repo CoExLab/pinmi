@@ -29,3 +29,31 @@ export const usePins = () => {
   
     return { pins, setPins };
 };
+
+//mediaUrlHook
+//have a mediaURL variable that is accessable to audioReview and VideoChatComponent
+//Set mediaURL from host, and retrieve it from DB as participant
+//
+
+export const useMediaURL = () => {
+  const [mediaURL, setMediaURL] = useState("default");
+
+  useEffect(() => {
+    let ref = firebase
+      .firestore()
+      .collection("MediaURLs")
+      .doc("test");
+
+    var unsubscribe = ref.onSnapshot((doc) => {
+      let recentURL = doc.data()
+      console.log(recentURL);
+    })
+    return () => {
+      unsubscribe()
+    };
+  })
+  return {mediaURL, setMediaURL};
+};
+
+
+
