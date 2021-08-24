@@ -1,16 +1,55 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import Navbar from './Navbar';
 
-// main content component
+const useStyles = makeStyles((theme) => ({
+  welcome_container: {
+    padding: "50px 68px 50px 68px",
+    textAlign: "center",
+  },
+  welcome_intro: {
+    color: "#005E7D",
+    fontSize: "xx-large",
+    fontWeight: "bold",
+  },
+  welcome_definition: {
+    fontStyle: "italic",
+    padding: "10px 20px 10px 20px",
+  },
+  startbutton: {
+    borderRadius: "35px",
+    backgroundColor: "#337E92",
+    color: "white",
+    fontSize: "large",
+    padding: "5px 36px 5px 36px",
+    textTransform: "none",
+  }
+}));
 
 const Landing = () => {
-    return (
-        <section>    
-            This is the landing page!
-            <br />
-            <Link to="/content">Begin Your Preparations</Link>
-        </section>
-    );
+  const classes = useStyles();
+
+	return (
+		<section> 
+			<Navbar />
+			<Container className={classes.welcome_container} maxWidth="md">
+        <Typography className={classes.welcome_intro}>
+          Pin-MI is a platform for practicing MI with your peers with the help of pins.
+        </Typography>
+        <Typography className={classes.welcome_definition}>
+          Pins are time marks that you add during your live role-play session to mark parts of conversation that you would like to revisit during a feedback conversation.
+        </Typography>
+				<Button className={classes.startbutton} href="/content">
+          Let's get started!
+        </Button>
+			</Container>
+		</section>
+	);
 };
 
 export default Landing;
+
