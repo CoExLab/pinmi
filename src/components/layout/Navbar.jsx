@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
-    color: "#005E7D",
+    color: theme.palette.teal.dark,
     flexGrow: 1,
     fontWeight: "600",
   },
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0px 0px 0px 0px",
   },
   navbar_button: {
-    color: "#30394B",
+    color: theme.palette.gray.dark,
     textTransform: "capitalize",
   },
 }));
