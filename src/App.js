@@ -20,8 +20,7 @@ const theme = createMuiTheme({
     teal: {
       dark: '#005E7D',
       main: '#337E92',
-      light: '#7C6D78',
-      lighter: '#C2DCE7',
+      light: '#C2DCE7',
     },
     pink: {
       dark: '#FC6D78',
@@ -36,7 +35,7 @@ const theme = createMuiTheme({
     action: {
       hover: '#C2DCE7',
     }
-  }
+  },
 });
 
 const App = () => {
