@@ -84,6 +84,7 @@ const ColorLibLabel = withStyles((theme) => ({
 			color: theme.palette.pink.dark,
 			fontSize: '20px',
 			fontWeight: 'bold',
+			marginTop: '12px',
 		},
 	},
 	label: {
