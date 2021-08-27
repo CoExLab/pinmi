@@ -1,5 +1,3 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -12,21 +10,26 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   welcome_intro: {
-    color: "#005E7D",
+    color: theme.palette.teal.dark,
     fontSize: "xx-large",
     fontWeight: "bold",
   },
   welcome_definition: {
+    color: theme.palette.gray.main,
     fontStyle: "italic",
     padding: "10px 20px 10px 20px",
   },
   startbutton: {
     borderRadius: "35px",
-    backgroundColor: "#337E92",
+    backgroundColor: theme.palette.teal.main,
     color: "white",
     fontSize: "large",
     padding: "5px 36px 5px 36px",
     textTransform: "none",
+    '&:hover': {
+      backgroundColor: theme.palette.teal.light,
+      color: theme.palette.gray.dark,
+    }, 
   }
 }));
 
