@@ -13,8 +13,6 @@ import DoneIcon from '@material-ui/icons/Done';
 // context
 import { useActiveStepValue } from "../../context";
 
-
-
 const useColorlibStepIconStyles = makeStyles((theme) => ({
 	root: {
 		backgroundColor: theme.palette.gray.light,
@@ -29,7 +27,7 @@ const useColorlibStepIconStyles = makeStyles((theme) => ({
 	},
 	active: {
 		backgroundColor: theme.palette.pink.dark,
-		boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+		// boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
 	},
 	completed: {
 		backgroundColor:
@@ -80,6 +78,19 @@ ColorlibStepIcon.propTypes = {
 	icon: PropTypes.node,
 };
 
+const ColorLibLabel = withStyles((theme) => ({
+	root: {
+		'& .MuiStepLabel-active': {
+			color: theme.palette.pink.dark,
+			fontSize: '20px',
+			fontWeight: 'bold',
+		},
+	},
+	label: {
+		color: theme.palette.teal.main,
+	},
+}))(StepLabel);
+
 const ColorlibConnector = withStyles((theme) => ({
 	alternativeLabel: {
 	 top: 22,
@@ -103,7 +114,7 @@ const ColorlibConnector = withStyles((theme) => ({
  }))(StepConnector);
 
 const Steppers = () => {
-	const steps = ['MI Refresher', 'Practice Session', 'Discussion Prep', 'Collaborative Discussion', 'Self-Reflection', 'Complete'];
+	const steps = ['MI Refresher', 'Practice Session', 'Discussion Prep', 'Discussion', 'Self-Reflection', 'Complete'];
 	const {curActiveStep: activeStep} = useActiveStepValue();
 
 	return (
@@ -111,7 +122,9 @@ const Steppers = () => {
 			<Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
 			{steps.map((label) => (
 				<Step key={label}>
-				<StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+					<ColorLibLabel StepIconComponent={ColorlibStepIcon}>
+						{label}
+					</ColorLibLabel>
 				</Step>
 			))}
 			</Stepper>

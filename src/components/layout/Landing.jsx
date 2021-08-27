@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "5px 36px 5px 36px",
     textTransform: "none",
     '&:hover': {
-      backgroundColor: theme.palette.teal.lighter,
+      backgroundColor: theme.palette.teal.light,
       color: theme.palette.gray.dark,
     }, 
   }
