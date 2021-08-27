@@ -13,6 +13,12 @@ import DoneIcon from '@material-ui/icons/Done';
 // context
 import { useActiveStepValue } from "../../context";
 
+const useStepperStyles = makeStyles((theme) => ({
+	stepper: {
+		marginTop: '30px',
+	}
+}));
+
 const useColorlibStepIconStyles = makeStyles((theme) => ({
 	root: {
 		backgroundColor: theme.palette.gray.light,
@@ -30,8 +36,7 @@ const useColorlibStepIconStyles = makeStyles((theme) => ({
 		// boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
 	},
 	completed: {
-		backgroundColor:
-		theme.palette.pink.main,
+		backgroundColor: theme.palette.pink.light,
 	},
 	space: {
 		marginTop: 100,
@@ -61,7 +66,7 @@ function ColorlibStepIcon(props) {
 			{icons[String(props.icon)]}
 		</div>
 	);
-	}
+}
 
 ColorlibStepIcon.propTypes = {
 	/**
@@ -84,26 +89,33 @@ const ColorLibLabel = withStyles((theme) => ({
 			color: theme.palette.pink.dark,
 			fontSize: '20px',
 			fontWeight: 'bold',
-			marginTop: '12px',
+			marginTop: '-84px !important',
+			whiteSpace: 'nowrap',
 		},
+		'& .MuiStepLabel-completed': {
+			color: theme.palette.pink.light,
+		}
 	},
 	label: {
 		color: theme.palette.teal.main,
+		marginTop: '-80px !important',
 	},
 }))(StepLabel);
 
 const ColorlibConnector = withStyles((theme) => ({
 	alternativeLabel: {
 	 top: 22,
+	 left: 'calc(-50% + 0px)',
+	 right: 'calc(50% + 0px)',
 	},
 	active: {
 	 '& $line': {
-		backgroundColor: theme.palette.pink.dark,
+		backgroundColor: theme.palette.pink.light,
 	 },
 	},
 	completed: {
 	 '& $line': {
-		backgroundColor: theme.palette.pink.main,
+		backgroundColor: theme.palette.pink.light,
 	 },
 	},
 	line: {
@@ -116,11 +128,12 @@ const ColorlibConnector = withStyles((theme) => ({
 
 const Steppers = () => {
 	const steps = ['MI Refresher', 'Practice Session', 'Discussion Prep', 'Discussion', 'Self-Reflection', 'Complete'];
+	const classes = useStepperStyles();
 	const {curActiveStep: activeStep} = useActiveStepValue();
 
 	return (
 		<div>
-			<Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
+			<Stepper className={classes.stepper} alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
 			{steps.map((label) => (
 				<Step key={label}>
 					<ColorLibLabel StepIconComponent={ColorlibStepIcon}>
