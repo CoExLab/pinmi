@@ -114,7 +114,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration} = useSessionValue();
+  const {setMediaDuration, sessionID} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -144,14 +144,11 @@ function VideoChatComponent(props) {
 
       }
 
-    await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
-        pinID,
-        pinTime: curTime,
-        // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        sessionID: MiTrainingSessionID,
-        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-    })        
+      await firebase.firestore().collection("sessions").doc(sessionID).collection(pins).add( {
+        user_id: '',
+        timestamp: formatTime(curTime),
+        notes: '',
+      })        
     .then( () => {
         setPins([...pins, ]);
     })
@@ -166,8 +163,8 @@ function VideoChatComponent(props) {
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
+    await firebase.firestore().collection("sessions").doc(sessionID).set({
+      transcript: results
     })
     .then( () => {
         setPins([...pins, ]);
