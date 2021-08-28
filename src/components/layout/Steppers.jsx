@@ -90,6 +90,7 @@ const ColorLibLabel = withStyles((theme) => ({
 			fontSize: '20px',
 			fontWeight: 'bold',
 			marginTop: '-84px !important',
+			opacity: '100%',
 			whiteSpace: 'nowrap',
 		},
 		'& .MuiStepLabel-completed': {
@@ -99,6 +100,7 @@ const ColorLibLabel = withStyles((theme) => ({
 	label: {
 		color: theme.palette.teal.main,
 		marginTop: '-80px !important',
+		opacity: '70%',
 	},
 }))(StepLabel);
 
