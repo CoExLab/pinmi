@@ -3,15 +3,13 @@ import { useState, useEffect } from 'react';
 
 // pin hook
 
-export const usePins = () => {
+export const usePins = (sessionID) => {
     const [pins, setPins] = useState([]);
   
     useEffect(() => {
       let unsubscribe = firebase
         .firestore()
-        .collection("Pins")
-        .orderBy("pinTime")
-
+        .collection("sessions").where(firebase.firestore.FieldPath.documentId(), '==', sessionID).limit(1).collection("pins")
         // console.log("get data from firebase");
         unsubscribe = unsubscribe.onSnapshot((snapshot) => {
           const allPins = snapshot.docs.map((pin) => ({
@@ -35,17 +33,16 @@ export const usePins = () => {
 //Set mediaURL from host, and retrieve it from DB as participant
 //
 
-export const useMediaURL = () => {
+export const useMediaURL = (sessionID) => {
   const [mediaURL, setMediaURL] = useState("default");
 
   useEffect(() => {
     let ref = firebase
       .firestore()
-      .collection("MediaURLs")
-      .doc("test");
+      .collection("sessions").where(firebase.firestore.FieldPath.documentId(), '==', sessionID).limit(1)
 
     var unsubscribe = ref.onSnapshot((doc) => {
-      let recentURL = doc.data()
+      let recentURL = doc.data().media_url
       console.log(recentURL);
     })
     return () => {

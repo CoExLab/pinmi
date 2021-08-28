@@ -56,7 +56,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
+    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen, sessionID} = useSessionValue();
     const [loadURL, setLoadURL] = useState(false)
 
     let playTimeArr = pins.map(pin => pin.pinTime);
@@ -65,11 +65,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         //callback function when useEffect is called
         let ref = firebase
         .firestore()
-        .collection("MediaURLs")
-        .doc("test");
+        .collection("sessions").doc(sessionID)
 
         var unsubscribe = ref.onSnapshot((doc) => {
-            let recentURL = doc.data();
+            let recentURL = doc.data().media_url;
             console.log(recentURL.URL);
             setMediaUrl(recentURL.URL);
             setMediaDuration(recentURL.Duration);

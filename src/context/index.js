@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { usePins } from '../hooks/index';
+import { firebase } from "../hooks/firebase";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({children}) => {
@@ -54,12 +55,19 @@ export const SessionContext = createContext();
 export const SessionProvider = ({ children }) => {
   // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  // const [token, setToken] = useState("YOUR_TOKEN");
+  // const [token, setToken] = useState("YOUR_TOKEN"); 
+  
   const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
+  const sessionID = await firebase.collection('sessions').add({
+    callee_id: '',
+    caller_id: '',
+    media_url: mediaUrl,
+    transcript: ''
+  });
   return (
-    <SessionContext.Provider value={{mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton}}>
+    <SessionContext.Provider value={{mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton, sessionID}}>
       {children}
     </SessionContext.Provider>
   );
