@@ -54,14 +54,6 @@ const useStyles = makeStyles((theme) => ({
   '& > * + *': {
     marginLeft: theme.spacing(5),
   },
-  beginDiscussionPrepButton: {
-    backgroundColor: '#DB0000',
-    opacity: '62%',
-    '&:hover': {
-      backgroundColor: '#DB0000',
-      opacity: '100%',
-    }, 
-  },
 }));
 
 function VideoChatComponent(props) {
@@ -553,7 +545,6 @@ function VideoChatComponent(props) {
         <ColorLibCallEndButton
           variant="contained"
           size="medium"
-          className={classes.beginDiscussionPrepButton}
           onClick={() => handleFinishChat()}
           disabled={!isInterviewStarted}
         >
