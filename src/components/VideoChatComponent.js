@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import CallEndIcon from '@material-ui/icons/CallEnd';
 import MicIcon from "@material-ui/icons/MicNone";
 import MicOffIcon from "@material-ui/icons/MicOffOutlined";
 import VideocamIcon from "@material-ui/icons/VideocamOutlined";
@@ -20,6 +22,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Popper from '@material-ui/core/Popper';
 
+import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
 
 import {
   toggleAudio,
@@ -52,6 +55,14 @@ const useStyles = makeStyles((theme) => ({
   display: 'flex',
   '& > * + *': {
     marginLeft: theme.spacing(5),
+  },
+  beginDiscussionPrepButton: {
+    backgroundColor: '#DB0000',
+    opacity: '62%',
+    '&:hover': {
+      backgroundColor: '#DB0000',
+      opacity: '100%',
+    }, 
   },
 }));
 
@@ -244,10 +255,10 @@ function VideoChatComponent(props) {
               <Tooltip title="mic on">
                 <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
                   <Button>
-                  <MicIcon classes={{root: classes.iconRoot}}
-                    onClick={() => onToggleAudio(false)}
-                    className="on-icon">
-                  </MicIcon>
+                    <MicIcon classes={{root: classes.iconRoot}}
+                      onClick={() => onToggleAudio(false)}
+                      className="on-icon">
+                    </MicIcon>
                   </Button>
                 </Fab>
               </Tooltip>
@@ -255,10 +266,10 @@ function VideoChatComponent(props) {
               <Tooltip title="mic off">
                 <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
                   <Button color="#616161">
-                  <MicOffIcon classes={{root: classes.iconRoot}}
-                    onClick={() => onToggleAudio(true)}
-                    className="off-icon">
-                  </MicOffIcon>
+                    <MicOffIcon classes={{root: classes.iconRoot}}
+                      onClick={() => onToggleAudio(true)}
+                      className="off-icon">
+                    </MicOffIcon>
                   </Button>
                 </Fab>
               </Tooltip>
@@ -267,10 +278,10 @@ function VideoChatComponent(props) {
               <Tooltip title="camera on">
                 <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
                   <Button>
-                  <VideocamIcon classes={{root: classes.iconRoot}}
-                    onClick={() => onToggleVideo(false)}
-                    className="on-icon">
-                  </VideocamIcon>
+                    <VideocamIcon classes={{root: classes.iconRoot}}
+                      onClick={() => onToggleVideo(false)}
+                      className="on-icon">
+                    </VideocamIcon>
                   </Button>
                 </Fab>
               </Tooltip>
@@ -278,10 +289,10 @@ function VideoChatComponent(props) {
               <Tooltip title="camera off">
                 <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
                   <Button>
-                  <VideocamOffIcon classes={{root: classes.iconRoot}}
-                    onClick={() => onToggleVideo(true)}
-                    className="off-icon">
-                  </VideocamOffIcon>
+                    <VideocamOffIcon classes={{root: classes.iconRoot}}
+                      onClick={() => onToggleVideo(true)}
+                      className="off-icon">
+                    </VideocamOffIcon>
                   </Button>
                 </Fab>
               </Tooltip>
@@ -509,9 +520,17 @@ function VideoChatComponent(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => handleStartChat(setApiKey, setSessionId, setToken, baseURL)} color="primary" autoFocus>
-                        Join Now
-                    </Button>
+                    <ColorLibButton
+                      variant='contained'
+                      size='medium'
+                      endIcon={<ArrowForwardIosIcon />}
+                      onClick={
+                        () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
+                      }
+                      autoFocus
+                    >
+                      Join Now
+                    </ColorLibButton>
                 </DialogActions>
             </Dialog>    
       
@@ -534,14 +553,16 @@ function VideoChatComponent(props) {
           </div> 
           </div>
           <div className='actions-btns'>
-        <Button
+        <ColorLibButton
+          variant="contained"
+          size="medium"
+          className={classes.beginDiscussionPrepButton}
+          startIcon={<CallEndIcon />}
           onClick={() => handleFinishChat()}
           disabled={!isInterviewStarted}
-          color='secondary'
-          variant="contained"
         >
           Begin Discussion Prep
-        </Button>
+        </ColorLibButton>
         {props.isArchiveHost ? 
         <Button 
           onClick = {() => handleStartArchive()}

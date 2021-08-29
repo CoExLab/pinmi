@@ -1,6 +1,6 @@
 import {withStyles} from '@material-ui/core/styles';
 
-import Button from '@material-ui/core/Button';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
@@ -11,7 +11,7 @@ const ColorLibButton = withStyles((theme) => ({
     fontWeight: '600',
     lineHeight: '1.5',
     padding: '6px 39px',
-    textTransform: 'none',
+    textTransform: 'none'
   },
   sizeLarge: {
     fontSize: '25px',

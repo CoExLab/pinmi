@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
+import { Paper, Box, TextField, Grid } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Fragment } from 'react';
 import { useUserModeValue, useActiveStepValue } from '../../context';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 
 const Refresher = () => {
 	const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
@@ -173,11 +174,9 @@ const Refresher = () => {
 			</div>
       
 			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-			<Button 
-			 variant="contained"
-			 onClick={handleNext}>
-				Submit
-			</Button>
+        <ColorLibButton variant='outlined' size='medium' onClick={handleNext}>
+          Submit
+        </ColorLibButton>
 			</div>
 			
 		</Fragment>
