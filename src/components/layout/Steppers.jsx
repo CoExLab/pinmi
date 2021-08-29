@@ -1,4 +1,3 @@
-import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {Step, StepConnector, Stepper, StepLabel} from '@material-ui/core';
