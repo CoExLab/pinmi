@@ -1,8 +1,9 @@
-import {withStyles} from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import CallEndIcon from '@material-ui/icons/CallEnd';
 
 const ColorLibButton = withStyles((theme) => ({
   root: { /* sizeMedium */ 
@@ -36,6 +37,81 @@ const ColorLibButton = withStyles((theme) => ({
   },
 }))(Button);
 
+/* Commony Used Variations */
+export const ColorLibNextButton = (props) => (
+  <ColorLibButton 
+    endIcon={<ArrowForwardIosIcon />}
+    {...props}
+  />
+);
+
+export const ColorLibBackButton = (props) => (
+  <ColorLibButton 
+    startIcon={<ArrowBackIosIcon />}
+    {...props}
+  />
+);
+
+const useSpecialButtonStyles = makeStyles((theme) => ({
+  callEndButton: {
+    backgroundColor: '#DB0000',
+    color: 'white',
+    opacity: '62%',
+    '&:hover': {
+      backgroundColor: '#DB0000',
+      opacity: '100%',
+    },
+  },
+  grayNextButton: {
+    backgroundColor: 'black',
+    color: 'white',
+    opacity: '50%',
+    '&:hover': {
+      backgroundColor: 'black',
+      opacity: '100%',
+    },
+  },
+}));
+
+export const ColorLibCallEndButton = (props) => {
+  const CallEndButton = withStyles({
+    root: {
+      backgroundColor: '#DB0000',
+      color: 'white',
+      opacity: '62%',
+      '&:hover': {
+        backgroundColor: '#DB0000',
+        opacity: '100%',
+      },
+    },
+  })(ColorLibButton);
+  return (
+    <CallEndButton 
+      {...props}
+      startIcon={<CallEndIcon />}
+    />
+  );
+};
+
+export const ColorLibGrayNextButton = (props) => {
+  const GrayNextButton = withStyles({
+    root: {
+      backgroundColor: 'black',
+      color: 'white',
+      opacity: '50%',
+      '&:hover': {
+        backgroundColor: 'black',
+        opacity: '100%',
+      },
+    },
+  })(ColorLibNextButton);
+  return (
+    <GrayNextButton 
+      {...props}
+    />
+  );
+};
+
 /* Examples for commonly used buttons */
 export const ColorLibButtonDemo = () => (
   <div>
@@ -49,12 +125,12 @@ export const ColorLibButtonDemo = () => (
       <ColorLibButton variant="contained" size="large">
         Big Required Button
       </ColorLibButton>
-      <ColorLibButton variant="contained" size="large" startIcon={<ArrowBackIosIcon />}>
+      <ColorLibBackButton variant="contained" size="large">
         Previous
-      </ColorLibButton>
-      <ColorLibButton variant="contained" size="large" endIcon={<ArrowForwardIosIcon />}>
+      </ColorLibBackButton>
+      <ColorLibNextButton variant="contained" size="large">
         Next
-      </ColorLibButton>
+      </ColorLibNextButton>
     </div>
     
     <br />
@@ -71,12 +147,12 @@ export const ColorLibButtonDemo = () => (
       <ColorLibButton variant="contained" size="medium">
         Medium Required Button
       </ColorLibButton>
-      <ColorLibButton variant="contained" size="medium" startIcon={<ArrowBackIosIcon />}>
+      <ColorLibBackButton variant="contained" size="medium">
         Previous
-      </ColorLibButton>
-      <ColorLibButton variant="contained" size="medium" endIcon={<ArrowForwardIosIcon />}>
+      </ColorLibBackButton>
+      <ColorLibNextButton variant="contained" size="medium">
         Next
-      </ColorLibButton>
+      </ColorLibNextButton>
     </div>
     
     <br />
@@ -93,12 +169,12 @@ export const ColorLibButtonDemo = () => (
       <ColorLibButton variant="contained" size="small">
         Small Required Button
       </ColorLibButton>
-      <ColorLibButton variant="contained" size="small" startIcon={<ArrowBackIosIcon />}>
+      <ColorLibBackButton variant="contained" size="small">
         Previous
-      </ColorLibButton>
-      <ColorLibButton variant="contained" size="small" endIcon={<ArrowForwardIosIcon />}>
+      </ColorLibBackButton>
+      <ColorLibNextButton variant="contained" size="small">
         Next
-      </ColorLibButton>
+      </ColorLibNextButton>
     </div>
     
     <br />
@@ -107,6 +183,22 @@ export const ColorLibButtonDemo = () => (
       <ColorLibButton variant="outlined" size="small">
         Small Optional Button
       </ColorLibButton>
+    </div>
+
+    <br />
+
+    <div>
+      <ColorLibCallEndButton>
+        End Call
+      </ColorLibCallEndButton>
+    </div>
+
+    <br />
+
+    <div>
+      <ColorLibGrayNextButton>
+        Gray Next
+      </ColorLibGrayNextButton>
     </div>
   </div>
 );
