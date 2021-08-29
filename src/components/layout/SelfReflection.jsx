@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
 import { Fragment } from 'react';
 
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import { useActiveStepValue } from '../../context';
 
 const SelfReflection = () => {
@@ -115,11 +116,13 @@ const SelfReflection = () => {
 
             </div>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
+            <ColorLibButton 
+                variant="contained"
+                size="medium"
+                onClick={handleNext}
+            >
                 Finish Self-Reflection
-            </Button>
+            </ColorLibButton>
             </div>
         </Fragment>
     );

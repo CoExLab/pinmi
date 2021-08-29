@@ -1,12 +1,11 @@
 import { Box } from '@material-ui/core';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React, {useState, useEffect} from 'react';
 import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
 import Session from "./PracticeSession/Session.jsx"
 
 import { useActiveStepValue, useSessionValue } from "../../context";
-import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibButton, { ColorLibNextButton } from './ColorLibComponents/ColorLibButton';
 
 
 function getConditionalContent(page) {
@@ -32,9 +31,13 @@ function getConditionalButton(page, setPage, setButton) {
         return (
           <div>
             <Box align='center' m = {2} mb = {20}>
-              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton()} endIcon={<ArrowForwardIosIcon />}>
+              <ColorLibNextButton 
+                variant='contained' 
+                size='medium' 
+                onClick={() => handleButton()}
+              >
                 Review Information on Client
-              </ColorLibButton>
+              </ColorLibNextButton>
             </Box>
           </div>
         );
