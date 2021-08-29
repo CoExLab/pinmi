@@ -1,10 +1,12 @@
-import { Button, Box } from '@material-ui/core';
+import { Box } from '@material-ui/core';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React, {useState, useEffect} from 'react';
 import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
 import Session from "./PracticeSession/Session.jsx"
 
 import { useActiveStepValue, useSessionValue } from "../../context";
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 
 
 function getConditionalContent(page) {
@@ -14,7 +16,7 @@ function getConditionalContent(page) {
       case 1:
         return <Narrative />;
       case 2:
-        return <Session /> ;
+        return <Session />;
       default:
         return <div>Unknown</div>;
     }
@@ -27,9 +29,25 @@ function getConditionalButton(page, setPage, setButton) {
 }
     switch (page) {
       case 0:
-        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => handleButton()}>Review Client Information</Button></Box></div>;
+        return (
+          <div>
+            <Box align='center' m = {2} mb = {20}>
+              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton()} endIcon={<ArrowForwardIosIcon />}>
+                Review Information on Client
+              </ColorLibButton>
+            </Box>
+          </div>
+        );
       case 1:
-        return <div><Box align="center" m = {2} mb = {20}> <Button variant="contained" color="primary" onClick={() => handleButton()}>Begin Live Session</Button></Box></div>;
+        return (
+          <div>
+            <Box align='center' m = {2} mb = {20}> 
+              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton()}>
+                Begin Live Session
+              </ColorLibButton>
+            </Box>
+          </div>
+        );
       case 2:
         return ;
       default:

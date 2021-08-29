@@ -5,8 +5,9 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
 
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import { useActiveStepValue } from '../../context';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,12 +53,13 @@ const DisscussionPrep = () => {
         </Grid>
       </Container>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Join Discussion
-            </Button>
-            </div>
+        <ColorLibButton 
+          variant="contained"
+          size="medium"
+          onClick={handleNext}>
+            Join Discussion
+        </ColorLibButton>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,8 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import VideoChatComponent from '../VideoChatComponent';
 import { useSessionValue, useActiveStepValue } from "../../context";
 import { baseURL } from 'constants';
@@ -58,12 +59,14 @@ const Collaboration = () => {
         </Grid>
       </Container>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Begin Self-Reflection
-            </Button>
-            </div>
+        <ColorLibButton 
+          variant="contained"
+          size="medium"
+          onClick={handleNext}
+        >
+          Begin Self-Reflection
+        </ColorLibButton>
+      </div>
     </div>
   );
 };
