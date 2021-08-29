@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import CallEndIcon from '@material-ui/icons/CallEnd';
 import MicIcon from "@material-ui/icons/MicNone";
 import MicOffIcon from "@material-ui/icons/MicOffOutlined";
 import VideocamIcon from "@material-ui/icons/VideocamOutlined";
@@ -22,7 +20,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Popper from '@material-ui/core/Popper';
 
-import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
+import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 
 import {
   toggleAudio,
@@ -520,17 +518,16 @@ function VideoChatComponent(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <ColorLibButton
-                      variant='contained'
-                      size='medium'
-                      endIcon={<ArrowForwardIosIcon />}
-                      onClick={
-                        () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
-                      }
-                      autoFocus
-                    >
-                      Join Now
-                    </ColorLibButton>
+                  <ColorLibNextButton
+                    variant='contained'
+                    size='medium'
+                    onClick={
+                      () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
+                    }
+                    autoFocus
+                  >
+                    Join Now
+                  </ColorLibNextButton>
                 </DialogActions>
             </Dialog>    
       
@@ -553,16 +550,15 @@ function VideoChatComponent(props) {
           </div> 
           </div>
           <div className='actions-btns'>
-        <ColorLibButton
+        <ColorLibCallEndButton
           variant="contained"
           size="medium"
           className={classes.beginDiscussionPrepButton}
-          startIcon={<CallEndIcon />}
           onClick={() => handleFinishChat()}
           disabled={!isInterviewStarted}
         >
           Begin Discussion Prep
-        </ColorLibButton>
+        </ColorLibCallEndButton>
         {props.isArchiveHost ? 
         <Button 
           onClick = {() => handleStartArchive()}
