@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import { Typography, Box, Grid, Paper } from '@material-ui/core';
 import { firebase } from "../hooks/firebase";
+import { useSessionValue } from "../context";
 
 const Transcription = () => {
     const [localTrans, setLocalTrans] = useState([]);
-
+    const {sessionID} = useSessionValue ()
     // fetch trans data here
-    const fetchTranscript = async (sessionID) => {
-        const docRef = await firebase.firestore().collection("Transcripts").doc(sessionID);
+    const fetchTranscript = async (id) => {
+        console.log("in transcription" + sessionID);
+        const docRef = await firebase.firestore().collection("sessions").doc(id);
         await docRef.get().then((doc) => {
             if (doc.exists) {
-                setLocalTrans(doc.data()["text"]);
+                setLocalTrans(doc.data().transcript);
             } else {
                 // doc.data() will be undefined in this case
                 console.log("No such document!");
@@ -21,9 +23,9 @@ const Transcription = () => {
         });
     }
 
-    useEffect(() => {
-        fetchTranscript("testSessionID");
-    }, []);
+    // useEffect(() => {
+    //     fetchTranscript(sessionID);
+    // }, []);
 
     const getTimeStamp = (transcriptString) => {
         var index = transcriptString.indexOf("-");

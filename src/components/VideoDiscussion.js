@@ -144,7 +144,7 @@ function VideoChatComponent(props) {
 
       }
 
-      await firebase.firestore().collection("sessions").doc(sessionID).collection(pins).add( {
+      await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add( {
         user_id: '',
         timestamp: formatTime(curTime),
         notes: '',
@@ -164,7 +164,7 @@ function VideoChatComponent(props) {
 
   const addTranscript = async () => {
     await firebase.firestore().collection("sessions").doc(sessionID).set({
-      transcript: results
+      "transcript": results
     })
     .then( () => {
         setPins([...pins, ]);

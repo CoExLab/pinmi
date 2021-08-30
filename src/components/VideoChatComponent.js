@@ -182,8 +182,8 @@ function VideoChatComponent(props) {
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+      "transcript": results
     })
     .then( () => {
         setPins([...pins, ]);
@@ -388,7 +388,7 @@ function VideoChatComponent(props) {
     await saveArchiveURL()
     .then(() => {
       stopSpeechToText();
-      addTranscript();
+      // addTranscript();
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     })
     .catch((error) => {console.log(error)});
@@ -443,7 +443,6 @@ function VideoChatComponent(props) {
       let latestArc = arc[arc.length-1];
       console.log(latestArc.duration);
       console.log(latestArc.url);
-      setMediaDuration(latestArc.duration);
       setMediaUrl(latestArc.url);
     })
     .catch((e) => {console.log(e)});
@@ -456,9 +455,7 @@ function VideoChatComponent(props) {
       await fetch(url)
       .then(res => res.json()) //return the res data as a json
       .then((res) => {
-        setMediaDuration(res.duration);
         setMediaUrl(res.url);
-        console.log("Media Duration:", res.duration);
         console.log("Media URL:", res.url);  
         
         setDBMediaURL(res);
@@ -471,9 +468,8 @@ function VideoChatComponent(props) {
   }
 
   const setDBMediaURL = async (res) => {
-    await firebase.firestore().collection("MediaURLs").doc("test").set({
-      URL: res.url,
-      Duration: res.duration
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+     "media_url": res.url,
   })
   .then(() => console.log("MediaURL Added to DB"))
   .catch((e) => {console.log(e)});
