@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import { Paper, Box, TextField, Grid } from '@material-ui/core';
+import { Paper, Box, Grid } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Fragment } from 'react';
 import { useUserModeValue, useActiveStepValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 
 const Refresher = () => {
 	const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
@@ -111,35 +112,35 @@ const Refresher = () => {
                 Are you doing OK today?                                
               </Box>
               <Box pl = {3.5} width = {900} >
-                <TextField
+                <ColorLibTextField
                     id="outlined-secondary"
                     label="Convert the closed question to open-ended..."
                     fullWidth
                     variant="outlined"
                     multiline
                     rowsMax={2}
-                    margin="normal"                        
+                    margin="normal"       
                 />
               </Box>
               <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
                 How much do you drink on a typical drinking occasion?                               
               </Box>
               <Box pl = {3.5} width = {900} >
-                <TextField
+                <ColorLibTextField
                     id="outlined-secondary"
                     label="Convert the closed question to open-ended..."
                     fullWidth
                     variant="outlined"
                     multiline
                     rowsMax={2}
-                    margin="normal"                        
+                    margin="normal"
                 />
               </Box>
               <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
                 I don’t get what we’re supposed to be doing here.                               
               </Box>
               <Box pl = {3.5} width = {900} >
-                <TextField
+                <ColorLibTextField
                   id="outlined-secondary"
                   label="Form a question in response to the client statement..."
                   fullWidth
@@ -153,7 +154,7 @@ const Refresher = () => {
                 I love my kids, but sometimes they push me to the edge, and then I do things I shouldn’t.
               </Box>
               <Box pl = {3.5} width = {900} >
-                <TextField
+                <ColorLibTextField
                     id="outlined-secondary"
                     label="Form a question in response to the client statement..."
                     fullWidth
