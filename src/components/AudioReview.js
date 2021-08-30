@@ -59,24 +59,21 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen, sessionID} = useSessionValue();
     const [loadURL, setLoadURL] = useState(false)
 
-    let playTimeArr = pins.map(pin => pin.pinTime);
+    let playTimeArr = pins.map(pin => pin.timestamp);
 
     useEffect(() =>{
         //callback function when useEffect is called
-        let ref = firebase
+        console.log("sessionID: " + sessionID);
+        (async () => await firebase
         .firestore()
-        .collection("sessions").doc(sessionID)
+        .collection("sessions").doc(sessionID).get().then((doc) => {
+            console.log("Here")
+            const recentURL= doc.data().media_url;
+            console.log(recentURL);
+            setMediaUrl(recentURL);
+            // setMediaDuration(recentURL.Duration);
 
-        var unsubscribe = ref.onSnapshot((doc) => {
-            let recentURL = doc.data().media_url;
-            console.log(recentURL.URL);
-            setMediaUrl(recentURL.URL);
-            setMediaDuration(recentURL.Duration);
-
-        })
-        return () => {
-            unsubscribe()
-        };
+        })) ();
     },[loadURL]);
 
 
@@ -87,18 +84,18 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         console.log(audioProgress);
         if(curPinIndex > 0){
             setCurPinIndex(index);
-            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+            player.current.seekTo(parseFloat(pins.map(pin => pin.timestamp)[index]));
         }
     };
 
     // go to next pin
     const handleNextPin = (index, remove = false) => {
-        if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
+        if(curPinIndex < pins.map(pin => pin.timestamp).length - 1){
             if(!remove){
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                player.current.seekTo(parseFloat(pins.map(pin => pin.timestamp)[index]));
                 setCurPinIndex(index);
             } else{                
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                player.current.seekTo(parseFloat(pins.map(pin => pin.timestamp)[index]));
                 setCurPinIndex(index - 1);
             }
         }
@@ -113,13 +110,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             setPinBtnDisabled(false);
         }, 800);
 
-        await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
-            pinID,
-            pinTime: curTime,
-            // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            sessionID: MiTrainingSessionID,
-            callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+            user_id: '',
+            timestamp: formatTime(curTime),
+            notes: '',
         })        
         .then( () => {
             setPins([...pins, ]);
@@ -134,18 +128,20 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         console.log(curTime); 
         //seek to
         let dummyPlayTimeArr = [...pins, {
-            pinID,
-            pinTime: curTime,
-            pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
+            timestamp: curTime,
+            user_id: '',
+            notes: ''
         }].sort((a, b) => a.pinTime - b.pinTime);
 
-        setCurPinIndex(dummyPlayTimeArr.map(pin => pin.pinTime).indexOf(curTime));   
+        setCurPinIndex(dummyPlayTimeArr.map(pin => pin.timestamp).indexOf(curTime));   
     }
 
     const deletePin = async (docId) => {
         firebase
           .firestore()
-          .collection("Pins")
+          .collection('sessions')
+          .doc(sessionID)
+          .collection("pins")
           .doc(docId)
           .delete()
           .then(() => {
@@ -169,22 +165,22 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const handlePin = () => {
         const curTime = Math.round(player.current.getCurrentTime());
         let index = playTimeArr.indexOf(curTime);
-        if (pins.map(pin => pin.pinTime).indexOf(curTime) !== -1) {
+        if (pins.map(pin => pin.timestamp).indexOf(curTime) !== -1) {
             // remove current pin
-            deletePin(pins.map(pin => pin.docId)[index]);
+            deletePin(pins.map(pin => pin.id)[index]);
             // auto jump to next available pin point
             console.log(pins.length);
-            if(pins.map(pin => pin.pinTime).length === 0) {
+            if(pins.map(pin => pin.timestamp).length === 0) {
                 player.current.seekTo(parseFloat(0));
             }
-            else if(pins.map(pin => pin.pinTime).length === 2){
+            else if(pins.map(pin => pin.timestamp).length === 2){
                 curPinIndex === 0 ? 
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
+                player.current.seekTo(parseFloat(pins.map(pin => pin.timestamp)[1])) : 
                 handleLastPin(curPinIndex - 1)
             }
             else{
-                curPinIndex === pins.map(pin => pin.pinTime).length - 1 || 
-                curPinIndex === pins.map(pin => pin.pinTime).length ? 
+                curPinIndex === pins.map(pin => pin.timestamp).length - 1 || 
+                curPinIndex === pins.map(pin => pin.timestamp).length ? 
                 handleLastPin(curPinIndex - 1) : 
                 handleNextPin(curPinIndex + 1, true);
             }
@@ -215,7 +211,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 <SliderBar 
                     maxValue = {audioLen} 
                     curValue = {audioProgress} 
-                    pinMarks = {pins.map(pin => pin.pinTime)}
+                    pinMarks = {pins.map(pin => pin.timestamp)}
                     canClick = {pinBtnDisabled}
                 />
                 <ReactPlayer

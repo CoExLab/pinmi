@@ -1,21 +1,18 @@
 import { firebase } from "../hooks/firebase";
 import { useState, useEffect } from 'react';
-
 // pin hook
 
 export const usePins = (sessionID) => {
     const [pins, setPins] = useState([]);
-  
     useEffect(() => {
       let unsubscribe = firebase
         .firestore()
-        .collection("sessions").where(firebase.firestore.FieldPath.documentId(), '==', sessionID).limit(1).collection("pins")
+        .collection("sessions").doc(sessionID).collection("pins")
         // console.log("get data from firebase");
         unsubscribe = unsubscribe.onSnapshot((snapshot) => {
           const allPins = snapshot.docs.map((pin) => ({
-            ...pin.data(),
-            docId: pin.id,
-            }));
+            ...pin.data()            
+          }));
           if (JSON.stringify(allPins) !== JSON.stringify(pins)) {
             setPins(allPins);
           }
@@ -39,7 +36,7 @@ export const useMediaURL = (sessionID) => {
   useEffect(() => {
     let ref = firebase
       .firestore()
-      .collection("sessions").where(firebase.firestore.FieldPath.documentId(), '==', sessionID).limit(1)
+      .collection("sessions").doc(sessionID)
 
     var unsubscribe = ref.onSnapshot((doc) => {
       let recentURL = doc.data().media_url
