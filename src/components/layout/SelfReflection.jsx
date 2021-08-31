@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
+import { Paper, Box, Grid, Button } from '@material-ui/core';
 import { Fragment } from 'react';
 
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import { useActiveStepValue } from '../../context';
 
 const SelfReflection = () => {
@@ -26,26 +28,28 @@ const SelfReflection = () => {
                                     What do I feel like are my strengths?                              
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
+                                            label="Type a strength and press Enter to add"
                                             fullWidth
                                             variant="outlined"
                                             multiline
                                             rowsMax={2}
-                                            margin="normal"                        
+                                            margin="normal"
                                     />
                                 </Box>
                                 <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What are some opportunities for growth?                             
+                                    What are some opportunities for growth?
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
+                                            label="Type and opportunity and press Enter to add"
                                             fullWidth
                                             variant="outlined"
                                             multiline
                                             rowsMax={2}
-                                            margin="normal"                        
+                                            margin="normal"
                                     />
                                 </Box>
                                 <Box mt = {2} fontStyle="normal" fontSize={20} textAlign="center" fontWeight="fontWeightBold" >
@@ -55,7 +59,7 @@ const SelfReflection = () => {
                                     What steps will I take to improve?                              
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
                                             fullWidth
                                             variant="outlined"
@@ -68,7 +72,7 @@ const SelfReflection = () => {
                                     What obstacles might get in the way, and how will I overcome them?                                
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
                                             fullWidth
                                             variant="outlined"
@@ -84,7 +88,7 @@ const SelfReflection = () => {
                                     What would I like to add to my clinical practice?                            
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
                                             fullWidth
                                             variant="outlined"
@@ -97,7 +101,7 @@ const SelfReflection = () => {
                                     What else would I like to keep reflecting on during the next week?                               
                                 </Box>
                                 <Box pl = {3.5} width = {900} >
-                                    <TextField
+                                    <ColorLibTextField
                                             id="outlined-secondary"
                                             fullWidth
                                             variant="outlined"
@@ -115,11 +119,13 @@ const SelfReflection = () => {
 
             </div>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
+            <ColorLibButton 
+                variant="contained"
+                size="medium"
+                onClick={handleNext}
+            >
                 Finish Self-Reflection
-            </Button>
+            </ColorLibButton>
             </div>
         </Fragment>
     );

@@ -1,9 +1,10 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField } from '@material-ui/core';
-import {ToggleButton } from '@material-ui/lab';
-import MISkillsSheet from './layout/MISkillsSheet';
 import { makeStyles } from '@material-ui/core/styles';
+import {formatTime} from '../helper/index';
+import { Box, Grid, Paper } from '@material-ui/core';
+import { ToggleButton } from '@material-ui/lab';
+import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
+import MISkillsSheet from './layout/MISkillsSheet';
 
 // firebase hook
 import { usePins } from '../hooks/index';
@@ -14,12 +15,13 @@ import { useUserModeValue } from '../context';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      '& > *': {
-        margin: theme.spacing(2),
-        width: '45ch',
-      },
+        display: 'flex',
+        '& > *': {
+            margin: theme.spacing(2),
+            width: 'auto',
+        },
     },
-  }));
+}));
 
 const DissResponse = ({curPinIndex}) => {   
     // user mode switcher
@@ -117,11 +119,11 @@ const DissResponse = ({curPinIndex}) => {
             <Paper >
                 <h2>{userMode}</h2>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={700} width = {800} overflow="auto" >
+                <Box m={2} height={700}>
                     <Box fontStyle="italic" fontSize={18}>
                         Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                     </Box>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
                         label="Personal Notes..."
                         fullWidth
@@ -138,7 +140,7 @@ const DissResponse = ({curPinIndex}) => {
                         What is your perspective of what happened at this pin? 
                     </Box>
                     <form className={classes.root} noValidate autoComplete="off">
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
                         label="caller's perspective"
                         fullWidth
@@ -148,14 +150,14 @@ const DissResponse = ({curPinIndex}) => {
                         margin="normal"                        
                         value = {curPerspectiveInfo1}
                     />
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
                         label="callee's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
                         rows={3}
-                        margin="normal"                        
+                        margin="normal"
                         value = {curPerspectiveInfo2}
                     />
                     </form>
@@ -172,17 +174,17 @@ const DissResponse = ({curPinIndex}) => {
                     </form>
                     <MISkillsSheet />
                     <form className={classes.root} noValidate autoComplete="off">
-                        <TextField
+                        <ColorLibTextField
                             id="outlined-secondary"
                             label="caller's MI skill"
                             fullWidth
                             variant="outlined"
                             multiline
                             rows={1}
-                            margin="normal"                        
+                            margin="normal"
                             value = {curSkillInfo1}
                         />
-                        <TextField
+                        <ColorLibTextField
                             id="outlined-secondary"
                             label="callee's MI skill"
                             fullWidth
@@ -197,14 +199,13 @@ const DissResponse = ({curPinIndex}) => {
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
                         Why was the pinned situation effective or ineffective?
                     </Box>  
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
                         rowsMax={2}
-                        margin="normal"                        
+                        margin="normal"
                         // value = {curSkillInfo}
                         // inputRef={skillValueRef}
                         // onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}

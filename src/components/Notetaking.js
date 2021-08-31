@@ -1,7 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField } from '@material-ui/core';
+import { Box, Grid, Paper } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
 
 // firebase hook
@@ -110,9 +111,8 @@ const Notetaking = ({curPinIndex}) => {
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         Personal Notes
                     </Box>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
@@ -126,9 +126,8 @@ const Notetaking = ({curPinIndex}) => {
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         What is your perspective of what happened at this pin? 
                     </Box>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
@@ -157,9 +156,8 @@ const Notetaking = ({curPinIndex}) => {
                         </ToggleButtonGroup>
                     </Box>   
                     <MISkillsSheet pinType = {pinType}/>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
