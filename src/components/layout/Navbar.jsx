@@ -35,7 +35,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
-          {["Home", "Practice", "Reivew"].map((label) => (
+          {["Home", "Practice", "Review"].map((label) => (
             <ColorLibButton 
               variant="text" 
               size="small" 
