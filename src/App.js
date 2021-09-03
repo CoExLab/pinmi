@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} from './context/index';
 import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
+import CORsTestButtons from './components/layout/CORsTestButtons';
+
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
@@ -49,6 +51,7 @@ const App = () => {
                     <Switch>
                       <Route exact path='/' component={Landing}/>
                       <Route exact path="/content" component={Content}/>
+                      <Route exact path='/test' component={CORsTestButtons}/>
                     </Switch>
                   </main>
                 </UserModeProvider>
