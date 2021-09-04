@@ -41,7 +41,7 @@ const DisscussionPrep = () => {
 
   return (
     <div className={classes.root}>
-      <Container>
+      <Container maxWidth='md'>
         <Grid container spacing={2}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
@@ -52,7 +52,7 @@ const DisscussionPrep = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '50px'}}>
         <ColorLibButton 
           variant="contained"
           size="medium"
