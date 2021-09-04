@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import { Box, Container } from '@material-ui/core';
 import { Fragment } from 'react';
 
@@ -8,9 +7,6 @@ import { useActiveStepValue } from '../../context';
 
 const SelfReflection = () => {
     const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
     
     return (
         <Fragment>
@@ -114,7 +110,7 @@ const SelfReflection = () => {
                 <ColorLibButton 
                     variant="contained"
                     size="medium"
-                    onClick={handleNext}
+                    href="/completion"
                 >
                     Finish Self-Reflection
                 </ColorLibButton>
