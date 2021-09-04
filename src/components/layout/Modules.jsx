@@ -23,8 +23,6 @@ function getStepContent(step) {
         return <Collaboration />;
       case 4:
         return <SelfReflection />;
-      case 5:
-        return <div>complete</div>;
       default:
         return <div>Unknown</div>;
     }
