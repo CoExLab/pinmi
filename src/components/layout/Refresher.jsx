@@ -163,7 +163,7 @@ const Refresher = () => {
         </Box>
       </Container>
       
-			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '50px 0px'}}>
+			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0px 50px 0px'}}>
         <ColorLibButton variant='outlined' size='medium' onClick={handleNext}>
           Submit
         </ColorLibButton>
