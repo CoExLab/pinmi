@@ -21,19 +21,19 @@ import { firebase } from "../hooks/firebase";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         '& > *': {
           margin: theme.spacing(1),
         },
-      },
+    },
     imageIcon: {
         height: '100%'
     },
     iconRoot: {
         textAlign: 'center'
     },
-    fab: {
-        marginLeft: 500,
-    },    
     display: 'flex',
     '& > * + *': {
       marginLeft: theme.spacing(5),
@@ -239,8 +239,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     // }}
                 />
                 <div className={classes.root} >
-                    <Fab color="default" aria-label="last" className={classes.fab} 
-                         onClick={() => handleLastPin(curPinIndex - 1)} >
+                    <Fab 
+                        color="default" 
+                        aria-label="last" 
+                        onClick={() => handleLastPin(curPinIndex - 1)} 
+                    >
                         <NavigateBeforeIcon />
                     </Fab>
                     <Fab color="default" aria-label="addPin"

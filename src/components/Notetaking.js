@@ -102,13 +102,13 @@ const Notetaking = ({curPinIndex}) => {
             <Paper >
                 <h2>{userMode}</h2>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={700} overflow="auto">
+                <Box m={2} height={600} overflow="auto">
                     {curPinIndex !== -1 ? 
                         <Box fontStyle="italic" fontSize={18}>
                             The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                         </Box>
                     : null}
-                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
+                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium"> 
                         Personal Notes
                     </Box>
                     <ColorLibTextField

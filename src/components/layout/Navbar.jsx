@@ -35,7 +35,19 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
+<<<<<<< HEAD
+          <ColorLibButton 
+            variant="text" 
+            size="small"
+            className={classes.navbar_button} 
+            href="/"
+          >
+            Home
+          </ColorLibButton>
+          {["Practice", "Reivew"].map((label) => (
+=======
           {["Home", "Practice", "Review"].map((label) => (
+>>>>>>> UserTesting
             <ColorLibButton 
               variant="text" 
               size="small" 

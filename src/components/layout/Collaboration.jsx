@@ -25,7 +25,12 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     marginLeft: 450,
     marginRight: 200,
-  }
+  },
+  grid: {
+    "& .MuiGrid-item": {
+      display: 'inline-grid',
+    },
+  },
 }));
 
 const Collaboration = () => {
@@ -47,8 +52,8 @@ const Collaboration = () => {
 
   return (
     <div className={classes.root}>
-      <Container>
-        <Grid container spacing={2}>
+      <Container maxWidth='md'>
+        <Grid container spacing={2} className={classes.grid}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
@@ -58,7 +63,7 @@ const Collaboration = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>
         <ColorLibButton 
           variant="contained"
           size="medium"

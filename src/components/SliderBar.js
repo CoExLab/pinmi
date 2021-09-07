@@ -13,8 +13,8 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
     root: {
       color: '#52af77',
       height: 8,    
-      marginTop: 20,
-      width: 990,
+      marginTop: 25,
+      width: 'calc(20%)',
       marginLeft: 105,            
       '&.Mui-disabled': {
         color: '#52af77',
@@ -77,7 +77,7 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
   },[pinMarks]);
 
   return (
-    <Container className = "SliderbarContext">     
+    <Container className = "SliderbarContext" maxWidth="md">     
         <PrettoSlider className = "SliderbarOverlay"
             valueLabelDisplay="on" 
             aria-label="pretto slider" 
