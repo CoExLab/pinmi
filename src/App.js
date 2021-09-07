@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} from './context/index';
 import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
+import Completion from './components/layout/Completion';
 import CORsTestButtons from './components/layout/CORsTestButtons';
 
 import { store } from "./components/Store";
@@ -51,6 +52,7 @@ const App = () => {
                     <Switch>
                       <Route exact path='/' component={Landing}/>
                       <Route exact path="/content" component={Content}/>
+                      <Route exact path="/completion" component={Completion}/>
                       <Route exact path='/test' component={CORsTestButtons}/>
                     </Switch>
                   </main>
