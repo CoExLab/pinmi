@@ -10,7 +10,6 @@ import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
 import Completion from './components/layout/Completion';
 import CORsTestButtons from './components/layout/CORsTestButtons';
-
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";

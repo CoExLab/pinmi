@@ -1,4 +1,3 @@
-import React from 'react';
 import Steppers from './Steppers';
 import Modules from './Modules';
 import Container from '@material-ui/core/Container';
@@ -10,8 +9,8 @@ const Content = () => {
         <section>    
             <Container maxWidth="md">
                 <Steppers />
-                <Modules />
             </Container>
+            <Modules />
         </section>
     );
 };
