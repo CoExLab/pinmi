@@ -238,7 +238,6 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     //     // }
                     // }}
                 />
-                <button onClick ={() => {setLoadURL(!loadURL)}}>Load URL</button>
                 <div className={classes.root} >
                     <Fab 
                         color="default" 
