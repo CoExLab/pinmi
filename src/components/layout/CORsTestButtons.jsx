@@ -16,7 +16,6 @@ const test = async (testName) => {
     })
 }
 
-
 const CORsTestButtons = () => {
     return(
         <div>
@@ -25,6 +24,7 @@ const CORsTestButtons = () => {
             <button onClick = {() => test("test3")}>test3</button>
             <button onClick = {() => test("test4")}>test4</button>
             <button onClick = {() => test("test5")}>test5</button>
+            <button onClick = {() => test("test6")}>test6</button>
         </div>
     )
 }
