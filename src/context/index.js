@@ -66,12 +66,11 @@ export const SessionProvider = ({ children }) => {
   const getSessionID = async () => { 
       console.log(';-;')
       const sessionID = await firebase.firestore().collection("sessions").add({
-      callee_id: callee,
-      caller_id: caller,
-      media_url: mediaUrl,
-      transcript: ''
+        callee_id: callee,
+        caller_id: caller,
+        media_url: "default",
+        transcript: ''
     });
-    console.log(sessionID.id);
     return sessionID.id;
   }
 

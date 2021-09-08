@@ -45,7 +45,7 @@ export const useMediaURL = (sessionID) => {
     return () => {
       unsubscribe()
     };
-  })
+  });
   return {mediaURL, setMediaURL};
 };
 
