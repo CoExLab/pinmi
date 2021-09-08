@@ -153,7 +153,8 @@ function VideoChatComponent(props) {
   const transID = generatePushId();
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
-
+  
+  //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
@@ -165,11 +166,11 @@ function VideoChatComponent(props) {
           setPinBtnDisabled(false);
       }, 800);
 
-      if(curTime > addPinDelayTime){
-        curTime -= addPinDelayTime;
-      } else{
-        curTime = addPinDelayTime;
-      }
+      // if(curTime > addPinDelayTime){
+      //   curTime -= addPinDelayTime;
+      // } else{
+      //   curTime = addPinDelayTime;
+      // }
 
     await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
         pinID,
