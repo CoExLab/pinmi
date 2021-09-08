@@ -163,7 +163,7 @@ function VideoChatComponent(props) {
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("sessions").doc(sessionID).set({
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
       "transcript": results
     })
     .then( () => {

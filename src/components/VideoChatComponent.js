@@ -163,7 +163,7 @@ function VideoChatComponent(props) {
         curTime = addPinDelayTime;
       }
 
-    await firebase.firestore().collection("sessions").doc(sessionID).collection(pins).add( {
+    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add( {
       user_id: '',
       timestamp: formatTime(curTime),
       notes: '',
