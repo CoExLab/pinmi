@@ -43,7 +43,7 @@ export default function ButtonAppBar() {
           >
             Home
           </ColorLibButton>
-          {["Home", "Practice", "Review"].map((label) => (
+          {["Practice", "Review"].map((label) => (
             <ColorLibButton 
               variant="text" 
               size="small" 
