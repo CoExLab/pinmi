@@ -64,6 +64,12 @@ function VideoChatComponent(props) {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
+  const handlePinButtonClick = () => {
+    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
+    console.log("added a pin")
+    addPin(pinTime);
+  }
+
   const openPopper = Boolean(anchorEl);
   const id = openPopper ? 'simple-popper' : undefined;
 
@@ -107,7 +113,6 @@ function VideoChatComponent(props) {
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
-  
 
   
   
@@ -341,7 +346,7 @@ function VideoChatComponent(props) {
           </div>
         )}
         <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={handleClick}>                    
+          onClick={() => {handlePinButtonClick()}}>
           <Icon classes={{ root: classes.iconRoot }}>
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
