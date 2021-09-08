@@ -455,12 +455,11 @@ function VideoChatComponent(props) {
       await fetch(url)
       .then(res => res.json()) //return the res data as a json
       .then((res) => {
-        setMediaUrl(res.url);
-        console.log("Media URL:", res.url);  
+        setMediaUrl(res.url).then( res => {console.log("Media URL:", res.url); setDBMediaURL(res);}); 
         
-        setDBMediaURL(res);
+        
       })
-      .catch((e) => {console.log(e)});
+      .catch((e) => {console.log(e); console.log("also big sad here\n")});
     }
     else { 
       //getLastestArchive()
@@ -472,7 +471,7 @@ function VideoChatComponent(props) {
      "media_url": res.url,
   })
   .then(() => console.log("MediaURL Added to DB"))
-  .catch((e) => {console.log(e)});
+  .catch((e) => {console.log(e); console.log("big sad here\n")});
   }
 
 
