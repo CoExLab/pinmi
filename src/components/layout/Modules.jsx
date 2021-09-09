@@ -4,6 +4,7 @@ import PracticeSession from './PracticeSession';
 import Collaboration from  './Collaboration';
 import Refresher from './Refresher';
 import SelfReflection from './SelfReflection';
+import Discussion from './Discussion';
 // context
 import { useActiveStepValue } from "../../context";
 
@@ -20,7 +21,7 @@ function getStepContent(step) {
       case 2:
         return <DisscussionPrep/> ;
       case 3:
-        return <Collaboration />;
+        return <Discussion />;
       case 4:
         return <SelfReflection />;
       default:

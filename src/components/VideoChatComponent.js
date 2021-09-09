@@ -352,9 +352,6 @@ function VideoChatComponent(props) {
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
         </Fab>
-      <Popper id={id} open={openPopper} anchorEl={anchorEl}>
-        <div className={classes.paper}>The content of the Popper.</div>
-      </Popper>
       </>
     );
   };

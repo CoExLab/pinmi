@@ -28,6 +28,15 @@
       z-index: 2;
       margin: 100px 100px;
     }
+    .card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
+      margin: 100px 100px;
+    }
     .video-toolbar {
       display: flex;
       justify-content: center;
