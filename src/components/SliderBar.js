@@ -14,7 +14,7 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
       color: '#52af77',
       height: 8,    
       marginTop: 25,
-      width: 'calc(20%)',
+      width: 'calc(73.5%)',
       marginLeft: 105,            
       '&.Mui-disabled': {
         color: '#52af77',
