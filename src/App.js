@@ -9,6 +9,7 @@ import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} fro
 import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
 import Completion from './components/layout/Completion';
+import CORsTestButtons from './components/layout/CORsTestButtons';
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
@@ -41,23 +42,24 @@ const App = () => {
 	return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Provider store={store}>
-          <SessionProvider>
-            <ActiveStepProvider>
-              <PinsProvider>
-                <UserModeProvider>
-                  <main>
-                    <Switch>
-                      <Route exact path='/' component={Landing}/>
+        <main>
+          <Switch>
+            <Route exact path='/' component={Landing}/>
+            <Route exact path="/completion" component={Completion}/>
+            <Route exact path='/test' component={CORsTestButtons}/>
+            <Provider store={store}>
+              <SessionProvider>
+                <ActiveStepProvider>
+                  <PinsProvider>
+                    <UserModeProvider>
                       <Route exact path="/content" component={Content}/>
-                      <Route exact path="/completion" component={Completion}/>
-                    </Switch>
-                  </main>
-                </UserModeProvider>
-              </PinsProvider>
-            </ActiveStepProvider>
-          </SessionProvider>
-        </Provider>
+                    </UserModeProvider>
+                  </PinsProvider>
+                </ActiveStepProvider>
+              </SessionProvider>
+            </Provider>
+          </Switch>
+        </main>
       </Router>
     </ThemeProvider>
 	)

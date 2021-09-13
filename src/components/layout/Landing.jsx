@@ -3,6 +3,8 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import Navbar from './Navbar';
+import { TextField, Box } from '@material-ui/core';
+
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -35,9 +37,17 @@ const Landing = () => {
           Pins are time marks that you add during your live role-play session to mark parts of conversation that you would like to revisit during a feedback conversation.
         </Typography>
         <br />
-				<ColorLibButton variant='contained' size='large' href='/content'>
+        <Box m={1} display="inline">
+        <TextField id="outlined-basic" label="Your Name" variant="outlined" />
+        </Box>
+        <Box m={1} display="inline">
+        <TextField id="outlined-basic" label="Room Name" variant="outlined" />
+				</Box>
+        <Box m={2}>
+        <ColorLibButton variant='contained' size='large' href='/content'>
           Let's get started!
         </ColorLibButton>
+        </Box>
 			</Container>
 		</section>
 	);

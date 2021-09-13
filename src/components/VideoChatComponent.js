@@ -64,6 +64,12 @@ function VideoChatComponent(props) {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
+  const handlePinButtonClick = () => {
+    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
+    console.log("added a pin")
+    addPin(pinTime);
+  }
+
   const openPopper = Boolean(anchorEl);
   const id = openPopper ? 'simple-popper' : undefined;
 
@@ -107,7 +113,6 @@ function VideoChatComponent(props) {
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
-  
 
   
   
@@ -148,7 +153,8 @@ function VideoChatComponent(props) {
   const transID = generatePushId();
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
-
+  
+  //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
@@ -160,11 +166,11 @@ function VideoChatComponent(props) {
           setPinBtnDisabled(false);
       }, 800);
 
-      if(curTime > addPinDelayTime){
-        curTime -= addPinDelayTime;
-      } else{
-        curTime = addPinDelayTime;
-      }
+      // if(curTime > addPinDelayTime){
+      //   curTime -= addPinDelayTime;
+      // } else{
+      //   curTime = addPinDelayTime;
+      // }
 
     await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
         pinID,
@@ -341,14 +347,11 @@ function VideoChatComponent(props) {
           </div>
         )}
         <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={handleClick}>                    
+          onClick={() => {handlePinButtonClick()}}>
           <Icon classes={{ root: classes.iconRoot }}>
               <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>   
         </Fab>
-      <Popper id={id} open={openPopper} anchorEl={anchorEl}>
-        <div className={classes.paper}>The content of the Popper.</div>
-      </Popper>
       </>
     );
   };
