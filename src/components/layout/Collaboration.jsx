@@ -63,15 +63,6 @@ const Collaboration = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>
-        <ColorLibButton 
-          variant="contained"
-          size="medium"
-          onClick={handleNext}
-        >
-          Begin Self-Reflection
-        </ColorLibButton>
-      </div>
     </div>
   );
 };

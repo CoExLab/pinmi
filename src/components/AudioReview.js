@@ -203,7 +203,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         <Grid item xs={12}>
             { curActiveStep === 2 ? 
             (
-                <Typography variant='h6'>Listen back to your audio recording with pins and take notes to discuss with your peer. 
+                <Typography variant='h6'>Listen back to the session, add pins, and take notes to discuss with your peer. 
                 </Typography> 
             ) 
             : 

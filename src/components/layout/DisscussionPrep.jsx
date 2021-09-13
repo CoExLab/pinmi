@@ -54,7 +54,8 @@ const DisscussionPrep = () => {
           />
           <Transcription />
           <Notetaking 
-            curPinIndex = {curPinIndex}/>
+            curPinIndex = {curPinIndex}
+            setCurPinIndex = {setCurPinIndex} />
         </Grid>
       </Container>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>

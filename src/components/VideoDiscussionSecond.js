@@ -21,8 +21,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Popper from '@material-ui/core/Popper';
 import CardContent from '@material-ui/core/CardContent';
 
-import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
+import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 
 import {
   toggleAudio,
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VideoChatComponent(props) {
+function VideoChatComponentSecond(props) {
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -195,53 +195,8 @@ function VideoChatComponent(props) {
     console.log(curTime);  
   }
 
-  const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
-    })
-    .then( () => {
-        setPins([...pins, ]);
-    })
-    .then(() => {
-        console.log("Document successfully written!");    
-    })
-    .catch((error) => {
-        console.error("Error writing document: ", error);
-    });  
-    console.log("finished writing transcript")    
-  }
+  
 
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
-  }
 
 
   const renderToolbar = () => {
@@ -352,11 +307,10 @@ function VideoChatComponent(props) {
         <Card variant='outlined' aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'card' width='100'>
         <CardContent>
         <Typography variant="body2" component="p">
-        Introduce yourself to Julia, a social worker at UPMC also learning MI.
-
+        What did you learn from today’s discussion?
           <br />
           <br />
-How did today’s mock client session go?
+          Be sure to thank your peer for their time!
         </Typography>
       </CardContent>
         </Card>
@@ -389,113 +343,21 @@ How did today’s mock client session go?
         console.log("start recording");
       }
       //pass in videoCallTimer so we can create time stamps
-      startSpeechToText(); 
     }) 
     .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
       //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
       console.log("stop recording");
     }
-    //this fetches the archive url
-    await saveArchiveURL()
-    .then(() => {
-      stopSpeechToText();
-      addTranscript();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((error) => {console.log(error)});
   }
 
-
-  const handleStartArchive = async () => {
-    //create json to send as the body for post
-    const data = {
-      sessionId: sessionId,
-      resolution: '640x480',
-      outputMode: 'composed',
-      hasVideo: 'false',
-    };
-    //send post request to server
-    await fetch(baseURL + 'archive/start', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      }, 
-      body: JSON.stringify(data)
-    })
-    //get response from the post request, 
-    //and turn it into json so you can access data from it
-    .then(response => response.json())
-    .then((archiveData) => {
-      console.log(archiveData);
-      setArchiveData(archiveData);
-    })
-    .catch((error) => {console.log(error)})
-  }
-
-  const handleStopArchive = async () => {
-    var url = baseURL + 'archive/'+ archiveData.id + '/stop';
-    await fetch(url, {
-      method: 'POST', 
-    })
-    .then(res => res.json())
-    .then((res) => {
-      console.log(res);
-    })
-  }
-
-  const getLastestArchive = async () => {
-    let url = 'https://pin-mi-node-server.herokuapp.com/' + 'archive'
-    await fetch(url)
-    .then((res) => {
-      return res.json()
-      //return archives[archives.length - 1];
-    })
-    .then((arc) => {
-      let latestArc = arc[arc.length-1];
-      console.log(latestArc.duration);
-      console.log(latestArc.url);
-      setMediaDuration(latestArc.duration);
-      setMediaUrl(latestArc.url);
-    })
-    .catch((e) => {console.log(e)});
-  }
-
-//if status is available and if timing checks out, and if session id is correct
-  const saveArchiveURL = async () => {
-    if(props.isArchiveHost) {
-      let url = baseURL + 'archive/'+ archiveData.id;
-      await fetch(url)
-      .then(res => res.json()) //return the res data as a json
-      .then((res) => {
-        setMediaDuration(res.duration);
-        setMediaUrl(res.url);
-        console.log("Media Duration:", res.duration);
-        console.log("Media URL:", res.url);  
-        
-        setDBMediaURL(res);
-      })
-      .catch((e) => {console.log(e)});
-    }
-    else { 
-      //getLastestArchive()
-    }
-  }
-
-  const setDBMediaURL = async (res) => {
-    await firebase.firestore().collection("MediaURLs").doc("test").set({
-      URL: res.url,
-      Duration: res.duration
-  })
-  .then(() => console.log("MediaURL Added to DB"))
-  .catch((e) => {console.log(e)});
-  }
 
 
   
@@ -510,10 +372,10 @@ How did today’s mock client session go?
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"You have discussed 2 out of 3 pins."}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <p>You have added notes to 2 out of 3 pins.</p>
+                        <p>Are you sure you want to finish discussing pins?</p>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -527,7 +389,7 @@ How did today’s mock client session go?
                     }
                     autoFocus
                   >
-                    Add more notes to pins
+                    Continue with Discussion
                   </ColorLibButton>
                   <Box mt={2}>
                   <ColorLibNextButton
@@ -538,7 +400,7 @@ How did today’s mock client session go?
                     }
                     autoFocus
                   >
-                    Join Discussion
+                    Finish Discussing pins
                   </ColorLibNextButton>
                   </Box>
                   
@@ -567,25 +429,18 @@ How did today’s mock client session go?
           </div>
           <div className='actions-btns'>
         
-        {props.isArchiveHost ? 
-        <Button 
-          onClick = {() => handleStartArchive()}
-          color='secondary'
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>
+        <ColorLibCallEndButton 
           variant="contained"
-        >Start Recording
-        </Button> :
-        <div></div>}
-        {props.isArchiveHost? 
-        <Button 
-          onClick = {() => handleStopArchive()}
-          color='secondary'
-          variant="contained"
-        >Stop Recording
-        </Button> :
-        <div></div>}
+          size="medium"
+          onClick={handleNext}
+        >
+          Begin Self-Reflection
+        </ColorLibCallEndButton>
+      </div>
       </div>
     </>
   );
 }
 
-export default VideoChatComponent;
+export default VideoChatComponentSecond;
