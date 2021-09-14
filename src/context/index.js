@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
+import { generatePushId } from "../helper";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({children}) => {
@@ -49,35 +50,19 @@ export const usePinsValue = () => useContext(PinsContext);
 //   );
 // };
 // export const useSessionValue = () => useContext(SessionContext);
-
-
 export const SessionContext = createContext();
+const newDoc = generatePushId();
 export const SessionProvider = ({ children }) => {
   // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   // const [token, setToken] = useState("YOUR_TOKEN"); 
-  //hard-coded for now
-  const caller = 'tI2fK1Py7Ibsznp3MDz4'
-  const callee = '6AT1Se8aU93MPGXZ5miK'
 
   const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
-  const getSessionID = async () => { 
-      console.log(';-;')
-      const sessionID = await firebase.firestore().collection("sessions").add({
-        callee_id: callee,
-        caller_id: caller,
-        media_url: "default",
-        transcript: ''
-    });
-    return sessionID.id;
-  }
-
-  const sessionID = getSessionID ();
-  console.log("sessionID");
-  console.log(sessionID);
-  return (<SessionContext.Provider value={{mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton, sessionID}}>
+  const [sessionID, setSessionID] = useState(newDoc);
+  console.log("sessionID in index: " + sessionID);
+  return (<SessionContext.Provider value={{mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton, sessionID, setSessionID}}>
     {children}
   </SessionContext.Provider>);
   

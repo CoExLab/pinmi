@@ -10,7 +10,7 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useUserModeValue } from '../context';
+import { useUserModeValue, useSessionValue} from '../context';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,6 +45,8 @@ const DissResponse = ({curPinIndex}) => {
 
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
+
+    const {sessionID} = useSessionValue();
 
     useEffect(() => {
         fetchCurTextVal(`${userMode}PinInfos.pinNote`);
@@ -100,8 +102,8 @@ const DissResponse = ({curPinIndex}) => {
         usersUpdate[`${infoName}`] = input;
         firebase
             .firestore()
-            .collection("Pins")
-            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
+            .collection("sessions")
+            .doc(sessionID).collection("pins")        
             .update(usersUpdate)    
             .then(() => {
                 console.log("Document successfully updated!");

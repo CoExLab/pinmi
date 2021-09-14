@@ -16,7 +16,7 @@ export const formatTime = (time) => {
 
 export const generatePushId = (() => {
     const PUSH_CHARS =
-      "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   
     const lastRandChars = [];
   

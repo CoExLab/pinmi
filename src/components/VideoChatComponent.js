@@ -60,6 +60,7 @@ function VideoChatComponent(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
+    addPin(Date.now());
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
@@ -138,7 +139,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration , setMediaUrl, sessionID} = useSessionValue();
+  const {setMediaDuration , setMediaUrl, sessionID, mediaUrl} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -146,7 +147,7 @@ function VideoChatComponent(props) {
   // get trans ID
   const transID = generatePushId();
   // hard-coded sessionID here
-  const addPinDelayTime = 20;
+  const addPinDelayTime = 0;
 
   const addPin = async (curTime) => {
       // ui on
@@ -162,9 +163,9 @@ function VideoChatComponent(props) {
       } else{
         curTime = addPinDelayTime;
       }
-
+      //user_id hardcoded
     await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add( {
-      user_id: '',
+      user_id: '6AT1Se8aU93MPGXZ5miK',
       timestamp: formatTime(curTime),
       notes: '',
     })      
@@ -353,7 +354,7 @@ function VideoChatComponent(props) {
     setLoadingStatus(true);
     await fetch(baseURL + "room/" + room)
     .then(function(res) {
-      return res.json()
+      return res.json();
     })
     .then(function(res) {
       console.log("got server info");
@@ -365,7 +366,6 @@ function VideoChatComponent(props) {
       setLoadingStatus(false);
       console.log("start chat now");
       setIsInterviewStarted(true);
-      setVideoCallTimer(Date.now());
       if(props.isArchiveHost) {
         //props.startRec();
         console.log("start recording");
@@ -380,7 +380,7 @@ function VideoChatComponent(props) {
     setIsInterviewStarted(false);
     if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
+      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
       console.log("stop recording");
     }
@@ -413,12 +413,13 @@ function VideoChatComponent(props) {
     })
     //get response from the post request, 
     //and turn it into json so you can access data from it
-    .then(response => response.json())
+    .then(response => {return response.json();})
     .then((archiveData) => {
-      console.log(archiveData);
+      console.log("archive data: " + archiveData);
       setArchiveData(archiveData);
     })
     .catch((error) => {console.log(error)})
+    setVideoCallTimer(Date.now());
   }
 
   const handleStopArchive = async () => {
@@ -433,7 +434,7 @@ function VideoChatComponent(props) {
   }
 
   const getLastestArchive = async () => {
-    let url = 'https://pin-mi-node-server.herokuapp.com/' + 'archive'
+    let url = 'https://pinmi-node-server.herokuapp.com/' + 'archive'
     await fetch(url)
     .then((res) => {
       return res.json()
@@ -453,12 +454,7 @@ function VideoChatComponent(props) {
     if(props.isArchiveHost) {
       let url = baseURL + 'archive/'+ archiveData.id;
       await fetch(url)
-      .then(res => res.json()) //return the res data as a json
-      .then((res) => {
-        setMediaUrl(res.url).then( res => {console.log("Media URL:", res.url); setDBMediaURL(res);}); 
-        
-        
-      })
+      .then(res => { setDBMediaURL(res.url);setMediaUrl(res.url);console.log("Media URL:", mediaUrl);})
       .catch((e) => {console.log(e); console.log("also big sad here\n")});
     }
     else { 
@@ -466,9 +462,9 @@ function VideoChatComponent(props) {
     }
   }
 
-  const setDBMediaURL = async (res) => {
+  const setDBMediaURL = async (url) => {
     await firebase.firestore().collection("sessions").doc(sessionID).update({
-     "media_url": res.url,
+     media_url: url,
   })
   .then(() => console.log("MediaURL Added to DB"))
   .catch((e) => {console.log(e); console.log("big sad here\n")});
