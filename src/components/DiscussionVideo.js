@@ -101,7 +101,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration} = useSessionValue();
+  const {setMediaDuration, sessionID} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -111,7 +111,7 @@ function VideoChatComponent(props) {
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
 
-  const addPinDelayTime = 20;
+  const addPinDelayTime = 0;
 
   const addPin = async (curTime) => {
       // ui on
@@ -128,13 +128,10 @@ function VideoChatComponent(props) {
         curTime = addPinDelayTime;
       }
 
-    await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
-        pinID,
-        pinTime: curTime,
-        // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        sessionID: MiTrainingSessionID,
-        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+        user_id: '',
+        timestamp: '',
+        notes: ''
     })        
     .then( () => {
         setPins([...pins, ]);
@@ -150,8 +147,8 @@ function VideoChatComponent(props) {
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+      transcript: results
     })
     .then( () => {
         setPins([...pins, ]);
@@ -351,12 +348,12 @@ function VideoChatComponent(props) {
     setIsInterviewStarted(false);
     if(props.isRecording) {
       //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
+      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
       console.log("stop recording");
     }
     stopSpeechToText();
-    addTranscript();
+    // addTranscript();
   }
 
   return (

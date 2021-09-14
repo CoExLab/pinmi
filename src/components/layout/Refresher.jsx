@@ -2,10 +2,12 @@ import React, {useState} from 'react';
 import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Fragment } from 'react';
-import { useUserModeValue, useActiveStepValue } from '../../context';
+import { useUserModeValue, useActiveStepValue, useSessionValue} from '../../context';
+import { firebase } from "../../hooks/firebase";
 
 const Refresher = () => {
 	const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const {sessionID} = useSessionValue();
 	const [question1Ans, setQuestion1Ans] = useState('');
 	const [question2Ans, setQuestion2Ans] = useState('');
 
@@ -29,7 +31,20 @@ const Refresher = () => {
 		}
 	  };
 
+  const makeSessionDoc = async () => {
+    const caller = 'tI2fK1Py7Ibsznp3MDz4';  
+    const callee = '6AT1Se8aU93MPGXZ5miK';
+    await firebase.firestore().collection("sessions").doc(sessionID).set({
+      callee_id: callee,
+      caller_id: caller,
+      media_url: "default",
+      duration: '0',
+      transcript: ''
+    });
+  }
+ 
 	const handleNext = () => {
+    makeSessionDoc();
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
 

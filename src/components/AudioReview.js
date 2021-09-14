@@ -44,8 +44,9 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const classes = useStyles();
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
+    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen, sessionID} = useSessionValue();
     // fetch raw pin data here
-    const { pins, setPins } = usePins();
+    const { pins, setPins } = usePins(sessionID);
     // get document ID
     const pinID = generatePushId();
     // hard-coded sessionID here
@@ -56,32 +57,24 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen, sessionID} = useSessionValue();
     const [loadURL, setLoadURL] = useState(false)
 
     let playTimeArr = pins.map(pin => pin.timestamp);
 
-    useEffect(() =>{
-        //callback function when useEffect is called
-        console.log("sessionID: " + sessionID);
-        (async () => await firebase
-        .firestore()
-        .collection("sessions").doc(sessionID).get().then((doc) => {
-            console.log("Here")
-            const recentURL= doc.data().media_url;
-            console.log(recentURL);
-            setMediaUrl(recentURL);
-            // setMediaDuration(recentURL.Duration);
-
-        })) ();
-    },[loadURL]);
+    // useEffect(() =>{
+    //     //callback function when useEffect is called
+    //     console.log("sessionID: " + sessionID);
+    //     (async () => await firebase
+    //     .firestore()
+    //     .collection("sessions").doc(sessionID).update({
+    //         media_url: audio
+    //     })) ();
+    // },[loadURL]);
 
 
     // back to last pin
     const handleLastPin = (index) => {   
-        console.log(audio);
-        console.log(audioLen);
-        console.log(audioProgress);
+        console.log(pins[index]);
         if(curPinIndex > 0){
             setCurPinIndex(index);
             player.current.seekTo(parseFloat(pins.map(pin => pin.timestamp)[index]));
@@ -193,7 +186,10 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const handleProgress = state => {
         setAudioProgress(Math.round(state.playedSeconds)); 
     }
-
+    
+    console.log("AudioLen: " + audioLen);
+    console.log("audio: " + audio );
+    console.log("pins: " + pins);
     return (
         <Grid item xs={12}>
             { curActiveStep === 2 ? 

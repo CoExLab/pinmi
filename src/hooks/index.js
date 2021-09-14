@@ -40,7 +40,7 @@ export const useMediaURL = (sessionID) => {
 
     var unsubscribe = ref.onSnapshot((doc) => {
       let recentURL = doc.data().media_url
-      console.log(recentURL);
+      console.log("recentURL: " + recentURL);
     })
     return () => {
       unsubscribe()
