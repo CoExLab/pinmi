@@ -1,8 +1,24 @@
-import { Box, Container, Paper, Typography } from '@material-ui/core';
+import { Box, Container, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 
 import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
+import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
+
+const useStyles = makeStyles((theme) => ({
+    title: {
+        fontSize: '25px',
+        fontWeight: '600',
+    },
+    page: {
+        margin: '24px 0px',
+    },
+    pageTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+    },
+}));
 
 const getPageTitle = (page) => {
     switch(page) {
@@ -17,10 +33,10 @@ const getPageContent = (page) => {
     switch(page) {
         case 0: return (
             <div>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What do I feel like are my strengths?                              
                 </Box>
-                <Box pl = {3.5}>
+                <Box>
                     <ColorLibTextField
                             id="outlined-secondary"
                             label="Type a strength and press Enter to add"
@@ -31,10 +47,10 @@ const getPageContent = (page) => {
                             margin="normal"
                     />
                 </Box>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What are some opportunities for growth?
                 </Box>
-                <Box pl = {3.5}>
+                <Box>
                     <ColorLibTextField
                             id="outlined-secondary"
                             label="Type and opportunity and press Enter to add"
@@ -49,10 +65,10 @@ const getPageContent = (page) => {
         );
         case 1: return (
             <div>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What steps will I take to improve?
                 </Box>
-                <Box pl = {3.5} >
+                <Box>
                     <ColorLibTextField
                             id="outlined-secondary"
                             fullWidth
@@ -62,10 +78,10 @@ const getPageContent = (page) => {
                             margin="normal"
                     />
                 </Box>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What obstacles might get in the way, and how will I overcome them?
                 </Box>
-                <Box pl = {3.5}>
+                <Box>
                     <ColorLibTextField
                             id="outlined-secondary"
                             fullWidth
@@ -79,10 +95,10 @@ const getPageContent = (page) => {
         );
         case 2: return (
             <div>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What would I like to add to my clinical practice?
                 </Box>
-                <Box pl = {3.5}>
+                <Box>
                     <ColorLibTextField
                         id="outlined-secondary"
                         fullWidth
@@ -92,10 +108,10 @@ const getPageContent = (page) => {
                         margin="normal"
                     />
                 </Box>
-                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
                     What else would I like to keep reflecting on during the next week?
                 </Box>
-                <Box pl = {3.5}>
+                <Box>
                     <ColorLibTextField
                             id="outlined-secondary"
                             fullWidth
@@ -170,19 +186,29 @@ const getPageButtons = (page, setPage) => {
 
 const SelfReflection = () => {
     const [page, setPage] = useState(0);
+    const classes = useStyles();
 
     return (
         <Container maxWidth = 'md'>
-            <Typography variant="h5">
+            <Typography className={classes.title}>
                 Reflect on how the session went and how you felt.
             </Typography>
-            <Paper style={{backgroundColor: 'lightgrey', padding: '10px'}}>
-                <Typography variant="h6">
+            <ColorLibPaper className={classes.page}>
+                <Typography className={classes.pageTitle}>
                     {getPageTitle(page)}
                 </Typography>  
                 {getPageContent(page)}
-                {getPageButtons(page, setPage)}
-            </Paper>
+                <div 
+                    style={{
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        margin: '20px 0 0 0'
+                    }}
+                >
+                    {getPageButtons(page, setPage)}
+                </div>
+            </ColorLibPaper>
         </Container>
     );
 }

@@ -36,6 +36,9 @@ const theme = createMuiTheme({
       light: '#DDEEF9',
     },
   },
+  typography: {
+    fontFamily: "'Poppins', sans-serif",
+  }
 });
 
 const App = () => {
