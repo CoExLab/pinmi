@@ -542,9 +542,9 @@ function VideoChatComponent(props) {
           }`}
           >
           {!isStreamSubscribed && renderToolbar()}
-          </div> 
-          </div>
-          <div className='actions-btns'>
+        </div> 
+      </div>
+      <div className='actions-btns'>
         <ColorLibCallEndButton
           variant="contained"
           size="medium"

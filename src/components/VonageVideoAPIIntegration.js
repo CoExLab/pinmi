@@ -38,12 +38,13 @@ export function initializeSession(apiKey, sessionId, token) {
       },
       handleError
     );
+    console.log("streamCreated")
     store.dispatch(handleSubscription(true));
   });
 
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
-    console.log("The Video chat has ended");
+    console.log("streamDestroyed");
     store.dispatch(handleSubscription(false));
   });
 
@@ -60,15 +61,18 @@ export function initializeSession(apiKey, sessionId, token) {
 
 export function stopStreaming() {
   session && session.unpublish(publisher);
+  session && session.unsubscribe(subscriber);
 }
 
 // The following functions are used in functionality customization
 export function toggleVideo(state) {
   publisher.publishVideo(state);
 }
+
 export function toggleAudio(state) {
   publisher.publishAudio(state);
 }
+
 export function toggleAudioSubscription(state) {
   subscriber.subscribeToAudio(state);
 }
