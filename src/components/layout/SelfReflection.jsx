@@ -7,16 +7,8 @@ import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
 const useStyles = makeStyles((theme) => ({
-    title: {
-        fontSize: '25px',
-        fontWeight: '600',
-    },
     page: {
         margin: '24px 0px',
-    },
-    pageTitle: {
-        fontSize: '20px',
-        fontWeight: '600',
     },
 }));
 
@@ -190,11 +182,11 @@ const SelfReflection = () => {
 
     return (
         <Container maxWidth = 'md'>
-            <Typography className={classes.title}>
+            <Typography variant='h2'>
                 Reflect on how the session went and how you felt.
             </Typography>
             <ColorLibPaper className={classes.page}>
-                <Typography className={classes.pageTitle}>
+                <Typography variant='h4'>
                     {getPageTitle(page)}
                 </Typography>  
                 {getPageContent(page)}
