@@ -6,12 +6,6 @@ import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorL
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
-const useStyles = makeStyles((theme) => ({
-    page: {
-        margin: '24px 0px',
-    },
-}));
-
 const getPageTitle = (page) => {
     switch(page) {
         case 0: return "Based on today’s session";
@@ -178,14 +172,16 @@ const getPageButtons = (page, setPage) => {
 
 const SelfReflection = () => {
     const [page, setPage] = useState(0);
-    const classes = useStyles();
 
     return (
         <Container maxWidth = 'md'>
             <Typography variant='h2'>
                 Reflect on how the session went and how you felt.
             </Typography>
-            <ColorLibPaper className={classes.page}>
+            <ColorLibPaper 
+                elevation={0}
+                style={{margin:'24px 0px'}}
+            >
                 <Typography variant='h4'>
                     {getPageTitle(page)}
                 </Typography>  
