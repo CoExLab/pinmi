@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import { Box, Container } from '@material-ui/core';
-import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Fragment } from 'react';
 import { useUserModeValue, useActiveStepValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
+import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibComponents/ColorLibToggleButton';
 
 const Refresher = () => {
 	const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
@@ -39,18 +39,18 @@ const Refresher = () => {
 		<Fragment>
       <Container maxWidth='md'>
         <Box align="left" m = {2}> 
-          <ToggleButtonGroup
+          <ColorLibToggleButtonGroup
             value={userMode}
             exclusive
             onChange={handleUserMode}
           >
-            <ToggleButton value="caller" aria-label="left aligned">
+            <ColorLibToggleButton size="small" value="caller" aria-label="left aligned">
               caller
-            </ToggleButton>
-            <ToggleButton value="callee" aria-label="centered">
+            </ColorLibToggleButton>
+            <ColorLibToggleButton size="small" value="callee" aria-label="centered">
               callee
-            </ToggleButton>
-          </ToggleButtonGroup>
+            </ColorLibToggleButton>
+          </ColorLibToggleButtonGroup>
         </Box>
         <Box fontStyle="normal" fontSize={25} textAlign="center" fontWeight="fontWeightBold" >
           Complete the exercises to unlock today's session!
@@ -60,18 +60,18 @@ const Refresher = () => {
           Closed questions are bad.
           </Box>
           <Box align="left" m = {2}>          
-            <ToggleButtonGroup
+            <ColorLibToggleButtonGroup
               value={question1Ans}
               exclusive
               onChange={handleQestion1}
             >
-              <ToggleButton value="true" aria-label="left aligned">
+              <ColorLibToggleButton size="small" value="true" aria-label="left aligned">
                 True
-              </ToggleButton>
-              <ToggleButton value="false" aria-label="centered">
+              </ColorLibToggleButton>
+              <ColorLibToggleButton size="small" value="false" aria-label="centered">
                 False
-              </ToggleButton>
-            </ToggleButtonGroup>
+              </ColorLibToggleButton>
+            </ColorLibToggleButtonGroup>
           </Box>  
         </div>
         {question1Ans === '' ? null :
@@ -83,18 +83,18 @@ const Refresher = () => {
             We use reflections to help clients not only see what they've told us, but to also help organize and understand their experience.
           </Box>
           <Box align="left" m = {2}>          
-            <ToggleButtonGroup
+            <ColorLibToggleButtonGroup
               value={question2Ans}
               exclusive
               onChange={handleQestion2}
             >
-              <ToggleButton value="true" aria-label="left aligned">
+              <ColorLibToggleButton size="small" value="true" aria-label="left aligned">
                 True
-              </ToggleButton>
-              <ToggleButton value="false" aria-label="centered">
+              </ColorLibToggleButton>
+              <ColorLibToggleButton size="small" value="false" aria-label="centered">
                 False
-              </ToggleButton>
-            </ToggleButtonGroup>
+              </ColorLibToggleButton>
+            </ColorLibToggleButtonGroup>
           </Box>  
         </div>
         {question2Ans === '' ? null :

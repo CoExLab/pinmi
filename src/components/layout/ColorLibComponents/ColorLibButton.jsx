@@ -52,27 +52,6 @@ export const ColorLibBackButton = (props) => (
   />
 );
 
-const useSpecialButtonStyles = makeStyles((theme) => ({
-  callEndButton: {
-    backgroundColor: '#DB0000',
-    color: 'white',
-    opacity: '62%',
-    '&:hover': {
-      backgroundColor: '#DB0000',
-      opacity: '100%',
-    },
-  },
-  grayNextButton: {
-    backgroundColor: 'black',
-    color: 'white',
-    opacity: '50%',
-    '&:hover': {
-      backgroundColor: 'black',
-      opacity: '100%',
-    },
-  },
-}));
-
 export const ColorLibCallEndButton = (props) => {
   const CallEndButton = withStyles({
     root: {
