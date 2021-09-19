@@ -13,8 +13,6 @@ const useStyles = makeStyles((theme) => ({
   },
   welcome_intro: {
     color: theme.palette.teal.dark,
-    fontSize: 'xx-large',
-    fontWeight: 'bold',
   },
   welcome_definition: {
     color: theme.palette.gray.main,
@@ -30,10 +28,10 @@ const Landing = () => {
 		<section> 
 			<Navbar />
 			<Container className={classes.welcome_container} maxWidth='md'>
-        <Typography className={classes.welcome_intro}>
+        <Typography variant='h1' className={classes.welcome_intro}>
           Pin-MI is a platform for practicing MI with your peers with the help of pins.
         </Typography>
-        <Typography className={classes.welcome_definition}>
+        <Typography variant='h3' className={classes.welcome_definition}>
           Pins are time marks that you add during your live role-play session to mark parts of conversation that you would like to revisit during a feedback conversation.
         </Typography>
         <br />

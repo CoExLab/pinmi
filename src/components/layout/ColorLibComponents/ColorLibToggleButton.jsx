@@ -13,7 +13,7 @@ const ColorLibToggleButton = withStyles((theme) => ({
     fontSize: '20px',
     fontWeight: '600',
     lineHeight: '1.5',
-    padding: '10px 27px',
+    padding: '6px 27px',
     textTransform: 'none',
   },
   sizeLarge: {
