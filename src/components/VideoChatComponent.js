@@ -380,7 +380,7 @@ function VideoChatComponent(props) {
     setIsInterviewStarted(false);
     if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
-      setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
+      setMediaDuration(Math.floor((Date.now() - videoCallTimer)));
       //props.stopRec();
       console.log("stop recording");
     }
@@ -453,8 +453,10 @@ function VideoChatComponent(props) {
   const saveArchiveURL = async () => {
     if(props.isArchiveHost) {
       let url = baseURL + 'archive/'+ archiveData.id;
-      await fetch(url)
-      .then(res => { setDBMediaURL(res.url);setMediaUrl(res.url);console.log("Media URL:", mediaUrl);})
+      await fetch(url, {
+        method: 'GET', 
+      })
+      .then(res => {res.json().then(data => { console.log("result:" + data.url);setDBMediaURL(data.url);setMediaUrl(data.url);console.log("Media URL:", mediaUrl);})})
       .catch((e) => {console.log(e); console.log("also big sad here\n")});
     }
     else { 

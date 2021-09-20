@@ -44,7 +44,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const classes = useStyles();
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
-    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen, sessionID} = useSessionValue();
+    const {mediaUrl: audio, setMediaUrl, mediaDuration: audioLen, setMediaDuration: setAudioLen, sessionID} = useSessionValue();
     // fetch raw pin data here
     const { pins, setPins } = usePins(sessionID);
     // get document ID
@@ -58,6 +58,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
     const [loadURL, setLoadURL] = useState(false)
+    // const [audioLen, setAudioLen] = useState(0);
 
     let playTimeArr = pins.map(pin => pin.timestamp);
 
@@ -187,9 +188,9 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         setAudioProgress(Math.round(state.playedSeconds)); 
     }
     
-    console.log("AudioLen: " + audioLen);
-    console.log("audio: " + audio );
-    console.log("pins: " + pins);
+    // console.log("AudioLen: " + audioLen);
+    // console.log("audio: " + audio );
+    // console.log("pins: " + pins);
     return (
         <Grid item xs={12}>
             { curActiveStep === 2 ? 
@@ -213,7 +214,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 <ReactPlayer
                     ref={player}
                     url={audio}
-                    controls = {true}
+                    controls={true}
                     width="100%"
                     height="55px"
                     style={{ marginBottom: 8 }}
@@ -231,10 +232,16 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 />
                 <button onClick ={() => {setLoadURL(!loadURL)}}>Load URL</button>
                 <div className={classes.root} >
-                    <Fab color="default" aria-label="last" className={classes.fab} 
+                    {curPinIndex == 0 ? 
+                    <Fab color="default" disabled="true" aria-label="last" className={classes.fab}>
+                        <NavigateBeforeIcon />
+                    </Fab>
+                    : 
+                    <Fab color="default" disabled="false" aria-label="last" className={classes.fab} 
                          onClick={() => handleLastPin(curPinIndex - 1)} >
                         <NavigateBeforeIcon />
                     </Fab>
+                    }
                     <Fab color="default" aria-label="addPin"
                           onClick={() => handlePin()} disabled = {pinBtnDisabled}>
                         {pinBtnDisabled 
@@ -246,10 +253,13 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                         </Icon>   
                         }
                     </Fab>
-                    <Fab color="default" aria-label="next" 
-                          onClick={() => handleNextPin(curPinIndex + 1)} >
+                    {curPinIndex == pins.length 
+                    ? <Fab color="default" disabled="true" aria-label="next"> </Fab>
+                    : <Fab color="default" aria-label="next" 
+                          onClick={() => handleNextPin(curPinIndex + 1)}>
                         <NavigateNextIcon />    
                     </Fab>
+                    }
                     {/* below are something thing only for debugging */}
                     {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
                     <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
