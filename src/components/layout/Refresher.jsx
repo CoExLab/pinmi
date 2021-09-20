@@ -178,6 +178,7 @@ const Refresher = () => {
             value={userMode}
             exclusive
             onChange={handleUserMode}
+            disabled={submitted}
           >
             <ColorLibToggleButton size="small" value="caller">
               Caller
@@ -204,10 +205,10 @@ const Refresher = () => {
               exclusive
               onChange={handleQuestion1}
             >
-              <ColorLibToggleButton size="small" value="true">
+              <ColorLibToggleButton size="small" value="true" disabled={submitted}>
                 True
               </ColorLibToggleButton>
-              <ColorLibToggleButton size="small" value="false">
+              <ColorLibToggleButton size="small" value="false" disabled={submitted}>
                 False
               </ColorLibToggleButton>
             </ColorLibToggleButtonGroup>
@@ -232,10 +233,10 @@ const Refresher = () => {
               exclusive
               onChange={handleQuestion2}
             >
-              <ColorLibToggleButton size="small" value="true">
+              <ColorLibToggleButton size="small" value="true" disabled={submitted}>
                 True
               </ColorLibToggleButton>
-              <ColorLibToggleButton size="small" value="false">
+              <ColorLibToggleButton size="small" value="false" disabled={submitted}>
                 False
               </ColorLibToggleButton>
             </ColorLibToggleButtonGroup>
