@@ -66,6 +66,20 @@ const theme = createMuiTheme({
       fontWeight: 600,
       lineHeight: '30px',
     },
+    subtitle1: {
+      fontFamily: 'Karla',
+      fontSize: '20px',
+      fontWeight: 700,
+      lineHeight: '23.38px',
+      letterSpacing: '-0.015em',
+    },
+    subtitle2: {
+      fontFamily: 'Karla',
+      fontSize: '16px',
+      fontWeight: 700,
+      lineHeight: '18.7px',
+      letterSpacing: '-0.02em',
+    },
     body1: {
       fontFamily: 'Karla',
       fontSize: '20px',

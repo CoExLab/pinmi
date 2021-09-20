@@ -16,7 +16,7 @@ const ColorLibPaper = withStyles((theme) => ({
     // For Refresher Page final answer preview
     borderRadius: '10px',
     boxShadow: '0px 0px 9px rgba(51, 126, 146, 0.15)',
-    padding: '6px 14px',
+    padding: '10px 20px',
   },
 }))(Paper);
 

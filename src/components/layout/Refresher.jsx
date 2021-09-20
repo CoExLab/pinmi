@@ -9,7 +9,8 @@ import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
 
 const Refresher = () => {
-	const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const [submitted, setSubmitted] = useState(false);
 	const [question1Ans, setQuestion1Ans] = useState('');
 	const [question2Ans, setQuestion2Ans] = useState('');
 
@@ -21,13 +22,13 @@ const Refresher = () => {
 		}
 	};
 
-	const handleQestion1 = (event, newAns) => {
+	const handleQuestion1 = (event, newAns) => {
 	  if (newAns !== null) {
 		setQuestion1Ans(newAns);
 	  }
 	};
 
-	const handleQestion2 = (event, newAns) => {
+	const handleQuestion2 = (event, newAns) => {
 		if (newAns !== null) {
 		  setQuestion2Ans(newAns);
 		}
@@ -35,7 +36,139 @@ const Refresher = () => {
 
 	const handleNext = () => {
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
-	};
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+  }
+  
+  /* TODO: The 'submittedResponse's are just placeholders for now.
+   * After the database is set up, then should be replaced with what was sent to the database. */
+  const openEndedQuestions = [
+    {
+      question: "Are you doing OK today?",
+      description: "Convert the closed question to open-ended...",
+      submittedResponse: "How is your day going?",
+      sampleResponse: "What has been good in your day so far?",
+    }, 
+    {
+      question: "How much do you drink on a typical drinking occasion?",
+      description: "Convert the closed question to open-ended...",
+      submittedResponse: "Do you drink occasionally?",
+      sampleResponse: "What's a typical drinking occasion like for you?",
+    },
+    {
+      question: "I don't get what we're supposed to be doing here.",
+      description: "Form a question in response to the client statement...",
+      submittedResponse: "Do you understand why I am asking you these questions?",
+      sampleResponse: "What's your understanding of why you are here?",
+    },
+    {
+      question: "I love my kids, but sometimes they push me to the edge, and then I do things I shouldn't.",
+      description: "Form a question in response to the client statement...",
+      submittedResponse: "Would you like me to help you with some coping skills?",
+      sampleResponse: "What are the feelings like after one of these episodes when you've felt pushed and then reacted in a way you didn't like?",
+    }
+  ]
+
+  const getOpenEndQuestionSet = (question, submitted) => {
+    let response = <div />;
+    if (!submitted) {
+      response = (
+        <ColorLibTextField
+          id="outlined-secondary"
+          label={question.description}
+          fullWidth
+          variant="outlined"
+          multiline
+          rowsMax={2}
+           margin="normal"
+        />
+      );
+    } else {
+      response = (
+        <Grid 
+          container 
+          direction="row"
+          justifyContent="center"
+          style={{
+            alignItems: 'stretch',
+            margin: '16px 0px 26px 0px',
+          }}
+        >
+          <Grid item xs={6}>
+            <ColorLibPaper 
+              elevation={9} 
+              style={{
+                height: 'calc(100% - 16px)',
+                marginRight: '17px',
+              }}
+            >
+              <Typography variant="subtitle2">
+                Your Response
+              </Typography>
+              <Typography variant="body2">
+                {question.submittedResponse}
+              </Typography>
+            </ColorLibPaper>
+          </Grid>
+          <Grid item xs={6}>
+            <ColorLibPaper 
+              elevation={9} 
+              style={{
+                height: 'calc(100% - 16px)',
+                marginLeft: '17px',
+              }}
+            >
+              <Typography variant="subtitle2">
+                Sample Response
+              </Typography>
+              <Typography variant="body2">
+                {question.sampleResponse}
+              </Typography>
+            </ColorLibPaper>
+          </Grid>
+        </Grid>
+      )
+    }
+    return (
+      <Fragment>
+        <Typography variant='body1' style={{marginTop: '10px'}}> 
+          {question.question}
+        </Typography>
+        {response}
+      </Fragment>
+    )
+  }
+
+  const checkValidness = (question1Ans, question2Ans) => !(
+    question1Ans === '' || question2Ans === ''
+  );
+
+  const getButton = (submitted, isValid) => {
+    if (submitted) {
+      return (
+        <ColorLibButton 
+          variant='contained'
+          size='medium' 
+          onClick={handleNext}
+        >
+          Prepare for Live Session
+        </ColorLibButton>
+      );
+    } else {
+      return (
+        <ColorLibButton 
+          size='medium' 
+          variant={!isValid ? 'outlined' : 'contained'}
+          disabled={!isValid ? true : false}
+          onClick={handleSubmit}
+        >
+          Submit
+        </ColorLibButton>
+      );
+    }
+  };
 
 	return (
 		<Fragment>
@@ -55,7 +188,9 @@ const Refresher = () => {
           </ColorLibToggleButtonGroup>
         </Box>
         <Typography variant='h2'>
-          Complete the exercises to unlock today’s session!
+          {submitted 
+          ? "Complete the exercises to unlock today’s session!" 
+          : "Review the following before we begin the practice session."}
         </Typography>
         <Grid container style={{marginTop: '20px'}}>
           <Grid item xs={9}>
@@ -67,7 +202,7 @@ const Refresher = () => {
             <ColorLibToggleButtonGroup
               value={question1Ans}
               exclusive
-              onChange={handleQestion1}
+              onChange={handleQuestion1}
             >
               <ColorLibToggleButton size="small" value="true">
                 True
@@ -77,7 +212,7 @@ const Refresher = () => {
               </ColorLibToggleButton>
             </ColorLibToggleButtonGroup>
           </Grid>
-          {question1Ans === '' ? null :
+          {!submitted ? null :
           <ColorLibPaper elevation={9} style={{margin:'15px 0px'}}>
             <Typography variant="body2">
               {question1Ans === "false" ? "Correct!" : "Sorry, try again."} Closed questions are not “bad.” They simply are limited as a tool, so we try to avoid using them in favor of open-ended questions. However, there are situations in which closed questions are desirable. In general, the aim is to ask more open-ended than closed questions.
@@ -95,7 +230,7 @@ const Refresher = () => {
             <ColorLibToggleButtonGroup
               value={question2Ans}
               exclusive
-              onChange={handleQestion2}
+              onChange={handleQuestion2}
             >
               <ColorLibToggleButton size="small" value="true">
                 True
@@ -105,7 +240,7 @@ const Refresher = () => {
               </ColorLibToggleButton>
             </ColorLibToggleButtonGroup>
           </Grid>
-          {question2Ans === '' ? null :
+          {!submitted ? null :
           <ColorLibPaper elevation={9} style={{margin:'15px 0px'}}>
             <Typography variant="body2">
               {question2Ans === "true" ? "Correct!" : "Sorry, try again."} If we simply hold up the mirror, then we aren’t helping clients become unstuck. In addition to helping clients hear again what they’re told us, we also selectively attend to certain elements and not to others and then present that information back in a manner that helps them attain greater understanding of their situation
@@ -115,60 +250,14 @@ const Refresher = () => {
         <Typography variant='h4' style={{marginTop: '50px'}}>
           Practicing Open-ended Questions
         </Typography>
-        <Typography variant='body1' style={{marginTop: '10px'}}> 
-          Are you doing OK today?                                
-        </Typography>
-        <ColorLibTextField
-            id="outlined-secondary"
-            label="Convert the closed question to open-ended..."
-            fullWidth
-            variant="outlined"
-            multiline
-            rowsMax={2}
-            margin="normal"       
-        />
-        <Typography variant='body1' style={{marginTop: '10px'}}> 
-          How much do you drink on a typical drinking occasion?                               
-        </Typography>
-        <ColorLibTextField
-            id="outlined-secondary"
-            label="Convert the closed question to open-ended..."
-            fullWidth
-            variant="outlined"
-            multiline
-            rowsMax={2}
-            margin="normal"
-        />
-        <Typography variant='body1' style={{marginTop: '10px'}}> 
-          I don’t get what we’re supposed to be doing here.                               
-        </Typography>
-        <ColorLibTextField
-          id="outlined-secondary"
-          label="Form a question in response to the client statement..."
-          fullWidth
-          variant="outlined"
-          multiline
-          rowsMax={2}
-          margin="normal"
-        />
-        <Typography variant='body1' style={{marginTop: '10px'}}> 
-          I love my kids, but sometimes they push me to the edge, and then I do things I shouldn’t.
-        </Typography>
-        <ColorLibTextField
-            id="outlined-secondary"
-            label="Form a question in response to the client statement..."
-            fullWidth
-            variant="outlined"
-            multiline
-            rowsMax={2}
-            margin="normal"
-        />
+        {openEndedQuestions.map(ques => getOpenEndQuestionSet(ques, submitted))}
       </Container>
       
-			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0px 50px 0px'}}>
-        <ColorLibButton variant='outlined' size='medium' onClick={handleNext}>
-          Submit
-        </ColorLibButton>
+			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '50px 0px'}}>
+        {getButton(
+          submitted, 
+          checkValidness(question1Ans, question2Ans)
+        )}
 			</div>
 			
 		</Fragment>
