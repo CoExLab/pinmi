@@ -46,13 +46,10 @@ const useStyles = makeStyles((theme) => ({
     },
     innerText_title: {
         color: 'white',
-        fontSize: 'xx-large',
-        fontWeight: 'bold',
         marginTop: '30px',
     },
     innerText_content: {
         color: 'white',
-        fontWeight: 'bold',
         marginBottom: '20px',
     },
     rescheduleButton: {
@@ -78,10 +75,10 @@ const Completion = () => {
                         </Icon>
                     </Fab>
                     <br />
-                    <Typography className={classes.innerText_title}>
+                    <Typography variant='h1' className={classes.innerText_title}>
                         Congratulations!
                     </Typography>
-                    <Typography className={classes.innerText_content}>
+                    <Typography variant='h2' className={classes.innerText_content}>
                         You have successfully finished today’s session in Pin-MI.
                     </Typography>
                     <br />

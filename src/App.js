@@ -37,7 +37,63 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: [
+      'Poppins', 
+      'Karla',
+      'sans-serif'
+    ].join(','),
+    h1: {
+      fontFamily: 'Poppins',
+      fontSize: '35px',
+      fontWeight: 700,
+      lineHeight: '52.5px',
+    },
+    h2: {
+      fontFamily: 'Poppins',
+      fontSize: '25px',
+      fontWeight: 600,
+      lineHeight: '37.5px',
+    },
+    h3: {
+      fontFamily: 'Poppins',
+      fontSize: '20px',
+      fontWeight: 400,
+      lineHeight: '30px',
+    },
+    h4: {
+      fontFamily: 'Poppins',
+      fontSize: '20px',
+      fontWeight: 600,
+      lineHeight: '30px',
+    },
+    subtitle1: {
+      fontFamily: 'Karla',
+      fontSize: '20px',
+      fontWeight: 700,
+      lineHeight: '23.38px',
+      letterSpacing: '-0.015em',
+    },
+    subtitle2: {
+      fontFamily: 'Karla',
+      fontSize: '16px',
+      fontWeight: 700,
+      lineHeight: '18.7px',
+      letterSpacing: '-0.02em',
+    },
+    body1: {
+      fontFamily: 'Karla',
+      fontSize: '20px',
+      fontWeight: 400,
+      lineHeight: '23.38px',
+      letterSpacing: '-0.015em',
+    },
+    body2: {
+      fontFamily: 'Karla',
+      fontSize: '16px',
+      fontWeight: 400,
+      lineHeight: '18.7px',
+      letterSpacing: '-0.02em',
+    }
   }
 });
 
