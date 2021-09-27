@@ -5,6 +5,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ReactPlayer from 'react-player';
 //import audio from '../other/audio.mp3';
+import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer';
 import pin from '../other/pin.svg';
 import {formatTime, generatePushId} from '../helper/index';
 
@@ -57,6 +58,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
     const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
+    const [audioPlaying, setAudioPlaying] = useState(false);
+    console.log(audio, audioLen);
     const [loadURL, setLoadURL] = useState(false)
 
     let playTimeArr = pins.map(pin => pin.pinTime);
@@ -199,6 +202,13 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         setAudioProgress(Math.round(state.playedSeconds)); 
     }
 
+    const handleAudioProgress = (currentTime) => {
+        setAudioProgress(currentTime);
+        if (player.current != null) {
+            player.current.seekTo(currentTime);
+        }
+    }
+
     return (
         <Grid item xs={12}>
             { curActiveStep === 2 ? 
@@ -213,15 +223,29 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             ) 
             }
             <Paper variant='outlined' style={{ padding: 10, marginTop: 10 }}>         
-                <SliderBar 
+                {/* <SliderBar 
                     maxValue = {audioLen} 
                     curValue = {audioProgress} 
                     pinMarks = {pins.map(pin => pin.pinTime)}
                     canClick = {pinBtnDisabled}
+                /> */}
+                <ColorLibAudioPlayer
+                    playerStatus = {audioPlaying}
+                    setPlayerStatus = {setAudioPlaying}
+                    currentTime = {
+                        audioProgress
+                    }
+                    setCurrentTime = {handleAudioProgress}
+                    // duration = {372}
+                    duration = {audioLen}
+                    marks = {[20, 80]}
                 />
                 <ReactPlayer
+                    hidden
+                    playing = {audioPlaying}
                     ref={player}
                     url={audio}
+                    // url={"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
                     controls = {true}
                     width="100%"
                     height="55px"
@@ -238,7 +262,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     //     // }
                     // }}
                 />
-                <div className={classes.root} >
+                {/* <div className={classes.root} >
                     <Fab 
                         color="default" 
                         aria-label="last" 
@@ -260,12 +284,12 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     <Fab color="default" aria-label="next" 
                           onClick={() => handleNextPin(curPinIndex + 1)} >
                         <NavigateNextIcon />    
-                    </Fab>
+                    </Fab> */}
                     {/* below are something thing only for debugging */}
                     {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
                     <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
                     <Typography>{"Current pin index: " + curPinIndex}</Typography> */}
-                </div>
+                {/* </div> */}
             </Paper>
         </Grid>
     );
