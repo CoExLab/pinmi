@@ -23,8 +23,6 @@ function createData(name, role, fat, carbs, protein) {
   
   const rows = [
     createData('Full Name', 'Julia Rogers', 6.0, 24, 4.0),
-    createData('Age', 28, 237, 9.0, 37, 4.3),
-    createData('Gender', 'F', 262, 16.0, 24, 6.0),
     createData('Reason for appointment', 'I’m going through a hard time and I’m not sure what to do.', 262, 16.0, 24, 6.0),
   ];
 

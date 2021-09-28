@@ -9,7 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box, Card, Typography } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
@@ -19,7 +19,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Popper from '@material-ui/core/Popper';
+import CardContent from '@material-ui/core/CardContent';
 
+import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 
 import {
@@ -56,12 +58,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VideoChatComponent(props) {
+function VideoChatComponentSecond(props) {
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-    addPin(Date.now());
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
@@ -145,7 +146,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration , setMediaUrl, sessionID, mediaUrl} = useSessionValue();
+  const {setMediaDuration , setMediaUrl} = useSessionValue();
   // fetch raw pin data here
   const { pins, setPins } = usePins();
   // get document ID
@@ -153,7 +154,10 @@ function VideoChatComponent(props) {
   // get trans ID
   const transID = generatePushId();
   // hard-coded sessionID here
-  const addPinDelayTime = 0;
+  const MiTrainingSessionID = "123";
+  
+  //what is going on with addPinDelayTime????
+  const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
       // ui on
@@ -164,17 +168,20 @@ function VideoChatComponent(props) {
           setPinBtnDisabled(false);
       }, 800);
 
-      if(curTime > addPinDelayTime){
-        curTime -= addPinDelayTime;
-      } else{
-        curTime = addPinDelayTime;
-      }
-      //user_id hardcoded
-    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add( {
-      user_id: '6AT1Se8aU93MPGXZ5miK',
-      timestamp: formatTime(curTime),
-      notes: '',
-    })      
+      // if(curTime > addPinDelayTime){
+      //   curTime -= addPinDelayTime;
+      // } else{
+      //   curTime = addPinDelayTime;
+      // }
+
+    await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
+        pinID,
+        pinTime: curTime,
+        // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        sessionID: MiTrainingSessionID,
+        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+    })        
     .then( () => {
         setPins([...pins, ]);
     })
@@ -188,53 +195,8 @@ function VideoChatComponent(props) {
     console.log(curTime);  
   }
 
-  const addTranscript = async () => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
-      "transcript": results
-    })
-    .then( () => {
-        setPins([...pins, ]);
-    })
-    .then(() => {
-        console.log("Document successfully written!");    
-    })
-    .catch((error) => {
-        console.error("Error writing document: ", error);
-    });  
-    console.log("finished writing transcript")    
-  }
+  
 
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
-  }
 
 
   const renderToolbar = () => {
@@ -341,12 +303,18 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'pin-Btn'
-          onClick={() => {handlePinButtonClick()}}>
-          <Icon classes={{ root: classes.iconRoot }}>
-              <img className={classes.imageIcon} src={pin} alt="" />
-          </Icon>   
-        </Fab>
+        <Box width='10%'>
+        <Card variant='outlined' aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'card' width='100'>
+        <CardContent>
+        <Typography variant="body2" component="p">
+        What did you learn from today’s discussion?
+          <br />
+          <br />
+          Be sure to thank your peer for their time!
+        </Typography>
+      </CardContent>
+        </Card>
+        </Box>
       </>
     );
   };
@@ -357,7 +325,7 @@ function VideoChatComponent(props) {
     setLoadingStatus(true);
     await fetch(baseURL + "room/" + room)
     .then(function(res) {
-      return res.json();
+      return res.json()
     })
     .then(function(res) {
       console.log("got server info");
@@ -369,111 +337,27 @@ function VideoChatComponent(props) {
       setLoadingStatus(false);
       console.log("start chat now");
       setIsInterviewStarted(true);
+      setVideoCallTimer(Date.now());
       if(props.isArchiveHost) {
         //props.startRec();
         console.log("start recording");
       }
       //pass in videoCallTimer so we can create time stamps
-      startSpeechToText(); 
     }) 
     .catch((error) => {console.log(error)});
   }
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if(props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
-      setMediaDuration(Math.floor((Date.now() - videoCallTimer)));
+      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
       console.log("stop recording");
     }
-    //this fetches the archive url
-    await saveArchiveURL()
-    .then(() => {
-      stopSpeechToText();
-      // addTranscript();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((error) => {console.log(error)});
   }
 
-
-  const handleStartArchive = async () => {
-    //create json to send as the body for post
-    const data = {
-      sessionId: sessionId,
-      resolution: '640x480',
-      outputMode: 'composed',
-      hasVideo: 'false',
-    };
-    //send post request to server
-    await fetch(baseURL + 'archive/start', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      }, 
-      body: JSON.stringify(data)
-    })
-    //get response from the post request, 
-    //and turn it into json so you can access data from it
-    .then(response => {return response.json();})
-    .then((archiveData) => {
-      console.log("archive data: " + archiveData);
-      setArchiveData(archiveData);
-    })
-    .catch((error) => {console.log(error)})
-    setVideoCallTimer(Date.now());
-  }
-
-  const handleStopArchive = async () => {
-    var url = baseURL + 'archive/'+ archiveData.id + '/stop';
-    await fetch(url, {
-      method: 'POST', 
-    })
-    .then(res => res.json())
-    .then((res) => {
-      console.log(res);
-    })
-  }
-
-  const getLastestArchive = async () => {
-    let url = 'https://pinmi-node-server.herokuapp.com/' + 'archive'
-    await fetch(url)
-    .then((res) => {
-      return res.json()
-      //return archives[archives.length - 1];
-    })
-    .then((arc) => {
-      let latestArc = arc[arc.length-1];
-      console.log(latestArc.duration);
-      console.log(latestArc.url);
-      setMediaUrl(latestArc.url);
-    })
-    .catch((e) => {console.log(e)});
-  }
-
-//if status is available and if timing checks out, and if session id is correct
-  const saveArchiveURL = async () => {
-    if(props.isArchiveHost) {
-      let url = baseURL + 'archive/'+ archiveData.id;
-      await fetch(url, {
-        method: 'GET', 
-      })
-      .then(res => {res.json().then(data => { console.log("result:" + data.url);setDBMediaURL(data.url);setMediaUrl(data.url);console.log("Media URL:", mediaUrl);})})
-      .catch((e) => {console.log(e); console.log("also big sad here\n")});
-    }
-    else { 
-      //getLastestArchive()
-    }
-  }
-
-  const setDBMediaURL = async (url) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
-     media_url: url,
-  })
-  .then(() => console.log("MediaURL Added to DB"))
-  .catch((e) => {console.log(e); console.log("big sad here\n")});
-  }
 
 
   
@@ -488,28 +372,40 @@ function VideoChatComponent(props) {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"What is pinning for? "}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"You have discussed 2 out of 3 pins."}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <p>Click on the pin to create time marks of</p>
-                        <ul>
-                            <li>situations where you struggled to use MI</li>
-                            <li>instances of effective MI use</li>
-                        </ul>
-                        <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
+                        <p>Are you sure you want to finish discussing pins?</p>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <ColorLibNextButton
+                <Box m={2}>
+                  <div direction='row' align='center'>
+                  <ColorLibButton
                     variant='contained'
+                    size='medium'
+                    onClick={
+                      () => setOpen(false)
+                    }
+                    autoFocus
+                  >
+                    Continue with Discussion
+                  </ColorLibButton>
+                  <Box mt={2}>
+                  <ColorLibNextButton
+                    variant='outlined'
                     size='medium'
                     onClick={
                       () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
                     }
                     autoFocus
                   >
-                    Join Now
+                    Finish Discussing pins
                   </ColorLibNextButton>
+                  </Box>
+                  
+                  </div>
+                  </Box>
                 </DialogActions>
             </Dialog>    
       
@@ -532,33 +428,19 @@ function VideoChatComponent(props) {
           </div> 
           </div>
           <div className='actions-btns'>
-        <ColorLibCallEndButton
+        
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>
+        <ColorLibCallEndButton 
           variant="contained"
           size="medium"
-          onClick={() => handleFinishChat()}
-          disabled={!isInterviewStarted}
+          onClick={handleNext}
         >
-          Begin Discussion Prep
+          Begin Self-Reflection
         </ColorLibCallEndButton>
-        {props.isArchiveHost ? 
-        <Button 
-          onClick = {() => handleStartArchive()}
-          color='secondary'
-          variant="contained"
-        >Start Recording
-        </Button> :
-        <div></div>}
-        {props.isArchiveHost? 
-        <Button 
-          onClick = {() => handleStopArchive()}
-          color='secondary'
-          variant="contained"
-        >Stop Recording
-        </Button> :
-        <div></div>}
+      </div>
       </div>
     </>
   );
 }
 
-export default VideoChatComponent;
+export default VideoChatComponentSecond;

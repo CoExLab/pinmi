@@ -5,6 +5,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ReactPlayer from 'react-player';
 //import audio from '../other/audio.mp3';
+import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer';
 import pin from '../other/pin.svg';
 import {formatTime, generatePushId} from '../helper/index';
 
@@ -21,19 +22,19 @@ import { firebase } from "../hooks/firebase";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         '& > *': {
           margin: theme.spacing(1),
         },
-      },
+    },
     imageIcon: {
         height: '100%'
     },
     iconRoot: {
         textAlign: 'center'
     },
-    fab: {
-        marginLeft: 500,
-    },    
     display: 'flex',
     '& > * + *': {
       marginLeft: theme.spacing(5),
@@ -187,15 +188,19 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const handleProgress = state => {
         setAudioProgress(Math.round(state.playedSeconds)); 
     }
-    
-    // console.log("AudioLen: " + audioLen);
-    // console.log("audio: " + audio );
-    // console.log("pins: " + pins);
+
+    const handleAudioProgress = (currentTime) => {
+        setAudioProgress(currentTime);
+        if (player.current != null) {
+            player.current.seekTo(currentTime);
+        }
+    }
+
     return (
         <Grid item xs={12}>
             { curActiveStep === 2 ? 
             (
-                <Typography variant='h6'>Listen back to your audio recording with pins and take notes to discuss with your peer. 
+                <Typography variant='h6'>Listen back to the session, add pins, and take notes to discuss with your peer. 
                 </Typography> 
             ) 
             : 
@@ -205,16 +210,30 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             ) 
             }
             <Paper variant='outlined' style={{ padding: 10, marginTop: 10 }}>         
-                <SliderBar 
+                {/* <SliderBar 
                     maxValue = {audioLen} 
                     curValue = {audioProgress} 
                     pinMarks = {pins.map(pin => pin.timestamp)}
                     canClick = {pinBtnDisabled}
+                /> */}
+                <ColorLibAudioPlayer
+                    playerStatus = {audioPlaying}
+                    setPlayerStatus = {setAudioPlaying}
+                    currentTime = {
+                        audioProgress
+                    }
+                    setCurrentTime = {handleAudioProgress}
+                    // duration = {372}
+                    duration = {audioLen}
+                    marks = {[20, 80]}
                 />
                 <ReactPlayer
+                    hidden
+                    playing = {audioPlaying}
                     ref={player}
                     url={audio}
-                    controls={true}
+                    // url={"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
+                    controls = {true}
                     width="100%"
                     height="55px"
                     style={{ marginBottom: 8 }}
@@ -230,7 +249,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     //     // }
                     // }}
                 />
-                <button onClick ={() => {setLoadURL(!loadURL)}}>Load URL</button>
+                {/* <button onClick ={() => {setLoadURL(!loadURL)}}>Load URL</button>
                 <div className={classes.root} >
                     {curPinIndex == 0 ? 
                     <Fab color="default" disabled="true" aria-label="last" className={classes.fab}>
@@ -257,14 +276,13 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     ? <Fab color="default" disabled="true" aria-label="next"> </Fab>
                     : <Fab color="default" aria-label="next" 
                           onClick={() => handleNextPin(curPinIndex + 1)}>
-                        <NavigateNextIcon />    
-                    </Fab>
-                    }
+                        <NavigateNextIcon />     
+                    </Fab> */}
                     {/* below are something thing only for debugging */}
                     {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
                     <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
                     <Typography>{"Current pin index: " + curPinIndex}</Typography> */}
-                </div>
+                {/* </div> */}
             </Paper>
         </Grid>
     );

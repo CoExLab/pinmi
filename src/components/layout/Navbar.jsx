@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -18,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
   navbar_button: {
     color: theme.palette.gray.dark,
-    textTransform: "capitalize",
+    fontSize: "16px",
+    margin: "0px 13px",
+    padding: "6px 17px",
   },
 }));
 
@@ -32,9 +35,33 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
-          {["home", "practice", "review", "message"].map((label) => (
-            <Button className={classes.navbar_button} key={label}>{label}</Button>
+          <ColorLibButton 
+            variant="text" 
+            size="small"
+            className={classes.navbar_button} 
+            href="/"
+          >
+            Home
+          </ColorLibButton>
+          {["Practice", "Review"].map((label) => (
+            <ColorLibButton 
+              variant="text" 
+              size="small" 
+              key={label} 
+              className={classes.navbar_button}
+            >
+              {label}
+            </ColorLibButton>
           ))}
+          <ColorLibButton 
+            variant="outlined" 
+            size="small" 
+            key="message" 
+            className={classes.navbar_button} 
+            endIcon={<KeyboardArrowDownIcon />}
+          >
+            Message
+          </ColorLibButton>
         </Toolbar>
       </AppBar>
     </div>

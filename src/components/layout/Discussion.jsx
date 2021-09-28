@@ -1,11 +1,16 @@
-import { Button } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import React, {useState, useEffect} from 'react';
 import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
 import Session from "./PracticeSession/Session.jsx"
 import Collaboration from "./Collaboration.jsx"
 import VideoChatComponent from "../VideoDiscussion.js";
+
+import VideoChatComponentSecond from "../VideoDiscussionSecond.js";
 import { useReactMediaRecorder } from "react-media-recorder";
+import { ColorLibNextButton } from './ColorLibComponents/ColorLibButton';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
+
 
 //context
 import { useSessionValue } from "../../context";
@@ -18,20 +23,39 @@ function getConditionalContent(page, apiKey, sessionId, token, isRecording, star
       case 1:
         return <Collaboration />;
       case 2:
-        return <VideoChatComponent apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording} startRec = {startRecording} stopRec = {stopRecording}/> ;
+        return <VideoChatComponentSecond apiKey = {apiKey} sessionId = {sessionId} token = {token} isRecording = {isRecording} startRec = {startRecording} stopRec = {stopRecording}/> ;
       default:
         return <div>Unknown</div>;
     }
 }
 
-function getConditionalButton(page) {
+function getConditionalButton(page, setPage) {
+  const handleButton = () => {
+    setPage(page+1);
+}
     switch (page) {
       case 0:
-        return "Review Client Information"
+        return (
+          <div>
+            <Box align='center' m = {2} mb = {20}> 
+              <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton()}>
+                Let's talk about our pins
+              </ColorLibNextButton>
+            </Box>
+          </div>
+        );
       case 1:
-        return "Begin Live Session";
+        return (
+          <div>
+            <Box align='center' m = {2} mb = {20}> 
+              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton()}>
+                Finish Discussing Pins
+              </ColorLibButton>
+            </Box>
+          </div>
+        );
       case 2:
-        return "Begin Discussion Prep";
+        return ;
       default:
         return <div>Unknown</div>;
     }
@@ -39,9 +63,6 @@ function getConditionalButton(page) {
 
 const PracticeSession = () => {
     const [page, setPage] = useState(0);
-    const handleButton = () => {
-        setPage(page+1);
-    }
 
     const [room, setRoom] = useState("hellooo");
     //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
@@ -63,8 +84,8 @@ const PracticeSession = () => {
 
     return (  
         <div>
-            {getConditionalContent(page, apiKey, sessionId, token, isRecording, startRecording, stopRecording)}
-            <Button onClick={() => setPage(page+1)}>{getConditionalButton(page)}</Button>
+            {getConditionalContent(page, apiKey, sessionId, token, isRecording, startRecording, stopRecording)}  
+            {getConditionalButton(page, setPage)}
         </div>
     );
 }
