@@ -80,7 +80,7 @@ function VideoChatComponent(props) {
   };
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((activeStep) => activeStep + 1);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -113,15 +113,16 @@ function VideoChatComponent(props) {
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
-
   
   
-
+  //This is where the video stopping and starting is controlled
   useEffect(() => {
+    console.log("isInterviewStarted has changed");
     isInterviewStarted
       ? initializeSession(apiKey, sessionId, token)
       : stopStreaming();
   }, [isInterviewStarted]);
+
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
@@ -360,7 +361,14 @@ function VideoChatComponent(props) {
     setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);
-    await fetch(baseURL + "room/" + room)
+    if (props.mode == "Discussion"){
+      var roomAddOn = "Discussion";
+      console.log("Discussion Room Video component")
+    }
+    else{
+      var roomAddOn = "";
+    }
+    await fetch(baseURL + "room/" + room + roomAddOn)
     .then(function(res) {
       return res.json()
     })
@@ -391,14 +399,14 @@ function VideoChatComponent(props) {
       //setting mediaDuration to be used in AudioReview
       //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
-      console.log("stop recording");
+      //console.log("stop recording");
     }
     //this fetches the archive url
     await saveArchiveURL()
     .then(() => {
       stopSpeechToText();
       addTranscript();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      handleNext()
     })
     .catch((error) => {console.log(error)});
   }
