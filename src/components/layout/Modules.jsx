@@ -15,13 +15,13 @@ import { usePins } from '../../hooks/index';
 function getStepContent(step) {
     switch (step) {
       case 0:
-        return <Refresher />
+        return <Refresher />;
       case 1:
         return <PracticeSession />;
       case 2:
         return <DisscussionPrep/> ;
       case 3:
-        return <Discussion />;
+        return <Discussion/>;
       case 4:
         return <SelfReflection />;
       default:
@@ -30,11 +30,7 @@ function getStepContent(step) {
 }
 
 const Modules = () => {    
-
-
-
     const {curActiveStep} = useActiveStepValue();
-    const { pins } = usePins();
     
     return (  
         <div>
