@@ -10,8 +10,11 @@ function handleError(error) {
 
 let session, publisher, subscriber;
 
-export function initializeSession(apiKey, sessionId, token) {
+export function initializeSession(apiKey, sessionId, token, isFirstSession) {
+  //if a session has not been created create it. 
+  //if it has been created, skip creating a new one
   session = OT.initSession(apiKey, sessionId);
+
 
   // Create a publisher
   publisher = OT.initPublisher(
@@ -44,7 +47,7 @@ export function initializeSession(apiKey, sessionId, token) {
 
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
-    console.log("streamDestroyed");
+    console.log("Someones stream has been destroyed");
     store.dispatch(handleSubscription(false));
   });
 
@@ -59,9 +62,24 @@ export function initializeSession(apiKey, sessionId, token) {
   });
 }
 
+
 export function stopStreaming() {
+  //first unpublishing the stream (removing it from DOM, and not sending it out to others)
   session && session.unpublish(publisher);
-  session && session.unsubscribe(subscriber);
+
+  // console.log("stopStreaming event called");
+  
+  // // then removing the event handler that automatically subscribes to new streams
+  // session && session.off();
+
+  // //var isSubscribed = store.getState().videoChat.isStreamSubscribed;
+
+  // // //if the client is subscribed to another stream, then end the subscription
+  // if (subscriber){
+  //   console.log("unsubscribing to subscriber");
+  //   session.unsubscribe(subscriber);
+  //   store.dispatch(handleSubscription(false));
+  // }
 }
 
 // The following functions are used in functionality customization
