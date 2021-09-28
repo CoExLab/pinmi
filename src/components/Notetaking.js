@@ -1,8 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {formatTime} from '../helper/index';
-import { Box, Grid, Paper, TextField } from '@material-ui/core';
+import { Box, Grid, Paper, Fab, Button } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import ReactPlayer from 'react-player';
 
 // firebase hook
 import { usePins } from '../hooks/index';
@@ -10,9 +14,12 @@ import { firebase } from "../hooks/firebase";
 
 //context
 import { useUserModeValue } from '../context';
+import { useSessionValue } from "../context";
 
-const Notetaking = ({curPinIndex}) => {    
+
+const Notetaking = ({curPinIndex, setCurPinIndex}) => {    
     //creating a refernce for TextField Component
+    const player = useRef(null);
     const noteValueRef = useRef('') 
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
@@ -25,9 +32,38 @@ const Notetaking = ({curPinIndex}) => {
     const [curNoteInfo, setCurNoteInfo] = useState('');
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
+    const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
+    const [pinBtnColor, setPinBtnColor] = useState("");
+    const [audioProgress, setAudioProgress] = useState(0);
+    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
+    const [loadURL, setLoadURL] = useState(false)
 
     // user mode switcher
     const {userMode} = useUserModeValue();
+
+    // back to last pin
+    const handleLastPin = (index) => {   
+        console.log(audio);
+        console.log(audioLen);
+        console.log(audioProgress);
+        if(curPinIndex > 0){
+            setCurPinIndex(index);
+            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+        }
+    };
+
+    // go to next pin
+    const handleNextPin = (index, remove = false) => {
+        if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
+            if(!remove){
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                setCurPinIndex(index);
+            } else{                
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+                setCurPinIndex(index - 1);
+            }
+        }
+    };
 
     useEffect(() => {
         fetchCurTextVal(`${userMode}PinInfos.pinNote`);
@@ -101,18 +137,17 @@ const Notetaking = ({curPinIndex}) => {
             <Paper >
                 <h2>{userMode}</h2>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={700} overflow="auto">
+                <Box m={2} height={600} overflow="auto">
                     {curPinIndex !== -1 ? 
                         <Box fontStyle="italic" fontSize={18}>
                             The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                         </Box>
                     : null}
-                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
+                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium"> 
                         Personal Notes
                     </Box>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
@@ -126,9 +161,8 @@ const Notetaking = ({curPinIndex}) => {
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         What is your perspective of what happened at this pin? 
                     </Box>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline
@@ -157,9 +191,8 @@ const Notetaking = ({curPinIndex}) => {
                         </ToggleButtonGroup>
                     </Box>   
                     <MISkillsSheet pinType = {pinType}/>
-                    <TextField
+                    <ColorLibTextField
                         id="outlined-secondary"
-                        label="Type a response..."
                         fullWidth
                         variant="outlined"
                         multiline

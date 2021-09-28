@@ -5,8 +5,9 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
 
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import { useActiveStepValue } from '../../context';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +24,12 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     marginLeft: 450,
     marginRight: 200,
-  }
+  },
+  grid: {
+    "& .MuiGrid-item": {
+      display: 'inline-grid',
+    },
+  },
 }));
 
 const DisscussionPrep = () => {
@@ -40,24 +46,26 @@ const DisscussionPrep = () => {
 
   return (
     <div className={classes.root}>
-      <Container>
-        <Grid container spacing={2}>
+      <Container maxWidth='md'>
+        <Grid container spacing={2} className={classes.grid}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
           />
           <Transcription />
           <Notetaking 
-            curPinIndex = {curPinIndex}/>
+            curPinIndex = {curPinIndex}
+            setCurPinIndex = {setCurPinIndex} />
         </Grid>
       </Container>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Join Discussion
-            </Button>
-            </div>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0'}}>
+        <ColorLibButton 
+          variant="contained"
+          size="medium"
+          onClick={handleNext}>
+            Join Discussion
+        </ColorLibButton>
+      </div>
     </div>
   );
 };

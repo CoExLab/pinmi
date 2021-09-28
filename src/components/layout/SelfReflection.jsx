@@ -1,127 +1,203 @@
-import React, {useState} from 'react';
-import { Paper, Box, TextField, Grid, Button } from '@material-ui/core';
-import { Fragment } from 'react';
+import { Box, Container, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { useState } from 'react';
 
-import { useActiveStepValue } from '../../context';
+import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
+import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
+import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
+
+const getPageTitle = (page) => {
+    switch(page) {
+        case 0: return "Based on today’s session";
+        case 1: return "Make a plan";
+        case 2: return "Prepare for change";
+        default: return "";
+    }
+}
+
+const getPageContent = (page) => {
+    switch(page) {
+        case 0: return (
+            <div>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What do I feel like are my strengths?                              
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                            id="outlined-secondary"
+                            label="Type a strength and press Enter to add"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rowsMax={2}
+                            margin="normal"
+                    />
+                </Box>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What are some opportunities for growth?
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                            id="outlined-secondary"
+                            label="Type and opportunity and press Enter to add"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rowsMax={2}
+                            margin="normal"
+                    />
+                </Box>
+            </div>
+        );
+        case 1: return (
+            <div>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What steps will I take to improve?
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                            id="outlined-secondary"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rowsMax={2}
+                            margin="normal"
+                    />
+                </Box>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What obstacles might get in the way, and how will I overcome them?
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                            id="outlined-secondary"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rowsMax={2}
+                            margin="normal"
+                    />
+                </Box>
+            </div>
+        );
+        case 2: return (
+            <div>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What would I like to add to my clinical practice?
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                        id="outlined-secondary"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rowsMax={2}
+                        margin="normal"
+                    />
+                </Box>
+                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
+                    What else would I like to keep reflecting on during the next week?
+                </Box>
+                <Box>
+                    <ColorLibTextField
+                            id="outlined-secondary"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rowsMax={2}
+                            margin="normal"
+                    />
+                </Box>
+            </div>
+        )
+        default: return <div />;
+    }
+}
+
+const getPageButtons = (page, setPage) => {
+    const handleNext = () => {
+        setPage(page+1);
+    }
+    const handleBack = () => {
+        setPage(page-1);
+    }
+    switch(page) {
+        case 0: return (
+            <ColorLibNextButton 
+                variant="contained" 
+                size="medium" 
+                onClick={handleNext}
+            >
+                Next
+            </ColorLibNextButton>
+        );
+        case 1: return (
+            <div>
+                <ColorLibBackButton 
+                    variant="outlined" 
+                    size="medium"
+                    onClick={handleBack}
+                >
+                    Back
+                </ColorLibBackButton>
+                <ColorLibNextButton 
+                    variant="contained" 
+                    size="medium" 
+                    onClick={handleNext}
+                >
+                    Next
+                </ColorLibNextButton>
+            </div>
+        );
+        case 2: return (
+            <div>
+                <ColorLibBackButton 
+                    variant="outlined" 
+                    size="medium"
+                    onClick={handleBack}
+                >
+                    Back
+                </ColorLibBackButton>
+                <ColorLibButton 
+                    variant="contained"
+                    size="medium"
+                    href="/completion"
+                >
+                    Finish Self-Reflection
+                </ColorLibButton>
+            </div>
+        );
+        default: return <div />;
+    }
+}
 
 const SelfReflection = () => {
-    const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-    
+    const [page, setPage] = useState(0);
+
     return (
-        <Fragment>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
-                    <Paper >
-                        <Grid container spacing={1}>
-                            <Box m={2} height={800} width = {1000} overflow="auto">
-                                <Box fontStyle="normal" fontSize={25} textAlign="center" fontWeight="fontWeightBold" >
-                                    Reflect on how the session went and how you felt.
-                                </Box>
-                                <Box mt = {2} fontStyle="normal" fontSize={20} textAlign="center" fontWeight="fontWeightBold" >
-                                    Based on today’s session
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What do I feel like are my strengths?                              
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What are some opportunities for growth?                             
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-                                <Box mt = {2} fontStyle="normal" fontSize={20} textAlign="center" fontWeight="fontWeightBold" >
-                                    Make a plan
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What steps will I take to improve?                              
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What obstacles might get in the way, and how will I overcome them?                                
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-                                <Box mt = {2} fontStyle="normal" fontSize={20} textAlign="center" fontWeight="fontWeightBold" >
-                                    Prepare for change
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What would I like to add to my clinical practice?                            
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-                                <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" pl={3.5}> 
-                                    What else would I like to keep reflecting on during the next week?                               
-                                </Box>
-                                <Box pl = {3.5} width = {900} >
-                                    <TextField
-                                            id="outlined-secondary"
-                                            fullWidth
-                                            variant="outlined"
-                                            multiline
-                                            rowsMax={2}
-                                            margin="normal"                        
-                                    />
-                                </Box>
-
-
-
-                            </Box>
-                        </Grid>
-                    </Paper>
-
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Finish Self-Reflection
-            </Button>
-            </div>
-        </Fragment>
+        <Container maxWidth = 'md'>
+            <Typography variant='h2'>
+                Reflect on how the session went and how you felt.
+            </Typography>
+            <ColorLibPaper 
+                elevation={0}
+                style={{margin:'24px 0px'}}
+            >
+                <Typography variant='h4'>
+                    {getPageTitle(page)}
+                </Typography>  
+                {getPageContent(page)}
+                <div 
+                    style={{
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        margin: '20px 0 0 0'
+                    }}
+                >
+                    {getPageButtons(page, setPage)}
+                </div>
+            </ColorLibPaper>
+        </Container>
     );
 }
  

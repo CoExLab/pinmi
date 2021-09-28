@@ -5,7 +5,8 @@ import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import VideoChatComponent from '../VideoChatComponent';
 import { useSessionValue, useActiveStepValue } from "../../context";
 import { baseURL } from 'constants';
@@ -24,7 +25,12 @@ const useStyles = makeStyles((theme) => ({
   fab: {
     marginLeft: 450,
     marginRight: 200,
-  }
+  },
+  grid: {
+    "& .MuiGrid-item": {
+      display: 'inline-grid',
+    },
+  },
 }));
 
 const Collaboration = () => {
@@ -46,8 +52,8 @@ const Collaboration = () => {
 
   return (
     <div className={classes.root}>
-      <Container>
-        <Grid container spacing={2}>
+      <Container maxWidth='md'>
+        <Grid container spacing={2} className={classes.grid}>
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
@@ -57,13 +63,6 @@ const Collaboration = () => {
             curPinIndex = {curPinIndex}/>
         </Grid>
       </Container>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button 
-             variant="contained"
-             onClick={handleNext}>
-                Begin Self-Reflection
-            </Button>
-            </div>
     </div>
   );
 };

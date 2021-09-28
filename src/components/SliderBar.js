@@ -13,9 +13,9 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
     root: {
       color: '#52af77',
       height: 8,    
-      marginTop: 20,
-      width: 990,
-      marginLeft: 105,            
+      marginTop: 25,
+      width: 700,
+      marginLeft: 105,
       '&.Mui-disabled': {
         color: '#52af77',
       },
@@ -25,8 +25,8 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
       width: 24,
       backgroundColor: '#fff',
       border: '2px solid currentColor',
-      marginTop: -18,
-      marginLeft: -12,
+      marginTop: 18,
+      marginLeft: 12,
       '&:focus, &:hover, &$active': {
         boxShadow: 'inherit',
       },      
@@ -58,7 +58,7 @@ export default function SliderBar({maxValue, pinMarks, curValue, canClick}) {
         height: 15,
         width: 8,
         marginTop: -10,
-        marginLeft: -3,
+        marginLeft: 3,
       },    
 
     markLabel: {

@@ -69,7 +69,7 @@ const Transcription = () => {
     return (
         <Grid item xs={12} sm={4}>
             <Paper>
-                <Box m={2} height={700} overflow="auto">
+                <Box m={2} height={600} overflow="auto">
                     <Box fontSize={20} fontStyle="Normal" fontWeight="fontWeightBold">
                         Transcript
                     </Box>
