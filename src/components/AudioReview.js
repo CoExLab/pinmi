@@ -53,12 +53,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     // hard-coded sessionID here
     const MiTrainingSessionID = "123";
 
-    //const { mediaURL: audio, setMediaURL } = useMediaURL();
-
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const [loadURL, setLoadURL] = useState(false)
+    const [audioPlaying, setAudioPlaying] = useState(false);
+    // const [loadURL, setLoadURL] = useState(false)
     // const [audioLen, setAudioLen] = useState(0);
 
     let playTimeArr = pins.map(pin => pin.timestamp);
