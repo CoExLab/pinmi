@@ -11,7 +11,7 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useUserModeValue } from '../context';
+import { useSessionValue, useUserModeValue } from '../context';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,8 +32,11 @@ const DissResponse = ({curPinIndex}) => {
     //creating a refernce for TextField Component
     const noteValueRef = useRef('') 
 
+    //get sessionID
+    const {sessionID} = useSessionValue();
+
     // fetch raw pin data here
-    const { pins } = usePins();
+    const [pins, setPins] = useState([]);
 
     // set up states for four different questions
     const [curNoteInfo, setCurNoteInfo] = useState('');
@@ -58,6 +61,12 @@ const DissResponse = ({curPinIndex}) => {
         fetchCurTextVal(`calleePinInfos.pinSkill`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [curPinIndex, userMode])
+
+    useEffect(async () => {
+        const tempPins = [];
+        await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").get().then(snap => snap.docs.map(doc => tempPins.push(doc.data())));
+        setPins(tempPins);
+    }, [pins]);
 
     // for updating and fetching current text field value
     const fetchCurTextVal = async (infoName) => {

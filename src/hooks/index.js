@@ -1,16 +1,18 @@
 import { firebase } from "../hooks/firebase";
 import { useState, useEffect } from 'react';
-
+import { useSessionValue } from "../context";
 // pin hook
 
 export const usePins = () => {
     const [pins, setPins] = useState([]);
-  
+    const {sessionID} = useSessionValue();
     useEffect(() => {
       let unsubscribe = firebase
         .firestore()
-        .collection("Pins")
-        .orderBy("pinTime")
+        .collection("sessions")
+        .doc(sessionID)
+        .collection('pins')
+        .orderBy("timestamp");
 
         // console.log("get data from firebase");
         unsubscribe = unsubscribe.onSnapshot((snapshot) => {
