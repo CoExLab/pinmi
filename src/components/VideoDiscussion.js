@@ -480,23 +480,6 @@ How did today’s mock client session go?
           </div> 
           </div>
           <div className='actions-btns'>
-        
-        {props.isArchiveHost ? 
-        <Button 
-          onClick = {() => handleStartArchive()}
-          color='secondary'
-          variant="contained"
-        >Start Recording
-        </Button> :
-        <div></div>}
-        {props.isArchiveHost? 
-        <Button 
-          onClick = {() => handleStopArchive()}
-          color='secondary'
-          variant="contained"
-        >Stop Recording
-        </Button> :
-        <div></div>}
       </div>
     </>
   );
