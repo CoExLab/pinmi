@@ -6,7 +6,7 @@ import Refresher from './Refresher';
 import SelfReflection from './SelfReflection';
 import Discussion from './Discussion';
 // context
-import { useActiveStepValue } from "../../context";
+import { useActiveStepValue, useSessionValue } from "../../context";
 
 import { usePins } from '../../hooks/index';
 
@@ -32,7 +32,7 @@ function getStepContent(step) {
 const Modules = () => {    
 
 
-
+    const {sessionID} = useSessionValue();
     const {curActiveStep} = useActiveStepValue();
     const { pins } = usePins();
     

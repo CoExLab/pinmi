@@ -8,7 +8,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
 
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useActiveStepValue } from '../../context';
+import { useActiveStepValue, usePinsValue, useSessionValue, useUserModeValue } from '../../context';
+import { firebase } from '../../hooks/firebase';
+import {formatTime, generatePushId} from '../../helper/index';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,12 +38,31 @@ const useStyles = makeStyles((theme) => ({
 const DisscussionPrep = () => {
   const classes = useStyles();
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(-1);
+  const [curPinIndex, setCurPinIndex] = useState(0);
+  const {pins} = usePinsValue();
+  const {sessionID} = useSessionValue();
+  const {userID} = useUserModeValue();
   useEffect(() => {
     window.scrollTo(0,0);
   }, [])
 
+  const savePin = async (index) => {
+    const myPin = pins[index];
+    console.log(myPin);
+    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+      user_id: userID,
+      timestamp: formatTime(myPin.pinTime),
+      notes: myPin.pinInfos.pinNote,
+      perspective: myPin.pinInfos.pinPerspective,
+      category: myPin.pinInfos.pinCategory,
+      category_notes: myPin.pinInfos.pinSkill,
+    })
+    .then(() => {console.log("current pin successfully updated")})
+    .catch((e) => {console.log("pin update unsuccessful: " + e)});
+  }
+
   const handleNext = () => {
+    pins.map((elem, id) => savePin(id));
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
 };
 

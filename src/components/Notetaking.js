@@ -14,7 +14,7 @@ import { firebase } from "../hooks/firebase";
 
 //context
 import { useUserModeValue } from '../context';
-import { useSessionValue } from "../context";
+import { useSessionValue, usePinsValue } from "../context";
 
 
 const Notetaking = ({curPinIndex, setCurPinIndex}) => {    
@@ -24,8 +24,11 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
 
+    //session values
+    const {sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
+
     // fetch raw pin data here
-    const { pins } = usePins();
+    const { pins } = usePinsValue();
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
@@ -35,11 +38,12 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
     const [loadURL, setLoadURL] = useState(false)
 
     // user mode switcher
     const {userMode} = useUserModeValue();
+
+    console.log(pins);
 
     // back to last pin
     const handleLastPin = (index) => {   
@@ -65,22 +69,48 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
         }
     };
 
+    const savePin = async (index) => {
+        console.log("pins:" + pins +"\nindex: " + index);
+        if(index >= 0)
+        {
+            const myPin = pins[index];
+            myPin.pinInfos.pinNote = curNoteInfo;
+            myPin.pinInfos.pinPersepective = curPerspectiveInfo;
+            myPin.pinInfos.pinCategory = pinType;
+            myPin.pinInfos.pinSkill = curSkillInfo;
+            pins[index] = myPin;
+        }        
+    }
+
     useEffect(() => {
-        fetchCurTextVal(`${userMode}PinInfos.pinNote`);
-        fetchCurTextVal(`${userMode}PinInfos.pinPerspective`);
-        fetchCurTextVal(`${userMode}PinInfos.pinCategory`);
-        fetchCurTextVal(`${userMode}PinInfos.pinSkill`);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [curPinIndex, userMode])
+        //update pin values
+        setCurNoteInfo(noteValueRef.current);
+        setCurPerspectiveInfo(perspectiveValueRef.current);
+        setCurSkillInfo(skillValueRef.current);
+        //save pin info
+        savePin(curPinIndex);
+        //clear out all the states
+        setPinType(pins[curPinIndex].pinInfos.pinCategory);
+        setCurNoteInfo(pins[curPinIndex].pinInfos.pinNote);
+        setCurPerspectiveInfo(pins[curPinIndex].pinInfos.pinPersepective);
+        setCurSkillInfo(pins[curPinIndex].pinInfos.pinSkill);
+        //reset all the refs
+        noteValueRef.current = curNoteInfo;
+        perspectiveValueRef.current = curPerspectiveInfo;
+        skillValueRef.current = curSkillInfo;
+    }, [curPinIndex])
+    
 
     // for updating and fetching current text field value
     const fetchCurTextVal = async (infoName) => {
-        const docRef = await firebase.firestore().collection("Pins").doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]));
+        return 
+        const docId = pins[curPinIndex].pinID;
+        const docRef = await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').doc(pins[curPinIndex].pinID);
         const infos = infoName.split(".");
         let curInfo = "";
         const doc = await docRef.get().then((doc) => {
             if (doc.exists) {
-                curInfo = doc.data()[infos[0]][infos[1]];
+                curInfo = doc.data()[infos[1]];
                 return curInfo;
             } else {
                 // doc.data() will be undefined in this case
@@ -110,26 +140,26 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
         } else if(infoName === `${userMode}PinInfos.pinSkill`){
             setCurSkillInfo(input);
         } 
-        let usersUpdate = {};
-        usersUpdate[`${infoName}`] = input;
-        firebase
-            .firestore()
-            .collection("Pins")
-            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
-            .update(usersUpdate)    
-            .then(() => {
-                console.log("Document successfully updated!");
-            })
-            .catch((error) => {
-                // The document probably doesn't exist.
-                console.error("Error updating document: ", error);
-            });
+        // let usersUpdate = {};
+        // usersUpdate[`${infoName}`] = input;
+        // firebase
+        //     .firestore()
+        //     .collection("Pins")
+        //     .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
+        //     .update(usersUpdate)    
+        //     .then(() => {
+        //         console.log("Document successfully updated!");
+        //     })
+        //     .catch((error) => {
+        //         // The document probably doesn't exist.
+        //         console.error("Error updating document: ", error);
+        //     });
     }
 
     // for handling pin tyep switching
     const handlePinType = (event, newPinType) => {
         setPinType(newPinType);
-        handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
+        // handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
     };  
 
     return (
@@ -155,7 +185,7 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
                         margin="normal"
                         value = {curNoteInfo}
                         inputRef={noteValueRef}  
-                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
+                        onChange = {() =>{setCurNoteInfo(noteValueRef.current.value); console.log("cur: "+ curNoteInfo);}}
                     />
                     <Box my={1} fontStyle="italic" fontSize={18}> To share with your peer:</Box>
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
@@ -170,7 +200,7 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
                         margin="normal"                        
                         value = {curPerspectiveInfo}
                         inputRef={perspectiveValueRef}
-                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinPerspective`, perspectiveValueRef.current.value)}
+                        onChange = {() => setCurPerspectiveInfo(perspectiveValueRef.current.value)}
                     />
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
                         What would you categorize this pin as?
@@ -200,7 +230,7 @@ const Notetaking = ({curPinIndex, setCurPinIndex}) => {
                         margin="normal"                        
                         value = {curSkillInfo}
                         inputRef={skillValueRef}
-                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinSkill`, skillValueRef.current.value)}
+                        onChange = {() => setCurSkillInfo(skillValueRef.current.value)}
                     />
                 </Box>
             </Paper>
