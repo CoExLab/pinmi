@@ -133,6 +133,7 @@ const DissResponse = ({curPinIndex}) => {
                         Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
                     </Box>
                     <ColorLibTextField
+                        disabled
                         id="outlined-secondary"
                         label="Personal Notes..."
                         fullWidth
@@ -150,6 +151,7 @@ const DissResponse = ({curPinIndex}) => {
                     </Box>
                     <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
+                        disabled
                         id="outlined-secondary"
                         label="caller's perspective"
                         fullWidth
@@ -160,6 +162,7 @@ const DissResponse = ({curPinIndex}) => {
                         value = {curPerspectiveInfo1}
                     />
                     <ColorLibTextField
+                        disabled
                         id="outlined-secondary"
                         label="callee's perspective"
                         fullWidth
@@ -184,6 +187,7 @@ const DissResponse = ({curPinIndex}) => {
                     <MISkillsSheet />
                     <form className={classes.root} noValidate autoComplete="off">
                         <ColorLibTextField
+                            disabled
                             id="outlined-secondary"
                             label="caller's MI skill"
                             fullWidth
@@ -194,6 +198,7 @@ const DissResponse = ({curPinIndex}) => {
                             value = {curSkillInfo1}
                         />
                         <ColorLibTextField
+                            disabled
                             id="outlined-secondary"
                             label="callee's MI skill"
                             fullWidth
