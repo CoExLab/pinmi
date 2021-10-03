@@ -1,15 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, Paper, Icon, Fab, CircularProgress } from '@material-ui/core';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import { Typography, Grid } from '@material-ui/core';
 import ReactPlayer from 'react-player';
 //import audio from '../other/audio.mp3';
 import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer';
-import pin from '../other/pin.svg';
 import {formatTime, generatePushId} from '../helper/index';
-
-import SliderBar from './SliderBar';
 
 // context
 import { useActiveStepValue } from "../context";
@@ -20,29 +15,7 @@ import { useEffect } from "react";
 import { usePins, useMediaURL } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        '& > *': {
-          margin: theme.spacing(1),
-        },
-    },
-    imageIcon: {
-        height: '100%'
-    },
-    iconRoot: {
-        textAlign: 'center'
-    },
-    display: 'flex',
-    '& > * + *': {
-      marginLeft: theme.spacing(5),
-    },
-}));
-
 const AudioReview = ({curPinIndex, setCurPinIndex}) => {
-    const classes = useStyles();
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
     // fetch raw pin data here
@@ -52,7 +25,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     // hard-coded sessionID here
     const MiTrainingSessionID = "123";
 
-    //const { mediaURL: audio, setMediaURL } = useMediaURL();
+    // const { mediaURL: audio, setMediaURL } = useMediaURL();
 
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
@@ -222,46 +195,28 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 </Typography> 
             ) 
             }
-            {/* <Paper variant='outlined' style={{ padding: '10px 10px 20px 10px', marginTop: 10 }}>          */}
-                {/* <SliderBar 
-                    maxValue = {audioLen} 
-                    curValue = {audioProgress} 
-                    pinMarks = {pins.map(pin => pin.pinTime)}
-                    canClick = {pinBtnDisabled}
-                /> */}
-                <ColorLibAudioPlayer
-                    playerStatus = {audioPlaying}
-                    setPlayerStatus = {setAudioPlaying}
-                    currentTime = {
-                        audioProgress
-                    }
-                    setCurrentTime = {handleAudioProgress}
-                    duration = {audioLen}
-                    marks = {pins.map(pin => pin.pinTime)}
-                    addPin = {addPin}
-                />
-                <ReactPlayer
-                    hidden
-                    playing = {audioPlaying}
-                    ref={player}
-                    url={audio}
-                    controls = {true}
-                    width="100%"
-                    height="55px"
-                    style={{ marginBottom: 8 }}
-                    // onDuration={(duration) => setAudioLen (duration)}
-                    onProgress = {handleProgress}
-                    // onSeek={(e) => {
-                    //     setAudioProgress(e); 
-                    //     // const curTime = Math.round(player.current.getCurrentTime());
-                    //     // let index = playTimeArr.indexOf(curTime);
-                    //     // if(index !== -1){
-                    //     //     setCurPinIndex(index);
-                    //     //     player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                    //     // }
-                    // }}
-                />
-            {/* </Paper> */}
+            <ColorLibAudioPlayer
+                playerStatus = {audioPlaying}
+                setPlayerStatus = {setAudioPlaying}
+                currentTime = {
+                    audioProgress
+                }
+                setCurrentTime = {handleAudioProgress}
+                duration = {audioLen}
+                marks = {pins.map(pin => pin.pinTime)}
+                addPin = {addPin}
+            />
+            <ReactPlayer
+                hidden
+                playing = {audioPlaying}
+                ref={player}
+                url={audio}
+                controls = {true}
+                width="100%"
+                height="55px"
+                style={{ marginBottom: 8 }}
+                onProgress = {handleProgress}
+            />
         </Grid>
     );
 };
