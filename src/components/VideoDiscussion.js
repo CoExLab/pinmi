@@ -36,7 +36,7 @@ import "./VideoChatComponent.scss";
 
 import { baseURL } from './constants';
 
-import { useSessionValue, useActiveStepValue } from "../context";
+import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
 import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -146,9 +146,9 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {setMediaDuration , setMediaUrl} = useSessionValue();
+  const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
   // fetch raw pin data here
-  const { pins, setPins } = usePins();
+  const { pins } = usePinsValue();
   // get document ID
   const pinID = generatePushId();
   // get trans ID
@@ -168,47 +168,22 @@ function VideoChatComponent(props) {
           setPinBtnDisabled(false);
       }, 800);
 
-      // if(curTime > addPinDelayTime){
-      //   curTime -= addPinDelayTime;
-      // } else{
-      //   curTime = addPinDelayTime;
-      // }
-
-    await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
-        pinID,
-        pinTime: curTime,
-        // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        sessionID: MiTrainingSessionID,
-        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-    })        
-    .then( () => {
-        setPins([...pins, ]);
-    })
-    .then(() => {
-        console.log("Document successfully written!");    
-    })
-    .catch((error) => {
-        console.error("Error writing document: ", error);
-    });  
+      pins.push({pinID: '', pinTime: curTime, pinInfos: {pinNote: '', pinPerspective: '', pinCategory: '', pinSkill: ''}});
+  
     console.log("finished writing")      
     console.log(curTime);  
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("Transcripts").doc("testSessionID").set({
-      text: results
-    })
-    .then( () => {
-        setPins([...pins, ]);
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+      transcript: results
     })
     .then(() => {
-        console.log("Document successfully written!");    
+        console.log("Transcript successfully written!");    
     })
     .catch((error) => {
         console.error("Error writing document: ", error);
-    });  
-    console.log("finished writing transcript")    
+    });
   }
 
   const {
