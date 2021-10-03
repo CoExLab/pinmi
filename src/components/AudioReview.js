@@ -222,7 +222,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                 </Typography> 
             ) 
             }
-            <Paper variant='outlined' style={{ padding: 10, marginTop: 10 }}>         
+            {/* <Paper variant='outlined' style={{ padding: '10px 10px 20px 10px', marginTop: 10 }}>          */}
                 {/* <SliderBar 
                     maxValue = {audioLen} 
                     curValue = {audioProgress} 
@@ -236,16 +236,15 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                         audioProgress
                     }
                     setCurrentTime = {handleAudioProgress}
-                    // duration = {372}
                     duration = {audioLen}
-                    marks = {[20, 80]}
+                    marks = {pins.map(pin => pin.pinTime)}
+                    addPin = {addPin}
                 />
                 <ReactPlayer
                     hidden
                     playing = {audioPlaying}
                     ref={player}
                     url={audio}
-                    // url={"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
                     controls = {true}
                     width="100%"
                     height="55px"
@@ -262,35 +261,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
                     //     // }
                     // }}
                 />
-                {/* <div className={classes.root} >
-                    <Fab 
-                        color="default" 
-                        aria-label="last" 
-                        onClick={() => handleLastPin(curPinIndex - 1)} 
-                    >
-                        <NavigateBeforeIcon />
-                    </Fab>
-                    <Fab color="default" aria-label="addPin"
-                          onClick={() => handlePin()} disabled = {pinBtnDisabled}>
-                        {pinBtnDisabled 
-                        ? 
-                        <CircularProgress color={pinBtnColor} /> 
-                        :                         
-                        <Icon classes={{ root: classes.iconRoot }}>
-                            <img className={classes.imageIcon} src={pin} alt="" />
-                        </Icon>   
-                        }
-                    </Fab>
-                    <Fab color="default" aria-label="next" 
-                          onClick={() => handleNextPin(curPinIndex + 1)} >
-                        <NavigateNextIcon />    
-                    </Fab> */}
-                    {/* below are something thing only for debugging */}
-                    {/* <Typography>{"Current Pin Time is: " + formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}</Typography>
-                    <Typography>{"New Pins from database: " + pins.map(pin => formatTime(pin.pinTime))}</Typography>
-                    <Typography>{"Current pin index: " + curPinIndex}</Typography> */}
-                {/* </div> */}
-            </Paper>
+            {/* </Paper> */}
         </Grid>
     );
 };
