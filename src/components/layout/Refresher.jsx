@@ -1,24 +1,34 @@
 import React, {useState} from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
-import { useUserModeValue, useActiveStepValue } from '../../context';
+import { useUserModeValue, useActiveStepValue, useSessionValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibComponents/ColorLibToggleButton';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
+import { firebase } from "../../hooks/firebase";
+
 
 const Refresher = () => {
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const {sessionID} = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
 	const [question1Ans, setQuestion1Ans] = useState('');
 	const [question2Ans, setQuestion2Ans] = useState('');
 
-	const {userMode, setUserMode} = useUserModeValue();
+	const {userMode, setUserMode, userID, setUserID} = useUserModeValue();
 
 	const handleUserMode = (event, newMode) => {
+    const caller = 'tI2fK1Py7Ibsznp3MDz4';  
+    const callee = '6AT1Se8aU93MPGXZ5miK';
 		if (newMode !== null) {
 			setUserMode(newMode);
+      if(newMode == 'caller'){
+        setUserID(caller);
+      } else {
+        setUserID(callee);
+      }
 		}
 	};
 
@@ -38,7 +48,30 @@ const Refresher = () => {
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const makeSessionDoc = async () => {
+    const caller = 'tI2fK1Py7Ibsznp3MDz4';  
+    const callee = '6AT1Se8aU93MPGXZ5miK';
+    await firebase.firestore().collection("sessions").doc(sessionID).set({
+      callee_id: callee,
+      caller_id: caller,
+      media_url: "default",
+      duration: '0',
+      transcript: ''
+    });
+  }
+
+  const makeRefresherDoc = async () => {
+    await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID).set({
+        q1: openEndedQuestions[0].submittedResponse,
+        q2: openEndedQuestions[1].submittedResponse,
+        q3: openEndedQuestions[2].submittedResponse,
+        q4: openEndedQuestions[3].submittedResponse
+    });
+  }
+
   const handleSubmit = () => {
+    makeSessionDoc();
+    makeRefresherDoc();
     setSubmitted(true);
   }
   

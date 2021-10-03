@@ -7,8 +7,7 @@ import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer
 import {formatTime, generatePushId} from '../helper/index';
 
 // context
-import { useActiveStepValue } from "../context";
-import { useSessionValue } from "../context";
+import { useActiveStepValue, useSessionValue, usePinsValue } from "../context";
 import { useEffect } from "react";
 
 // firebase hook
@@ -18,8 +17,10 @@ import { firebase } from "../hooks/firebase";
 const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
+    //session data
+    const {sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
     // fetch raw pin data here
-    const { pins, setPins } = usePins();
+    const { pins } = usePinsValue();
     // get document ID
     const pinID = generatePushId();
     // hard-coded sessionID here
@@ -30,31 +31,31 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
-    const {mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
     const [audioPlaying, setAudioPlaying] = useState(false);
-    console.log(audio, audioLen);
+    
     const [loadURL, setLoadURL] = useState(false)
+    
 
     let playTimeArr = pins.map(pin => pin.pinTime);
 
-    useEffect(() =>{
-        //callback function when useEffect is called
-        let ref = firebase
-        .firestore()
-        .collection("MediaURLs")
-        .doc("test");
+    // useEffect(() =>{
+    //     //callback function when useEffect is called
+    //     let ref = firebase
+    //     .firestore()
+    //     .collection("MediaURLs")
+    //     .doc("test");
 
-        var unsubscribe = ref.onSnapshot((doc) => {
-            let recentURL = doc.data();
-            console.log(recentURL.URL);
-            setMediaUrl(recentURL.URL);
-            setMediaDuration(recentURL.Duration);
+    //     var unsubscribe = ref.onSnapshot((doc) => {
+    //         let recentURL = doc.data();
+    //         console.log(recentURL.URL);
+    //         setMediaUrl(recentURL.URL);
+    //         setMediaDuration(recentURL.Duration);
 
-        })
-        return () => {
-            unsubscribe()
-        };
-    },[loadURL]);
+    //     })
+    //     return () => {
+    //         unsubscribe()
+    //     };
+    // },[loadURL]);
 
 
     // back to last pin
@@ -63,20 +64,22 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         console.log(audioLen);
         console.log(audioProgress);
         if(curPinIndex > 0){
-            setCurPinIndex(index);
-            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+            setCurPinIndex(index - 1);
+            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index - 1]));
         }
     };
 
     // go to next pin
     const handleNextPin = (index, remove = false) => {
-        if(curPinIndex < pins.map(pin => pin.pinTime).length - 1){
+        console.log("interesting: " + curPinIndex + " length: " + pins.length);
+        if(curPinIndex < pins.length - 1){
+            console.log("Index: " + index);
             if(!remove){
                 player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
                 setCurPinIndex(index);
             } else{                
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                setCurPinIndex(index - 1);
+                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index ]));
+                setCurPinIndex(index);
             }
         }
     };
@@ -90,25 +93,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             setPinBtnDisabled(false);
         }, 800);
 
-        await firebase.firestore().collection("Pins").doc(formatTime(curTime)).set({
-            pinID,
-            pinTime: curTime,
-            // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            sessionID: MiTrainingSessionID,
-            callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-            calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        })        
-        .then( () => {
-            setPins([...pins, ]);
-        })
-        .then(() => {
-            console.log("Document successfully written!");    
-        })
-        .catch((error) => {
-            console.error("Error writing document: ", error);
-        });  
-        console.log("finished writing")      
-        console.log(curTime); 
+        pins.push({pinID: '', pinTime: curTime, pinInfos: {pinNote: "", pinPerspective: "", pinCategory: "", pinSkill: ""}});
+        
         //seek to
         let dummyPlayTimeArr = [...pins, {
             pinID,
@@ -119,21 +105,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
         setCurPinIndex(dummyPlayTimeArr.map(pin => pin.pinTime).indexOf(curTime));   
     }
 
-    const deletePin = async (docId) => {
-        firebase
-          .firestore()
-          .collection("Pins")
-          .doc(docId)
-          .delete()
-          .then(() => {
-            setPins([...pins]);
-        })
-        .then(() => {
-            console.log("Document successfully deleted!");
-        })
-        .catch((error) => {
-            console.error("Error writing document: ", error);
-        });
+    const deletePin = async (index) => {
+
+        pins.splice(index, 1);
+        console.log("Document successfully deleted!");
+        
         // ui on
         setPinBtnDisabled(true);
         setPinBtnColor("secondary");
@@ -146,29 +122,30 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     const handlePin = () => {
         const curTime = Math.round(player.current.getCurrentTime());
         let index = playTimeArr.indexOf(curTime);
-        if (pins.map(pin => pin.pinTime).indexOf(curTime) !== -1) {
-            // remove current pin
-            deletePin(pins.map(pin => pin.docId)[index]);
-            // auto jump to next available pin point
-            console.log(pins.length);
-            if(pins.map(pin => pin.pinTime).length === 0) {
-                player.current.seekTo(parseFloat(0));
-            }
-            else if(pins.map(pin => pin.pinTime).length === 2){
-                curPinIndex === 0 ? 
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
-                handleLastPin(curPinIndex - 1)
-            }
-            else{
-                curPinIndex === pins.map(pin => pin.pinTime).length - 1 || 
-                curPinIndex === pins.map(pin => pin.pinTime).length ? 
-                handleLastPin(curPinIndex - 1) : 
-                handleNextPin(curPinIndex + 1, true);
-            }
-        } else {
-            // add current playtime as a new pin and seek to it
-            addPin(curTime);
-        }
+        addPin(curTime);
+        // if (pins.map(pin => pin.pinTime).indexOf(curTime) !== -1) {
+        //     // remove current pin
+        //     deletePin(index);
+        //     // auto jump to next available pin point
+        //     console.log(pins.length);
+        //     if(pins.map(pin => pin.pinTime).length === 0) {
+        //         player.current.seekTo(parseFloat(0));
+        //     }
+        //     else if(pins.map(pin => pin.pinTime).length === 2){
+        //         curPinIndex === 0 ? 
+        //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
+        //         handleLastPin(curPinIndex - 1)
+        //     }
+        //     else{
+        //         curPinIndex === pins.map(pin => pin.pinTime).length - 1 || 
+        //         curPinIndex === pins.map(pin => pin.pinTime).length ? 
+        //         handleLastPin(curPinIndex - 1) : 
+        //         handleNextPin(curPinIndex + 1, true);
+        //     }
+        // } else {
+        //     // add current playtime as a new pin and seek to it
+        //     addPin(curTime);
+        // }
     };
 
     const handleProgress = state => {
