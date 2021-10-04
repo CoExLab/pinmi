@@ -134,11 +134,6 @@ const Landing = () => {
         <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
 				</Box>
-        <Box m={4}>
-          <ColorLibButton variant='contained' size='large' href='/content'>
-            Let's get started!
-          </ColorLibButton>
-        </Box>
 			</Container>
       {tutorialInfo.map(tutorialSection)}
       <div className={classes.button_wrapper}>
