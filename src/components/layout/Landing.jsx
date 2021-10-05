@@ -122,20 +122,23 @@ const Landing = () => {
 			<Navbar />
 			<Container className={classes.welcome_container} maxWidth='md'>
         <Typography variant='h1' className={classes.welcome_intro}>
-          Pin-MI is a platform for practicing MI with your peers with the help of pins.
+        Welcome to Pin-MI
         </Typography>
         <Typography variant='h3' className={classes.welcome_definition}>
-          Pins are time marks that you add during your live role-play session to mark parts of conversation that you would like to revisit during a feedback conversation.
+        a platform for practicing MI with your peers with the help of pins
         </Typography>
         <br />
-        <Box m={1} display="inline">
+        
+			</Container>
+      {tutorialInfo.map(tutorialSection)}
+      <Container className={classes.welcome_container} maxWidth='md'>
+      <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Your Name" variant="outlined" />
         </Box>
         <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
 				</Box>
-			</Container>
-      {tutorialInfo.map(tutorialSection)}
+      </Container>
       <div className={classes.button_wrapper}>
         <ColorLibButton variant='contained' size='large' href='/content'>
           Let's get started!
