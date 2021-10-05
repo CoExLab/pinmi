@@ -344,7 +344,15 @@ How did today’s mock client session go?
     setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);
-    await fetch(baseURL + "room/" + room)
+    //in order to make sure it connects to the correct room
+    if (props.mode == "Discussion"){
+      var roomAddOn = "Discussion";
+      console.log("Discussion Room Video component")
+    }
+    else{
+      var roomAddOn = "";
+    }
+    await fetch(baseURL + "room/" + room + roomAddOn)
     .then(function(res) {
       return res.json()
     })
