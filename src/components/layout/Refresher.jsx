@@ -14,6 +14,7 @@ const Refresher = () => {
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   const { sessionID } = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
+  const [submittedAnswers, setSubmittedAnswers] = useState(['', '', '', '']);
   const [question1Ans, setQuestion1Ans] = useState('');
   const [question2Ans, setQuestion2Ans] = useState('');
   const [openEndedQuesAns, setOpenEndedQuesAns] = useState(['', '', '', '']);
@@ -76,10 +77,26 @@ const Refresher = () => {
     });
   }
 
+  const fetchCurAnswers = async () => {
+    const docRef = await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID);
+    const curAnswers = 
+      await docRef.get().then((doc) => {
+        if (doc.exists) {
+          return [doc.data()['q1'], doc.data()['q2'], doc.data()['q3'], doc.data()['q4']];
+        } else {
+          console.log("No such document!");
+        }
+      }).catch((error) => {
+        console.log("Error getting document:", error);
+      })
+    setSubmittedAnswers(curAnswers);
+  }
+
   const handleSubmit = async () => {
     makeSessionDoc();
     makeRefresherDoc();
     setSubmitted(true);
+    fetchCurAnswers();
   }
 
   /* TODO: The 'submittedResponse's are just placeholders for now.
@@ -150,7 +167,7 @@ const Refresher = () => {
                 Your Response
               </Typography>
               <Typography variant="body2">
-                {openEndedQuesAns[index]}
+                {submittedAnswers[index]}
               </Typography>
             </ColorLibPaper>
           </Grid>
