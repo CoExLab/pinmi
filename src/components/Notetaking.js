@@ -118,9 +118,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
     useEffect(() => {
         console.log("Current pin Index: ", curPinIndex);
         //update pin values
-        setCurNoteInfo(noteValueRef.current);
-        setCurPerspectiveInfo(perspectiveValueRef.current);
-        setCurSkillInfo(skillValueRef.current);
+        setCurNoteInfo(noteValueRef.current.value);
+        setCurPerspectiveInfo(perspectiveValueRef.current.value);
+        setCurSkillInfo(skillValueRef.current.value);
         //save pin info
         savePin(curPinIndex);
         //clear out all the states
@@ -131,9 +131,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
             setCurSkillInfo(pins[curPinIndex].pinInfos.pinSkill);
         }
         //reset all the refs
-        noteValueRef.current
+        noteValueRef.current.value
             = curNoteInfo;
-        perspectiveValueRef.current = curPerspectiveInfo;
+        perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current = curSkillInfo;
     }, [curPinIndex])
 
