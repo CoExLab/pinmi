@@ -10,6 +10,22 @@ const CustomizedTextField = withStyles((theme) => ({
     '& .MuiInputBase-input': {
       color: theme.palette.gray.main,
     },
+    '& .MuiInputBase-root.Mui-disabled': {
+      opacity: '50%',
+      borderColor: '1px solid ' + theme.palette.teal.light,
+      '& fieldset': {
+        borderColor: theme.palette.teal.light,
+        borderWidth: '1.5px',
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.teal.light,
+        borderWidth: '1.5px',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.teal.light,
+        borderWidth: '1.5px',
+      },
+    },
     '& .MuiOutlinedInput-root': {
       background: 'white',
       borderRadius: '5px',

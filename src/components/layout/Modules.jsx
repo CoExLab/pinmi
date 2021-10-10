@@ -15,7 +15,7 @@ import { usePins } from '../../hooks/index';
 function getStepContent(step) {
     switch (step) {
       case 0:
-        return <Refresher />
+        return <Refresher />;
       case 1:
         return <PracticeSession />;
       case 2:
