@@ -1,17 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 
 
 const useStyles = makeStyles({
   table: {
+    marginTop: '20px',
     width: 600,
   },
 });
@@ -31,8 +31,10 @@ const Intro = () => {
   const classes = useStyles();
   return (
     <div>
-      <Box align="center" m={2}>
-        <h1>Now, it’s time to step into the practice session and practice using open-ended questions.</h1>
+      <Box align="center" m={6}>
+        <Typography variant="h4" style={{textAlign: "left", width: "50%"}}>
+          Now, it’s time to step into the practice session and practice using open-ended questions.
+        </Typography>
         <TableContainer>
           <Table className={classes.table} aria-label="simple table">
 

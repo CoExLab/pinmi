@@ -6,6 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
+import { Typography } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -30,7 +31,9 @@ const Narrative = () => {
   return (
     <div>
       <Box align="center" m={2}>
-        <h1> Client Information </h1>
+        <Typography variant="h4">
+          Client Information
+        </Typography>
         <TableContainer>
           <Table className={classes.table} aria-label="simple table">
 
