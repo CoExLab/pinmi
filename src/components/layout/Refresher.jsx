@@ -174,7 +174,7 @@ const Refresher = () => {
       )
     }
     return (
-      <Fragment>
+      <Fragment key={`open-ended-${index}`}>
         <Typography variant='body1' style={{ marginTop: '10px' }}>
           {question.question}
         </Typography>
