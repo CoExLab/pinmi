@@ -11,6 +11,7 @@ const CustomizedTextField = withStyles((theme) => ({
       color: theme.palette.gray.main,
     },
     '& .MuiOutlinedInput-root': {
+      background: 'white',
       borderRadius: '5px',
       '& fieldset': {
         borderColor: theme.palette.teal.light,
@@ -23,9 +24,12 @@ const CustomizedTextField = withStyles((theme) => ({
       '&.Mui-focused fieldset': {
         borderColor: theme.palette.teal.main,
         borderWidth: '1.5px',
-      }
-    }
-  }
+      },
+    },
+    '&.MuiFormControl-marginNormal': {
+      margin: '8px 0px 16px 0px'
+    },
+  },
 }))(TextField);
 
 const ColorLibTextField = (props) => {
