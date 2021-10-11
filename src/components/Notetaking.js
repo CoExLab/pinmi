@@ -47,7 +47,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
+const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
+    //session values
+    const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
+    // fetch raw pin data here
+    const { pins } = usePinsValue();
+    // user mode switcher
+    const { userMode, userID } = useUserModeValue();
+  
     const classes = useStyles();
 
     //creating a refernce for TextField Component
@@ -55,12 +62,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
     const noteValueRef = useRef('')
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
-
-    //session values
-    const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
-
-    // fetch raw pin data here
-    const { pins } = usePinsValue();
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
@@ -71,11 +72,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
     const [loadURL, setLoadURL] = useState(false)
-
-    // user mode switcher
-    const { userMode } = useUserModeValue();
-
-    console.log(pins);
 
     // back to last pin
     const handleLastPin = (index) => {
@@ -103,36 +99,48 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
 
     const savePin = async (index) => {
         console.log("pins:" + pins + "\nindex: " + index);
-        if (index >= 0) {
+        if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin) {
-                myPin.pinInfos.pinNote = curNoteInfo;
-                myPin.pinInfos.pinPersepective = curPerspectiveInfo;
-                myPin.pinInfos.pinCategory = pinType;
-                myPin.pinInfos.pinSkill = curSkillInfo;
+            if (myPin && userID == myPin.creatorID) {
+                myPin.creatorPinNote = curNoteInfo;
+                myPin.creatorPinPerspective = curPerspectiveInfo;
+                myPin.creatorPinCategory = pinType;
+                myPin.creatorPinSkill = curSkillInfo;
+                pins[index] = myPin;
+            } else if(myPin) {
+                myPin.otherPinNote = curNoteInfo;
+                myPin.otherPinPerspective = curPerspectiveInfo;
+                myPin.otherPinCategory = pinType;
+                myPin.otherPinSkill = curSkillInfo;
                 pins[index] = myPin;
             }
         }
     }
 
     useEffect(() => {
-        console.log("Current pin Index: ", curPinIndex);
+        console.log("previous index: " + prevPinIndex);
+        console.log("current index: " + curPinIndex);
         //update pin values
-        setCurNoteInfo(noteValueRef.current.value);
-        setCurPerspectiveInfo(perspectiveValueRef.current.value);
-        setCurSkillInfo(skillValueRef.current.value);
+        setCurNoteInfo(noteValueRef.current);
+        setCurPerspectiveInfo(perspectiveValueRef.current);
+        setCurSkillInfo(skillValueRef.current);
         //save pin info
-        savePin(curPinIndex);
+        savePin(prevPinIndex);
+
         //clear out all the states
-        if (pins[curPinIndex]) {
-            setPinType(pins[curPinIndex].pinInfos.pinCategory);
-            setCurNoteInfo(pins[curPinIndex].pinInfos.pinNote);
-            setCurPerspectiveInfo(pins[curPinIndex].pinInfos.pinPersepective);
-            setCurSkillInfo(pins[curPinIndex].pinInfos.pinSkill);
+        if (pins[curPinIndex] && pins[curPinIndex].creatorID == userID) {
+            setPinType(pins[curPinIndex].creatorPinCategory);
+            setCurNoteInfo(pins[curPinIndex].creatorPinNote);
+            setCurPerspectiveInfo(pins[curPinIndex].creatorPinPerspective);
+            setCurSkillInfo(pins[curPinIndex].creatorPinSkill);
+        } else if(pins[curPinIndex]){
+            setPinType(pins[curPinIndex].otherPinCategory);
+            setCurNoteInfo(pins[curPinIndex].otherPinNote);
+            setCurPerspectiveInfo(pins[curPinIndex].otherPinPerspective);
+            setCurSkillInfo(pins[curPinIndex].otherPinSkill);
         }
         //reset all the refs
-        noteValueRef.current.value
-            = curNoteInfo;
+        noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current = curSkillInfo;
     }, [curPinIndex])
@@ -279,7 +287,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex }) => {
                     margin="normal"
                     value={curSkillInfo}
                     inputRef={skillValueRef}
-                    onChange={() => setCurSkillInfo(skillValueRef.current.value)}
+                    onChange={() => setCurSkillInfo(skillValueRef.current)}
                 />
             </ColorLibPaper>
         </Grid>
