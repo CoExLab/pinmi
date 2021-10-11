@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import { Typography, Box, Grid, Paper } from '@material-ui/core';
+import { Typography, Box, Grid } from '@material-ui/core';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import { firebase } from "../hooks/firebase";
 import { useSessionValue } from '../context';
 
@@ -68,16 +69,16 @@ const Transcription = () => {
 
     return (
         <Grid item xs={12} sm={4}>
-            <Paper>
-                <Box m={2} height={600} overflow="auto">
-                    <Box fontSize={20} fontStyle="Normal" fontWeight="fontWeightBold">
+            <ColorLibPaper>
+                <Box fontStyle="italic">
+                    <Typography>
                         Transcript
-                    </Box>
-                    <Typography component="div" >
-                        {renderTranscript()}
                     </Typography>
                 </Box>
-            </Paper>
+                <Typography component="div" >
+                    {renderTranscript()}
+                </Typography>
+            </ColorLibPaper>
 
         </Grid>
     );

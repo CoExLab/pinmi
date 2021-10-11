@@ -12,6 +12,13 @@ const ColorLibPaper = withStyles((theme) => ({
     boxShadow: 'none',
     padding: '50px 80px',
   },
+  elevation1: {
+    // For Transcript, Notetaking, and ..
+    backgroundColor: theme.palette.teal.lighter,
+    borderRadius: '4px',
+    boxShadow: 'none',
+    padding: '30px',
+  },
   elevation9: {
     // For Refresher Page final answer preview
     borderRadius: '10px',
