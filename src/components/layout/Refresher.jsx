@@ -65,7 +65,9 @@ const Refresher = () => {
       media_url: "default",
       duration: '0',
       transcript: ''
-    });
+    })
+    .then(() => console.log("Session doc created" + sessionID))
+    .catch((err) => console.error("Error in making session ", err));
   }
 
   const makeRefresherDoc = async () => {
