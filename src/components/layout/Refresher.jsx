@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
 import { useUserModeValue, useActiveStepValue, useSessionValue } from '../../context';
@@ -11,45 +11,53 @@ import { firebase } from "../../hooks/firebase";
 
 
 const Refresher = () => {
-  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const {sessionID} = useSessionValue();
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  const { sessionID } = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
-	const [question1Ans, setQuestion1Ans] = useState('');
-	const [question2Ans, setQuestion2Ans] = useState('');
+  const [submittedAnswers, setSubmittedAnswers] = useState(['', '', '', '']);
+  const [question1Ans, setQuestion1Ans] = useState('');
+  const [question2Ans, setQuestion2Ans] = useState('');
+  const [openEndedQuesAns, setOpenEndedQuesAns] = useState(['', '', '', '']);
 
-	const {userMode, setUserMode, userID, setUserID} = useUserModeValue();
+  const { userMode, setUserMode, userID, setUserID } = useUserModeValue();
 
-	const handleUserMode = (event, newMode) => {
-    const caller = 'tI2fK1Py7Ibsznp3MDz4';  
+  const handleUserMode = (event, newMode) => {
+    const caller = 'tI2fK1Py7Ibsznp3MDz4';
     const callee = '6AT1Se8aU93MPGXZ5miK';
-		if (newMode !== null) {
-			setUserMode(newMode);
-      if(newMode == 'caller'){
+    if (newMode !== null) {
+      setUserMode(newMode);
+      if (newMode == 'caller') {
         setUserID(caller);
       } else {
         setUserID(callee);
       }
-		}
-	};
+    }
+  };
 
-	const handleQuestion1 = (event, newAns) => {
-	  if (newAns !== null) {
-		setQuestion1Ans(newAns);
-	  }
-	};
+  const handleQuestion1 = (event, newAns) => {
+    if (newAns !== null) {
+      setQuestion1Ans(newAns);
+    }
+  };
 
-	const handleQuestion2 = (event, newAns) => {
-		if (newAns !== null) {
-		  setQuestion2Ans(newAns);
-		}
-	  };
+  const handleQuestion2 = (event, newAns) => {
+    if (newAns !== null) {
+      setQuestion2Ans(newAns);
+    }
+  };
 
-	const handleNext = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleOpenEndedQues = (answer, index) => {
+    let newAnswers = [...openEndedQuesAns];
+    newAnswers[index] = answer;
+    setOpenEndedQuesAns(newAnswers);
+  }
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const makeSessionDoc = async () => {
-    const caller = 'tI2fK1Py7Ibsznp3MDz4';  
+    const caller = 'tI2fK1Py7Ibsznp3MDz4';
     const callee = '6AT1Se8aU93MPGXZ5miK';
     await firebase.firestore().collection("sessions").doc(sessionID).set({
       callee_id: callee,
@@ -62,19 +70,35 @@ const Refresher = () => {
 
   const makeRefresherDoc = async () => {
     await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID).set({
-        q1: openEndedQuestions[0].submittedResponse,
-        q2: openEndedQuestions[1].submittedResponse,
-        q3: openEndedQuestions[2].submittedResponse,
-        q4: openEndedQuestions[3].submittedResponse
+      q1: openEndedQuesAns[0],
+      q2: openEndedQuesAns[1],
+      q3: openEndedQuesAns[2],
+      q4: openEndedQuesAns[3],
     });
   }
 
-  const handleSubmit = () => {
+  const fetchCurAnswers = async () => {
+    const docRef = await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID);
+    const curAnswers = 
+      await docRef.get().then((doc) => {
+        if (doc.exists) {
+          return [doc.data()['q1'], doc.data()['q2'], doc.data()['q3'], doc.data()['q4']];
+        } else {
+          console.log("No such document!");
+        }
+      }).catch((error) => {
+        console.log("Error getting document:", error);
+      })
+    setSubmittedAnswers(curAnswers);
+  }
+
+  const handleSubmit = async () => {
     makeSessionDoc();
     makeRefresherDoc();
     setSubmitted(true);
+    fetchCurAnswers();
   }
-  
+
   /* TODO: The 'submittedResponse's are just placeholders for now.
    * After the database is set up, then should be replaced with what was sent to the database. */
   const openEndedQuestions = [
@@ -83,7 +107,7 @@ const Refresher = () => {
       description: "Convert the closed question to open-ended...",
       submittedResponse: "How is your day going?",
       sampleResponse: "What has been good in your day so far?",
-    }, 
+    },
     {
       question: "How much do you drink on a typical drinking occasion?",
       description: "Convert the closed question to open-ended...",
@@ -104,7 +128,7 @@ const Refresher = () => {
     }
   ]
 
-  const getOpenEndQuestionSet = (question, submitted) => {
+  const getOpenEndQuestionSet = (question, index, submitted) => {
     let response = <div />;
     if (!submitted) {
       response = (
@@ -115,13 +139,15 @@ const Refresher = () => {
           variant="outlined"
           multiline
           rowsMax={2}
-           margin="normal"
+          margin="normal"
+          value={openEndedQuesAns[index]}
+          onChange={event => handleOpenEndedQues(event.target.value, index)}
         />
       );
     } else {
       response = (
-        <Grid 
-          container 
+        <Grid
+          container
           direction="row"
           justifyContent="center"
           style={{
@@ -130,8 +156,8 @@ const Refresher = () => {
           }}
         >
           <Grid item xs={6}>
-            <ColorLibPaper 
-              elevation={9} 
+            <ColorLibPaper
+              elevation={9}
               style={{
                 height: 'calc(100% - 16px)',
                 marginRight: '17px',
@@ -141,13 +167,13 @@ const Refresher = () => {
                 Your Response
               </Typography>
               <Typography variant="body2">
-                {question.submittedResponse}
+                {submittedAnswers[index]}
               </Typography>
             </ColorLibPaper>
           </Grid>
           <Grid item xs={6}>
-            <ColorLibPaper 
-              elevation={9} 
+            <ColorLibPaper
+              elevation={9}
               style={{
                 height: 'calc(100% - 16px)',
                 marginLeft: '17px',
@@ -165,8 +191,8 @@ const Refresher = () => {
       )
     }
     return (
-      <Fragment>
-        <Typography variant='body1' style={{marginTop: '10px'}}> 
+      <Fragment key={`open-ended-${index}`}>
+        <Typography variant='body1' style={{ marginTop: '10px' }}>
           {question.question}
         </Typography>
         {response}
@@ -181,9 +207,9 @@ const Refresher = () => {
   const getButton = (submitted, isValid) => {
     if (submitted) {
       return (
-        <ColorLibButton 
+        <ColorLibButton
           variant='contained'
-          size='medium' 
+          size='medium'
           onClick={handleNext}
         >
           Prepare for Live Session
@@ -191,8 +217,8 @@ const Refresher = () => {
       );
     } else {
       return (
-        <ColorLibButton 
-          size='medium' 
+        <ColorLibButton
+          size='medium'
           variant={!isValid ? 'outlined' : 'contained'}
           disabled={!isValid ? true : false}
           onClick={handleSubmit}
@@ -203,10 +229,10 @@ const Refresher = () => {
     }
   };
 
-	return (
-		<Fragment>
+  return (
+    <Fragment>
       <Container maxWidth='md'>
-        <Box align="left" m = {2}> 
+        <Box align="left" m={2}>
           <ColorLibToggleButtonGroup
             value={userMode}
             exclusive
@@ -222,13 +248,13 @@ const Refresher = () => {
           </ColorLibToggleButtonGroup>
         </Box>
         <Typography variant='h2'>
-          {submitted 
-          ? "Complete the exercises to unlock today’s session!" 
-          : "Review the following before we begin the practice session."}
+          {submitted
+            ? "Complete the exercises to unlock today’s session!"
+            : "Review the following before we begin the practice session."}
         </Typography>
-        <Grid container style={{marginTop: '20px'}}>
+        <Grid container style={{ marginTop: '20px' }}>
           <Grid item xs={9}>
-            <Typography variant='body1' style={{marginRight: '12px'}}>
+            <Typography variant='body1' style={{ marginRight: '12px' }}>
               Closed questions are bad.
             </Typography>
           </Grid>
@@ -247,20 +273,20 @@ const Refresher = () => {
             </ColorLibToggleButtonGroup>
           </Grid>
           {!submitted ? null :
-          <ColorLibPaper elevation={9} style={{margin:'15px 0px'}}>
-            <Typography variant="body2">
-              {question1Ans === "false" ? "Correct!" : "Sorry, try again."} Closed questions are not “bad.” They simply are limited as a tool, so we try to avoid using them in favor of open-ended questions. However, there are situations in which closed questions are desirable. In general, the aim is to ask more open-ended than closed questions.
-            </Typography>
-          </ColorLibPaper>
+            <ColorLibPaper elevation={9} style={{ margin: '15px 0px' }}>
+              <Typography variant="body2">
+                {question1Ans === "false" ? "Correct!" : "Sorry, try again."} Closed questions are not “bad.” They simply are limited as a tool, so we try to avoid using them in favor of open-ended questions. However, there are situations in which closed questions are desirable. In general, the aim is to ask more open-ended than closed questions.
+              </Typography>
+            </ColorLibPaper>
           }
         </Grid>
-        <Grid container style={{marginTop: '20px'}}>
+        <Grid container style={{ marginTop: '20px' }}>
           <Grid item xs={9}>
-            <Typography variant='body1' style={{marginRight: '12px'}}> 
+            <Typography variant='body1' style={{ marginRight: '12px' }}>
               We use reflections to help clients not only see what they've told us, but to also help organize and understand their experience.
             </Typography>
           </Grid>
-          <Grid item xs={3}>        
+          <Grid item xs={3}>
             <ColorLibToggleButtonGroup
               value={question2Ans}
               exclusive
@@ -275,27 +301,27 @@ const Refresher = () => {
             </ColorLibToggleButtonGroup>
           </Grid>
           {!submitted ? null :
-          <ColorLibPaper elevation={9} style={{margin:'15px 0px'}}>
-            <Typography variant="body2">
-              {question2Ans === "true" ? "Correct!" : "Sorry, try again."} If we simply hold up the mirror, then we aren’t helping clients become unstuck. In addition to helping clients hear again what they’re told us, we also selectively attend to certain elements and not to others and then present that information back in a manner that helps them attain greater understanding of their situation
-            </Typography>
-          </ColorLibPaper>}
+            <ColorLibPaper elevation={9} style={{ margin: '15px 0px' }}>
+              <Typography variant="body2">
+                {question2Ans === "true" ? "Correct!" : "Sorry, try again."} If we simply hold up the mirror, then we aren’t helping clients become unstuck. In addition to helping clients hear again what they’re told us, we also selectively attend to certain elements and not to others and then present that information back in a manner that helps them attain greater understanding of their situation
+              </Typography>
+            </ColorLibPaper>}
         </Grid>
-        <Typography variant='h4' style={{marginTop: '50px'}}>
+        <Typography variant='h4' style={{ marginTop: '50px' }}>
           Practicing Open-ended Questions
         </Typography>
-        {openEndedQuestions.map(ques => getOpenEndQuestionSet(ques, submitted))}
+        {openEndedQuestions.map((ques, index) => getOpenEndQuestionSet(ques, index, submitted))}
       </Container>
-      
-			<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '50px 0px'}}>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '50px 0px' }}>
         {getButton(
-          submitted, 
+          submitted,
           checkValidness(question1Ans, question2Ans)
         )}
-			</div>
-			
-		</Fragment>
-	);
+      </div>
+
+    </Fragment>
+  );
 }
- 
+
 export default Refresher;

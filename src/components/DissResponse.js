@@ -1,8 +1,9 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {formatTime} from '../helper/index';
-import { Box, Grid, Paper } from '@material-ui/core';
+import { formatTime } from '../helper/index';
+import { Box, Grid, Paper, Typography } from '@material-ui/core';
 import { ToggleButton } from '@material-ui/lab';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
 
@@ -12,28 +13,34 @@ import { firebase } from "../hooks/firebase";
 
 //context
 import { useSessionValue, useUserModeValue } from '../context';
+import { format } from 'url';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         '& > *': {
-            margin: theme.spacing(2),
-            width: 'auto',
+            width: '100%',
+            '&:first-child': {
+                marginRight: '8px',
+            },
+            '&:last-child': {
+                marginLeft: '8px',
+            }
         },
     },
 }));
 
-const DissResponse = ({curPinIndex}) => {   
+const DissResponse = ({ curPinIndex }) => {
     // user mode switcher
-    const {userMode} = useUserModeValue();
-    
+    const { userMode } = useUserModeValue();
+
     const classes = useStyles();
-    
+
     //creating a refernce for TextField Component
-    const noteValueRef = useRef('') 
+    const noteValueRef = useRef('')
 
     //get sessionID
-    const {sessionID} = useSessionValue();
+    const { sessionID } = useSessionValue();
 
     // fetch raw pin data here
     const [pins, setPins] = useState([]);
@@ -82,29 +89,29 @@ const DissResponse = ({curPinIndex}) => {
                 console.log("No such document!");
             }
         })
-        .catch((error) => {
-            console.log("Error getting document:", error);
-        });
-        if(infoName === `${userMode}PinInfos.pinNote`){
+            .catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        if (infoName === `${userMode}PinInfos.pinNote`) {
             setCurNoteInfo(doc);
-        } else if(infoName === `callerPinInfos.pinPerspective`){
+        } else if (infoName === `callerPinInfos.pinPerspective`) {
             setCurPerspectiveInfo1(doc);
-        } else if(infoName === `calleePinInfos.pinPerspective`){
+        } else if (infoName === `calleePinInfos.pinPerspective`) {
             setCurPerspectiveInfo2(doc);
-        } else if(infoName === `callerPinInfos.pinCategory`){
+        } else if (infoName === `callerPinInfos.pinCategory`) {
             setPinType1(doc);
-        } else if(infoName === `calleePinInfos.pinCategory`){
+        } else if (infoName === `calleePinInfos.pinCategory`) {
             setPinType2(doc);
-        } else if(infoName === `callerPinInfos.pinSkill`){
+        } else if (infoName === `callerPinInfos.pinSkill`) {
             setCurSkillInfo1(doc);
-        } else if(infoName === `calleePinInfos.pinSkill`){
+        } else if (infoName === `calleePinInfos.pinSkill`) {
             setCurSkillInfo2(doc);
         }
     }
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
-        if(infoName === `${userMode}PinInfos.pinNote`){
+        if (infoName === `${userMode}PinInfos.pinNote`) {
             setCurNoteInfo(input);
         }
         let usersUpdate = {};
@@ -112,8 +119,8 @@ const DissResponse = ({curPinIndex}) => {
         firebase
             .firestore()
             .collection("Pins")
-            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
-            .update(usersUpdate)    
+            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))
+            .update(usersUpdate)
             .then(() => {
                 console.log("Document successfully updated!");
             })
@@ -125,31 +132,41 @@ const DissResponse = ({curPinIndex}) => {
 
     return (
         <Grid item xs={12} sm={8}>
-            <Paper >
-                <h2>{userMode}</h2>
+            <ColorLibPaper >
+                <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
+                    {userMode}
+                </Typography>
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box m={2} height={700}>
-                    <Box fontStyle="italic" fontSize={18}>
+                <Box fontStyle="italic">
+                    <Typography>
                         Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
-                    </Box>
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="Personal Notes..."
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={3}
-                        margin="normal"
-                        value = {curNoteInfo}
-                        inputRef={noteValueRef}
-                        onChange = {() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
-                    />
-                    <Box my={1} fontStyle="italic" fontSize={18}> Talk with your peer about:</Box>
-                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={2}> 
-                        What is your perspective of what happened at this pin? 
-                    </Box>
-                    <form className={classes.root} noValidate autoComplete="off">
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    disabled
+                    id="outlined-secondary"
+                    label="Personal Notes..."
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                    margin="normal"
+                    value={curNoteInfo}
+                    inputRef={noteValueRef}
+                    onChange={() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
+                />
+                <Box fontStyle="italic" marginTop="30px"> 
+                    <Typography variant="h3">
+                        Talk with your peer about:
+                    </Typography>
+                </Box>
+                <Box textAlign="left">
+                    <Typography>
+                        What is your perspective of what happened at this pin?
+                    </Typography>
+                </Box>
+                <form className={classes.root} noValidate autoCo
+                mplete="off">
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
@@ -158,8 +175,8 @@ const DissResponse = ({curPinIndex}) => {
                         variant="outlined"
                         multiline
                         rows={3}
-                        margin="normal"                        
-                        value = {curPerspectiveInfo1}
+                        margin="normal"
+                        value={curPerspectiveInfo1}
                     />
                     <ColorLibTextField
                         disabled
@@ -170,62 +187,65 @@ const DissResponse = ({curPinIndex}) => {
                         multiline
                         rows={3}
                         margin="normal"
-                        value = {curPerspectiveInfo2}
+                        value={curPerspectiveInfo2}
                     />
-                    </form>
-                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
+                </form>
+                <Box textAlign="left">
+                    <Typography>
                         What would you categorize this pin as?
-                    </Box>       
-                    <form className={classes.root} noValidate autoComplete="off">
-                        <ToggleButton >
-                            {pinType1}
-                        </ToggleButton>
-                        <ToggleButton >
-                            {pinType2}
-                        </ToggleButton>
-                    </form>
-                    <MISkillsSheet />
-                    <form className={classes.root} noValidate autoComplete="off">
-                        <ColorLibTextField
-                            disabled
-                            id="outlined-secondary"
-                            label="caller's MI skill"
-                            fullWidth
-                            variant="outlined"
-                            multiline
-                            rows={1}
-                            margin="normal"
-                            value = {curSkillInfo1}
-                        />
-                        <ColorLibTextField
-                            disabled
-                            id="outlined-secondary"
-                            label="callee's MI skill"
-                            fullWidth
-                            variant="outlined"
-                            multiline
-                            rows={1}
-                            margin="normal"                        
-                            value = {curSkillInfo2}
-                        />
-                    </form>
-
-                    <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
-                        Why was the pinned situation effective or ineffective?
-                    </Box>  
+                    </Typography>
+                </Box>
+                <form className={classes.root} noValidate autoComplete="off">
+                    <ToggleButton >
+                        {pinType1}
+                    </ToggleButton>
+                    <ToggleButton >
+                        {pinType2}
+                    </ToggleButton>
+                </form>
+                <MISkillsSheet />
+                <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
+                        disabled
                         id="outlined-secondary"
+                        label="caller's MI skill"
                         fullWidth
                         variant="outlined"
                         multiline
-                        rowsMax={2}
+                        rows={1}
                         margin="normal"
-                        // value = {curSkillInfo}
-                        // inputRef={skillValueRef}
-                        // onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}
+                        value={curSkillInfo1}
                     />
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="callee's MI skill"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={1}
+                        margin="normal"
+                        value={curSkillInfo2}
+                    />
+                </form>
+
+                <Box textAlign="left">
+                    <Typography>
+                        Why was the pinned situation effective or ineffective?
+                        </Typography>
                 </Box>
-            </Paper>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rowsMax={2}
+                    margin="normal"
+                // value = {curSkillInfo}
+                // inputRef={skillValueRef}
+                // onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}
+                />
+            </ColorLibPaper>
 
         </Grid>
     );

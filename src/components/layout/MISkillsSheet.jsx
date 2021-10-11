@@ -50,13 +50,14 @@ const MISkillsSheet = ({pinType}) => {
         <div>
             {pinType === undefined ? null : 
             <div>
-            <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" m={1}> 
-                What   
-                <Link href="#" onClick={() => {handleClickOpen()}}>
-                    {" MI skills "}
-                </Link>
-                
-                {pinType === "strength" ? str1 : str2}
+            <Box textAlign="left">
+                <Typography>
+                    What   
+                    <Link href="#" onClick={() => {handleClickOpen()}}>
+                        {" MI skills "}
+                    </Link>
+                    {pinType === "strength" ? str1 : str2}
+                </Typography> 
             </Box>   
             <Dialog onClose={handleClose} open={skillInfoOpened}>
                 <DialogTitle onClose={handleClose} align="center">
