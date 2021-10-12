@@ -7,12 +7,11 @@ import VideoChatComponentSecond from "../VideoDiscussionSecond.js";
 import { ColorLibNextButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 
+import firebase from 'firebase';
 
 //context
 import {useSessionValue, usePinsValue } from "../../context";
 
-const {sessionID} = useSessionValue();
-const {pins} = usePinsValue();
 
 function getConditionalContent(page) {
     switch (page) {
@@ -27,7 +26,7 @@ function getConditionalContent(page) {
     }
 }
 
-const saveEfficacyInfo = async () => {
+const saveEfficacyInfo = async (pins, sessionID) => {
   pins.map(async (p) => {
     await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").doc(p.pinID).update({
       pinEfficacy: p.pinEfficacy
@@ -35,9 +34,10 @@ const saveEfficacyInfo = async () => {
   })
 }
 
-function getConditionalButton(page, setPage) {
+function getConditionalButton(page, setPage, pins, sessionID) {
+  
   const handleButton = () => {
-    saveEfficacyInfo();
+    saveEfficacyInfo(pins, sessionID);
     setPage(page+1);
 }
     switch (page) {
@@ -70,11 +70,12 @@ function getConditionalButton(page, setPage) {
 
 const Discussion = () => {
     const [page, setPage] = useState(0);
-
+    const {sessionID} = useSessionValue();
+    const {pins} = usePinsValue();
     return (  
         <div>
             {getConditionalContent(page)}  
-            {getConditionalButton(page, setPage)}
+            {getConditionalButton(page, setPage, pins, sessionID)}
         </div>
     );
 }

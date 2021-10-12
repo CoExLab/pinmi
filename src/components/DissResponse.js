@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const DissResponse = ({ curPinIndex }) => {
+const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     // user mode switcher
     const { userMode } = useUserModeValue();
 
@@ -60,6 +60,8 @@ const DissResponse = ({ curPinIndex }) => {
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
+    const [curEfficacyInfo, setCurEfficacyInfo] = useState(pins[curPinIndex].pinEfficacy);
+
     useEffect(() => {
         fetchCurTextVal(`pinNote`);
         fetchCurTextVal(`callerPinInfos.pinPerspective`);
@@ -68,6 +70,8 @@ const DissResponse = ({ curPinIndex }) => {
         fetchCurTextVal(`calleePinInfos.pinCategory`);
         fetchCurTextVal(`callerPinInfos.pinSkill`);
         fetchCurTextVal(`calleePinInfos.pinSkill`);
+        pins[prevPinIndex].pinEfficacy = curEfficacyInfo;
+        setCurEfficacyInfo(pins[curPinIndex].pinEfficacy);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [curPinIndex])
 
@@ -95,9 +99,9 @@ const DissResponse = ({ curPinIndex }) => {
     }
 
     // for pin information modifying
-    const handlePinInfo = (input) => {
-        pins[curPinIndex].pinEfficacy = input;
-    }
+    // const handlePinInfo = (input) => {
+    //     pins[curPinIndex].pinEfficacy = curEfficacyInfo;
+    // }
 
     return (
         <Grid item xs={12} sm={8}>
@@ -122,7 +126,7 @@ const DissResponse = ({ curPinIndex }) => {
                     margin="normal"
                     value={curNoteInfo}
                     inputRef={noteValueRef}
-                    onChange={() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
+                    onChange={() => console.log("invalid")}
                 />
                 <Box fontStyle="italic" marginTop="30px"> 
                     <Typography variant="h3">
@@ -204,7 +208,6 @@ const DissResponse = ({ curPinIndex }) => {
                         </Typography>
                 </Box>
                 <ColorLibTextField
-                    disabled
                     id="outlined-secondary"
                     label="Personal Notes..."
                     fullWidth
@@ -212,9 +215,9 @@ const DissResponse = ({ curPinIndex }) => {
                     multiline
                     rows={3}
                     margin="normal"
-                    value={pins[curPinIndex].pinEfficacy}
+                    value={curEfficacyInfo}
                     inputRef={noteValueRef}
-                    onChange={() => handlePinInfo(noteValueRef.current.value)}
+                    onChange={() => setCurEfficacyInfo(noteValueRef.current.value)}
                 />
             </ColorLibPaper>
 
