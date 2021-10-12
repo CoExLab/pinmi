@@ -36,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
 const Collaboration = () => {
   const classes = useStyles();
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(-1);
+  const [curPinIndex, setCurPinIndex] = useState(0);
+  const [prevPinIndex, setPrevPinIndex] = useState(0);
 
   const [room, setRoom] = useState("hello");
     //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
@@ -57,10 +58,14 @@ const Collaboration = () => {
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
+            prevPinIndex = {prevPinIndex}
+            setPrevPinIndex = {setPrevPinIndex}
           />
           <Transcription />
           <DissResponse 
-            curPinIndex = {curPinIndex}/>
+            curPinIndex = {curPinIndex}
+            prevPinIndex = {prevPinIndex}
+            />
         </Grid>
       </Container>
     </div>

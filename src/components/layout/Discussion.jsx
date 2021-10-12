@@ -9,8 +9,10 @@ import ColorLibButton from './ColorLibComponents/ColorLibButton';
 
 
 //context
-import { useSessionValue } from "../../context";
+import {useSessionValue, usePinsValue } from "../../context";
 
+const {sessionID} = useSessionValue();
+const {pins} = usePinsValue();
 
 function getConditionalContent(page) {
     switch (page) {
@@ -25,8 +27,17 @@ function getConditionalContent(page) {
     }
 }
 
+const saveEfficacyInfo = async () => {
+  pins.map(async (p) => {
+    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").doc(p.pinID).update({
+      pinEfficacy: p.pinEfficacy
+    })
+  })
+}
+
 function getConditionalButton(page, setPage) {
   const handleButton = () => {
+    saveEfficacyInfo();
     setPage(page+1);
 }
     switch (page) {
