@@ -54,14 +54,15 @@ const DisscussionPrep = () => {
       creatorID: myPin.creatorID,
       creatorMode: myPin.creatorMode,
       pinTime: myPin.pinTime,
-      creatorPinNote: myPin.creatorPinNote,
-      creatorPinPerspective: myPin.creatorPinPerspective,
-      creatorPinCategory: myPin.creatorPinCategory,
-      creatorPinSkill: myPin.creatorPinSkill,
-      otherPinNote: myPin.otherPinNote,
-      otherPinPerspective: myPin.otherPinPerspective,
-      otherPinCategory: myPin.otherPinCategory,
-      otherPinSkill: myPin.otherPinSkill,
+      callerPinNote: myPin.callerPinNote,
+      callerPinPerspective: myPin.callerPinPerspective,
+      callerPinCategory: myPin.callerPinCategory,
+      callerPinSkill: myPin.callerPinSkill,
+      calleePinNote: myPin.calleePinNote,
+      calleePinPerspective: myPin.calleePinPerspective,
+      calleePinCategory: myPin.calleePinCategory,
+      calleePinSkill: myPin.calleePinSkill,
+      pinEfficacy: ''
     })
     .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
     .catch((e) => { console.log("pin update unsuccessful: " + e) });

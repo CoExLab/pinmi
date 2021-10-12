@@ -174,14 +174,15 @@ function VideoChatComponent(props) {
         creatorID: userID,
         creatorMode: userMode,
         pinTime: curTime, 
-        creatorPinNote: '',
-        creatorPinPerspective: '',
-        creatorPinCategory: '',
-        creatorPinSkill: '',
-        otherPinNote: '',
-        otherPinPerspective: '',
-        otherPinCategory: '',
-        otherPinSkill: ''
+        callerPinNote: '',
+        callerPinPerspective: '',
+        callerPinCategory: '',
+        callerPinSkill: '',
+        calleePinNote: '',
+        calleePinPerspective: '',
+        calleePinCategory: '',
+        calleePinSkill: '',
+        pinEfficacy: ''
       }; 
 
       //Use this code if the pins context doesn't work correctly to save pin information from both users

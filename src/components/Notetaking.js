@@ -101,17 +101,17 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         console.log("pins:" + pins + "\nindex: " + index);
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin && userID == myPin.creatorID) {
-                myPin.creatorPinNote = curNoteInfo;
-                myPin.creatorPinPerspective = curPerspectiveInfo;
-                myPin.creatorPinCategory = pinType;
-                myPin.creatorPinSkill = curSkillInfo;
+            if (myPin && userMode == "caller") {
+                myPin.callerPinNote = curNoteInfo;
+                myPin.callerPinPerspective = curPerspectiveInfo;
+                myPin.callerPinCategory = pinType;
+                myPin.callerPinSkill = curSkillInfo;
                 pins[index] = myPin;
             } else if(myPin) {
-                myPin.otherPinNote = curNoteInfo;
-                myPin.otherPinPerspective = curPerspectiveInfo;
-                myPin.otherPinCategory = pinType;
-                myPin.otherPinSkill = curSkillInfo;
+                myPin.calleePinNote = curNoteInfo;
+                myPin.calleePinPerspective = curPerspectiveInfo;
+                myPin.calleePinCategory = pinType;
+                myPin.calleePinSkill = curSkillInfo;
                 pins[index] = myPin;
             }
         }
@@ -128,16 +128,16 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         savePin(prevPinIndex);
 
         //clear out all the states
-        if (pins[curPinIndex] && pins[curPinIndex].creatorID == userID) {
-            setPinType(pins[curPinIndex].creatorPinCategory);
-            setCurNoteInfo(pins[curPinIndex].creatorPinNote);
-            setCurPerspectiveInfo(pins[curPinIndex].creatorPinPerspective);
-            setCurSkillInfo(pins[curPinIndex].creatorPinSkill);
+        if (pins[curPinIndex] && userMode == "caller") {
+            setPinType(pins[curPinIndex].callerPinCategory);
+            setCurNoteInfo(pins[curPinIndex].callerPinNote);
+            setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
+            setCurSkillInfo(pins[curPinIndex].callerPinSkill);
         } else if(pins[curPinIndex]){
-            setPinType(pins[curPinIndex].otherPinCategory);
-            setCurNoteInfo(pins[curPinIndex].otherPinNote);
-            setCurPerspectiveInfo(pins[curPinIndex].otherPinPerspective);
-            setCurSkillInfo(pins[curPinIndex].otherPinSkill);
+            setPinType(pins[curPinIndex].calleePinCategory);
+            setCurNoteInfo(pins[curPinIndex].calleePinNote);
+            setCurPerspectiveInfo(pins[curPinIndex].calleePinPerspective);
+            setCurSkillInfo(pins[curPinIndex].calleePinSkill);
         }
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
