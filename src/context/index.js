@@ -27,6 +27,18 @@ export const UserModeProvider = ({children}) => {
 }
 export const useUserModeValue = () => useContext(UserModeContext);
 
+export const PlayerModeContext = createContext();
+export const PlayerModeProvider = ({children}) => {
+    const [playerMode, setPlayerMode] = useState("multiplayer");
+
+    return  (
+        <PlayerModeContext.Provider value = {{playerMode, setPlayerMode}}>
+            {children}
+        </PlayerModeContext.Provider>
+    )
+}
+export const usePlayerModeValue = () => useContext(PlayerModeContext);
+
 // export const SessionContext = createContext();
 // export const SessionProvider = ({ children }) => {
 //   const [apiKey, setApiKey] = useState("YOUR_API_KEY");

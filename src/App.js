@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import { Provider } from "react-redux";
 
-import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} from './context/index';
+import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider, PlayerModeProvider} from './context/index';
 import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
 import Completion from './components/layout/Completion';
@@ -107,15 +107,18 @@ const App = () => {
             <Route exact path="/completion" component={Completion}/>
             <Route exact path='/test' component={CORsTestButtons}/>
             <Provider store={store}>
-              <SessionProvider>
-                <ActiveStepProvider>
-                  <PinsProvider>
-                    <UserModeProvider>
-                      <Route exact path="/content" component={Content}/>
-                    </UserModeProvider>
-                  </PinsProvider>
-                </ActiveStepProvider>
-              </SessionProvider>
+              <PlayerModeProvider>
+                <SessionProvider>
+                  <ActiveStepProvider>
+                    <PinsProvider>
+                      <UserModeProvider>
+                        <Route exact path="/content" component={Content}/>
+                      </UserModeProvider>
+                    </PinsProvider>
+                  </ActiveStepProvider>
+                </SessionProvider>
+              </PlayerModeProvider>
+
             </Provider>
           </Switch>
         </main>
