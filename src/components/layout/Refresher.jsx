@@ -8,7 +8,10 @@ import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibCompo
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
 import { firebase } from "../../hooks/firebase";
-
+import SinglePlayerToggleButton, {
+  SinglePlayerToggleButtonGroup,
+} from "./SinglePlayerComponents/SinglePlayerToggleButton";
+import { usePlayerModeValue } from "../../context";
 
 const Refresher = () => {
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
@@ -34,11 +37,19 @@ const Refresher = () => {
     }
   };
 
-  const handleQuestion1 = (event, newAns) => {
-    if (newAns !== null) {
-      setQuestion1Ans(newAns);
+  const { playerMode, setPlayerMode } = usePlayerModeValue();
+
+  const handlePlayerMode = (event, newMode) => {
+    if (newMode !== null) {
+      setPlayerMode(newMode);
     }
   };
+
+	const handleQuestion1 = (event, newAns) => {
+	  if (newAns !== null) {
+		setQuestion1Ans(newAns);
+	  }
+	};
 
   const handleQuestion2 = (event, newAns) => {
     if (newAns !== null) {
@@ -232,7 +243,19 @@ const Refresher = () => {
   return (
     <Fragment>
       <Container maxWidth='md'>
-        <Box align="left" m={2}>
+        <Box align="left" m = {2}> 
+        <SinglePlayerToggleButtonGroup
+            value={playerMode}
+            exclusive
+            onChange={handlePlayerMode}
+          >
+            <SinglePlayerToggleButton size="small" value="multiplayer">
+              Multiplayer
+            </SinglePlayerToggleButton>
+            <SinglePlayerToggleButton size="small" value="singleplayer">
+              Single-player
+            </SinglePlayerToggleButton>
+          </SinglePlayerToggleButtonGroup>
           <ColorLibToggleButtonGroup
             value={userMode}
             exclusive
