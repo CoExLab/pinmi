@@ -15,16 +15,16 @@ import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
-    padding: "50px 68px 50px 68px",
-    textAlign: "center",
+    padding: '50px 68px 50px 68px',
+    textAlign: 'center',
   },
   welcome_intro: {
     color: theme.palette.teal.dark,
   },
   welcome_definition: {
     color: theme.palette.gray.main,
-    fontStyle: "italic",
-    padding: "10px 20px 10px 20px",
+    fontStyle: 'italic',
+    padding: '10px 20px 10px 20px',
   },
   button_wrapper: {
     marginBottom: '68px',
@@ -149,3 +149,4 @@ const Landing = () => {
 };
 
 export default Landing;
+
