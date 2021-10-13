@@ -3,7 +3,7 @@ import VideoChatComponent from "../../VideoChatComponent.js";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
-import { useSessionValue, useUserModeValue} from "../../../context";
+import { useSessionValue, useUserModeValue, usePlayerModeValue} from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
@@ -33,6 +33,8 @@ const Session = () => {
     //   }
 
     const { userMode } = useUserModeValue();
+    const { playerMode } = usePlayerModeValue();
+    console.log(playerMode);
 
     //hostName is a string that is the clients usermode that should host the archive. 
     const checkIsArchiveHost = (hostName) => {
@@ -62,6 +64,13 @@ const Session = () => {
 
     return (
         <div>
+            <div>
+            {playerMode == "multiplayer" ? (
+                <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
+            ) : (
+                <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
+            )}
+            </div>
             <VideoChatComponent isArchiveHost = {checkIsArchiveHost("callee")}/>
         </div>
     );
