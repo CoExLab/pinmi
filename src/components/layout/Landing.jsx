@@ -125,7 +125,7 @@ const Landing = () => {
         Welcome to Pin-MI
         </Typography>
         <Typography variant='h3' className={classes.welcome_definition}>
-        a platform for practicing MI with your peers with the help of pins
+        a platform for practicing MI with your peers and the help of pins
         </Typography>
         <br />
         
