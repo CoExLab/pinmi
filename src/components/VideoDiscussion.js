@@ -327,7 +327,7 @@ function VideoChatComponent(props) {
         <Card variant='outlined' aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'card' width='100'>
         <CardContent>
         <Typography variant="body2" component="p">
-        Introduce yourself to Julia, a social worker at UPMC also learning MI.
+        Introduce yourself to your peer who is also learning MI.
 
           <br />
           <br />
