@@ -9,17 +9,17 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Popper from '@material-ui/core/Popper';
+
 import Webcam from "react-webcam";
+
+import pinningClick from "./../other/tutorial/pinning-click.png";
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 
@@ -55,6 +55,30 @@ const useStyles = makeStyles((theme) => ({
   '& > * + *': {
     marginLeft: theme.spacing(5),
   },
+  dialog: {
+    '& .MuiDialogContentText-root': {
+      color: theme.palette.gray.dark,
+      display: 'flex',
+      '& video': {
+        borderRadius: '5px',
+        width: '100%',
+        height: 'max-content',
+      },
+      '& .MuiFab-root': {
+        left: 'calc(50% - 50px)',
+        width: '45px',
+        height: '45px',
+        backgroundColor: 'white',
+        border: 'solid 1px ' + theme.palette.teal.light,
+        '& .MuiSvgIcon-root': {
+          fill: theme.palette.teal.dark,
+        },
+        '&:last-child': {
+          marginLeft: '10px',
+        }
+      }
+    }
+  }
 }));
 
 function VideoChatComponent(props) {
@@ -469,6 +493,34 @@ function VideoChatComponent(props) {
       .catch((e) => { console.log(e) });
   }
 
+  const PreviewMicButton = () => (
+    isAudioEnabled ? 
+    <Fab>
+      <MicIcon 
+        onClick={() => setIsAudioEnabled(false)}
+      />
+    </Fab> : 
+    <Fab>
+      <MicOffIcon 
+        onClick={() => setIsAudioEnabled(true)}
+      />
+    </Fab>
+  );
+
+  const PreviewVideoButton = () => (
+    isVideoEnabled ? 
+    <Fab>
+      <VideocamIcon 
+        onClick={() => setIsVideoEnabled(false)}
+      />
+    </Fab> : 
+    <Fab>
+      <VideocamOffIcon 
+        onClick={() => setIsVideoEnabled(true)}
+      />
+    </Fab>
+  );
+
 
 
   return (
@@ -477,35 +529,61 @@ function VideoChatComponent(props) {
         {loadingStatus ? <LinearProgress /> : null}
       </Box>
       <Dialog
+        className={classes.dialog}
+        fullWidth
+        maxWidth="md"
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"What is pinning for? "}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Webcam />
-            <p>Click on the pin to create time marks of</p>
-            <ul>
-              <li>situations where you struggled to use MI</li>
-              <li>instances of effective MI use</li>
-            </ul>
-            <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
+            <div style={{marginRight: '20px'}}>
+              <img 
+                src={pinningClick} 
+                alt={"Icon of clicking the pin"}
+                style={{
+                  margin:'20px 0px 10px 0px',
+                  height:'80px'
+                }}
+              />
+              <Typography variant='h4'>
+                What is pinning for?
+              </Typography>
+              <Typography variant='body2'>
+                <p>Click on the pin to create time marks of</p>
+                <ul style={{fontWeight: 700}}>
+                  <li>situations where you struggled to use MI</li>
+                  <li>instances of effective MI use</li>
+                </ul>
+                <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
+              </Typography>
+              <div style={{marginTop: '20px'}}>
+                <ColorLibNextButton
+                  variant='contained'
+                  size='medium'
+                  onClick={
+                    () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
+                  }
+                  autoFocus
+                >
+                  Join Now
+                </ColorLibNextButton>
+              </div>
+            </div>
+            <div style={{Width: '100%'}}>
+              <Webcam 
+                mirrored
+                audio={isAudioEnabled} 
+              />
+              <div style={{marginTop: '-65px'}}>
+                <PreviewMicButton />
+                <PreviewVideoButton />
+              </div>
+            </div>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <ColorLibNextButton
-            variant='contained'
-            size='medium'
-            onClick={
-              () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
-            }
-            autoFocus
-          >
-            Join Later
-          </ColorLibNextButton>
-        </DialogActions>
       </Dialog>
 
       <div className="video-container">
@@ -524,6 +602,7 @@ function VideoChatComponent(props) {
           {!isStreamSubscribed && renderToolbar()}
         </div>
       </div>
+
       <div className='actions-btns'>
         <ColorLibCallEndButton
           variant="contained"
