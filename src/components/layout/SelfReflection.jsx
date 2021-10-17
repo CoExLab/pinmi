@@ -222,7 +222,7 @@ const SelfReflection = () => {
             practice: currentInput.state.practice,
             additional: currentInput.state.addReflect
         });
-        document.location.href = “/completion”;
+        document.location.href = "/completion";
     }
 
     return (
