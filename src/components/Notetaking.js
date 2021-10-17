@@ -122,9 +122,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         console.log("previous index: " + prevPinIndex);
         console.log("current index: " + curPinIndex);
         //update pin values
-        setCurNoteInfo(noteValueRef.current);
-        setCurPerspectiveInfo(perspectiveValueRef.current);
-        setCurSkillInfo(skillValueRef.current);
+        setCurNoteInfo(noteValueRef.current.value);
+        setCurPerspectiveInfo(perspectiveValueRef.current.value);
+        setCurSkillInfo(skillValueRef.current.value);
 
         //pin info saved
         console.log("Current note: " + curNoteInfo);
