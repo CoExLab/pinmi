@@ -47,6 +47,27 @@ const DisscussionPrep = () => {
     window.scrollTo(0, 0);
   }, [])
 
+  const saveLocalPin = async (index) => {
+    console.log("pins:" + pins + "\nindex: " + index);
+    if (index >= 0 && index < pins.length) {
+        const myPin = pins[index];
+        if (myPin && userMode == "caller") {
+            myPin.callerPinNote = curNoteInfo;
+            myPin.callerPinPerspective = curPerspectiveInfo;
+            myPin.callerPinCategory = pinType;
+            myPin.callerPinSkill = curSkillInfo;
+            pins[index] = myPin;
+        } else if(myPin) {
+            myPin.calleePinNote = curNoteInfo;
+            myPin.calleePinPerspective = curPerspectiveInfo;
+            myPin.calleePinCategory = pinType;
+            myPin.calleePinSkill = curSkillInfo;
+            pins[index] = myPin;
+        }
+        console.log("Pin Edited: " + pins[index]);
+    }
+}
+
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
@@ -69,7 +90,7 @@ const DisscussionPrep = () => {
   }
 
   const handleNext = () => {
-    setCurPinIndex(0);
+    saveLocalPin(curPinIndex);
     console.log(pins);
     pins.map((elem, id) => savePin(id));
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
