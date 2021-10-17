@@ -19,6 +19,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Popper from '@material-ui/core/Popper';
+import Webcam from "react-webcam";
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 
@@ -528,6 +529,7 @@ function VideoChatComponent(props) {
                 <DialogTitle id="alert-dialog-title">{"What is pinning for? "}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
+                        <Webcam />
                         <p>Click on the pin to create time marks of</p>
                         <ul>
                             <li>situations where you struggled to use MI</li>

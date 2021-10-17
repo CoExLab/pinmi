@@ -327,7 +327,7 @@ function VideoChatComponent(props) {
         <Card variant='outlined' aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'card' width='100'>
         <CardContent>
         <Typography variant="body2" component="p">
-        Introduce yourself to Julia, a social worker at UPMC also learning MI.
+        Introduce yourself to your peer who is also learning MI.
 
           <br />
           <br />
@@ -494,11 +494,6 @@ How did today’s mock client session go?
             aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <p>You have added notes to 2 out of 3 pins.</p>
-                    </DialogContentText>
-                </DialogContent>
                 <DialogActions>
                 <Box m={2}>
                   <div direction='row' align='center'>
