@@ -114,6 +114,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                 myPin.calleePinSkill = curSkillInfo;
                 pins[index] = myPin;
             }
+            console.log("Pin Edited: " + pins[index]);
         }
     }
 
