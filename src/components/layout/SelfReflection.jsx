@@ -192,14 +192,13 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
                 >
                     Back
                 </ColorLibBackButton>
-                <ColorLibButton 
+                <ColorLibNextButton 
                     variant="contained"
                     size="medium"
                     onClick={()=>makeReflectionDoc()}
-                    href="/completion"
                 >
                     Finish Self-Reflection
-                </ColorLibButton>
+                </ColorLibNextButton>
             </div>
         );
         default: return <div />;
@@ -222,7 +221,8 @@ const SelfReflection = () => {
             obstacles: currentInput.state.obstacles,
             practice: currentInput.state.practice,
             additional: currentInput.state.addReflect
-        })
+        });
+        document.location.href = “/completion”;
     }
 
     return (
