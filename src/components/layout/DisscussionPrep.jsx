@@ -69,6 +69,7 @@ const DisscussionPrep = () => {
   }
 
   const handleNext = () => {
+    setCurPinIndex(0);
     console.log(pins);
     pins.map((elem, id) => savePin(id));
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
