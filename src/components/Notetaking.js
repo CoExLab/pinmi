@@ -233,7 +233,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     label="Personal notes..."
                     value={curNoteInfo}
                     inputRef={noteValueRef}
-                    onChange={() => { setCurNoteInfo(noteValueRef.current.value); console.log("cur: " + curNoteInfo); }}
+                    onChange={() => { setCurNoteInfo(noteValueRef.current.value); }}
                 />
                 <Box fontStyle="italic" marginTop="30px"> 
                     <Typography variant = "h3">
@@ -287,7 +287,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     margin="normal"
                     value={curSkillInfo}
                     inputRef={skillValueRef}
-                    onChange={() => setCurSkillInfo(skillValueRef.current)}
+                    onChange={() => setCurSkillInfo(skillValueRef.current.value)}
                 />
             </ColorLibPaper>
         </Grid>
