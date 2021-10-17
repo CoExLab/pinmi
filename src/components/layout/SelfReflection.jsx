@@ -1,10 +1,13 @@
 import { Box, Container, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useState } from 'react';
+import { useState, useRef, React } from 'react';
 
 import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
+
+import firebase from 'firebase';
+import { useSessionValue } from '../../context';
 
 const getPageTitle = (page) => {
     switch(page) {
@@ -15,7 +18,21 @@ const getPageTitle = (page) => {
     }
 }
 
-const getPageContent = (page) => {
+const GetPageContent = ({page}) => {
+    const [strength, setStrength] = useState('');
+    const [opp, setOpp] = useState('');
+    const [nextSteps, setNextSteps] = useState('');
+    const [obstacles, setObstacles] = useState('');
+    const [practice, setPractice] = useState('');
+    const [addReflect, setAddReflect] = useState('');
+
+    const strengthRef = useRef('');
+    const oppRef = useRef('');
+    const nextStepsRef = useRef('');
+    const obstaclesRef = useRef('');
+    const practiceRef = useRef('');
+    const addReflectRef = useRef('');
+
     switch(page) {
         case 0: return (
             <div>
@@ -31,6 +48,9 @@ const getPageContent = (page) => {
                             multiline
                             rowsMax={2}
                             margin="normal"
+                            value={strength}
+                            inputRef={strengthRef}
+                            onChange={() => setStrength(strengthRef.current.value)}
                     />
                 </Box>
                 <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
@@ -45,6 +65,9 @@ const getPageContent = (page) => {
                             multiline
                             rowsMax={2}
                             margin="normal"
+                            value={opp}
+                            inputRef={oppRef}
+                            onChange={()=>setOpp(oppRef.current.value)}
                     />
                 </Box>
             </div>
@@ -62,6 +85,9 @@ const getPageContent = (page) => {
                             multiline
                             rowsMax={2}
                             margin="normal"
+                            value={nextSteps}
+                            inputRef={nextStepsRef}
+                            onChange={() => setNextSteps(nextStepsRef.current.value)}
                     />
                 </Box>
                 <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
@@ -75,6 +101,9 @@ const getPageContent = (page) => {
                             multiline
                             rowsMax={2}
                             margin="normal"
+                            value={obstacles}
+                            inputRef={obstaclesRef}
+                            onChange={() => setObstacles(obstaclesRef.current.value)}
                     />
                 </Box>
             </div>
@@ -92,6 +121,9 @@ const getPageContent = (page) => {
                         multiline
                         rowsMax={2}
                         margin="normal"
+                        value={practice}
+                        inputRef={practiceRef}
+                        onChange={() => setPractice(practiceRef.current.value)}
                     />
                 </Box>
                 <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
@@ -105,6 +137,9 @@ const getPageContent = (page) => {
                             multiline
                             rowsMax={2}
                             margin="normal"
+                            value={addReflect}
+                            inputRef={addReflectRef}
+                            onChange={() => setAddReflect(addReflectRef.current.value)}
                     />
                 </Box>
             </div>
@@ -113,7 +148,7 @@ const getPageContent = (page) => {
     }
 }
 
-const getPageButtons = (page, setPage) => {
+const getPageButtons = (page, setPage, makeReflectionDoc) => {
     const handleNext = () => {
         setPage(page+1);
     }
@@ -160,6 +195,7 @@ const getPageButtons = (page, setPage) => {
                 <ColorLibButton 
                     variant="contained"
                     size="medium"
+                    onClick={()=>makeReflectionDoc()}
                     href="/completion"
                 >
                     Finish Self-Reflection
@@ -171,7 +207,23 @@ const getPageButtons = (page, setPage) => {
 }
 
 const SelfReflection = () => {
+    const {sessionID} = useSessionValue();
+
     const [page, setPage] = useState(0);
+
+    const childRef = React.createRef();
+
+    const makeReflectionDoc = async () => {
+        const currentInput = this.childRef.current;
+        await firebase.firestore().collection("reflection").doc(sessionID).set({
+            strength: currentInput.state.strength,
+            opportunity: currentInput.state.opp,
+            nextSteps: currentInput.state.nextSteps,
+            obstacles: currentInput.state.obstacles,
+            practice: currentInput.state.practice,
+            additional: currentInput.state.addReflect
+        })
+    }
 
     return (
         <Container maxWidth = 'md'>
@@ -185,7 +237,7 @@ const SelfReflection = () => {
                 <Typography variant='h4'>
                     {getPageTitle(page)}
                 </Typography>  
-                {getPageContent(page)}
+                <GetPageContent ref={childRef} props={page}/>
                 <div 
                     style={{
                         display: 'flex', 
@@ -194,7 +246,7 @@ const SelfReflection = () => {
                         margin: '20px 0 0 0'
                     }}
                 >
-                    {getPageButtons(page, setPage)}
+                    {getPageButtons(page, setPage, makeReflectionDoc)}
                 </div>
             </ColorLibPaper>
         </Container>
