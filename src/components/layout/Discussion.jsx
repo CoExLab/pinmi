@@ -13,12 +13,32 @@ import firebase from 'firebase';
 import {useSessionValue, usePinsValue } from "../../context";
 
 
-function getConditionalContent(page) {
+
+
+const Discussion = () => {
+    const [page, setPage] = useState(0);
+    const {sessionID} = useSessionValue();
+    const {pins} = usePinsValue();
+
+    const [finishedUpdates, setFinishedUpdates] = useState(false);
+
+  const [curPinIndex, setCurPinIndex] = useState(0);
+  const [prevPinIndex, setPrevPinIndex] = useState(0);
+
+  useEffect(() => {
+    if(finishedUpdates)
+    {
+      saveEfficacyInfo(pins, sessionID);
+      setPage(page+1);
+    }
+  }, [finishedUpdates]);
+
+  function getConditionalContent(page) {
     switch (page) {
       case 0:
         return <VideoChatComponent mode = {"Discussion"}/>;
       case 1:
-        return <Collaboration />;
+        return <Collaboration curPinIndex= {curPinIndex} setCurPinIndex={setCurPinIndex} prevPinIndex={prevPinIndex} setPrevPinIndex={setPrevPinIndex}/>;
       case 2:
         return <VideoChatComponentSecond />;
       default:
@@ -37,8 +57,9 @@ const saveEfficacyInfo = async (pins, sessionID) => {
 function getConditionalButton(page, setPage, pins, sessionID) {
   
   const handleButton = () => {
-    saveEfficacyInfo(pins, sessionID);
-    setPage(page+1);
+    setPrevPinIndex(curPinIndex);
+    setCurPinIndex(0);
+    setFinishedUpdates(true);
 }
     switch (page) {
       case 0:
@@ -67,11 +88,6 @@ function getConditionalButton(page, setPage, pins, sessionID) {
         return <div>Unknown</div>;
     }
 }
-
-const Discussion = () => {
-    const [page, setPage] = useState(0);
-    const {sessionID} = useSessionValue();
-    const {pins} = usePinsValue();
     return (  
         <div>
             {getConditionalContent(page)}  
