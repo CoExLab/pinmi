@@ -176,9 +176,9 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+  // const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
-  const { pins } = usePinsValue();
+  // const { pins } = usePinsValue();
 
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
