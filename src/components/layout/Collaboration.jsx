@@ -33,11 +33,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Collaboration = () => {
+const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
   const classes = useStyles();
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(0);
-  const [prevPinIndex, setPrevPinIndex] = useState(0);
+  
 
   const [room, setRoom] = useState("hello");
     //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
