@@ -26,8 +26,9 @@ const Discussion = () => {
   const [prevPinIndex, setPrevPinIndex] = useState(0);
 
   useEffect(() => {
-    if(finishedUpdates)
-    {
+    console.log("before");
+    if(finishedUpdates){
+      console.log("after");
       saveEfficacyInfo(pins, sessionID);
       setPage(page+1);
     }
@@ -54,19 +55,27 @@ const saveEfficacyInfo = async (pins, sessionID) => {
   })
 }
 
-function getConditionalButton(page, setPage, pins, sessionID) {
-  
-  const handleButton = () => {
+const handleButton = (finished) => {
+  if(finished){
+    console.log("handlebutton");
     setPrevPinIndex(curPinIndex);
     setCurPinIndex(0);
     setFinishedUpdates(true);
+  } else {
+    setPage(page+1);
+  }
+  
 }
+
+function getConditionalButton(page, setPage, pins, sessionID) {
+  
+  
     switch (page) {
       case 0:
         return (
           <div>
             <Box align='center' m = {2} mb = {20}> 
-              <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton()}>
+              <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
                 Let's talk about our pins
               </ColorLibNextButton>
             </Box>
@@ -76,7 +85,7 @@ function getConditionalButton(page, setPage, pins, sessionID) {
         return (
           <div>
             <Box align='center' m = {2} mb = {20}> 
-              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton()}>
+              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton(true)}>
                 Finish Discussing Pins
               </ColorLibButton>
             </Box>
