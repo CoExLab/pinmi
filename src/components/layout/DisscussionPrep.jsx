@@ -40,33 +40,13 @@ const DisscussionPrep = () => {
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   const [curPinIndex, setCurPinIndex] = useState(0);
   const [prevPinIndex, setPrevPinIndex] = useState(0);
+  const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
   const { sessionID } = useSessionValue();
   const { userID } = useUserModeValue();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
-
-  const saveLocalPin = async (index) => {
-    console.log("pins:" + pins + "\nindex: " + index);
-    if (index >= 0 && index < pins.length) {
-        const myPin = pins[index];
-        if (myPin && userMode == "caller") {
-            myPin.callerPinNote = curNoteInfo;
-            myPin.callerPinPerspective = curPerspectiveInfo;
-            myPin.callerPinCategory = pinType;
-            myPin.callerPinSkill = curSkillInfo;
-            pins[index] = myPin;
-        } else if(myPin) {
-            myPin.calleePinNote = curNoteInfo;
-            myPin.calleePinPerspective = curPerspectiveInfo;
-            myPin.calleePinCategory = pinType;
-            myPin.calleePinSkill = curSkillInfo;
-            pins[index] = myPin;
-        }
-        console.log("Pin Edited: " + pins[index]);
-    }
-}
 
   const savePin = async (index) => {
     const myPin = pins[index];
@@ -89,12 +69,26 @@ const DisscussionPrep = () => {
     .catch((e) => { console.log("pin update unsuccessful: " + e) });
   }
 
-  const handleNext = () => {
-    saveLocalPin(curPinIndex);
-    console.log(pins);
-    pins.map((elem, id) => savePin(id));
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleNext = async () => {
+    
+    console.log("Pins changed in dis prep: " + curPinIndex);
+    //reset curPinIndex to force the Notetaking.js file to remember the last pin info
+    setPrevPinIndex(curPinIndex);
+    setCurPinIndex(0);
+    //allow next step in logic to occur
+    setFinishedUpdates(true);
   };
+
+  useEffect(() => {
+    console.log(curPinIndex);
+    console.log(pins);
+    if(finishedUpdates) {
+      //save all pins to database and move to next module
+      pins.map((elem, id) => savePin(id));
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  
+    }
+  }, [finishedUpdates]);
 
   return (
     <div className={classes.root}>

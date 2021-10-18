@@ -149,7 +149,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
-        skillValueRef.current = curSkillInfo;
+        skillValueRef.current.value = curSkillInfo;
     }, [curPinIndex])
 
 
