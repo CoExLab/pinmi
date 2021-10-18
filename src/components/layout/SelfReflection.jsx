@@ -98,10 +98,10 @@ const SelfReflection = () => {
         const practiceRef = useRef('');
         const addReflectRef = useRef('');
 
-    const GetPageContent = ({page}) => {
-        
-    
-        switch(page) {
+    const GetPageContent = (page) => {
+        console.log("In GetPageContent: ");
+        console.log(page.page);
+        switch(page.page) {
             case 0: return (
                 <div>
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" > 
@@ -241,7 +241,7 @@ const SelfReflection = () => {
                 <Typography variant='h4'>
                     {getPageTitle(page)}
                 </Typography>  
-                <GetPageContent props={page}/>
+                <GetPageContent page={page}/>
                 <div 
                     style={{
                         display: 'flex', 
