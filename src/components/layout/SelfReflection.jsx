@@ -7,7 +7,7 @@ import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
 import firebase from 'firebase';
-import { useSessionValue } from '../../context';
+import { useSessionValue, useUserModeValue} from '../../context';
 
 const getPageTitle = (page) => {
     switch(page) {
@@ -79,6 +79,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
 
 const SelfReflection = () => {
     const {sessionID} = useSessionValue();
+    const {userID} = useUserModeValue();
 
     const [page, setPage] = useState(0);
 
@@ -218,7 +219,7 @@ const SelfReflection = () => {
 
     const makeReflectionDoc = async () => {
         // const currentInput = this.childRef.current;
-        await firebase.firestore().collection("reflection").doc(sessionID).set({
+        await firebase.firestore().collection("reflection").doc(sessionID).collection("users").doc(userID).set({
             strength: strength,
             opportunity: opp,
             nextSteps: nextSteps,
