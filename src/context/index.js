@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { usePins } from '../hooks/index';
-import { generatePushId} from "../helper";
+import { randomString} from "../helper";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({children}) => {
@@ -42,7 +42,7 @@ export const useUserModeValue = () => useContext(UserModeContext);
 
 
 export const SessionContext = createContext();
-const newDoc = generatePushId();
+const newDoc = randomString(19);
 
 export const SessionProvider = ({ children }) => {
   // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
@@ -62,10 +62,10 @@ export const useSessionValue = () => useContext(SessionContext);
 
 // const tempPins = usePins(newDoc);
 export const PinsContext = createContext();
-const pins = [];
+var pins = [];
 export const PinsProvider = ({ children }) => {
   return (
-    <PinsContext.Provider value={{ pins}}>
+    <PinsContext.Provider value={{pins}}>
       {children}
     </PinsContext.Provider>
   );

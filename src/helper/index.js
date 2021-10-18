@@ -23,8 +23,8 @@ export const generatePushId = (() => {
     return function () {
       let now = new Date().getTime();
   
-      const timeStampChars = new Array(20);
-      for (var i = 19; i >= 0; i--) {
+      const timeStampChars = new Array(30);
+      for (var i = 29; i >= 0; i--) {
         timeStampChars[i] = PUSH_CHARS.charAt(now % 64);
         now = Math.floor(now / 64);
       }
@@ -37,4 +37,12 @@ export const generatePushId = (() => {
   
       return id;
     };
+
   })();
+  
+export function randomString(length) {
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+};
