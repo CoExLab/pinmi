@@ -35,8 +35,8 @@ import "./VideoChatComponent.scss";
 
 import { baseURL } from './constants';
 
-import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
-import { formatTime, generatePushId } from '../helper/index';
+import { useSessionValue, useActiveStepValue, usePinsValue, useUserModeValue } from "../context";
+import {formatTime, generatePushId} from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
 
@@ -82,7 +82,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  //get setter for media duration
+  const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
+  // fetch raw pin data here
+  const { pins } = usePinsValue();
+  //get user informatoin
+  const {userID, userMode} = useUserModeValue();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -169,32 +176,62 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+  // const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
-  const { pins } = usePinsValue();
+  // const { pins } = usePinsValue();
 
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
-    // ui on
-    setPinBtnDisabled(true);
-    setPinBtnColor("primary");
-    // ui off
-    setTimeout(() => {
-      setPinBtnDisabled(false);
-    }, 800);
+      // ui on
+      setPinBtnDisabled(true);        
+      setPinBtnColor("primary");
+      // ui off
+      setTimeout(() => {
+          setPinBtnDisabled(false);
+      }, 800);
 
-    // if(curTime > addPinDelayTime){
-    //   curTime -= addPinDelayTime;
-    // } else{
-    //   curTime = addPinDelayTime;
-    // }
-    pins.push({ pinID: '', pinTime: curTime, pinInfos: { pinNote: '', pinPerspective: '', pinCategory: '', pinSkill: '' } });
-    console.log("Finished pushing");
+      if(pins.length > 0 && pins[pins.length - 1].pinTime == curTime) {
+        return;
+      }
+
+      //create a newPin object to house pin details
+      const newPin = {
+        pinID: '',
+        creatorID: userID,
+        creatorMode: userMode,
+        pinTime: curTime, 
+        callerPinNote: '',
+        callerPinPerspective: '',
+        callerPinCategory: '',
+        callerPinSkill: '',
+        calleePinNote: '',
+        calleePinPerspective: '',
+        calleePinCategory: '',
+        calleePinSkill: '',
+        pinEfficacy: ''
+      }; 
+
+      //Use this code if the pins context doesn't work correctly to save pin information from both users
+      // await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').add(newPin)
+      // .then((docRef) => {
+      //   pins.push({
+      //     pinID: docRef.id,
+      //     pinInfo: newPin
+      //   })
+      // .then(() => {console.log("New pin successfully written to db");})
+      // .catch((err) => {console.error("Error writing pin document ", err);})
+      // });
+
+      //Otherwise, use this code, as it will save reads and writes in the long run:
+      pins.push(newPin);
+
+      console.log("Finished pin creation"); 
   }
 
   const addTranscript = async () => {
+    //write the transcript to the database
     await firebase.firestore().collection("sessions").doc(sessionID).update({
       transcript: results
     })
@@ -400,12 +437,22 @@ function VideoChatComponent(props) {
 
     //this fetches the archive url
     await saveArchiveURL()
-      .then(() => {
-        stopSpeechToText();
-        addTranscript();
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      })
-      .catch((error) => { console.log(error) });
+    .then(() => {
+      stopSpeechToText();
+      addTranscript();
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((error) => {console.log(error)});
+
+    //sort the array
+    pins.sort(function (a, b) {
+      return a.pinTime - b.pinTime;
+    });
+
+    console.log(pins);
+    if(pins[0]){
+      console.log(pins[0]);
+    }
   }
 
 

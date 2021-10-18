@@ -12,7 +12,7 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useSessionValue, useUserModeValue } from '../context';
+import { useSessionValue, useUserModeValue, usePinsValue } from '../context';
 import { format } from 'url';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const DissResponse = ({ curPinIndex }) => {
+const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     // user mode switcher
     const { userMode } = useUserModeValue();
 
@@ -42,8 +42,10 @@ const DissResponse = ({ curPinIndex }) => {
     //get sessionID
     const { sessionID } = useSessionValue();
 
-    // fetch raw pin data here
-    const [pins, setPins] = useState([]);
+    const {pins} = usePinsValue();
+
+    // // fetch raw pin data here
+    // const [pins, setPins] = useState([]);
 
     // set up states for four different questions
     const [curNoteInfo, setCurNoteInfo] = useState('');
@@ -58,77 +60,48 @@ const DissResponse = ({ curPinIndex }) => {
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
+    const [curEfficacyInfo, setCurEfficacyInfo] = useState(pins[curPinIndex].pinEfficacy);
+
     useEffect(() => {
-        fetchCurTextVal(`${userMode}PinInfos.pinNote`);
+        fetchCurTextVal(`pinNote`);
         fetchCurTextVal(`callerPinInfos.pinPerspective`);
         fetchCurTextVal(`calleePinInfos.pinPerspective`);
         fetchCurTextVal(`callerPinInfos.pinCategory`);
         fetchCurTextVal(`calleePinInfos.pinCategory`);
         fetchCurTextVal(`callerPinInfos.pinSkill`);
         fetchCurTextVal(`calleePinInfos.pinSkill`);
+        pins[prevPinIndex].pinEfficacy = curEfficacyInfo;
+        setCurEfficacyInfo(pins[curPinIndex].pinEfficacy);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [curPinIndex, userMode])
+    }, [curPinIndex])
 
-    useEffect(async () => {
-        const tempPins = [];
-        await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").get().then(snap => snap.docs.map(doc => tempPins.push(doc.data())));
-        setPins(tempPins);
-    }, [pins]);
 
     // for updating and fetching current text field value
     const fetchCurTextVal = async (infoName) => {
-        const docRef = await firebase.firestore().collection("Pins").doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]));
-        const infos = infoName.split(".");
-        let curInfo = "";
-        const doc = await docRef.get().then((doc) => {
-            if (doc.exists) {
-                curInfo = doc.data()[infos[0]][infos[1]];
-                return curInfo;
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        })
-            .catch((error) => {
-                console.log("Error getting document:", error);
-            });
-        if (infoName === `${userMode}PinInfos.pinNote`) {
-            setCurNoteInfo(doc);
+        let curPin = pins[curPinIndex];
+        if (infoName === `pinNote` && userMode == "caller") {
+            setCurNoteInfo(curPin.callerPinNote);
+        } else if (infoName === `pinNote` ){
+            setCurNoteInfo(curPin.calleePinNote);
         } else if (infoName === `callerPinInfos.pinPerspective`) {
-            setCurPerspectiveInfo1(doc);
+            setCurPerspectiveInfo1(curPin.callerPinPerspective);
         } else if (infoName === `calleePinInfos.pinPerspective`) {
-            setCurPerspectiveInfo2(doc);
+            setCurPerspectiveInfo2(curPin.calleePinPerspective);
         } else if (infoName === `callerPinInfos.pinCategory`) {
-            setPinType1(doc);
+            setPinType1(curPin.callerPinCategory);
         } else if (infoName === `calleePinInfos.pinCategory`) {
-            setPinType2(doc);
+            setPinType2(curPin.calleePinCategory);
         } else if (infoName === `callerPinInfos.pinSkill`) {
-            setCurSkillInfo1(doc);
+            setCurSkillInfo1(curPin.callerPinSkill);
         } else if (infoName === `calleePinInfos.pinSkill`) {
-            setCurSkillInfo2(doc);
+            setCurSkillInfo2(curPin.calleePinSkill);
         }
     }
 
     // for pin information modifying
-    const handlePinInfo = (infoName, input) => {
-        if (infoName === `${userMode}PinInfos.pinNote`) {
-            setCurNoteInfo(input);
-        }
-        let usersUpdate = {};
-        usersUpdate[`${infoName}`] = input;
-        firebase
-            .firestore()
-            .collection("Pins")
-            .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))
-            .update(usersUpdate)
-            .then(() => {
-                console.log("Document successfully updated!");
-            })
-            .catch((error) => {
-                // The document probably doesn't exist.
-                console.error("Error updating document: ", error);
-            });
-    }
+    // const handlePinInfo = (input) => {
+    //     pins[curPinIndex].pinEfficacy = curEfficacyInfo;
+    // }
 
     return (
         <Grid item xs={12} sm={8}>
@@ -139,7 +112,7 @@ const DissResponse = ({ curPinIndex }) => {
                 {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
                 <Box fontStyle="italic">
                     <Typography>
-                        Pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
+                        Pinned at {formatTime(pins[curPinIndex].pinTime)}
                     </Typography>
                 </Box>
                 <ColorLibTextField
@@ -153,7 +126,7 @@ const DissResponse = ({ curPinIndex }) => {
                     margin="normal"
                     value={curNoteInfo}
                     inputRef={noteValueRef}
-                    onChange={() => handlePinInfo(`${userMode}PinInfos.pinNote`, noteValueRef.current.value)}
+                    onChange={() => console.log("invalid")}
                 />
                 <Box fontStyle="italic" marginTop="30px"> 
                     <Typography variant="h3">
@@ -228,7 +201,7 @@ const DissResponse = ({ curPinIndex }) => {
                         value={curSkillInfo2}
                     />
                 </form>
-
+                
                 <Box textAlign="left">
                     <Typography>
                         Why was the pinned situation effective or ineffective?
@@ -236,14 +209,15 @@ const DissResponse = ({ curPinIndex }) => {
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
+                    label="Personal Notes..."
                     fullWidth
                     variant="outlined"
                     multiline
-                    rowsMax={2}
+                    rows={3}
                     margin="normal"
-                // value = {curSkillInfo}
-                // inputRef={skillValueRef}
-                // onChange = {() => handlePinInfo("pinInfos.pinSkill", skillValueRef.current.value)}
+                    value={curEfficacyInfo}
+                    inputRef={noteValueRef}
+                    onChange={() => setCurEfficacyInfo(noteValueRef.current.value)}
                 />
             </ColorLibPaper>
 

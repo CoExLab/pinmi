@@ -65,7 +65,9 @@ const Refresher = () => {
       media_url: "default",
       duration: '0',
       transcript: ''
-    });
+    })
+    .then(() => console.log("Session doc created" + sessionID))
+    .catch((err) => console.error("Error in making session ", err));
   }
 
   const makeRefresherDoc = async () => {
@@ -74,6 +76,8 @@ const Refresher = () => {
       q2: openEndedQuesAns[1],
       q3: openEndedQuesAns[2],
       q4: openEndedQuesAns[3],
+      tf1: question1Ans,
+      tf2: question2Ans
     });
   }
 
