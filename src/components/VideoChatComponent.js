@@ -206,10 +206,16 @@ function VideoChatComponent(props) {
         callerPinPerspective: '',
         callerPinCategory: '',
         callerPinSkill: '',
+        callerPinGoal: '',
+        callerPinStrength: '',
+        callerPinOpportunity: '',
         calleePinNote: '',
         calleePinPerspective: '',
         calleePinCategory: '',
         calleePinSkill: '',
+        calleePinGoal: '',
+        calleePinStrength: '',
+        calleePinOpportunity: '',
         pinEfficacy: ''
       }; 
 

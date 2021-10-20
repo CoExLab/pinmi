@@ -19,7 +19,7 @@ import { useSessionValue, usePinsValue } from "../context";
 const useStyles = makeStyles(theme => ({
     toggleGroup: {
         marginTop: '8px',
-        marginBottom: '16px',
+        marginBottom: '24px',
         width: '100%',
         height: '40px',
         '& .MuiToggleButton-root': {
@@ -57,17 +57,25 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   
     const classes = useStyles();
 
-    //creating a refernce for TextField Component
+    //creating a reference for TextField Component
     const player = useRef(null);
     const noteValueRef = useRef('')
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
+    const goalValueRef = useRef('')
+    const strengthValueRef = useRef('')
+    const opportunityValueRef = useRef('')
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
+
     const [curNoteInfo, setCurNoteInfo] = useState('');
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
+    const [curGoalInfo, setCurGoalInfo] = useState('');
+    const [curStrengthInfo, setCurStrengthInfo] = useState('');
+    const [curOpportunityInfo, setCurOpportunityInfo] = useState('');
+
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
@@ -101,20 +109,29 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         console.log("pins:" + pins + "\nindex: " + index);
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin && userMode == "caller") {
+            if (myPin && userMode === "caller") {
                 myPin.callerPinNote = curNoteInfo;
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
                 myPin.callerPinSkill = curSkillInfo;
+                myPin.callerPinGoal = curGoalInfo;
+                myPin.callerPinStrength = curStrengthInfo;
+                myPin.callerPinOpportunity = curOpportunityInfo;
+
                 pins[index] = myPin;
             } else if(myPin) {
                 myPin.calleePinNote = curNoteInfo;
                 myPin.calleePinPerspective = curPerspectiveInfo;
                 myPin.calleePinCategory = pinType;
                 myPin.calleePinSkill = curSkillInfo;
+                myPin.calleePinGoal = curGoalInfo;
+                myPin.calleePinStrength = curStrengthInfo;
+                myPin.calleePinOpportunity = curOpportunityInfo;
+
                 pins[index] = myPin;
             }
-            console.log("Pin Edited: " + pins[index]);
+            console.log("Pin Edited: ")
+            console.log(pins[index]);
         }
     }
 
@@ -125,63 +142,52 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         setCurNoteInfo(noteValueRef.current.value);
         setCurPerspectiveInfo(perspectiveValueRef.current.value);
         setCurSkillInfo(skillValueRef.current.value);
+        setCurGoalInfo(goalValueRef.current.value);
+        setCurStrengthInfo(strengthValueRef.current.value);
+        setCurOpportunityInfo(opportunityValueRef.current.value);
 
         //pin info saved
         console.log("Current note: " + curNoteInfo);
         console.log("Perspective info: " + curPerspectiveInfo);
         console.log("Skill Info: " + curSkillInfo);
+        console.log("Goal note: " + curGoalInfo);
+        console.log("Strength info: " + curStrengthInfo);
+        console.log("Opportunity Info: " + curOpportunityInfo);
 
         //save pin info
         savePin(prevPinIndex);
 
         //clear out all the states
-        if (pins[curPinIndex] && userMode == "caller") {
+        if (pins[curPinIndex] && userMode === "caller") {
             setPinType(pins[curPinIndex].callerPinCategory);
             setCurNoteInfo(pins[curPinIndex].callerPinNote);
             setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
             setCurSkillInfo(pins[curPinIndex].callerPinSkill);
+            setCurGoalInfo(pins[curPinIndex].callerPinGoal);
+            setCurStrengthInfo(pins[curPinIndex].callerPinStrength);
+            setCurOpportunityInfo(pins[curPinIndex].callerPinOpportunity);
         } else if(pins[curPinIndex]){
             setPinType(pins[curPinIndex].calleePinCategory);
             setCurNoteInfo(pins[curPinIndex].calleePinNote);
             setCurPerspectiveInfo(pins[curPinIndex].calleePinPerspective);
             setCurSkillInfo(pins[curPinIndex].calleePinSkill);
+            setCurGoalInfo(pins[curPinIndex].calleePinGoal);
+            setCurStrengthInfo(pins[curPinIndex].calleePinStrength);
+            setCurOpportunityInfo(pins[curPinIndex].calleePinOpportunity);
         }
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current.value = curSkillInfo;
+        goalValueRef.current.value = curGoalInfo;
+        strengthValueRef.current.value = curStrengthInfo;
+        opportunityValueRef.current.value = curOpportunityInfo;
+        console.log("Perspective info: " + curPerspectiveInfo);
+        console.log("Skill Info: " + curSkillInfo);
+        console.log("Goal note: " + curGoalInfo);
+        console.log("Strength info: " + curStrengthInfo);
+        console.log("Opportunity Info: " + curOpportunityInfo);
     }, [curPinIndex])
-
-
-    // for updating and fetching current text field value
-    const fetchCurTextVal = async (infoName) => {
-        return
-        const docId = pins[curPinIndex].pinID;
-        const docRef = await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').doc(pins[curPinIndex].pinID);
-        const infos = infoName.split(".");
-        let curInfo = "";
-        const doc = await docRef.get().then((doc) => {
-            if (doc.exists) {
-                curInfo = doc.data()[infos[1]];
-                return curInfo;
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        })
-            .catch((error) => {
-                console.log("Error getting document:", error);
-            });
-        if (infoName === `${userMode}PinInfos.pinNote`) {
-            setCurNoteInfo(doc);
-        } else if (infoName === `${userMode}PinInfos.pinPerspective`) {
-            setCurPerspectiveInfo(doc);
-        } else if (infoName === `${userMode}PinInfos.pinCategory`) {
-            setPinType(doc);
-        } else if (infoName === `${userMode}PinInfos.pinSkill`) {
-            setCurSkillInfo(doc);
-        }
-    }
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
@@ -227,9 +233,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                         </Typography>
                     </Box>
                     : null}
-                {/* <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium">
-                    Personal Notes
-                </Box> */}
                 <ColorLibTextField
                     id="outlined-secondary"
                     fullWidth
@@ -242,7 +245,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     inputRef={noteValueRef}
                     onChange={() => { setCurNoteInfo(noteValueRef.current.value); }}
                 />
-                <Box fontStyle="italic" marginTop="30px"> 
+                <Box fontStyle="italic" marginTop="16px"> 
                     <Typography variant = "h3">
                         To share with your peer:
                     </Typography>
@@ -257,7 +260,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     fullWidth
                     variant="outlined"
                     multiline
-                    rows={3}
+                    rows={2}
                     margin="normal"
                     value={curPerspectiveInfo}
                     inputRef={perspectiveValueRef}
@@ -290,11 +293,59 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     fullWidth
                     variant="outlined"
                     multiline
-                    rowsMax={2}
+                    rows={2}
                     margin="normal"
                     value={curSkillInfo}
                     inputRef={skillValueRef}
                     onChange={() => setCurSkillInfo(skillValueRef.current.value)}
+                />
+                <Box textAlign="left" >
+                    <Typography>
+                        What was the goal during the pinned situation?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    margin="normal"
+                    value={curGoalInfo}
+                    inputRef={goalValueRef}
+                    onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+                />
+                <Box textAlign="left" >
+                    <Typography>
+                        What worked well to achieve the goal?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    margin="normal"
+                    value={curStrengthInfo}
+                    inputRef={strengthValueRef}
+                    onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
+                />
+                <Box textAlign="left" >
+                    <Typography>
+                        What could be improved to achieve the goal?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    margin="normal"
+                    value={curOpportunityInfo}
+                    inputRef={opportunityValueRef}
+                    onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
                 />
             </ColorLibPaper>
         </Grid>
