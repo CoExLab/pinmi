@@ -133,8 +133,8 @@ function VideoChatComponent(props) {
         pinTime: curTime,
         // pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
         sessionID: MiTrainingSessionID,
-        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
-        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""},
+        callerPinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": "", "pinGoal":"", "pinStrength":"", "pinOpportunity": ""},
+        calleePinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": "", "pinGoal":"", "pinStrength":"", "pinOpportunity": ""},
     })        
     .then( () => {
         setPins([...pins, ]);
