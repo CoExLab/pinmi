@@ -86,10 +86,16 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             callerPinPerspective: '',
             callerPinCategory: '',
             callerPinSkill: '',
+            callerPinGoal: '',
+            callerPinStrength: '',
+            callerPinOpportunity: '',
             calleePinNote: '',
             calleePinPerspective: '',
             calleePinCategory: '',
             calleePinSkill: '',
+            calleePinGoal: '',
+            calleePinStrength: '',
+            calleePinOpportunity: '',
             pinEfficacy: ''
         }; 
 

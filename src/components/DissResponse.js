@@ -100,11 +100,11 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
         setCurGoalInfo1(curPin.callerPinGoal);
         setCurGoalInfo2(curPin.calleePinGoal);
 
-        setCurGoalInfo1(curPin.callerPinStrength);
-        setCurGoalInfo2(curPin.calleePinStrength);
+        setCurStrengthInfo1(curPin.callerPinStrength);
+        setCurStrengthInfo2(curPin.calleePinStrength);
 
-        setCurGoalInfo1(curPin.callerPinOpportunity);
-        setCurGoalInfo2(curPin.calleePinOpportunity);
+        setCurOpportunityInfo1(curPin.callerPinOpportunity);
+        setCurOpportunityInfo2(curPin.calleePinOpportunity);
     }
 
     return (

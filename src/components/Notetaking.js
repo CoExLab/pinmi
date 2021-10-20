@@ -57,7 +57,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   
     const classes = useStyles();
 
-    //creating a refernce for TextField Component
+    //creating a reference for TextField Component
     const player = useRef(null);
     const noteValueRef = useRef('')
     const perspectiveValueRef = useRef('')
@@ -68,12 +68,14 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
+
     const [curNoteInfo, setCurNoteInfo] = useState('');
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
     const [curGoalInfo, setCurGoalInfo] = useState('');
     const [curStrengthInfo, setCurStrengthInfo] = useState('');
     const [curOpportunityInfo, setCurOpportunityInfo] = useState('');
+
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
@@ -107,7 +109,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         console.log("pins:" + pins + "\nindex: " + index);
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin && userMode == "caller") {
+            if (myPin && userMode === "caller") {
                 myPin.callerPinNote = curNoteInfo;
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
@@ -128,7 +130,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
                 pins[index] = myPin;
             }
-            console.log("Pin Edited: " + pins[index]);
+            console.log("Pin Edited: ")
+            console.log(pins[index]);
         }
     }
 
@@ -179,38 +182,12 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         goalValueRef.current.value = curGoalInfo;
         strengthValueRef.current.value = curStrengthInfo;
         opportunityValueRef.current.value = curOpportunityInfo;
+        console.log("Perspective info: " + curPerspectiveInfo);
+        console.log("Skill Info: " + curSkillInfo);
+        console.log("Goal note: " + curGoalInfo);
+        console.log("Strength info: " + curStrengthInfo);
+        console.log("Opportunity Info: " + curOpportunityInfo);
     }, [curPinIndex])
-
-
-    // for updating and fetching current text field value
-    const fetchCurTextVal = async (infoName) => {
-        return
-        const docId = pins[curPinIndex].pinID;
-        const docRef = await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').doc(pins[curPinIndex].pinID);
-        const infos = infoName.split(".");
-        let curInfo = "";
-        const doc = await docRef.get().then((doc) => {
-            if (doc.exists) {
-                curInfo = doc.data()[infos[1]];
-                return curInfo;
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        })
-            .catch((error) => {
-                console.log("Error getting document:", error);
-            });
-        if (infoName === `${userMode}PinInfos.pinNote`) {
-            setCurNoteInfo(doc);
-        } else if (infoName === `${userMode}PinInfos.pinPerspective`) {
-            setCurPerspectiveInfo(doc);
-        } else if (infoName === `${userMode}PinInfos.pinCategory`) {
-            setPinType(doc);
-        } else if (infoName === `${userMode}PinInfos.pinSkill`) {
-            setCurSkillInfo(doc);
-        }
-    }
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
