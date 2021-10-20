@@ -36,8 +36,11 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
 
     const classes = useStyles();
 
-    //creating a refernce for TextField Component
-    const noteValueRef = useRef('')
+    //creating a refernce for TextField Components
+    const efficacyValueRef = useRef('')
+    const goalValueRef = useRef('')
+    const strengthValueRef = useRef('')
+    const opportunityValueRef = useRef('')
 
     //get sessionID
     const { sessionID } = useSessionValue();
@@ -56,25 +59,24 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     const [pinType1, setPinType1] = useState('');
     const [pinType2, setPinType2] = useState('');
 
-
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
-    const [curGoalInfo1, setCurGoalInfo1] = useState('');
-    const [curGoalInfo2, setCurGoalInfo2] = useState('');
-
-    const [curStrengthInfo1, setCurStrengthInfo1] = useState('');
-    const [curStrengthInfo2, setCurStrengthInfo2] = useState('');
-
-    const [curOpportunityInfo1, setCurOpportunityInfo1] = useState('');
-    const [curOpportunityInfo2, setCurOpportunityInfo2] = useState('');
-
     const [curEfficacyInfo, setCurEfficacyInfo] = useState(pins[curPinIndex].pinEfficacy);
+    const [curGoalInfo, setCurGoalInfo] = useState(pins[curPinIndex].pinGoal);
+    const [curStrengthInfo, setCurStrengthInfo] = useState(pins[curPinIndex].pinStrength);
+    const [curOpporunityInfo, setCurOpportunityInfo] = useState(pins[curPinIndex].pinOpportunity);
 
     useEffect(() => {
         fetchCurTextVal();
         pins[prevPinIndex].pinEfficacy = curEfficacyInfo;
+        pins[prevPinIndex].pinGoal = curGoalInfo;
+        pins[prevPinIndex].pinStrength = curStrengthInfo;
+        pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
         setCurEfficacyInfo(pins[curPinIndex].pinEfficacy);
+        setCurGoalInfo(pins[curPinIndex].pinGoal);
+        setCurStrengthInfo(pins[curPinIndex].pinStrength);
+        setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [curPinIndex])
 
@@ -96,15 +98,6 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
 
         setCurSkillInfo1(curPin.callerPinSkill);
         setCurSkillInfo2(curPin.calleePinSkill);
-
-        setCurGoalInfo1(curPin.callerPinGoal);
-        setCurGoalInfo2(curPin.calleePinGoal);
-
-        setCurStrengthInfo1(curPin.callerPinStrength);
-        setCurStrengthInfo2(curPin.calleePinStrength);
-
-        setCurOpportunityInfo1(curPin.callerPinOpportunity);
-        setCurOpportunityInfo2(curPin.calleePinOpportunity);
     }
 
     return (
@@ -130,8 +123,6 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                     rows={3}
                     margin="normal"
                     value={curNoteInfo}
-                    inputRef={noteValueRef}
-                    onChange={() => console.log("invalid")}
                 />
                 <Box fontStyle="italic" marginTop="16px">
                     <Typography variant="h3">
@@ -214,99 +205,6 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                         value={curSkillInfo2}
                     />
                 </form>
-                
-                <Box textAlign="left">
-                    <Typography>
-                        What was the goal during the pinned situation?
-                    </Typography>
-                </Box>
-                <form className={classes.root} noValidate autoCo
-                    mplete="off">
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="caller's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curGoalInfo1}
-                    />
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="callee's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curGoalInfo2}
-                    />
-                </form>
-
-                <Box textAlign="left">
-                    <Typography>
-                        What worked well to achieve the goal?
-                    </Typography>
-                </Box>
-                <form className={classes.root} noValidate autoCo
-                    mplete="off">
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="caller's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curStrengthInfo1}
-                    />
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="callee's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curStrengthInfo2}
-                    />
-                </form>
-
-                <Box textAlign="left">
-                    <Typography>
-                        What could be improved to achieve the goal?
-                    </Typography>
-                </Box>
-                <form className={classes.root} noValidate autoCo
-                    mplete="off">
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="caller's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curOpportunityInfo1}
-                    />
-                    <ColorLibTextField
-                        disabled
-                        id="outlined-secondary"
-                        label="callee's perspective"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={2}
-                        margin="normal"
-                        value={curOpportunityInfo2}
-                    />
-                </form>
 
                 <Box textAlign="left">
                     <Typography>
@@ -322,8 +220,62 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                     rows={3}
                     margin="normal"
                     value={curEfficacyInfo}
-                    inputRef={noteValueRef}
-                    onChange={() => setCurEfficacyInfo(noteValueRef.current.value)}
+                    inputRef={efficacyValueRef}
+                    onChange={() => setCurEfficacyInfo(efficacyValueRef.current.value)}
+                />
+
+                <Box textAlign="left">
+                    <Typography>
+                        What was the goal during the pinned situation?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    label="Personal Notes..."
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                    margin="normal"
+                    value={curGoalInfo}
+                    inputRef={goalValueRef}
+                    onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+                />
+
+                <Box textAlign="left">
+                    <Typography>
+                        What worked well to achieve the goal?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    label="Personal Notes..."
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                    margin="normal"
+                    value={curStrengthInfo}
+                    inputRef={strengthValueRef}
+                    onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
+                />
+
+                <Box textAlign="left">
+                    <Typography>
+                        What could be improved to achieve the goal?
+                    </Typography>
+                </Box>
+                <ColorLibTextField
+                    id="outlined-secondary"
+                    label="Personal Notes..."
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                    margin="normal"
+                    value={curOpporunityInfo}
+                    inputRef={opportunityValueRef}
+                    onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
                 />
             </ColorLibPaper>
         </Grid>
