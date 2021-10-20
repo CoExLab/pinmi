@@ -59,10 +59,16 @@ const DisscussionPrep = () => {
       callerPinPerspective: myPin.callerPinPerspective,
       callerPinCategory: myPin.callerPinCategory,
       callerPinSkill: myPin.callerPinSkill,
+      callerPinGoal: myPin.callerPinGoal,
+      callerPinStrength: myPin.callerPinStrength,
+      callerPinOpportunity: myPin.callerPinOpportunity,
       calleePinNote: myPin.calleePinNote,
       calleePinPerspective: myPin.calleePinPerspective,
       calleePinCategory: myPin.calleePinCategory,
       calleePinSkill: myPin.calleePinSkill,
+      calleePinGoal: myPin.callerPinGoal,
+      calleePinStrength: myPin.calleePinStrength,
+      calleePinOpportunity: myPin.calleePinOpportunity,
       pinEfficacy: ''
     })
     .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })

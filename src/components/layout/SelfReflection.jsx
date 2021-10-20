@@ -111,7 +111,7 @@ const SelfReflection = () => {
                     <Box>
                         <ColorLibTextField
                                 id="outlined-secondary"
-                                label="Type a strength and press Enter to add"
+                                label="Type a strength..."
                                 fullWidth
                                 variant="outlined"
                                 multiline
@@ -128,7 +128,7 @@ const SelfReflection = () => {
                     <Box>
                         <ColorLibTextField
                                 id="outlined-secondary"
-                                label="Type and opportunity and press Enter to add"
+                                label="Type an opportunity..."
                                 fullWidth
                                 variant="outlined"
                                 multiline

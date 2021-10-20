@@ -56,13 +56,13 @@ const theme = createMuiTheme({
     },
     h3: {
       fontFamily: 'Lato',
-      fontSize: '20px',
+      fontSize: '22px',
       fontWeight: 400,
       lineHeight: '30px',
     },
     h4: {
       fontFamily: 'Lato',
-      fontSize: '20px',
+      fontSize: '22px',
       fontWeight: 600,
       lineHeight: '30px',
     },

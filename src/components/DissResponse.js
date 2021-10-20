@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
 import { Box, Grid, Paper, Typography } from '@material-ui/core';
-import { ToggleButton } from '@material-ui/lab';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
@@ -42,7 +42,7 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     //get sessionID
     const { sessionID } = useSessionValue();
 
-    const {pins} = usePinsValue();
+    const { pins } = usePinsValue();
 
     // // fetch raw pin data here
     // const [pins, setPins] = useState([]);
@@ -60,16 +60,19 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
+    const [curGoalInfo1, setCurGoalInfo1] = useState('');
+    const [curGoalInfo2, setCurGoalInfo2] = useState('');
+
+    const [curStrengthInfo1, setCurStrengthInfo1] = useState('');
+    const [curStrengthInfo2, setCurStrengthInfo2] = useState('');
+
+    const [curOpportunityInfo1, setCurOpportunityInfo1] = useState('');
+    const [curOpportunityInfo2, setCurOpportunityInfo2] = useState('');
+
     const [curEfficacyInfo, setCurEfficacyInfo] = useState(pins[curPinIndex].pinEfficacy);
 
     useEffect(() => {
-        fetchCurTextVal(`pinNote`);
-        fetchCurTextVal(`callerPinInfos.pinPerspective`);
-        fetchCurTextVal(`calleePinInfos.pinPerspective`);
-        fetchCurTextVal(`callerPinInfos.pinCategory`);
-        fetchCurTextVal(`calleePinInfos.pinCategory`);
-        fetchCurTextVal(`callerPinInfos.pinSkill`);
-        fetchCurTextVal(`calleePinInfos.pinSkill`);
+        fetchCurTextVal();
         pins[prevPinIndex].pinEfficacy = curEfficacyInfo;
         setCurEfficacyInfo(pins[curPinIndex].pinEfficacy);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,42 +82,44 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
     // for updating and fetching current text field value
     const fetchCurTextVal = async (infoName) => {
         let curPin = pins[curPinIndex];
-        if (infoName === `pinNote` && userMode == "caller") {
-            setCurNoteInfo(curPin.callerPinNote);
-        } else if (infoName === `pinNote` ){
-            setCurNoteInfo(curPin.calleePinNote);
-        } else if (infoName === `callerPinInfos.pinPerspective`) {
-            setCurPerspectiveInfo1(curPin.callerPinPerspective);
-        } else if (infoName === `calleePinInfos.pinPerspective`) {
-            setCurPerspectiveInfo2(curPin.calleePinPerspective);
-        } else if (infoName === `callerPinInfos.pinCategory`) {
-            setPinType1(curPin.callerPinCategory);
-        } else if (infoName === `calleePinInfos.pinCategory`) {
-            setPinType2(curPin.calleePinCategory);
-        } else if (infoName === `callerPinInfos.pinSkill`) {
-            setCurSkillInfo1(curPin.callerPinSkill);
-        } else if (infoName === `calleePinInfos.pinSkill`) {
-            setCurSkillInfo2(curPin.calleePinSkill);
-        }
-    }
 
-    // for pin information modifying
-    // const handlePinInfo = (input) => {
-    //     pins[curPinIndex].pinEfficacy = curEfficacyInfo;
-    // }
+        if (userMode === "caller")
+            setCurNoteInfo(curPin.callerPinNote);
+        else
+            setCurNoteInfo(curPin.calleePinNote);
+
+        setCurPerspectiveInfo1(curPin.callerPinPerspective);
+        setCurPerspectiveInfo2(curPin.calleePinPerspective);
+
+        setPinType1(curPin.callerPinCategory);
+        setPinType2(curPin.calleePinCategory);
+
+        setCurSkillInfo1(curPin.callerPinSkill);
+        setCurSkillInfo2(curPin.calleePinSkill);
+
+        setCurGoalInfo1(curPin.callerPinGoal);
+        setCurGoalInfo2(curPin.calleePinGoal);
+
+        setCurStrengthInfo1(curPin.callerPinStrength);
+        setCurStrengthInfo2(curPin.calleePinStrength);
+
+        setCurOpportunityInfo1(curPin.callerPinOpportunity);
+        setCurOpportunityInfo2(curPin.calleePinOpportunity);
+    }
 
     return (
         <Grid item xs={12} sm={8}>
-            <ColorLibPaper >
+            <ColorLibPaper elevation={1}>
                 <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
                     {userMode}
                 </Typography>
-                {/* <Button variant="contained" onClick = {() => handleUserModeSwitch()}>userMode switcher</Button> */}
-                <Box fontStyle="italic">
-                    <Typography>
-                        Pinned at {formatTime(pins[curPinIndex].pinTime)}
-                    </Typography>
-                </Box>
+                {curPinIndex !== -1 ?
+                    <Box fontStyle="italic">
+                        <Typography>
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
+                        </Typography>
+                    </Box>
+                    : null}
                 <ColorLibTextField
                     disabled
                     id="outlined-secondary"
@@ -128,18 +133,19 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                     inputRef={noteValueRef}
                     onChange={() => console.log("invalid")}
                 />
-                <Box fontStyle="italic" marginTop="30px"> 
+                <Box fontStyle="italic" marginTop="16px">
                     <Typography variant="h3">
                         Talk with your peer about:
                     </Typography>
                 </Box>
+
                 <Box textAlign="left">
                     <Typography>
                         What is your perspective of what happened at this pin?
                     </Typography>
                 </Box>
                 <form className={classes.root} noValidate autoCo
-                mplete="off">
+                    mplete="off">
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
@@ -147,7 +153,7 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={3}
+                        rows={2}
                         margin="normal"
                         value={curPerspectiveInfo1}
                     />
@@ -158,7 +164,7 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={3}
+                        rows={2}
                         margin="normal"
                         value={curPerspectiveInfo2}
                     />
@@ -168,35 +174,42 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                         What would you categorize this pin as?
                     </Typography>
                 </Box>
-                <form className={classes.root} noValidate autoComplete="off">
-                    <ToggleButton >
-                        {pinType1}
-                    </ToggleButton>
-                    <ToggleButton >
-                        {pinType2}
-                    </ToggleButton>
-                </form>
+                <Box align="left">
+                    <ToggleButtonGroup
+                        disabled
+                        className={classes.toggleGroup}
+                        exclusive
+                        size="large"
+                    >
+                        <ToggleButton >
+                            {pinType1}
+                        </ToggleButton>
+                        <ToggleButton >
+                            {pinType2}
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Box>
                 <MISkillsSheet />
                 <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
                         disabled
-                        id="outlined-secondary"
                         label="caller's MI skill"
+                        id="outlined-secondary"
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={1}
+                        rows={2}
                         margin="normal"
                         value={curSkillInfo1}
                     />
                     <ColorLibTextField
                         disabled
-                        id="outlined-secondary"
                         label="callee's MI skill"
+                        id="outlined-secondary"
                         fullWidth
                         variant="outlined"
                         multiline
-                        rows={1}
+                        rows={2}
                         margin="normal"
                         value={curSkillInfo2}
                     />
@@ -204,8 +217,101 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                 
                 <Box textAlign="left">
                     <Typography>
+                        What was the goal during the pinned situation?
+                    </Typography>
+                </Box>
+                <form className={classes.root} noValidate autoCo
+                    mplete="off">
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="caller's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curGoalInfo1}
+                    />
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="callee's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curGoalInfo2}
+                    />
+                </form>
+
+                <Box textAlign="left">
+                    <Typography>
+                        What worked well to achieve the goal?
+                    </Typography>
+                </Box>
+                <form className={classes.root} noValidate autoCo
+                    mplete="off">
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="caller's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curStrengthInfo1}
+                    />
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="callee's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curStrengthInfo2}
+                    />
+                </form>
+
+                <Box textAlign="left">
+                    <Typography>
+                        What could be improved to achieve the goal?
+                    </Typography>
+                </Box>
+                <form className={classes.root} noValidate autoCo
+                    mplete="off">
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="caller's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curOpportunityInfo1}
+                    />
+                    <ColorLibTextField
+                        disabled
+                        id="outlined-secondary"
+                        label="callee's perspective"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={2}
+                        margin="normal"
+                        value={curOpportunityInfo2}
+                    />
+                </form>
+
+                <Box textAlign="left">
+                    <Typography>
                         Why was the pinned situation effective or ineffective?
-                        </Typography>
+                    </Typography>
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
@@ -220,7 +326,6 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                     onChange={() => setCurEfficacyInfo(noteValueRef.current.value)}
                 />
             </ColorLibPaper>
-
         </Grid>
     );
 };
