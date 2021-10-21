@@ -10,7 +10,7 @@ import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import firebase from 'firebase';
 
 //context
-import {useSessionValue, usePinsValue } from "../../context";
+import {useSessionValue, usePinsValue, useActiveStepValue} from "../../context";
 
 
 
@@ -19,6 +19,7 @@ const Discussion = () => {
     const [page, setPage] = useState(0);
     const {sessionID} = useSessionValue();
     const {pins} = usePinsValue();
+    const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
 
     const [finishedUpdates, setFinishedUpdates] = useState(false);
 
@@ -36,12 +37,12 @@ const Discussion = () => {
 
   function getConditionalContent(page) {
     switch (page) {
+      // case 0:
+      //   return <VideoChatComponent mode = {"Discussion"}/>;
       case 0:
-        return <VideoChatComponent mode = {"Discussion"}/>;
-      case 1:
         return <Collaboration curPinIndex= {curPinIndex} setCurPinIndex={setCurPinIndex} prevPinIndex={prevPinIndex} setPrevPinIndex={setPrevPinIndex}/>;
-      case 2:
-        return <VideoChatComponentSecond />;
+      // case 2:
+      //   return <VideoChatComponentSecond />;
       default:
         return <div>Unknown</div>;
     }
@@ -61,6 +62,8 @@ const handleButton = (finished) => {
     setPrevPinIndex(curPinIndex);
     setCurPinIndex(0);
     setFinishedUpdates(true);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
   } else {
     setPage(page+1);
   }
@@ -71,17 +74,17 @@ function getConditionalButton(page, setPage, pins, sessionID) {
   
   
     switch (page) {
+      // case 0:
+      //   return (
+      //     <div>
+      //       <Box align='center' m = {2} mb = {20}> 
+      //         <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
+      //           Let's talk about our pins
+      //         </ColorLibNextButton>
+      //       </Box>
+      //     </div>
+      //   );
       case 0:
-        return (
-          <div>
-            <Box align='center' m = {2} mb = {20}> 
-              <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
-                Let's talk about our pins
-              </ColorLibNextButton>
-            </Box>
-          </div>
-        );
-      case 1:
         return (
           <div>
             <Box align='center' m = {2} mb = {20}> 

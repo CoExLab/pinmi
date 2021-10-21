@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
+import VideoDiscussion from "../VideoDiscussion.js"
 // Others
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
@@ -52,13 +53,13 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   
 
-  const [room, setRoom] = useState("hello");
-    //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
-    const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-    const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-    const [token, setToken] = useState("YOUR_TOKEN");
-    const [readyMessage, setReadyMessage] = useState("video is not ready");
-    const isRecording = false;
+  // const [room, setRoom] = useState("hello");
+  //   //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+  //   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  //   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  //   const [token, setToken] = useState("YOUR_TOKEN");
+  //   const [readyMessage, setReadyMessage] = useState("video is not ready");
+  //   const isRecording = false;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -81,6 +82,7 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             prevPinIndex = {prevPinIndex}
             setPrevPinIndex = {setPrevPinIndex}
             />
+          <VideoDiscussion mode = {"Discussion"} discussionState = {1}/>
         </Grid>
       </Container>
     </div>
