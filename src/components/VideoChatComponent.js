@@ -62,7 +62,8 @@ const useStyles = makeStyles((theme) => ({
       '& video': {
         borderRadius: '5px',
         width: '100%',
-        height: 'max-content',
+        height: '100%',
+        backgroundColor: 'black',
       },
       '& .MuiFab-root': {
         left: 'calc(50% - 50px)',
@@ -419,6 +420,13 @@ function VideoChatComponent(props) {
         console.log("start chat now");
         setIsInterviewStarted(true);
         setVideoCallTimer(Date.now());
+        // Disable audio / video buttons as set before
+        if (!isAudioEnabled) {
+          onToggleAudio(false);
+        }
+        if (!isVideoEnabled) {
+          onToggleVideo(false);
+        }
         if (props.isArchiveHost) {
           //props.startRec();
           console.log("start recording");
@@ -589,7 +597,7 @@ function VideoChatComponent(props) {
       >
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <div style={{marginRight: '20px'}}>
+            <div style={{marginRight: '20px', width: 'calc(45% - 20px)'}}>
               <img 
                 src={pinningClick} 
                 alt={"Icon of clicking the pin"}
@@ -622,11 +630,18 @@ function VideoChatComponent(props) {
                 </ColorLibNextButton>
               </div>
             </div>
-            <div style={{Width: '100%'}}>
-              <Webcam 
+            <div style={{width: '55%'}}>
+              {isVideoEnabled 
+              ? <Webcam 
                 mirrored
                 audio={isAudioEnabled} 
-              />
+              /> 
+              : <div style={{
+                height: '100%',
+                width: '100%',
+                backgroundColor: 'black',
+                borderRadius: '5px'
+              }}/>}
               <div style={{marginTop: '-65px'}}>
                 <PreviewMicButton />
                 <PreviewVideoButton />
