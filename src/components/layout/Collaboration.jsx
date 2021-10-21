@@ -63,7 +63,9 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
           <Transcription />
           <DissResponse 
             curPinIndex = {curPinIndex}
+            setCurPinIndex = {setCurPinIndex}
             prevPinIndex = {prevPinIndex}
+            setPrevPinIndex = {setPrevPinIndex}
             />
         </Grid>
       </Container>

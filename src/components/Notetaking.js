@@ -4,6 +4,8 @@ import { formatTime } from '../helper/index';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+
+import { ColorLibNextButton, ColorLibBackButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
@@ -75,29 +77,71 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const [audioProgress, setAudioProgress] = useState(0);
     const [loadURL, setLoadURL] = useState(false)
 
-    // back to last pin
-    const handleLastPin = (index) => {
-        console.log(audio);
-        console.log(audioLen);
-        console.log(audioProgress);
-        if (curPinIndex > 0) {
-            setCurPinIndex(index);
-            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-        }
-    };
+    // // back to last pin
+    // const handleLastPin = (index) => {
+    //     console.log(audio);
+    //     console.log(audioLen);
+    //     console.log(audioProgress);
+    //     if (curPinIndex > 0) {
+    //         setCurPinIndex(index);
+    //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //     }
+    // };
 
-    // go to next pin
-    const handleNextPin = (index, remove = false) => {
-        if (curPinIndex < pins.map(pin => pin.pinTime).length - 1) {
-            if (!remove) {
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                setCurPinIndex(index);
-            } else {
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                setCurPinIndex(index - 1);
-            }
+    // // go to next pin
+    // const handleNextPin = (index, remove = false) => {
+    //     if (curPinIndex < pins.map(pin => pin.pinTime).length - 1) {
+    //         if (!remove) {
+    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //             setCurPinIndex(index);
+    //         } else {
+    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //             setCurPinIndex(index - 1);
+    //         }
+    //     }
+    // };
+
+
+
+    const handlePrevPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex - 1);
+    }
+
+    const handleNextPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex + 1);
+    }
+
+    const PinNavButtons = () => {
+        if (curPinIndex === -1)
+            return null;
+        const prev = 
+            <ColorLibBackButton 
+                variant="contained"
+                size="small"
+                onClick={handlePrevPin}
+            >
+                Prev Pin
+            </ColorLibBackButton>
+        const next = 
+            <ColorLibNextButton 
+                variant="contained"
+                size="small"
+                onClick={handleNextPin}
+            >
+                Next Pin
+            </ColorLibNextButton>
+
+        if (curPinIndex === 0) {
+            return next;
         }
-    };
+        if (curPinIndex === pins.length -1) {
+            return prev;
+        }
+    return <div>{prev} {next}</div>;
+    }
+
 
     const savePin = async (index) => {
         console.log("pins:" + pins + "\nindex: " + index);
@@ -188,6 +232,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         // handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
     };
 
+    
+
     return (
         <Grid item xs={12} sm={8}>
             <ColorLibPaper elevation={1}>
@@ -267,6 +313,10 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     inputRef={skillValueRef}
                     onChange={() => setCurSkillInfo(skillValueRef.current.value)}
                 />
+
+                <div style={{textAlign: 'center'}}>
+                    <PinNavButtons />
+                </div>
             </ColorLibPaper>
         </Grid>
     );

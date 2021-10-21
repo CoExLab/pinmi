@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
 import { Box, Grid, Paper, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+
+import { ColorLibNextButton, ColorLibBackButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
@@ -12,7 +14,7 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useSessionValue, useUserModeValue, usePinsValue } from '../context';
+import { useSessionValue, useUserModeValue, usePinsValue, PinsProvider } from '../context';
 import { format } from 'url';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const DissResponse = ({ curPinIndex, prevPinIndex }) => {
+const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
     // user mode switcher
     const { userMode } = useUserModeValue();
 
@@ -98,6 +100,45 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
 
         setCurSkillInfo1(curPin.callerPinSkill);
         setCurSkillInfo2(curPin.calleePinSkill);
+    }
+
+    const handlePrevPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex - 1);
+    }
+
+    const handleNextPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex + 1);
+    }
+
+    const PinNavButtons = () => {
+        if (curPinIndex === -1)
+            return null;
+        const prev = 
+            <ColorLibBackButton 
+                variant="contained"
+                size="small"
+                onClick={handlePrevPin}
+            >
+                Prev Pin
+            </ColorLibBackButton>
+        const next = 
+            <ColorLibNextButton 
+                variant="contained"
+                size="small"
+                onClick={handleNextPin}
+            >
+                Next Pin
+            </ColorLibNextButton>
+
+        if (curPinIndex === 0) {
+            return next;
+        }
+        if (curPinIndex === pins.length -1) {
+            return prev;
+        }
+    return <div>{prev} {next}</div>;
     }
 
     return (
@@ -277,6 +318,10 @@ const DissResponse = ({ curPinIndex, prevPinIndex }) => {
                     inputRef={opportunityValueRef}
                     onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
                 />
+
+                <div style={{textAlign: 'center'}}>
+                    <PinNavButtons />
+                </div>
             </ColorLibPaper>
         </Grid>
     );
