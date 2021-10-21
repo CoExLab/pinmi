@@ -118,6 +118,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             return null;
         const prev = 
             <ColorLibBackButton 
+                style={{margin: '0px 8px'}}
                 variant="contained"
                 size="small"
                 onClick={handlePrevPin}
@@ -126,6 +127,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             </ColorLibBackButton>
         const next = 
             <ColorLibNextButton 
+                style={{margin: '0px 8px'}}
                 variant="contained"
                 size="small"
                 onClick={handleNextPin}
@@ -314,9 +316,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     onChange={() => setCurSkillInfo(skillValueRef.current.value)}
                 />
 
-                <div style={{textAlign: 'center'}}>
+                <Box textAlign='center'>
                     <PinNavButtons />
-                </div>
+                </Box>
             </ColorLibPaper>
         </Grid>
     );

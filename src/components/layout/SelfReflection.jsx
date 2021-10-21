@@ -40,6 +40,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
         case 1: return (
             <div>
                 <ColorLibBackButton
+                    style={{margin: '0px 8px'}}
                     variant="outlined"
                     size="medium"
                     onClick={handleBack}
@@ -47,6 +48,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
                     Back
                 </ColorLibBackButton>
                 <ColorLibNextButton
+                    style={{margin: '0px 8px'}}
                     variant="contained"
                     size="medium"
                     onClick={handleNext}
@@ -58,6 +60,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
         case 2: return (
             <div>
                 <ColorLibBackButton
+                    style={{margin: '0px 8px'}}
                     variant="outlined"
                     size="medium"
                     onClick={handleBack}
@@ -65,6 +68,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
                     Back
                 </ColorLibBackButton>
                 <ColorLibNextButton
+                    style={{margin: '0px 8px'}}
                     variant="contained"
                     size="medium"
                     onClick={() => makeReflectionDoc()}

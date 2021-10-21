@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
 import { Box, Grid, Paper, Typography } from '@material-ui/core';
@@ -117,6 +117,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             return null;
         const prev = 
             <ColorLibBackButton 
+                style={{margin: '0px 8px'}}
                 variant="contained"
                 size="small"
                 onClick={handlePrevPin}
@@ -125,6 +126,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             </ColorLibBackButton>
         const next = 
             <ColorLibNextButton 
+                style={{margin: '0px 8px'}}
                 variant="contained"
                 size="small"
                 onClick={handleNextPin}
@@ -138,7 +140,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
         if (curPinIndex === pins.length -1) {
             return prev;
         }
-    return <div>{prev} {next}</div>;
+    return <Fragment> {prev} {next} </Fragment>;
     }
 
     return (
@@ -319,9 +321,9 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
                 />
 
-                <div style={{textAlign: 'center'}}>
+                <Box textAlign='center'>
                     <PinNavButtons />
-                </div>
+                </Box>
             </ColorLibPaper>
         </Grid>
     );
