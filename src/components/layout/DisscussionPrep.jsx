@@ -32,6 +32,20 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiGrid-item": {
       display: 'inline-grid',
     },
+    "& .MuiGrid-grid-sm-4": {
+      position: 'relative',
+      margin: '8px',
+      maxWidth: 'calc(33.333333% - 8px)',
+      "& .MuiPaper-root": {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        overflowY: 'scroll',
+      }
+    },
+    "& .MuiGrid-grid-sm-8": {
+      maxWidth: 'calc(66.666667% - 8px)',
+    }
   },
 }));
 
@@ -59,17 +73,14 @@ const DisscussionPrep = () => {
       callerPinPerspective: myPin.callerPinPerspective,
       callerPinCategory: myPin.callerPinCategory,
       callerPinSkill: myPin.callerPinSkill,
-      callerPinGoal: myPin.callerPinGoal,
-      callerPinStrength: myPin.callerPinStrength,
-      callerPinOpportunity: myPin.callerPinOpportunity,
       calleePinNote: myPin.calleePinNote,
       calleePinPerspective: myPin.calleePinPerspective,
       calleePinCategory: myPin.calleePinCategory,
       calleePinSkill: myPin.calleePinSkill,
-      calleePinGoal: myPin.callerPinGoal,
-      calleePinStrength: myPin.calleePinStrength,
-      calleePinOpportunity: myPin.calleePinOpportunity,
-      pinEfficacy: ''
+      pinEfficacy: '',
+      pinGoal: '',
+      pinStrength: '',
+      pinOpportunity: '',
     })
     .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
     .catch((e) => { console.log("pin update unsuccessful: " + e) });

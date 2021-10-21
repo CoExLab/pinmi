@@ -4,6 +4,8 @@ import { formatTime } from '../helper/index';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+
+import { ColorLibNextButton, ColorLibBackButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
@@ -62,9 +64,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const noteValueRef = useRef('')
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
-    const goalValueRef = useRef('')
-    const strengthValueRef = useRef('')
-    const opportunityValueRef = useRef('')
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
@@ -72,38 +71,79 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const [curNoteInfo, setCurNoteInfo] = useState('');
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
-    const [curGoalInfo, setCurGoalInfo] = useState('');
-    const [curStrengthInfo, setCurStrengthInfo] = useState('');
-    const [curOpportunityInfo, setCurOpportunityInfo] = useState('');
 
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
     const [pinBtnColor, setPinBtnColor] = useState("");
     const [audioProgress, setAudioProgress] = useState(0);
     const [loadURL, setLoadURL] = useState(false)
 
-    // back to last pin
-    const handleLastPin = (index) => {
-        console.log(audio);
-        console.log(audioLen);
-        console.log(audioProgress);
-        if (curPinIndex > 0) {
-            setCurPinIndex(index);
-            player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-        }
-    };
+    // // back to last pin
+    // const handleLastPin = (index) => {
+    //     console.log(audio);
+    //     console.log(audioLen);
+    //     console.log(audioProgress);
+    //     if (curPinIndex > 0) {
+    //         setCurPinIndex(index);
+    //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //     }
+    // };
 
-    // go to next pin
-    const handleNextPin = (index, remove = false) => {
-        if (curPinIndex < pins.map(pin => pin.pinTime).length - 1) {
-            if (!remove) {
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                setCurPinIndex(index);
-            } else {
-                player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-                setCurPinIndex(index - 1);
-            }
+    // // go to next pin
+    // const handleNextPin = (index, remove = false) => {
+    //     if (curPinIndex < pins.map(pin => pin.pinTime).length - 1) {
+    //         if (!remove) {
+    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //             setCurPinIndex(index);
+    //         } else {
+    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
+    //             setCurPinIndex(index - 1);
+    //         }
+    //     }
+    // };
+
+
+
+    const handlePrevPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex - 1);
+    }
+
+    const handleNextPin = () => {
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex + 1);
+    }
+
+    const PinNavButtons = () => {
+        if (curPinIndex === -1)
+            return null;
+        const prev = 
+            <ColorLibBackButton 
+                style={{margin: '0px 8px'}}
+                variant="contained"
+                size="small"
+                onClick={handlePrevPin}
+            >
+                Prev Pin
+            </ColorLibBackButton>
+        const next = 
+            <ColorLibNextButton 
+                style={{margin: '0px 8px'}}
+                variant="contained"
+                size="small"
+                onClick={handleNextPin}
+            >
+                Next Pin
+            </ColorLibNextButton>
+
+        if (curPinIndex === 0) {
+            return next;
         }
-    };
+        if (curPinIndex === pins.length -1) {
+            return prev;
+        }
+    return <div>{prev} {next}</div>;
+    }
+
 
     const savePin = async (index) => {
         console.log("pins:" + pins + "\nindex: " + index);
@@ -114,9 +154,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
                 myPin.callerPinSkill = curSkillInfo;
-                myPin.callerPinGoal = curGoalInfo;
-                myPin.callerPinStrength = curStrengthInfo;
-                myPin.callerPinOpportunity = curOpportunityInfo;
 
                 pins[index] = myPin;
             } else if(myPin) {
@@ -124,9 +161,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                 myPin.calleePinPerspective = curPerspectiveInfo;
                 myPin.calleePinCategory = pinType;
                 myPin.calleePinSkill = curSkillInfo;
-                myPin.calleePinGoal = curGoalInfo;
-                myPin.calleePinStrength = curStrengthInfo;
-                myPin.calleePinOpportunity = curOpportunityInfo;
 
                 pins[index] = myPin;
             }
@@ -142,17 +176,11 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         setCurNoteInfo(noteValueRef.current.value);
         setCurPerspectiveInfo(perspectiveValueRef.current.value);
         setCurSkillInfo(skillValueRef.current.value);
-        setCurGoalInfo(goalValueRef.current.value);
-        setCurStrengthInfo(strengthValueRef.current.value);
-        setCurOpportunityInfo(opportunityValueRef.current.value);
 
         //pin info saved
         console.log("Current note: " + curNoteInfo);
         console.log("Perspective info: " + curPerspectiveInfo);
         console.log("Skill Info: " + curSkillInfo);
-        console.log("Goal note: " + curGoalInfo);
-        console.log("Strength info: " + curStrengthInfo);
-        console.log("Opportunity Info: " + curOpportunityInfo);
 
         //save pin info
         savePin(prevPinIndex);
@@ -163,30 +191,16 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             setCurNoteInfo(pins[curPinIndex].callerPinNote);
             setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
             setCurSkillInfo(pins[curPinIndex].callerPinSkill);
-            setCurGoalInfo(pins[curPinIndex].callerPinGoal);
-            setCurStrengthInfo(pins[curPinIndex].callerPinStrength);
-            setCurOpportunityInfo(pins[curPinIndex].callerPinOpportunity);
         } else if(pins[curPinIndex]){
             setPinType(pins[curPinIndex].calleePinCategory);
             setCurNoteInfo(pins[curPinIndex].calleePinNote);
             setCurPerspectiveInfo(pins[curPinIndex].calleePinPerspective);
             setCurSkillInfo(pins[curPinIndex].calleePinSkill);
-            setCurGoalInfo(pins[curPinIndex].calleePinGoal);
-            setCurStrengthInfo(pins[curPinIndex].calleePinStrength);
-            setCurOpportunityInfo(pins[curPinIndex].calleePinOpportunity);
         }
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current.value = curSkillInfo;
-        goalValueRef.current.value = curGoalInfo;
-        strengthValueRef.current.value = curStrengthInfo;
-        opportunityValueRef.current.value = curOpportunityInfo;
-        console.log("Perspective info: " + curPerspectiveInfo);
-        console.log("Skill Info: " + curSkillInfo);
-        console.log("Goal note: " + curGoalInfo);
-        console.log("Strength info: " + curStrengthInfo);
-        console.log("Opportunity Info: " + curOpportunityInfo);
     }, [curPinIndex])
 
     // for pin information modifying
@@ -219,6 +233,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         setPinType(newPinType);
         // handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
     };
+
+    
 
     return (
         <Grid item xs={12} sm={8}>
@@ -299,54 +315,10 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                     inputRef={skillValueRef}
                     onChange={() => setCurSkillInfo(skillValueRef.current.value)}
                 />
-                <Box textAlign="left" >
-                    <Typography>
-                        What was the goal during the pinned situation?
-                    </Typography>
+
+                <Box textAlign='center'>
+                    <PinNavButtons />
                 </Box>
-                <ColorLibTextField
-                    id="outlined-secondary"
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    rows={2}
-                    margin="normal"
-                    value={curGoalInfo}
-                    inputRef={goalValueRef}
-                    onChange={() => setCurGoalInfo(goalValueRef.current.value)}
-                />
-                <Box textAlign="left" >
-                    <Typography>
-                        What worked well to achieve the goal?
-                    </Typography>
-                </Box>
-                <ColorLibTextField
-                    id="outlined-secondary"
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    rows={2}
-                    margin="normal"
-                    value={curStrengthInfo}
-                    inputRef={strengthValueRef}
-                    onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
-                />
-                <Box textAlign="left" >
-                    <Typography>
-                        What could be improved to achieve the goal?
-                    </Typography>
-                </Box>
-                <ColorLibTextField
-                    id="outlined-secondary"
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    rows={2}
-                    margin="normal"
-                    value={curOpportunityInfo}
-                    inputRef={opportunityValueRef}
-                    onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
-                />
             </ColorLibPaper>
         </Grid>
     );
