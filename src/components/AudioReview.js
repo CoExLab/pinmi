@@ -86,17 +86,14 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             callerPinPerspective: '',
             callerPinCategory: '',
             callerPinSkill: '',
-            callerPinGoal: '',
-            callerPinStrength: '',
-            callerPinOpportunity: '',
             calleePinNote: '',
             calleePinPerspective: '',
             calleePinCategory: '',
             calleePinSkill: '',
-            calleePinGoal: '',
-            calleePinStrength: '',
-            calleePinOpportunity: '',
-            pinEfficacy: ''
+            pinEfficacy: '',
+            pinGoal: '',
+            pinStrength: '',
+            pinOpportunity: '',
         }; 
 
         //now correctly add the pin into the array to maintain sortedness
