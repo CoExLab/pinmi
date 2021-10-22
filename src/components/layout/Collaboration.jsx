@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
+import VideoDiscussion from "../VideoDiscussion.js"
 // Others
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
@@ -30,21 +31,35 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiGrid-item": {
       display: 'inline-grid',
     },
+    "& .MuiGrid-grid-sm-4": {
+      position: 'relative',
+      margin: '8px',
+      maxWidth: 'calc(33.333333% - 8px)',
+      "& .MuiPaper-root": {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        overflowY: 'scroll',
+      }
+    },
+    "& .MuiGrid-grid-sm-8": {
+      maxWidth: 'calc(66.666667% - 8px)',
+    }
   },
 }));
 
-const Collaboration = () => {
+const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
   const classes = useStyles();
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(-1);
+  
 
-  const [room, setRoom] = useState("hello");
-    //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
-    const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-    const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-    const [token, setToken] = useState("YOUR_TOKEN");
-    const [readyMessage, setReadyMessage] = useState("video is not ready");
-    const isRecording = false;
+  // const [room, setRoom] = useState("hello");
+  //   //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
+  //   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  //   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  //   const [token, setToken] = useState("YOUR_TOKEN");
+  //   const [readyMessage, setReadyMessage] = useState("video is not ready");
+  //   const isRecording = false;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -57,10 +72,17 @@ const Collaboration = () => {
           <AudioReview 
             curPinIndex = {curPinIndex} 
             setCurPinIndex = {setCurPinIndex}
+            prevPinIndex = {prevPinIndex}
+            setPrevPinIndex = {setPrevPinIndex}
           />
           <Transcription />
           <DissResponse 
-            curPinIndex = {curPinIndex}/>
+            curPinIndex = {curPinIndex}
+            setCurPinIndex = {setCurPinIndex}
+            prevPinIndex = {prevPinIndex}
+            setPrevPinIndex = {setPrevPinIndex}
+            />
+          <VideoDiscussion mode = {"Discussion"} discussionState = {1}/>
         </Grid>
       </Container>
     </div>

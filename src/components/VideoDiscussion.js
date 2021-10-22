@@ -42,6 +42,7 @@ import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
 
 
+//styles used for icons in videocomponent
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
       height: '120%'
@@ -96,11 +97,11 @@ function VideoChatComponent(props) {
   );
 
   // needed vonage info
-  const [room, setRoom] = useState("hello");
+  const [room, setRoom] = useState("hello1");
   //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
-  const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  const [token, setToken] = useState("YOUR_TOKEN");
+  // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  // const [token, setToken] = useState("YOUR_TOKEN");
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -116,14 +117,23 @@ function VideoChatComponent(props) {
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
-  
-  
+//vonage session data set by the server
+const {vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey} = useSessionValue();  
 
-  useEffect(() => {
-    isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
-      : stopStreaming();
-  }, [isInterviewStarted]);
+useEffect(() => {
+  console.log("isInterviewStarted useEffect has been called: \n" + isInterviewStarted);
+  if (isInterviewStarted){
+    initializeSession(apiKey, vonageSessionID, token)
+  }
+
+  return function cleanup() {
+    console.log("stopStreaming called")
+    stopStreaming();
+  };
+  // isInterviewStarted
+  //   ? initializeSession(apiKey, vonageSessionID, token)
+  //   : stopStreaming();
+}, [isInterviewStarted]);
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
@@ -146,7 +156,7 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
+  const {sessionId, setMediaDuration , setMediaUrl} = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   // get document ID
@@ -175,7 +185,7 @@ function VideoChatComponent(props) {
   }
 
   const addTranscript = async () => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(sessionId).update({
       transcript: results
     })
     .then(() => {
@@ -217,7 +227,6 @@ function VideoChatComponent(props) {
       </div>
     );
   }
-
 
   const renderToolbar = () => {
     return (
@@ -323,11 +332,11 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Box width='10%'>
+        {/* <Box width='10%'>
         <Card variant='outlined' aria-describedby={id} type="button" color="default" aria-label="addPin" className = 'card' width='100'>
         <CardContent>
         <Typography variant="body2" component="p">
-        Introduce yourself to Julia, a social worker at UPMC also learning MI.
+        Introduce yourself to your peer who is also learning MI.
 
           <br />
           <br />
@@ -335,7 +344,7 @@ How did today’s mock client session go?
         </Typography>
       </CardContent>
         </Card>
-        </Box>
+        </Box> */}
       </>
     );
   };
@@ -481,7 +490,94 @@ How did today’s mock client session go?
   }
 
 
-  
+  //CSSMode are strings that have the CSS classnames 
+  //for the respective publisher and subscriber video windows. 
+  const videoBox = (CSSMode) => {
+    var mainVideoCSSClass = ""
+    var secondaryVideoCSSClass = ""
+    var class_name = ""
+    
+    if (CSSMode == "full"){
+      mainVideoCSSClass = "main-video";
+      secondaryVideoCSSClass  = "additional-video";
+      class_name = "video-container"
+    }
+    else if (CSSMode == "mini"){
+      mainVideoCSSClass = "discussion-video-other";
+      secondaryVideoCSSClass  = "discussion-video-other";
+      class_name = "mini-video-container"
+    }
+    return (
+    <>
+    {/* <Box pt = {10}>
+      {loadingStatus ? <LinearProgress /> : null}
+    </Box> */}
+      <div className={class_name}> 
+        <div
+          id="subscriber"
+          className={`${
+            isStreamSubscribed ? mainVideoCSSClass : ""
+          }`}
+        >
+        {isStreamSubscribed && renderToolbar()}
+        </div>
+        <div
+          id="publisher"
+          className={`${
+            isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass
+          }`}
+        >
+        {!isStreamSubscribed && renderToolbar()}
+        </div> 
+        </div>
+    </>
+    );
+  }
+  const dialogBox1 = () => {
+    <Dialog
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+                <p>You have added notes to 2 out of 3 pins.</p>
+            </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+        <Box m={2}>
+          <div direction='row' align='center'>
+          <ColorLibButton
+            variant='contained'
+            size='medium'
+            onClick={
+              () => setOpen(false)
+            }
+            autoFocus
+          >
+            Add more notes to pins
+          </ColorLibButton>
+          <Box mt={2}>
+          <ColorLibNextButton
+            variant='outlined'
+            size='medium'
+            onClick={
+              () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
+            }
+            autoFocus
+          >
+            Join Discussion
+          </ColorLibNextButton>
+          </Box>
+          
+          </div>
+          </Box>
+        </DialogActions>
+    </Dialog>
+  }
+
   return (
     <>              
       <Box pt = {10}>
@@ -494,11 +590,6 @@ How did today’s mock client session go?
             aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <p>You have added notes to 2 out of 3 pins.</p>
-                    </DialogContentText>
-                </DialogContent>
                 <DialogActions>
                 <Box m={2}>
                   <div direction='row' align='center'>
@@ -517,7 +608,7 @@ How did today’s mock client session go?
                     variant='outlined'
                     size='medium'
                     onClick={
-                      () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
+                      () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
                     }
                     autoFocus
                   >
@@ -529,8 +620,8 @@ How did today’s mock client session go?
                   </Box>
                 </DialogActions>
             </Dialog>    
-      
-      <div className="video-container"> 
+        {videoBox("mini")}
+      {/* <div className="video-container"> 
         <div
           id="subscriber"
           className={`${
@@ -566,7 +657,7 @@ How did today’s mock client session go?
         >Stop Recording
         </Button> :
         <div></div>}
-      </div>
+      </div> */}
     </>
   );
 }
