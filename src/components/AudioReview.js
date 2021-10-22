@@ -7,20 +7,23 @@ import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer
 import {formatTime, generatePushId} from '../helper/index';
 
 // context
-import { useActiveStepValue, useSessionValue, usePinsValue } from "../context";
+import { useActiveStepValue, useSessionValue, usePinsValue, useUserModeValue } from "../context";
 import { useEffect } from "react";
 
 // firebase hook
 import { usePins, useMediaURL } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
-const AudioReview = ({curPinIndex, setCurPinIndex}) => {
+const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
     //session data
-    const {sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration,mediaDuration: audioLen} = useSessionValue();
+    const { mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
+    //fetch user data
+    const {userID, userMode} = useUserModeValue();
+
     // get document ID
     const pinID = generatePushId();
     // hard-coded sessionID here
@@ -37,26 +40,6 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
     
 
     let playTimeArr = pins.map(pin => pin.pinTime);
-
-    // useEffect(() =>{
-    //     //callback function when useEffect is called
-    //     let ref = firebase
-    //     .firestore()
-    //     .collection("MediaURLs")
-    //     .doc("test");
-
-    //     var unsubscribe = ref.onSnapshot((doc) => {
-    //         let recentURL = doc.data();
-    //         console.log(recentURL.URL);
-    //         setMediaUrl(recentURL.URL);
-    //         setMediaDuration(recentURL.Duration);
-
-    //     })
-    //     return () => {
-    //         unsubscribe()
-    //     };
-    // },[loadURL]);
-
 
     // back to last pin
     const handleLastPin = (index) => {   
@@ -93,16 +76,32 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
             setPinBtnDisabled(false);
         }, 800);
 
-        pins.push({pinID: '', pinTime: curTime, pinInfos: {pinNote: "", pinPerspective: "", pinCategory: "", pinSkill: ""}});
-        
-        //seek to
-        let dummyPlayTimeArr = [...pins, {
-            pinID,
-            pinTime: curTime,
-            pinInfos: {"pinNote": "", "pinPerspective": "", "pinCategory": "", "pinSkill": ""}
-        }].sort((a, b) => a.pinTime - b.pinTime);
+        //create a newPin object to house pin details
+        const newPin = {
+            pinID: '',
+            creatorID: userID,
+            creatorMode: userMode,
+            pinTime: curTime, 
+            callerPinNote: '',
+            callerPinPerspective: '',
+            callerPinCategory: '',
+            callerPinSkill: '',
+            calleePinNote: '',
+            calleePinPerspective: '',
+            calleePinCategory: '',
+            calleePinSkill: '',
+            pinEfficacy: '',
+            pinGoal: '',
+            pinStrength: '',
+            pinOpportunity: '',
+        }; 
 
-        setCurPinIndex(dummyPlayTimeArr.map(pin => pin.pinTime).indexOf(curTime));   
+        //now correctly add the pin into the array to maintain sortedness
+        pins.splice(curPinIndex + 1, 0, newPin);
+
+        //update the current pin index so it points to the newly created pin
+        setPrevPinIndex(curPinIndex);
+        setCurPinIndex(curPinIndex + 1);
     }
 
     const deletePin = async (index) => {
@@ -154,8 +153,22 @@ const AudioReview = ({curPinIndex, setCurPinIndex}) => {
 
     const handleAudioProgress = (currentTime) => {
         setAudioProgress(currentTime);
+        console.log("Current Time in AR: " + currentTime);
         if (player.current != null) {
             player.current.seekTo(currentTime);
+        }
+        //if the audio progress hits the next pin, update the current pin index
+        const newIndex = pins.findIndex((elem) => elem.pinTime > currentTime);
+        console.log("New Index: " + newIndex);
+        if(newIndex == -1) {
+            setPrevPinIndex(curPinIndex);
+            setCurPinIndex(pins.length - 1);
+        } else if (newIndex == 0) {
+            setPrevPinIndex(curPinIndex);
+            setCurPinIndex(0);
+        } else {
+            setPrevPinIndex(curPinIndex);
+            setCurPinIndex(newIndex - 1);
         }
     }
 

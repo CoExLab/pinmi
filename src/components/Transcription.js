@@ -59,7 +59,7 @@ const Transcription = () => {
 
     const renderTranscript = () => {
         return localTrans.map((item) => (
-            <div>
+            <div style={{margin:'8px 0px'}}>
                 <Box fontWeight="bold">{getTimeStamp(item)}</Box>
                 <Typography> {getText(item)}
                 </Typography>

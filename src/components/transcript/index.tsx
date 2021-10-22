@@ -188,6 +188,7 @@ export default function useSpeechToText({
 
     // Stop recording if timeout
     if (timeout) {
+      console.log("timeout");
       handleRecordingTimeout();
     }
 

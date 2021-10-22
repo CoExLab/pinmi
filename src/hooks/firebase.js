@@ -4,13 +4,13 @@ import "firebase/firestore";
 // custom firebase hook
 
 const firebaseConfig = firebase.initializeApp({
-    apiKey: "AIzaSyBIuy2AyZ1BbeWsIdXBWPVHbZOOLUKlo4g",
-    authDomain: "pin-mi-e430d.firebaseapp.com",
-    projectId: "pin-mi-e430d",
-    storageBucket: "pin-mi-e430d.appspot.com",
-    messagingSenderId: "31998012275",
-    appId: "1:31998012275:web:fc8cd7078523c457c63306",
-    measurementId: "G-CBF7TZ5DF5"
+    apiKey: "AIzaSyBOFPxsSfAZ7kgB-Z8GgPAFBnr8EyvyJyg",
+    authDomain: "pinmi-59c77.firebaseapp.com",
+    projectId: "pinmi-59c77",
+    storageBucket: "pinmi-59c77.appspot.com",
+    messagingSenderId: "839028920590",
+    appId: "1:839028920590:web:a16ad3b6056ba7dd1b075f",
+    measurementId: "G-GHJVP7CDF7"
 });
 
 export { firebaseConfig as firebase };

@@ -172,7 +172,7 @@ const ColorLibAudioPlayer = ({
                     <AudioSlider
                         value = {currentTime}
                         onChange = {(event, newValue) => {
-                            console.log(event, newValue);
+                            // console.log(event, newValue);
                             setCurrentTime(newValue);
                         }}
                         max = {duration}

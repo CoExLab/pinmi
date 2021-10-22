@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { usePins } from '../hooks/index';
-import { generatePushId} from "../helper";
+import { randomString} from "../helper";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({children}) => {
@@ -54,18 +54,20 @@ export const usePlayerModeValue = () => useContext(PlayerModeContext);
 
 
 export const SessionContext = createContext();
-const newDoc = generatePushId();
+const newDoc = randomString(19);
 
 export const SessionProvider = ({ children }) => {
-  // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  // const [token, setToken] = useState("YOUR_TOKEN");
+
   const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
   const [sessionID, setSessionID] = useState(newDoc);
+  const [vonageSessionID, setVonageSessionID] = useState("YOUR_SESSION_ID");
+  const [token, setToken] = useState("YOUR_TOKEN");
+  const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+
   return (
-    <SessionContext.Provider value={{sessionID, mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton}}>
+    <SessionContext.Provider value={{sessionID, vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey, mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton}}>
       {children}
     </SessionContext.Provider>
   );
@@ -74,10 +76,10 @@ export const useSessionValue = () => useContext(SessionContext);
 
 // const tempPins = usePins(newDoc);
 export const PinsContext = createContext();
-const pins = [];
+var pins = [];
 export const PinsProvider = ({ children }) => {
   return (
-    <PinsContext.Provider value={{ pins}}>
+    <PinsContext.Provider value={{pins}}>
       {children}
     </PinsContext.Provider>
   );

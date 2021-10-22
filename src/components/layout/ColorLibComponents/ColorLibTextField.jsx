@@ -43,7 +43,7 @@ const CustomizedTextField = withStyles((theme) => ({
       },
     },
     '&.MuiFormControl-marginNormal': {
-      margin: '8px 0px 16px 0px'
+      margin: '8px 0px 24px 0px'
     },
   },
 }))(TextField);

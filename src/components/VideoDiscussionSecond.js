@@ -372,12 +372,7 @@ function VideoChatComponentSecond(props) {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"You have discussed 2 out of 3 pins."}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <p>Are you sure you want to finish discussing pins?</p>
-                    </DialogContentText>
-                </DialogContent>
+                <DialogTitle id="alert-dialog-title">{"Are you sure you want to finish discussing pins?"}</DialogTitle>
                 <DialogActions>
                 <Box m={2}>
                   <div direction='row' align='center'>
