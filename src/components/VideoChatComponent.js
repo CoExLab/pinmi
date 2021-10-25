@@ -124,7 +124,7 @@ function VideoChatComponent(props) {
     setPopperOpen(true);
     setTimeout(() => {
       setPopperOpen(false);
-    }, 2000);
+    }, 1000);
   }
 
   const [open, setOpen] = useState(true);
@@ -683,6 +683,7 @@ function VideoChatComponent(props) {
               ? <Webcam 
                 mirrored
                 audio={isAudioEnabled} 
+                muted="muted"
               /> 
               : <div style={{
                 height: '100%',
