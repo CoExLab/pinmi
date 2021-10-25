@@ -1,6 +1,5 @@
 import { Box, Container, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useState, useRef, React } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
@@ -40,7 +39,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
         case 1: return (
             <div>
                 <ColorLibBackButton
-                    style={{margin: '0px 8px'}}
+                    style={{ margin: '0px 8px' }}
                     variant="outlined"
                     size="medium"
                     onClick={handleBack}
@@ -48,7 +47,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
                     Back
                 </ColorLibBackButton>
                 <ColorLibNextButton
-                    style={{margin: '0px 8px'}}
+                    style={{ margin: '0px 8px' }}
                     variant="contained"
                     size="medium"
                     onClick={handleNext}
@@ -60,7 +59,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
         case 2: return (
             <div>
                 <ColorLibBackButton
-                    style={{margin: '0px 8px'}}
+                    style={{ margin: '0px 8px' }}
                     variant="outlined"
                     size="medium"
                     onClick={handleBack}
@@ -68,7 +67,7 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
                     Back
                 </ColorLibBackButton>
                 <ColorLibNextButton
-                    style={{margin: '0px 8px'}}
+                    style={{ margin: '0px 8px' }}
                     variant="contained"
                     size="medium"
                     onClick={() => makeReflectionDoc()}
@@ -102,6 +101,11 @@ const SelfReflection = () => {
     const obstaclesRef = useRef('');
     const practiceRef = useRef('');
     const addReflectRef = useRef('');
+
+    useEffect(() => {
+        // Scroll on render
+        window.scrollTo(0, 0);
+    }, []);
 
     const GetPageContent = (page) => {
         console.log("In GetPageContent: ");
