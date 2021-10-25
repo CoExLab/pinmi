@@ -30,7 +30,7 @@ const Narrative = () => {
   const classes = useStyles();
   return (
     <div>
-      <Box align="center" m={2}>
+      <Box align="center" m={6}>
         <Typography variant="h4">
           Client Information
         </Typography>
