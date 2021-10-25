@@ -58,9 +58,21 @@ const DisscussionPrep = () => {
   const { pins } = usePinsValue();
   const { sessionID } = useSessionValue();
   const { userID } = useUserModeValue();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
+
+  useEffect(() => {
+    console.log(curPinIndex);
+    console.log(pins);
+    if(finishedUpdates) {
+      //save all pins to database and move to next module
+      pins.map((elem, id) => savePin(id));
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  
+    }
+  }, [finishedUpdates]);
 
   const savePin = async (index) => {
     const myPin = pins[index];
@@ -95,17 +107,6 @@ const DisscussionPrep = () => {
     //allow next step in logic to occur
     setFinishedUpdates(true);
   };
-
-  useEffect(() => {
-    console.log(curPinIndex);
-    console.log(pins);
-    if(finishedUpdates) {
-      //save all pins to database and move to next module
-      pins.map((elem, id) => savePin(id));
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  
-    }
-  }, [finishedUpdates]);
 
   return (
     <div className={classes.root}>
