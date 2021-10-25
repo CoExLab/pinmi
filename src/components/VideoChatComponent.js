@@ -10,7 +10,7 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Icon, Fab, Popover } from '@material-ui/core';
+import { Icon, Fab, Popper, Fade } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,6 +22,7 @@ import Webcam from "react-webcam";
 import pinningClick from "./../other/tutorial/pinning-click.png";
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 
 import {
   toggleAudio,
@@ -93,22 +94,36 @@ function VideoChatComponent(props) {
   //get user informatoin
   const {userID, userMode} = useUserModeValue();
 
-  const [popoverContent, setPopoverContent] = useState(0);
-  // 0: Don’t forget to pin at least twice
-  // 1: Successfully pinned.
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [popperContentIndex, setPopperContentIndex] = useState(0);
+  const [popperOpen, setPopperOpen] = useState(false);
 
-  const handlePinButtonClick = (event) => {
+  const getPopperContent = (index) => {
+    switch(index) {
+      case 0: 
+        return "Don’t forget to pin at least twice";
+      case 1:
+        const pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+        return `Successfully pinned at ${formatTime(pinTime)}`;
+      default: 
+        return "Invalid Pin Content."
+    }
+  }
+
+  const handlePinButtonClick = () => {
     if (videoCallTimer === 0) {
       return;
     }
-    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
-    console.log("added a pin")
+    if (popperOpen) {
+      setPopperOpen(false);
+      return;
+    }
+    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+    console.log("added a pin");
     addPin(pinTime);
-    setPopoverContent(1);
-    setPopoverOpen(true);
+    setPopperContentIndex(1);
+    setPopperOpen(true);
     setTimeout(() => {
-      setPopoverOpen(false);
+      setPopperOpen(false);
     }, 2000);
   }
 
@@ -396,8 +411,8 @@ function VideoChatComponent(props) {
           type="button" 
           color="default" 
           className='pin-Btn'
-          onClick={(event) => { 
-            handlePinButtonClick(event);
+          onClick={() => { 
+            handlePinButtonClick();
           }}
           ref={pinBtn}
         >
@@ -405,26 +420,19 @@ function VideoChatComponent(props) {
             <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>
         </Fab>
-        <Popover
-          open={popoverOpen}
-          // open={true}
+        <Popper
+          open={popperOpen}
           anchorEl={pinBtn.current}
-          onClose={() => setPopoverOpen(false)}
-          anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'center',
-            horizontal: 'left',
-          }}
+          placement='right'
+          style={{zIndex: 3}}
+          transition
         >
-          <Typography>
-            {popoverContent === 0 
-            ? "Don’t forget to pin at least twice"
-            : "Successfully pinned!"}
-          </Typography>
-        </Popover>
+          <ColorLibPaper elevation = {2}>
+            <Typography variant='body2'>
+              {getPopperContent(popperContentIndex)}
+            </Typography>
+          </ColorLibPaper>
+        </Popper>
       </>
     );
   };
@@ -468,10 +476,10 @@ function VideoChatComponent(props) {
         }
         //pass in videoCallTimer so we can create time stamps
         startSpeechToText();
-        setPopoverOpen(true);
+        setPopperOpen(true);
         setTimeout(() => {
-          setPopoverOpen(true);
-          setPopoverContent(0);
+          setPopperOpen(true);
+          setPopperContentIndex(0);
         }, 300000);
       })
       .catch((error) => { console.log(error) });
