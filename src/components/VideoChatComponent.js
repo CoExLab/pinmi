@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from "@material-ui/icons/MicNone";
@@ -10,7 +10,7 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Icon, Fab } from '@material-ui/core';
+import { Icon, Fab, Popover } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
@@ -83,6 +83,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
+  const pinBtn = useRef(null);
+
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   //get setter for media duration
   const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
@@ -91,20 +93,24 @@ function VideoChatComponent(props) {
   //get user informatoin
   const {userID, userMode} = useUserModeValue();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [popoverContent, setPopoverContent] = useState(0);
+  // 0: Don’t forget to pin at least twice
+  // 1: Successfully pinned.
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const handlePinButtonClick = () => {
+  const handlePinButtonClick = (event) => {
+    if (videoCallTimer === 0) {
+      return;
+    }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
     console.log("added a pin")
     addPin(pinTime);
+    setPopoverContent(1);
+    setPopoverOpen(true);
+    setTimeout(() => {
+      setPopoverOpen(false);
+    }, 2000);
   }
-
-  const openPopper = Boolean(anchorEl);
-  const id = openPopper ? 'simple-popper' : undefined;
 
   const [open, setOpen] = useState(true);
 
@@ -384,12 +390,41 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className='pin-Btn'
-          onClick={() => { handlePinButtonClick() }}>
+        <Fab 
+          aria-describedby={"addPin"} 
+          aria-label="addPin" 
+          type="button" 
+          color="default" 
+          className='pin-Btn'
+          onClick={(event) => { 
+            handlePinButtonClick(event);
+          }}
+          ref={pinBtn}
+        >
           <Icon classes={{ root: classes.iconRoot }}>
             <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>
         </Fab>
+        <Popover
+          open={popoverOpen}
+          // open={true}
+          anchorEl={pinBtn.current}
+          onClose={() => setPopoverOpen(false)}
+          anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'center',
+            horizontal: 'left',
+          }}
+        >
+          <Typography>
+            {popoverContent === 0 
+            ? "Don’t forget to pin at least twice"
+            : "Successfully pinned!"}
+          </Typography>
+        </Popover>
       </>
     );
   };
@@ -433,6 +468,11 @@ function VideoChatComponent(props) {
         }
         //pass in videoCallTimer so we can create time stamps
         startSpeechToText();
+        setPopoverOpen(true);
+        setTimeout(() => {
+          setPopoverOpen(true);
+          setPopoverContent(0);
+        }, 300000);
       })
       .catch((error) => { console.log(error) });
   }
