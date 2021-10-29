@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import Hark from 'hark';
-import { startRecording, stopRecording } from './recorderHelpers';
+import { useState, useEffect, useRef } from "react";
+import Hark from "hark";
+import { startRecording, stopRecording } from "./recorderHelpers";
 
 // https://cloud.google.com/speech-to-text/docs/reference/rest/v1/RecognitionConfig
-import { GoogleCloudRecognitionConfig } from './GoogleCloudRecognitionConfig';
+import { GoogleCloudRecognitionConfig } from "./GoogleCloudRecognitionConfig";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition
 export interface SpeechRecognitionProperties {
@@ -14,7 +14,7 @@ export interface SpeechRecognitionProperties {
   maxAlternatives?: number;
 }
 
-const isEdgeChromium = navigator.userAgent.indexOf('Edg/') !== -1;
+const isEdgeChromium = navigator.userAgent.indexOf("Edg/") !== -1;
 
 interface BraveNavigator extends Navigator {
   brave: {
@@ -65,13 +65,14 @@ export default function useSpeechToText({
   onStoppedSpeaking,
   speechRecognitionProperties,
   timeout,
-  useOnlyGoogleCloud = false
+  useOnlyGoogleCloud = false,
 }: UseSpeechToTextTypes) {
   const [isRecording, setIsRecording] = useState(false);
 
   const audioContextRef = useRef<AudioContext>();
 
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState<(string | undefined)[]>([]);
+  const [resultsArr, setResultsArr] = useState<(string | number)[][]>([]);
   const [interimResult, setInterimResult] = useState<string | undefined>();
   const [error, setError] = useState("");
 
@@ -83,16 +84,16 @@ export default function useSpeechToText({
 
   useEffect(() => {
     if (!crossBrowser && !recognition) {
-      setError('Speech Recognition API is only available on Chrome');
+      setError("Speech Recognition API is only available on Chrome");
     }
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      setError('getUserMedia is not supported on this device/browser :(');
+      setError("getUserMedia is not supported on this device/browser :(");
     }
 
     if ((crossBrowser || useOnlyGoogleCloud) && !googleApiKey) {
       console.error(
-        'No google cloud API key was passed, google API will not be able to process speech'
+        "No google cloud API key was passed, google API will not be able to process speech"
       );
     }
 
@@ -104,7 +105,7 @@ export default function useSpeechToText({
   // Chrome Speech Recognition API:
   // Only supported on Chrome browsers
   const chromeSpeechRecognition = (ST: number) => {
-    var startTime = ST
+    var startTime = ST;
     console.log("Start time in CSR! ", startTime);
     if (recognition) {
       // Continuous recording after stopped speaking event
@@ -121,31 +122,38 @@ export default function useSpeechToText({
 
       // start recognition
       recognition.start();
+      var prevResultIndex = -1;
 
       // speech successfully translated into text
+      var currentTime = startTime;
       recognition.onresult = (e) => {
         const result = e.results[e.results.length - 1];
         const { transcript } = result[0];
-        var currentTime = Date.now() - startTime;
-        //const TSArray = [transcript, Date.now]
-        var TSwithDate = (currentTime.toString() + " - " + transcript);
+
+        if (prevResultIndex != e.resultIndex) {
+          currentTime = Date.now() - startTime;
+          prevResultIndex = e.resultIndex;
+        }
 
         // Allows for realtime speech result UI feedback
         if (interimResults) {
           if (result.isFinal) {
+            var TSArray = [transcript, Math.floor(currentTime / 1000)];
+            var TSwithDate = currentTime.toString() + " - " + transcript;
             setInterimResult(undefined);
             setResults((prevResults) => [...prevResults, TSwithDate]);
+            setResultsArr((prevResults) => [...prevResults, TSArray]);
           } else {
-            let concatTranscripts = '';
-
+            let concatTranscripts = "";
             // If continuous: e.results will include previous speech results: need to start loop at the current event resultIndex for proper concatenation
             for (let i = e.resultIndex; i < e.results.length; i++) {
               concatTranscripts += e.results[i][0].transcript + "test2";
             }
-
+            console.log("test2");
             setInterimResult(concatTranscripts);
           }
         } else {
+          console.log("test3");
           setResults((prevResults) => [...prevResults, transcript + "test3"]);
         }
       };
@@ -155,14 +163,15 @@ export default function useSpeechToText({
       // Audio stopped recording or timed out.
       // Chrome speech auto times-out if no speech after a while
       recognition.onend = () => {
+        console.log("ending...");
         setIsRecording(false);
       };
     }
   };
-//timeOfStart parameter is in unix system time
+  //timeOfStart parameter is in unix system time
   const startSpeechToText = async () => {
     if (!useOnlyGoogleCloud && recognition) {
-      var date = Date.now()
+      var date = Date.now();
       console.log("Date.now() ", date);
       //setStartTime(5);
       //console.log("Setting start time! ", startTime);
@@ -177,13 +186,13 @@ export default function useSpeechToText({
 
     // Resume audio context due to google auto play policy
     // https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
-    if (audioContextRef.current?.state === 'suspended') {
+    if (audioContextRef.current?.state === "suspended") {
       audioContextRef.current?.resume();
     }
 
     const stream = await startRecording({
-      errHandler: () => setError('Microphone permission was denied'),
-      audioContext: audioContextRef.current as AudioContext
+      errHandler: () => setError("Microphone permission was denied"),
+      audioContext: audioContextRef.current as AudioContext,
     });
 
     // Stop recording if timeout
@@ -201,17 +210,17 @@ export default function useSpeechToText({
     mediaStream.current = stream.clone();
 
     const speechEvents = Hark(mediaStream.current, {
-      audioContext: audioContextRef.current as AudioContext
+      audioContext: audioContextRef.current as AudioContext,
     });
 
-    speechEvents.on('speaking', () => {
+    speechEvents.on("speaking", () => {
       if (onStartSpeaking) onStartSpeaking();
 
       // Clear previous recording timeout on every speech event
       clearTimeout(timeoutId.current);
     });
 
-    speechEvents.on('stopped_speaking', () => {
+    speechEvents.on("stopped_speaking", () => {
       if (onStoppedSpeaking) onStoppedSpeaking();
 
       setIsRecording(false);
@@ -224,7 +233,7 @@ export default function useSpeechToText({
       stopRecording({
         exportWAV: true,
         wavCallback: (blob) =>
-          handleBlobToBase64({ blob, continuous: continuous || false })
+          handleBlobToBase64({ blob, continuous: continuous || false }),
       });
     });
 
@@ -239,12 +248,13 @@ export default function useSpeechToText({
       mediaStream.current?.getAudioTracks()[0].stop();
       stopRecording({
         exportWAV: true,
-        wavCallback: (blob) => handleBlobToBase64({ blob, continuous: false })
+        wavCallback: (blob) => handleBlobToBase64({ blob, continuous: false }),
       });
     }
   };
 
   const handleRecordingTimeout = () => {
+    console.log("recording timeout...");
     timeoutId.current = window.setTimeout(() => {
       setIsRecording(false);
       mediaStream.current?.getAudioTracks()[0].stop();
@@ -254,7 +264,7 @@ export default function useSpeechToText({
 
   const handleBlobToBase64 = ({
     blob,
-    continuous
+    continuous,
   }: {
     blob: Blob;
     continuous: boolean;
@@ -273,28 +283,28 @@ export default function useSpeechToText({
         sampleRate = 48000;
       }
 
-      const audio = { content: '' };
+      const audio = { content: "" };
 
       const config: GoogleCloudRecognitionConfig = {
-        encoding: 'LINEAR16',
-        languageCode: 'en-US',
+        encoding: "LINEAR16",
+        languageCode: "en-US",
         sampleRateHertz: sampleRate,
-        ...googleCloudRecognitionConfig
+        ...googleCloudRecognitionConfig,
       };
 
       const data = {
         config,
-        audio
+        audio,
       };
 
       // Gets raw base 64 string data
-      audio.content = base64data.substr(base64data.indexOf(',') + 1);
+      audio.content = base64data.substr(base64data.indexOf(",") + 1);
 
       const googleCloudRes = await fetch(
         `https://speech.googleapis.com/v1/speech:recognize?key=${googleApiKey}`,
         {
-          method: 'POST',
-          body: JSON.stringify(data)
+          method: "POST",
+          body: JSON.stringify(data),
         }
       );
 
@@ -304,7 +314,7 @@ export default function useSpeechToText({
       if (googleCloudJson.results?.length > 0) {
         setResults((prevResults) => [
           ...prevResults,
-          googleCloudJson.results[0].alternatives[0].transcript
+          googleCloudJson.results[0].alternatives[0].transcript,
         ]);
       }
 
@@ -319,7 +329,8 @@ export default function useSpeechToText({
     interimResult,
     isRecording,
     results,
+    resultsArr,
     startSpeechToText,
-    stopSpeechToText
+    stopSpeechToText,
   };
 }
