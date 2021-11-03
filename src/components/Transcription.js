@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import { Typography, Box, Grid } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
+import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import { firebase } from "../hooks/firebase";
 import { useSessionValue } from '../context';
 
+const useStyles = makeStyles((theme) => ({
+    textField_font: theme.typography.body2,
+}));
+
 const Transcription = () => {
+    const classes = useStyles();
+
     const [localTrans, setLocalTrans] = useState([]);
     const {sessionID} = useSessionValue();
     // fetch trans data here
@@ -60,9 +68,21 @@ const Transcription = () => {
     const renderTranscript = () => {
         return localTrans.map((item) => (
             <div style={{margin:'8px 0px'}}>
-                <Box fontWeight="bold">{getTimeStamp(item)}</Box>
-                <Typography> {getText(item)}
-                </Typography>
+                <ColorLibTextField 
+                    label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    margin="dense"
+                    // size="small"
+                    value={getText(item)}
+                    InputProps={{
+                      readOnly: true,
+                      classes: {
+                          input: classes.textField_font,
+                      }
+                    }}
+                />
             </div>
         ));
     }

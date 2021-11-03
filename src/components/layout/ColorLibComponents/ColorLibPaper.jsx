@@ -19,6 +19,13 @@ const ColorLibPaper = withStyles((theme) => ({
     boxShadow: 'none',
     padding: '30px',
   },
+  elevation2: {
+    // For Poppers.
+    backgroundColor: 'white',
+    border: 'solid 1px ' + theme.palette.teal.lighter,
+    padding: '6px 10px 6px 20px',
+    marginLeft: '-10px',
+  },
   elevation9: {
     // For Refresher Page final answer preview
     borderRadius: '10px',

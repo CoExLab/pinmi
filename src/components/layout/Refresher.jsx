@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
 import { useUserModeValue, useActiveStepValue, useSessionValue } from '../../context';
@@ -15,6 +15,7 @@ import { usePlayerModeValue } from "../../context";
 
 
 const Refresher = () => {
+  
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   const { sessionID } = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
@@ -25,6 +26,16 @@ const Refresher = () => {
 
   const { userMode, setUserMode, userID, setUserID } = useUserModeValue();
   const { playerMode, setPlayerMode } = usePlayerModeValue();
+
+  useEffect(() => {
+    // Scroll on render
+    window.scrollTo(0, 0)
+  }, []);
+
+  useEffect(() => {
+    // Scroll to up when the answers are submitted.
+    window.scrollTo(0, 0)
+  }, [submitted]);
 
   const handleUserMode = (event, newMode) => {
     const caller = 'tI2fK1Py7Ibsznp3MDz4';

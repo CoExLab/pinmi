@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from "@material-ui/icons/MicNone";
@@ -10,7 +10,7 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Icon, Fab } from '@material-ui/core';
+import { Icon, Fab, Popper, Fade } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,6 +22,7 @@ import Webcam from "react-webcam";
 import pinningClick from "./../other/tutorial/pinning-click.png";
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 
 import {
   toggleAudio,
@@ -83,6 +84,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
+  const pinBtn = useRef(null);
+
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
   //get setter for media duration
   const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
@@ -91,20 +94,38 @@ function VideoChatComponent(props) {
   //get user informatoin
   const {userID, userMode} = useUserModeValue();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [popperContentIndex, setPopperContentIndex] = useState(0);
+  const [popperOpen, setPopperOpen] = useState(false);
 
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const handlePinButtonClick = () => {
-    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
-    console.log("added a pin")
-    addPin(pinTime);
+  const getPopperContent = (index) => {
+    switch(index) {
+      case 0: 
+        return "Don’t forget to pin at least twice";
+      case 1:
+        const pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+        return `Successfully pinned at ${formatTime(pinTime)}`;
+      default: 
+        return "Invalid Pin Content."
+    }
   }
 
-  const openPopper = Boolean(anchorEl);
-  const id = openPopper ? 'simple-popper' : undefined;
+  const handlePinButtonClick = () => {
+    if (videoCallTimer === 0) {
+      return;
+    }
+    if (popperOpen) {
+      setPopperOpen(false);
+      return;
+    }
+    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+    console.log("added a pin");
+    addPin(pinTime);
+    setPopperContentIndex(1);
+    setPopperOpen(true);
+    setTimeout(() => {
+      setPopperOpen(false);
+    }, 1000);
+  }
 
   const [open, setOpen] = useState(true);
 
@@ -384,12 +405,34 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab aria-describedby={id} type="button" color="default" aria-label="addPin" className='pin-Btn'
-          onClick={() => { handlePinButtonClick() }}>
+        <Fab 
+          aria-describedby={"addPin"} 
+          aria-label="addPin" 
+          type="button" 
+          color="default" 
+          className='pin-Btn'
+          onClick={() => { 
+            handlePinButtonClick();
+          }}
+          ref={pinBtn}
+        >
           <Icon classes={{ root: classes.iconRoot }}>
             <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>
         </Fab>
+        <Popper
+          open={popperOpen}
+          anchorEl={pinBtn.current}
+          placement='right'
+          style={{zIndex: 3}}
+          transition
+        >
+          <ColorLibPaper elevation = {2}>
+            <Typography variant='body2'>
+              {getPopperContent(popperContentIndex)}
+            </Typography>
+          </ColorLibPaper>
+        </Popper>
       </>
     );
   };
@@ -433,6 +476,11 @@ function VideoChatComponent(props) {
         }
         //pass in videoCallTimer so we can create time stamps
         startSpeechToText();
+        setPopperOpen(true);
+        setTimeout(() => {
+          setPopperOpen(true);
+          setPopperContentIndex(0);
+        }, 300000);
       })
       .catch((error) => { console.log(error) });
   }
@@ -635,6 +683,7 @@ function VideoChatComponent(props) {
               ? <Webcam 
                 mirrored
                 audio={isAudioEnabled} 
+                muted="muted"
               /> 
               : <div style={{
                 height: '100%',

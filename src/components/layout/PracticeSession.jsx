@@ -24,7 +24,7 @@ function getConditionalContent(page) {
 function getConditionalButton(page, setPage, setButton) {
   const handleButton = () => {
     setPage(page + 1);
-    if (page == 2) setButton(true);
+    if (page === 2) setButton(true);
   }
   switch (page) {
     case 0:
@@ -62,6 +62,17 @@ const PracticeSession = () => {
 
   const { setButton } = useSessionValue();
   const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    // Scroll on render
+    window.scrollTo(0, 0)
+  }, []);
+
+  useEffect(() => {
+    // Scroll on page change
+      window.scrollTo(0, 0)
+  }, [page]);
+  
   return (
     <div>
       {getConditionalContent(page)}

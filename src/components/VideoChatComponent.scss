@@ -27,7 +27,7 @@
       align-items: center;
       position: absolute;
       bottom: 0;
-      z-index: 2;
+      z-index: 4;
       margin: 100px 100px;
     }
     .card {
@@ -82,12 +82,14 @@
       }
     }
     .pin-Btn {
+      background-color: white;
+      border: solid 1px #F2F6F8;
       display: flex;
       justify-content: center;
       align-items: center;
       position: absolute;
       bottom: 0;
-      z-index: 2;
+      z-index: 4;
       margin: 100px 100px;
     }
     .card {
