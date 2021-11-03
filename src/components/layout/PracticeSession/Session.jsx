@@ -7,14 +7,14 @@ import { useSessionValue, useUserModeValue} from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
-    const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
-    const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-    const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-    const [token, setToken] = useState("YOUR_TOKEN");
-    const [readyMessage, setReadyMessage] = useState("video is not ready");
-    const isRecording = true;
-    const {status, startRecording, stopRecording, mediaBlobUrl} 
-    =useReactMediaRecorder({ video: false, audio: true });
+    // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
+    // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+    // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+    // const [token, setToken] = useState("YOUR_TOKEN");
+    // const [readyMessage, setReadyMessage] = useState("video is not ready");
+    // const isRecording = true;
+    // const {status, startRecording, stopRecording, mediaBlobUrl} 
+    // =useReactMediaRecorder({ video: false, audio: true });
     
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
@@ -47,21 +47,22 @@ const Session = () => {
         }
     }
 
-    useEffect(() => {
-        // if (userMode == "callee"){
-        //     setMediaUrl(mediaBlobUrl);
-        //     //addMediaUrlDB(mediaBlobUrl)
-        // }
-        // else {
+    // useEffect(() => {
+    //     // if (userMode == "callee"){
+    //     //     setMediaUrl(mediaBlobUrl);
+    //     //     //addMediaUrlDB(mediaBlobUrl)
+    //     // }
+    //     // else {
 
-        // }
-        setMediaUrl(mediaBlobUrl);
-        console.log("mediablobURL: ", mediaBlobUrl);
-        window.scrollTo(0,0);
-    }, [mediaBlobUrl]);
+    //     // }
+    //     setMediaUrl(mediaBlobUrl);
+    //     console.log("mediablobURL: ", mediaBlobUrl);
+    //     window.scrollTo(0,0);
+    // }, [mediaBlobUrl]);
 
+    //When we pass callee into is archive host, 
     return (
-        <div>
+        <div> 
             <VideoChatComponent isArchiveHost = {checkIsArchiveHost("callee")}/>
         </div>
     );
