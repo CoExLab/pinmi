@@ -232,7 +232,6 @@ function VideoChatComponent(props) {
         calleePinPerspective: '',
         calleePinCategory: '',
         calleePinSkill: '',
-        pinEfficacy: '',
         pinGoal: '',
         pinStrength: '',
         pinOpportunity: '',
