@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid } from '@material-ui/core';
 import ReactPlayer from 'react-player';
@@ -8,7 +8,6 @@ import {formatTime, generatePushId} from '../helper/index';
 
 // context
 import { useActiveStepValue, useSessionValue, usePinsValue, useUserModeValue } from "../context";
-import { useEffect } from "react";
 
 // firebase hook
 import { usePins, useMediaURL } from '../hooks/index';
@@ -18,7 +17,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
     //session data
-    const { mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
+    const {sessionID, setMediaDuration , setMediaUrl, mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
     //fetch user data
@@ -37,9 +36,35 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const [audioPlaying, setAudioPlaying] = useState(false);
     
     const [loadURL, setLoadURL] = useState(false)
+    useEffect(() => {
+        console.log("Audio from AudioReview useEffect" + audio)
+    }, []);
     
 
     let playTimeArr = pins.map(pin => pin.pinTime);
+
+    const getDBMediaURL = async () => {
+        const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
+        docRef.get().then((doc) => {
+          if (doc.exists) {
+              if (doc.data().media_url != "default"){
+                console.log("caller db mediaURL getter:"+ doc.data().media_url)
+                setMediaDuration(doc.data().duration);
+                setMediaUrl(doc.data().media_url);
+                return(doc.data().media_url);
+              }
+              else{
+                //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
+                console.log("URL is not set yet")
+                return("default")
+              }
+            } 
+          else{
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+          }
+        });
+      }
 
     // back to last pin
     const handleLastPin = (index) => {   
