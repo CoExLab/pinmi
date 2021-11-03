@@ -31,12 +31,17 @@ export const useUserModeValue = () => useContext(UserModeContext);
 export const SessionContext = createContext();
 const newDoc = randomString(19);
 
+//temporarily use date as sessionID
+const date = new Date();
+const [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()];
+const tempNewDoc = (month+"-"+day+"-"+year)
+
 export const SessionProvider = ({ children }) => {
 
   const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
-  const [sessionID, setSessionID] = useState(newDoc);
+  const [sessionID, setSessionID] = useState(tempNewDoc);
   const [vonageSessionID, setVonageSessionID] = useState("YOUR_SESSION_ID");
   const [token, setToken] = useState("YOUR_TOKEN");
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
