@@ -484,12 +484,12 @@ function VideoChatComponent(props) {
         setTimeout(() => {
           setPopperOpen(true);
           setPopperContentIndex(0);
-        }, 30000);
+        }, 300000);
         setTimeout(() => {
           if (popperContentIndex === 0) {
             setPopperOpen(false);
           }
-        }, 35000);
+        }, 305000);
       })
       .catch((error) => { console.log(error) });
   }
