@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { useRef } from 'react';
+import { firebase } from '../../hooks/firebase';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid } from '@material-ui/core';
 
@@ -5,13 +9,14 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
+import ColorLibNextButton from './ColorLibComponents/ColorLibButton';
 import Navbar from './Navbar';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
 import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
-
+import { useUserModeValue } from '../../context';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -75,6 +80,34 @@ const tutorialInfo = [{
 const Landing = () => {
   const classes = useStyles();
 
+  const [username, setUsername] = useState('');
+  const usernameRef = useRef('');
+
+  const {userID, setUserID, userMode, setUserMode} = useUserModeValue();
+
+  const setUser = async () => {
+    console.log(username);
+
+    await firebase.firestore().collection("users").doc(username).get().then((doc) => {
+      console.log("data: " + doc.data().userID + " and " + doc.data().userMode);
+      return doc.data();
+    })
+    .then((data) => {
+      setStates(data);
+    })
+    
+  }
+  
+  const setStates = (data) => {
+    console.log(data);
+    const tempUserId = data.userID;
+    const tempUserMode = data.userMode;
+    setUserID(tempUserId);
+    setUserMode(tempUserMode);
+    console.log("user id: " + userID + " usermode: " + userMode);
+    document.location.href="/content";
+  }
+
   const tutorialSection = ({text, image, alt}, index) => {
     const isTextLeft = index % 2 === 0;
     const textGrid = 
@@ -133,16 +166,16 @@ const Landing = () => {
       {tutorialInfo.map(tutorialSection)}
       <Container className={classes.welcome_container} maxWidth='md'>
       <Box m={1} display="inline">
-          <ColorLibTextField id="outlined-basic" label="Your Name" variant="outlined" />
+          <ColorLibTextField id="outlined-basic" label="Your Name" variant="outlined" value={username} inputRef={usernameRef} onChange={() => setUsername(usernameRef.current.value)}/>
         </Box>
         <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
 				</Box>
       </Container>
       <div className={classes.button_wrapper}>
-        <ColorLibButton variant='contained' size='large' href='/content'>
+        <ColorLibNextButton variant='contained' size='large' onClick={() => setUser()}>
           Let's get started!
-        </ColorLibButton>
+        </ColorLibNextButton>
       </div>
 		</section>
 	);

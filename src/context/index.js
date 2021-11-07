@@ -15,10 +15,28 @@ export const ActiveStepProvider = ({children}) => {
 export const useActiveStepValue = () => useContext(ActiveStepContext);
 
 export const UserModeContext = createContext();
-export const UserModeProvider = ({children}) => {
-    const [userMode, setUserMode] = useState("");
-    const [userID, setUserID] = useState("");
 
+// var userID = "";
+// const setUserID = (oldID, newID) => {
+//   console.log("in user id");
+//   userID.substr(0,0);
+//   userID.concat(newID);
+//   console.log(newID);
+//   console.log(userID);
+// }
+
+// var userMode = "";
+// const setUserMode = (oldMode, newMode) => {
+//   console.log("In user mode");
+//   userMode.substr(0, 0);
+//   userMode.concat(newMode);
+//   console.log(newMode);
+//   console.log(userID);
+// }
+
+export const UserModeProvider = ({children}) => {
+    const [userID, setUserID] = useState("");
+    const [userMode, setUserMode] = useState("");
     return  (
         <UserModeContext.Provider value = {{userMode, setUserMode, userID, setUserID}}>
             {children}
