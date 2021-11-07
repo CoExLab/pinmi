@@ -13,6 +13,7 @@ import CORsTestButtons from './components/layout/CORsTestButtons';
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { useState } from 'react';
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */
@@ -98,24 +99,26 @@ const theme = createMuiTheme({
 });
 
 const App = () => {
+  const [userID, setUserID] = useState("");
+  const [userMode, setUserMode] = useState("");
 	return (
     <ThemeProvider theme={theme}>
       <Router>
         <main>
           <Switch>
-            <Route exact path='/' component={Landing}/>
-            <Route exact path="/completion" component={Completion}/>
-            <Route exact path='/test' component={CORsTestButtons}/>
             <Provider store={store}>
-              <SessionProvider>
-                <ActiveStepProvider>
-                  <PinsProvider>
-                    <UserModeProvider>
-                      <Route exact path="/content" component={Content}/>
-                    </UserModeProvider>
-                  </PinsProvider>
-                </ActiveStepProvider>
-              </SessionProvider>
+              <UserModeProvider>
+                <Route exact path='/' component={Landing}/>
+                <SessionProvider>
+                  <ActiveStepProvider>
+                    <PinsProvider>
+                        <Route exact path='/test' component={CORsTestButtons}/>
+                        <Route exact path="/content" component={Content}/>
+                    </PinsProvider>
+                  </ActiveStepProvider>
+                </SessionProvider>
+                <Route exact path="/completion" component={Completion}/>
+              </UserModeProvider>
             </Provider>
           </Switch>
         </main>

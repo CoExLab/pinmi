@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
-import { useUserModeValue, useActiveStepValue, useSessionValue } from '../../context';
+import { useActiveStepValue, useSessionValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibComponents/ColorLibToggleButton';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
 import { firebase } from "../../hooks/firebase";
+import { useUserModeValue } from '../../context';
 
 
 const Refresher = () => {
@@ -33,6 +34,8 @@ const Refresher = () => {
   }, [submitted]);
 
   const handleUserMode = (event, newMode) => {
+    console.log(userID);
+    console.log(userMode);
     const caller = 'tI2fK1Py7Ibsznp3MDz4';
     const callee = '6AT1Se8aU93MPGXZ5miK';
     if (newMode !== null) {
@@ -68,28 +71,60 @@ const Refresher = () => {
   };
 
   const makeSessionDoc = async () => {
-    const caller = 'tI2fK1Py7Ibsznp3MDz4';
-    const callee = '6AT1Se8aU93MPGXZ5miK';
-    await firebase.firestore().collection("sessions").doc(sessionID).set({
-      callee_id: callee,
-      caller_id: caller,
-      media_url: "default",
-      duration: '0',
-      transcript: ''
-    })
-    .then(() => console.log("Session doc created" + sessionID))
-    .catch((err) => console.error("Error in making session ", err));
+    var caller = '';
+    var callee = '';
+    if(userMode == 'callee') {
+      callee = userID;
+      await firebase.firestore().collection("sessions").doc(sessionID).set({
+        callee_id: callee,
+        media_url: "default",
+        duration: '0',
+        transcript: ''
+      })
+      .then(() => {
+        console.log("Session doc created" + sessionID);
+        makeRefresherDoc();
+      })
+      .catch((err) => console.error("Error in making session ", err));
+ 
+    } else {
+      caller = userID;
+      await firebase.firestore().collection("sessions").doc(sessionID).set({
+        caller_id: caller,
+        media_url: "default",
+        duration: '0',
+        transcript: ''
+      })
+      .then(() => {
+        console.log("Session doc created" + sessionID);
+        makeRefresherDoc();
+      })
+      .catch((err) => console.error("Error in making session ", err));
+ 
+    }
+    
   }
 
   const makeRefresherDoc = async () => {
-    await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID).set({
-      q1: openEndedQuesAns[0],
-      q2: openEndedQuesAns[1],
-      q3: openEndedQuesAns[2],
-      q4: openEndedQuesAns[3],
-      tf1: question1Ans,
-      tf2: question2Ans
-    });
+    await firebase.firestore().collection("refresher").doc(sessionID).set({
+      refresher: "yes"
+    })
+    .then( async () => {
+      console.log("Base refresher doc created");
+      console.log("userid: " + userID + " and userMode: " + userMode);
+      await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID).set({
+        q1: openEndedQuesAns[0],
+        q2: openEndedQuesAns[1],
+        q3: openEndedQuesAns[2],
+        q4: openEndedQuesAns[3],
+        tf1: question1Ans,
+        tf2: question2Ans
+      })
+      .then(() => {console.log("refresher finished");})
+      .catch((err) => {console.error("Error creating refresher: ", err);});
+    })
+    .catch((err) => {console.error("Error in making base refresher doc: ", err);});
+    
   }
 
   const fetchCurAnswers = async () => {
@@ -109,7 +144,7 @@ const Refresher = () => {
 
   const handleSubmit = async () => {
     makeSessionDoc();
-    makeRefresherDoc();
+    // makeRefresherDoc();
     setSubmitted(true);
     fetchCurAnswers();
   }
