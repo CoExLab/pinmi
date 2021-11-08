@@ -91,6 +91,7 @@ const DisscussionPrep = () => {
       calleePinPerspective: myPin.calleePinPerspective,
       calleePinCategory: myPin.calleePinCategory,
       calleePinSkill: myPin.calleePinSkill,
+      pinEfficacy: '',
       pinGoal: '',
       pinStrength: '',
       pinOpportunity: '',
