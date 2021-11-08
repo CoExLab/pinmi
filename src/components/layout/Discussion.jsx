@@ -34,6 +34,7 @@ const Discussion = () => {
     console.log("before");
     if (finishedUpdates) {
       console.log("after");
+      saveEfficacyInfo(pins, sessionID);
       setPage(page + 1);
     }
   }, [finishedUpdates]);
@@ -49,6 +50,14 @@ const Discussion = () => {
       default:
         return <div>Unknown</div>;
     }
+  }
+
+  const saveEfficacyInfo = async (pins, sessionID) => {
+    pins.map(async (p) => {
+      await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").doc(p.pinID).update({
+        pinEfficacy: p.pinEfficacy
+      })
+    })
   }
 
   const handleButton = (finished) => {
