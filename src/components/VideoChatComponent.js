@@ -102,7 +102,7 @@ function VideoChatComponent(props) {
       case 0: 
         return "Don’t forget to pin at least twice";
       case 1:
-        const pinTime = pins[pins.length - 1].pinTime;
+        const pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default: 
         return "Invalid Pin Content."
@@ -124,7 +124,7 @@ function VideoChatComponent(props) {
     setPopperOpen(true);
     setTimeout(() => {
       setPopperOpen(false);
-    }, 3000);
+    }, 1000);
   }
 
   const [open, setOpen] = useState(true);
@@ -237,6 +237,7 @@ function VideoChatComponent(props) {
         calleePinPerspective: '',
         calleePinCategory: '',
         calleePinSkill: '',
+        pinEfficacy: '',
         pinGoal: '',
         pinStrength: '',
         pinOpportunity: '',
@@ -482,19 +483,9 @@ function VideoChatComponent(props) {
         startSpeechToText();
         setPopperOpen(true);
         setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 5000);
-        setTimeout(() => {
           setPopperOpen(true);
           setPopperContentIndex(0);
         }, 300000);
-        setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 305000);
       })
       .catch((error) => { console.log(error) });
   }
