@@ -146,6 +146,7 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
+
   const isPublishing = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
@@ -172,9 +173,6 @@ function VideoChatComponent(props) {
   const classes = useStyles();
 
 
-  
-  // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
-  // const 
 
 
   useEffect(() => {
