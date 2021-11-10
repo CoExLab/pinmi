@@ -29,18 +29,22 @@ const SinglePlayerAudioReview = ({
   const player = useRef(null);
   const { curActiveStep } = useActiveStepValue();
   //session data
-  const { mediaUrl: audio, mediaDuration: audioLen } = useSessionValue();
+  const {
+    sessionID,
+    setMediaDuration,
+    setMediaUrl,
+    mediaUrl: audio,
+    mediaDuration: audioLen,
+  } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //fetch user data
   const { userID, userMode } = useUserModeValue();
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   console.log("Audio Pins: ", pins);
-  console.log("Audio: ", localTrans);
   console.log("SinglePlayerPins: ", singlePlayerPins);
 
   const [localTrans, setLocalTrans] = useState([]);
-  const { sessionID } = useSessionValue();
 
   // fetch trans data here
   const fetchTranscript = async () => {
@@ -55,12 +59,7 @@ const SinglePlayerAudioReview = ({
           const ts = getTimeStamp(doc.data()["transcript"]);
 
           for (let i = 0; i < pins.length; i++) {
-            const TSIndex = binarySearch(
-              ts,
-              0,
-              ts.length,
-              pins[i].pinTime
-            );
+            const TSIndex = binarySearch(ts, 0, ts.length, pins[i].pinTime);
             const newSinglePlayerPin = {
               ...pins[i],
               transcriptindex: TSIndex,
@@ -68,6 +67,7 @@ const SinglePlayerAudioReview = ({
             singlePlayerPins.push(newSinglePlayerPin);
           }
           setLocalTrans(ts);
+          console.log("Audio: ", ts);
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
@@ -111,8 +111,35 @@ const SinglePlayerAudioReview = ({
   const [audioPlaying, setAudioPlaying] = useState(false);
 
   const [loadURL, setLoadURL] = useState(false);
+  useEffect(() => {
+    console.log("Audio from AudioReview useEffect" + audio);
+  }, []);
 
   let playTimeArr = pins.map((pin) => pin.pinTime);
+
+  const getDBMediaURL = async () => {
+    const docRef = await firebase
+      .firestore()
+      .collection("sessions")
+      .doc(sessionID);
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        if (doc.data().media_url != "default") {
+          console.log("caller db mediaURL getter:" + doc.data().media_url);
+          setMediaDuration(doc.data().duration);
+          setMediaUrl(doc.data().media_url);
+          return doc.data().media_url;
+        } else {
+          //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
+          console.log("URL is not set yet");
+          return "default";
+        }
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    });
+  };
 
   // back to last pin
   const handleLastPin = (index) => {
@@ -202,7 +229,7 @@ const SinglePlayerAudioReview = ({
     // singlePlayerPins.push(newSinglePlayerPin);
 
     //update the current pin index so it points to the newly created pin
-    // setPrevPinIndex(curPinIndex);
+    setPrevPinIndex(curPinIndex);
     setCurPinIndex(curPinIndex + 1);
   };
 
