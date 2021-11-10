@@ -71,12 +71,9 @@ const Discussion = () => {
     } else {
       setPage(page + 1);
     }
-
   }
 
   function getConditionalButton(page, setPage, pins, sessionID) {
-
-
     switch (page) {
       // case 0:
       //   return (

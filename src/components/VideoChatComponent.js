@@ -146,6 +146,9 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
+  const isPublishing = useSelector(
+    (state) => state.videoChat.isStreamSubscribed
+  );
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
@@ -169,6 +172,9 @@ function VideoChatComponent(props) {
   const classes = useStyles();
 
 
+  
+  // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
+  // const 
 
 
   useEffect(() => {
@@ -179,6 +185,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
+    console.log("STREAM SUBSCRIBED FROM SELECTOR UPDATED")
   }, [isSubscribed]);
 
   const onToggleAudio = (action) => {
@@ -487,12 +494,6 @@ function VideoChatComponent(props) {
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
-    if (props.isArchiveHost) {
-      //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      //props.stopRec();
-      console.log("stop recording");
-    }
 
     //this fetches the archive url
     await saveArchiveURL()
@@ -513,7 +514,6 @@ function VideoChatComponent(props) {
       console.log(pins[0]);
     }
   }
-
 
   const handleStartArchive = async () => {
     //create json to send as the body for post
@@ -537,8 +537,17 @@ function VideoChatComponent(props) {
       .then((archiveData) => {
         console.log(archiveData);
         setArchiveData(archiveData);
+        setDBArchiveData(archiveData);
       })
       .catch((error) => { console.log(error) })
+  }
+
+  const setDBArchiveData = async (archiveData) => {
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+      archiveID:  archiveData
+    })
+      .then(() => console.log("archiveData Added to DB for :" + sessionID))
+      .catch((e) => {console.log(e)});
   }
 
   const handleStopArchive = async () => {
@@ -586,18 +595,41 @@ function VideoChatComponent(props) {
         .catch((e) => { console.log(e) });
     }
     else {
-      //getLastestArchive()
+      getDBMediaURL()
     }
   }
 
   const setDBMediaURL = async (res) => {
     await firebase.firestore().collection("sessions").doc(sessionID).update({
       media_url: res.url,
-      duration: res.duration
+      duration: res.duration,
+      archiveID:  archiveData
     })
       .then(() => console.log("MediaURL Added to DB"))
       .catch((e) => { console.log(e) });
   }
+
+  const getDBMediaURL = async () => {
+    const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+          if (doc.data().media_url != "default"){
+            console.log("caller db mediaURL getter:"+ doc.data().media_url)
+            setMediaDuration(doc.data().duration);
+            setMediaUrl(doc.data().media_url);
+          }
+          else{
+            //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
+            console.log("URL is for session "+ sessionID + " not set yet")
+          }
+        } 
+      else{
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+      }
+    });
+  }
+    
 
   const PreviewMicButton = () => (
     isAudioEnabled ? 
@@ -742,6 +774,8 @@ function VideoChatComponent(props) {
           >Stop Recording
           </Button> :
           <div></div>}
+        
+
       </div>
     </>
   );

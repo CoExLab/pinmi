@@ -2,15 +2,26 @@ import { createStore, combineReducers } from "redux";
 
 // Types
 const HANDLE_SUBSCRIPTION = "HANDLE_SUBSCRIPTION";
+const HANDLE_PUBLISH = "HANDLE_PUBLISH";
 
 // Actions
 export const handleSubscription = (payload) => ({
   type: HANDLE_SUBSCRIPTION,
   payload,
 });
+export const handlePublish = (payload) => ({
+  type: HANDLE_PUBLISH,
+  payload,
+});
+
+
+const defaultState = {
+  isStreamSubscribed: false,
+  isStreamPublishing: false,
+};
 
 // Reducers
-const videoReducer = (state = { isStreamSubscribed: false }, action) => {
+const subscriberReducer = (state = defaultState, action) => {
   switch (action.type) {
     case HANDLE_SUBSCRIPTION:
       return { ...state, isStreamSubscribed: action.payload };
@@ -18,9 +29,21 @@ const videoReducer = (state = { isStreamSubscribed: false }, action) => {
       return state;
   }
 };
+const publisherReducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case HANDLE_PUBLISH:
+      return { ...state, isStreamPublished: action.payload };
+    default:
+      return state;
+  }
+};
+
+
 // Root Reducers
 const rootReducer = combineReducers({
-  videoChat: videoReducer,
+  videoChat: subscriberReducer,
+  //VideoChat: publisherReducer
+
 });
 
 // Store
