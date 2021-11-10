@@ -107,10 +107,10 @@ const SelfReflection = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const GetPageContent = (page) => {
+    const getPageContent = (page) => {
         console.log("In GetPageContent: ");
-        console.log(page.page);
-        switch (page.page) {
+        console.log(page);
+        switch (page) {
             case 0: return (
                 <div>
                     <Box textAlign="left" fontSize={18} fontWeight="fontWeightMedium" >
@@ -250,7 +250,7 @@ const SelfReflection = () => {
                 <Typography variant='h4'>
                     {getPageTitle(page)}
                 </Typography>
-                <GetPageContent page={page} />
+                {getPageContent(page)}
                 <div
                     style={{
                         display: 'flex',
