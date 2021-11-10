@@ -32,13 +32,17 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
     const [pinBtnColor, setPinBtnColor] = useState("");
-    const [audioProgress, setAudioProgress] = useState(0);
+    const [audioProgress, setAudioProgress] = useState(Math.max(0, pins[0].pinTime - 10));
+    useState(0);
     const [audioPlaying, setAudioPlaying] = useState(false);
     
     const [loadURL, setLoadURL] = useState(false)
     useEffect(() => {
+        const time = pins[curPinIndex].pinTime;
+        setAudioProgress(Math.max(0, time - 10));
+
         console.log("Audio from AudioReview useEffect" + audio)
-    }, []);
+    }, [curPinIndex]);
     
 
     let playTimeArr = pins.map(pin => pin.pinTime);
@@ -115,7 +119,6 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             calleePinPerspective: '',
             calleePinCategory: '',
             calleePinSkill: '',
-            pinEfficacy: '',
             pinGoal: '',
             pinStrength: '',
             pinOpportunity: '',
