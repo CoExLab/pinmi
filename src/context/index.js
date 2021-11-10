@@ -3,40 +3,42 @@ import { usePins } from '../hooks/index';
 import { randomString} from "../helper";
 
 export const ActiveStepContext = createContext();
-export const ActiveStepProvider = ({children}) => {
-    const [curActiveStep, setCurActiveStep] = useState(0);
+export const ActiveStepProvider = ({ children }) => {
+  const [curActiveStep, setCurActiveStep] = useState(0);
 
-    return  (
-        <ActiveStepContext.Provider value = {{curActiveStep, setCurActiveStep}}>
-            {children}
-        </ActiveStepContext.Provider>
-    )
-}
+  return (
+    <ActiveStepContext.Provider value={{ curActiveStep, setCurActiveStep }}>
+      {children}
+    </ActiveStepContext.Provider>
+  );
+};
 export const useActiveStepValue = () => useContext(ActiveStepContext);
 
 export const UserModeContext = createContext();
-export const UserModeProvider = ({children}) => {
-    const [userMode, setUserMode] = useState("");
-    const [userID, setUserID] = useState("");
+export const UserModeProvider = ({ children }) => {
+  const [userMode, setUserMode] = useState("");
+  const [userID, setUserID] = useState("");
 
-    return  (
-        <UserModeContext.Provider value = {{userMode, setUserMode, userID, setUserID}}>
-            {children}
-        </UserModeContext.Provider>
-    )
-}
+  return (
+    <UserModeContext.Provider
+      value={{ userMode, setUserMode, userID, setUserID }}
+    >
+      {children}
+    </UserModeContext.Provider>
+  );
+};
 export const useUserModeValue = () => useContext(UserModeContext);
 
 export const PlayerModeContext = createContext();
-export const PlayerModeProvider = ({children}) => {
-    const [playerMode, setPlayerMode] = useState("multiplayer");
+export const PlayerModeProvider = ({ children }) => {
+  const [playerMode, setPlayerMode] = useState("singleplayer");
 
-    return  (
-        <PlayerModeContext.Provider value = {{playerMode, setPlayerMode}}>
-            {children}
-        </PlayerModeContext.Provider>
-    )
-}
+  return (
+    <PlayerModeContext.Provider value={{ playerMode, setPlayerMode }}>
+      {children}
+    </PlayerModeContext.Provider>
+  );
+};
 export const usePlayerModeValue = () => useContext(PlayerModeContext);
 
 // export const SessionContext = createContext();
@@ -51,7 +53,6 @@ export const usePlayerModeValue = () => useContext(PlayerModeContext);
 //   );
 // };
 // export const useSessionValue = () => useContext(SessionContext);
-
 
 export const SessionContext = createContext();
 const newDoc = randomString(19);
@@ -85,3 +86,17 @@ export const PinsProvider = ({ children }) => {
   );
 };
 export const usePinsValue = () => useContext(PinsContext);
+
+export const SinglePlayerPinsContext = createContext();
+export const SinglePlayerPinsProvider = ({ children }) => {
+  const [singlePlayerPins, setSinglePlayerPins] = useState([]);
+  return (
+    <SinglePlayerPinsContext.Provider
+      value={{ singlePlayerPins, setSinglePlayerPins }}
+    >
+      {children}
+    </SinglePlayerPinsContext.Provider>
+  );
+};
+export const useSinglePlayerPinsValue = () =>
+  useContext(SinglePlayerPinsContext);

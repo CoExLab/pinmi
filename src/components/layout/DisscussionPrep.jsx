@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 // Components
-import Notetaking from '../Notetaking';
-import AudioReview from '../AudioReview';
-import Transcription from '../Transcription';
+import Notetaking from "../Notetaking";
+import AudioReview from "../AudioReview";
+import Transcription from "../Transcription";
 // Others
-import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid } from '@material-ui/core';
+import { makeStyles } from "@material-ui/core/styles";
+import { Container, Grid } from "@material-ui/core";
 
-import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useActiveStepValue, usePinsValue, useSessionValue, useUserModeValue } from '../../context';
-import { firebase } from '../../hooks/firebase';
-import { formatTime, generatePushId } from '../../helper/index';
-
+import ColorLibButton from "./ColorLibComponents/ColorLibButton";
+import {
+  useActiveStepValue,
+  usePinsValue,
+  useSessionValue,
+  useUserModeValue,
+  usePlayerModeValue,
+} from "../../context";
+import { firebase } from "../../hooks/firebase";
+import { formatTime, generatePushId } from "../../helper/index";
+import SinglePlayerVideo from "./SinglePlayerComponents/SinglePlayerVideo";
+import { copyFileSync } from "fs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   imageIcon: {
-    height: '100%'
+    height: "100%",
   },
   iconRoot: {
-    textAlign: 'center'
+    textAlign: "center",
   },
   fab: {
     marginLeft: 450,
@@ -30,14 +37,14 @@ const useStyles = makeStyles((theme) => ({
   },
   grid: {
     "& .MuiGrid-item": {
-      display: 'inline-grid',
+      display: "inline-grid",
     },
     "& .MuiGrid-grid-sm-4": {
-      position: 'relative',
-      margin: '8px',
-      maxWidth: 'calc(33.333333% - 8px)',
+      position: "relative",
+      margin: "8px",
+      maxWidth: "calc(33.333333% - 8px)",
       "& .MuiPaper-root": {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         bottom: 0,
         left: 0,
@@ -46,14 +53,15 @@ const useStyles = makeStyles((theme) => ({
       }
     },
     "& .MuiGrid-grid-sm-8": {
-      maxWidth: 'calc(66.666667% - 8px)',
-    }
+      maxWidth: "calc(66.666667% - 8px)",
+    },
   },
 }));
 
 const DisscussionPrep = () => {
   const classes = useStyles();
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
+    useActiveStepValue();
   const [curPinIndex, setCurPinIndex] = useState(0);
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
@@ -63,7 +71,8 @@ const DisscussionPrep = () => {
   
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [])
+  }, []);
+  const { playerMode } = usePlayerModeValue();
 
   useEffect(() => {
     console.log(curPinIndex);
@@ -79,29 +88,38 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
-      creatorID: myPin.creatorID,
-      creatorMode: myPin.creatorMode,
-      pinTime: myPin.pinTime,
-      callerPinNote: myPin.callerPinNote,
-      callerPinPerspective: myPin.callerPinPerspective,
-      callerPinCategory: myPin.callerPinCategory,
-      callerPinSkill: myPin.callerPinSkill,
-      calleePinNote: myPin.calleePinNote,
-      calleePinPerspective: myPin.calleePinPerspective,
-      calleePinCategory: myPin.calleePinCategory,
-      calleePinSkill: myPin.calleePinSkill,
-      pinEfficacy: '',
-      pinGoal: '',
-      pinStrength: '',
-      pinOpportunity: '',
-    })
-    .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
-    .catch((e) => { console.log("pin update unsuccessful: " + e) });
-  }
+    await firebase
+      .firestore()
+      .collection("sessions")
+      .doc(sessionID)
+      .collection("pins")
+      .add({
+        creatorID: myPin.creatorID,
+        creatorMode: myPin.creatorMode,
+        pinTime: myPin.pinTime,
+        callerPinNote: myPin.callerPinNote,
+        callerPinPerspective: myPin.callerPinPerspective,
+        callerPinCategory: myPin.callerPinCategory,
+        callerPinSkill: myPin.callerPinSkill,
+        calleePinNote: myPin.calleePinNote,
+        calleePinPerspective: myPin.calleePinPerspective,
+        calleePinCategory: myPin.calleePinCategory,
+        calleePinSkill: myPin.calleePinSkill,
+        pinEfficacy: "",
+        pinGoal: "",
+        pinStrength: "",
+        pinOpportunity: "",
+      })
+      .then((docRef) => {
+        pins[index].pinID = docRef.id;
+        console.log("current pin successfully updated");
+      })
+      .catch((e) => {
+        console.log("pin update unsuccessful: " + e);
+      });
+  };
 
   const handleNext = async () => {
-    
     console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
@@ -110,29 +128,55 @@ const DisscussionPrep = () => {
     setFinishedUpdates(true);
   };
 
+  // useEffect(() => {
+  //   console.log(curPinIndex);
+  //   console.log(pins);
+  //   if (finishedUpdates) {
+  //     //save all pins to database and move to next module
+  //     pins.map((elem, id) => savePin(id));
+  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  //   }
+  // }, [finishedUpdates]);
+
   return (
     <div className={classes.root}>
-      <Container maxWidth='md'>
+      <Container maxWidth="md">
         <Grid container spacing={2} className={classes.grid}>
-          <AudioReview
-            curPinIndex={curPinIndex}
-            setCurPinIndex={setCurPinIndex}
-            prevPinIndex={prevPinIndex}
-            setPrevPinIndex={setPrevPinIndex}
-          />
-          <Transcription />
-          <Notetaking
-            curPinIndex={curPinIndex}
-            setCurPinIndex={setCurPinIndex}
-            prevPinIndex={prevPinIndex}
-            setPrevPinIndex={setPrevPinIndex} />
+          {playerMode == "multiplayer" ? (
+            <>
+              <AudioReview
+                curPinIndex={curPinIndex}
+                setCurPinIndex={setCurPinIndex}
+                prevPinIndex={prevPinIndex}
+                setPrevPinIndex={setPrevPinIndex}
+              />
+              <Transcription />
+              <Notetaking
+                curPinIndex={curPinIndex}
+                setCurPinIndex={setCurPinIndex}
+                prevPinIndex={prevPinIndex}
+                setPrevPinIndex={setPrevPinIndex}
+              />
+            </>
+          ) : (
+            <SinglePlayerVideo
+              curPinIndex={curPinIndex}
+              setCurPinIndex={setCurPinIndex}
+              prevPinIndex={prevPinIndex}
+              setPrevPinIndex={setPrevPinIndex}
+            />
+          )}
         </Grid>
       </Container>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0' }}>
-        <ColorLibButton
-          variant="contained"
-          size="medium"
-          onClick={handleNext}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "20px 0 50px 0",
+        }}
+      >
+        <ColorLibButton variant="contained" size="medium" onClick={handleNext}>
           Join Discussion
         </ColorLibButton>
       </div>

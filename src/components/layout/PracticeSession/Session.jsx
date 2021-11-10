@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import VideoChatComponent from "../../VideoChatComponent.js";
+import SinglePlayerVideoChat from "../SinglePlayerComponents/SinglePlayerVideoTemp";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
@@ -64,14 +65,12 @@ const Session = () => {
 
     return (
         <div>
-            <div>
-            {playerMode == "multiplayer" ? (
+            <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
+            {/* {playerMode == "multiplayer" ? (
                 <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
             ) : (
-                <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
-            )}
-            </div>
-            <VideoChatComponent isArchiveHost = {checkIsArchiveHost("callee")}/>
+                <SinglePlayerVideoChat isArchiveHost={checkIsArchiveHost("callee")} />
+            )} */}
         </div>
     );
 }

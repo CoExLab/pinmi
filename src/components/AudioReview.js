@@ -13,6 +13,7 @@ import { useEffect } from "react";
 // firebase hook
 import { usePins, useMediaURL } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
     const player = useRef(null);
