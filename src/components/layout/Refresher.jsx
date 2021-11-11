@@ -20,6 +20,8 @@ const Refresher = () => {
   const [question2Ans, setQuestion2Ans] = useState('');
   const [openEndedQuesAns, setOpenEndedQuesAns] = useState(['', '', '', '']);
 
+  const [countDown, setCountDown] = useState(10 * 60);
+
   const { userMode, setUserMode, userID, setUserID } = useUserModeValue();
 
   useEffect(() => {
@@ -31,6 +33,13 @@ const Refresher = () => {
     // Scroll to up when the answers are submitted.
     window.scrollTo(0, 0)
   }, [submitted]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCountDown(countDown - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
 
   const handleUserMode = (event, newMode) => {
     const caller = 'tI2fK1Py7Ibsznp3MDz4';

@@ -11,17 +11,16 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
 import { Icon, Fab, Popper, Fade } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText } from "@material-ui/core";
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 
 import Webcam from "react-webcam";
 
 import pinningClick from "./../other/tutorial/pinning-click.png";
 
-import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
+import ColorLibButton, { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
+import ColorLibTimeReminder from './layout/ColorLibComponents/ColorLibTimeReminder';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 
 import {
@@ -37,7 +36,7 @@ import "./VideoChatComponent.scss";
 import { baseURL } from './constants';
 
 import { useSessionValue, useActiveStepValue, usePinsValue, useUserModeValue } from "../context";
-import {formatTime, generatePushId} from '../helper/index';
+import { formatTime, generatePushId } from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
 
@@ -86,25 +85,31 @@ const useStyles = makeStyles((theme) => ({
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
-  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   //get setter for media duration
-  const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
+  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //get user informatoin
-  const {userID, userMode} = useUserModeValue();
+  const { userID, userMode } = useUserModeValue();
 
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
 
+  const recommendedTime = 10 * 60;
+  const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
+
   const getPopperContent = (index) => {
-    switch(index) {
-      case 0: 
+    switch (index) {
+      case 0:
         return "Don’t forget to pin at least twice";
       case 1:
-        const pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
-        return `Successfully pinned at ${formatTime(pinTime)}`;
-      default: 
+        const thisPin = pins[pins.length - 1];
+        const pinTime = thisPin.pinTime;
+        const pinCreatorMode = thisPin.creatorMode;
+        console.log(pinCreatorMode, userMode);
+        return `Successfully pinned at ${formatTime(pinTime)} by ${userMode === pinCreatorMode ? 'you' : 'your peer'}`;
+      default:
         return "Invalid Pin Content."
     }
   }
@@ -124,10 +129,11 @@ function VideoChatComponent(props) {
     setPopperOpen(true);
     setTimeout(() => {
       setPopperOpen(false);
-    }, 1000);
+    }, 3000);
   }
 
   const [open, setOpen] = useState(true);
+  const [timeRemind, setTimeRemind] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -172,7 +178,7 @@ function VideoChatComponent(props) {
   const classes = useStyles();
 
 
-  
+
   // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
   // const 
 
@@ -187,6 +193,21 @@ function VideoChatComponent(props) {
     setIsStreamSubscribed(isSubscribed);
     console.log("STREAM SUBSCRIBED FROM SELECTOR UPDATED")
   }, [isSubscribed]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!open && countDown > 0) {
+        const timePassed = (Date.now() - videoCallTimer) / 1000;
+        if (timePassed >= recommendedTime) {
+          setCountDown(0);
+          setTimeRemind(true);
+        } else {
+          setCountDown(recommendedTime - timePassed);
+        }
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  });
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -213,53 +234,52 @@ function VideoChatComponent(props) {
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
-      // ui on
-      setPinBtnDisabled(true);        
-      setPinBtnColor("primary");
-      // ui off
-      setTimeout(() => {
-          setPinBtnDisabled(false);
-      }, 800);
+    // ui on
+    setPinBtnDisabled(true);
+    setPinBtnColor("primary");
+    // ui off
+    setTimeout(() => {
+      setPinBtnDisabled(false);
+    }, 800);
 
-      if(pins.length > 0 && pins[pins.length - 1].pinTime == curTime) {
-        return;
-      }
+    if (pins.length > 0 && pins[pins.length - 1].pinTime == curTime) {
+      return;
+    }
 
-      //create a newPin object to house pin details
-      const newPin = {
-        pinID: '',
-        creatorID: userID,
-        creatorMode: userMode,
-        pinTime: curTime, 
-        callerPinNote: '',
-        callerPinPerspective: '',
-        callerPinCategory: '',
-        callerPinSkill: '',
-        calleePinNote: '',
-        calleePinPerspective: '',
-        calleePinCategory: '',
-        calleePinSkill: '',
-        pinEfficacy: '',
-        pinGoal: '',
-        pinStrength: '',
-        pinOpportunity: '',
-      }; 
+    //create a newPin object to house pin details
+    const newPin = {
+      pinID: '',
+      creatorID: userID,
+      creatorMode: userMode,
+      pinTime: curTime,
+      callerPinNote: '',
+      callerPinPerspective: '',
+      callerPinCategory: '',
+      callerPinSkill: '',
+      calleePinNote: '',
+      calleePinPerspective: '',
+      calleePinCategory: '',
+      calleePinSkill: '',
+      pinGoal: '',
+      pinStrength: '',
+      pinOpportunity: '',
+    };
 
-      //Use this code if the pins context doesn't work correctly to save pin information from both users
-      // await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').add(newPin)
-      // .then((docRef) => {
-      //   pins.push({
-      //     pinID: docRef.id,
-      //     pinInfo: newPin
-      //   })
-      // .then(() => {console.log("New pin successfully written to db");})
-      // .catch((err) => {console.error("Error writing pin document ", err);})
-      // });
+    //Use this code if the pins context doesn't work correctly to save pin information from both users
+    // await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').add(newPin)
+    // .then((docRef) => {
+    //   pins.push({
+    //     pinID: docRef.id,
+    //     pinInfo: newPin
+    //   })
+    // .then(() => {console.log("New pin successfully written to db");})
+    // .catch((err) => {console.error("Error writing pin document ", err);})
+    // });
 
-      //Otherwise, use this code, as it will save reads and writes in the long run:
-      pins.push(newPin);
+    //Otherwise, use this code, as it will save reads and writes in the long run:
+    pins.push(newPin);
 
-      console.log("Finished pin creation"); 
+    console.log("Finished pin creation");
   }
 
   const addTranscript = async () => {
@@ -311,6 +331,24 @@ function VideoChatComponent(props) {
   const renderToolbar = () => {
     return (
       <>
+        {open ? null : (
+          <ColorLibPaper
+            elevation={2}
+            style={{
+              width: 'fit-content',
+              position: 'absolute',
+              top: '23px',
+              left: '20px',
+              marginLeft: 0,
+              padding: '6px 10px',
+              zIndex: 2,
+            }}
+          >
+            <Typography variant="body2">
+              Recommended time left: {formatTime(countDown)}
+            </Typography>
+          </ColorLibPaper>
+        )}
         {isInterviewStarted && (
           <div className="video-toolbar">
             {isAudioEnabled ? (
@@ -412,13 +450,13 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab 
-          aria-describedby={"addPin"} 
-          aria-label="addPin" 
-          type="button" 
-          color="default" 
+        <Fab
+          aria-describedby={"addPin"}
+          aria-label="addPin"
+          type="button"
+          color="default"
           className='pin-Btn'
-          onClick={() => { 
+          onClick={() => {
             handlePinButtonClick();
           }}
           ref={pinBtn}
@@ -431,10 +469,10 @@ function VideoChatComponent(props) {
           open={popperOpen}
           anchorEl={pinBtn.current}
           placement='right'
-          style={{zIndex: 3}}
+          style={{ zIndex: 3 }}
           transition
         >
-          <ColorLibPaper elevation = {2}>
+          <ColorLibPaper elevation={2}>
             <Typography variant='body2'>
               {getPopperContent(popperContentIndex)}
             </Typography>
@@ -485,9 +523,19 @@ function VideoChatComponent(props) {
         startSpeechToText();
         setPopperOpen(true);
         setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 5000);
+        setTimeout(() => {
           setPopperOpen(true);
           setPopperContentIndex(0);
         }, 300000);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 305000);
       })
       .catch((error) => { console.log(error) });
   }
@@ -497,12 +545,12 @@ function VideoChatComponent(props) {
 
     //this fetches the archive url
     await saveArchiveURL()
-    .then(() => {
-      stopSpeechToText();
-      addTranscript();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((error) => {console.log(error)});
+      .then(() => {
+        stopSpeechToText();
+        addTranscript();
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      })
+      .catch((error) => { console.log(error) });
 
     //sort the array
     pins.sort(function (a, b) {
@@ -510,7 +558,7 @@ function VideoChatComponent(props) {
     });
 
     console.log(pins);
-    if(pins[0]){
+    if (pins[0]) {
       console.log(pins[0]);
     }
   }
@@ -544,10 +592,10 @@ function VideoChatComponent(props) {
 
   const setDBArchiveData = async (archiveData) => {
     await firebase.firestore().collection("sessions").doc(sessionID).update({
-      archiveID:  archiveData
+      archiveID: archiveData
     })
       .then(() => console.log("archiveData Added to DB for :" + sessionID))
-      .catch((e) => {console.log(e)});
+      .catch((e) => { console.log(e) });
   }
 
   const handleStopArchive = async () => {
@@ -603,7 +651,7 @@ function VideoChatComponent(props) {
     await firebase.firestore().collection("sessions").doc(sessionID).update({
       media_url: res.url,
       duration: res.duration,
-      archiveID:  archiveData
+      archiveID: archiveData
     })
       .then(() => console.log("MediaURL Added to DB"))
       .catch((e) => { console.log(e) });
@@ -613,50 +661,50 @@ function VideoChatComponent(props) {
     const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
     docRef.get().then((doc) => {
       if (doc.exists) {
-          if (doc.data().media_url != "default"){
-            console.log("caller db mediaURL getter:"+ doc.data().media_url)
-            setMediaDuration(doc.data().duration);
-            setMediaUrl(doc.data().media_url);
-          }
-          else{
-            //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-            console.log("URL is for session "+ sessionID + " not set yet")
-          }
-        } 
-      else{
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
+        if (doc.data().media_url != "default") {
+          console.log("caller db mediaURL getter:" + doc.data().media_url)
+          setMediaDuration(doc.data().duration);
+          setMediaUrl(doc.data().media_url);
+        }
+        else {
+          //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
+          console.log("URL is for session " + sessionID + " not set yet")
+        }
+      }
+      else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
       }
     });
   }
-    
+
 
   const PreviewMicButton = () => (
-    isAudioEnabled ? 
-    <Fab>
-      <MicIcon 
-        onClick={() => setIsAudioEnabled(false)}
-      />
-    </Fab> : 
-    <Fab>
-      <MicOffIcon 
-        onClick={() => setIsAudioEnabled(true)}
-      />
-    </Fab>
+    isAudioEnabled ?
+      <Fab>
+        <MicIcon
+          onClick={() => setIsAudioEnabled(false)}
+        />
+      </Fab> :
+      <Fab>
+        <MicOffIcon
+          onClick={() => setIsAudioEnabled(true)}
+        />
+      </Fab>
   );
 
   const PreviewVideoButton = () => (
-    isVideoEnabled ? 
-    <Fab>
-      <VideocamIcon 
-        onClick={() => setIsVideoEnabled(false)}
-      />
-    </Fab> : 
-    <Fab>
-      <VideocamOffIcon 
-        onClick={() => setIsVideoEnabled(true)}
-      />
-    </Fab>
+    isVideoEnabled ?
+      <Fab>
+        <VideocamIcon
+          onClick={() => setIsVideoEnabled(false)}
+        />
+      </Fab> :
+      <Fab>
+        <VideocamOffIcon
+          onClick={() => setIsVideoEnabled(true)}
+        />
+      </Fab>
   );
 
 
@@ -677,13 +725,13 @@ function VideoChatComponent(props) {
       >
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <div style={{marginRight: '20px', width: 'calc(45% - 20px)'}}>
-              <img 
-                src={pinningClick} 
+            <div style={{ marginRight: '20px', width: 'calc(45% - 20px)' }}>
+              <img
+                src={pinningClick}
                 alt={"Icon of clicking the pin"}
                 style={{
-                  margin:'20px 0px 10px 0px',
-                  height:'80px'
+                  margin: '20px 0px 10px 0px',
+                  height: '80px'
                 }}
               />
               <Typography variant='h4'>
@@ -691,13 +739,13 @@ function VideoChatComponent(props) {
               </Typography>
               <Typography variant='body2'>
                 <p>Click on the pin to create time marks of</p>
-                <ul style={{fontWeight: 700}}>
+                <ul style={{ fontWeight: 700 }}>
                   <li>situations where you struggled to use MI</li>
                   <li>instances of effective MI use</li>
                 </ul>
                 <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
               </Typography>
-              <div style={{marginTop: '20px'}}>
+              <div style={{ marginTop: '20px' }}>
                 <ColorLibNextButton
                   variant='contained'
                   size='medium'
@@ -710,20 +758,20 @@ function VideoChatComponent(props) {
                 </ColorLibNextButton>
               </div>
             </div>
-            <div style={{width: '55%'}}>
-              {isVideoEnabled 
-              ? <Webcam 
-                mirrored
-                audio={isAudioEnabled} 
-                muted="muted"
-              /> 
-              : <div style={{
-                height: '100%',
-                width: '100%',
-                backgroundColor: 'black',
-                borderRadius: '5px'
-              }}/>}
-              <div style={{marginTop: '-65px'}}>
+            <div style={{ width: '55%' }}>
+              {isVideoEnabled
+                ? <Webcam
+                  mirrored
+                  audio={isAudioEnabled}
+                  muted="muted"
+                />
+                : <div style={{
+                  height: '100%',
+                  width: '100%',
+                  backgroundColor: 'black',
+                  borderRadius: '5px'
+                }} />}
+              <div style={{ marginTop: '-65px' }}>
                 <PreviewMicButton />
                 <PreviewVideoButton />
               </div>
@@ -731,6 +779,13 @@ function VideoChatComponent(props) {
           </DialogContentText>
         </DialogContent>
       </Dialog>
+
+      <ColorLibTimeReminder 
+        open={timeRemind} 
+        setOpen={setTimeRemind}
+        recommendedMinutes={recommendedTime / 60}
+        nextSection="Discussion Prep"
+      />
 
       <div className="video-container">
         <div
@@ -774,7 +829,7 @@ function VideoChatComponent(props) {
           >Stop Recording
           </Button> :
           <div></div>}
-        
+
 
       </div>
     </>
