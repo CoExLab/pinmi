@@ -39,7 +39,6 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const classes = useStyles();
 
     //creating a refernce for TextField Components
-    const efficacyValueRef = useRef('')
     const goalValueRef = useRef('')
     const strengthValueRef = useRef('')
     const opportunityValueRef = useRef('')
@@ -64,18 +63,15 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
-    const [curEfficacyInfo, setCurEfficacyInfo] = useState(pins[curPinIndex].pinEfficacy);
     const [curGoalInfo, setCurGoalInfo] = useState(pins[curPinIndex].pinGoal);
     const [curStrengthInfo, setCurStrengthInfo] = useState(pins[curPinIndex].pinStrength);
     const [curOpporunityInfo, setCurOpportunityInfo] = useState(pins[curPinIndex].pinOpportunity);
 
     useEffect(() => {
         fetchCurTextVal();
-        pins[prevPinIndex].pinEfficacy = curEfficacyInfo;
         pins[prevPinIndex].pinGoal = curGoalInfo;
         pins[prevPinIndex].pinStrength = curStrengthInfo;
         pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
-        setCurEfficacyInfo(pins[curPinIndex].pinEfficacy);
         setCurGoalInfo(pins[curPinIndex].pinGoal);
         setCurStrengthInfo(pins[curPinIndex].pinStrength);
         setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
@@ -146,13 +142,13 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     return (
         <Grid item xs={12} sm={8}>
             <ColorLibPaper elevation={1}>
-                <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
+                {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
                     {userMode}
-                </Typography>
+                </Typography> */}
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>
-                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === userMode ? "you" : "your peer"}
                         </Typography>
                     </Box>
                     : null}
@@ -248,24 +244,6 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                         value={curSkillInfo2}
                     />
                 </form>
-
-                <Box textAlign="left">
-                    <Typography>
-                        Why was the pinned situation effective or ineffective?
-                    </Typography>
-                </Box>
-                <ColorLibTextField
-                    id="outlined-secondary"
-                    label="Personal Notes..."
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    rows={3}
-                    margin="normal"
-                    value={curEfficacyInfo}
-                    inputRef={efficacyValueRef}
-                    onChange={() => setCurEfficacyInfo(efficacyValueRef.current.value)}
-                />
 
                 <Box textAlign="left">
                     <Typography>
