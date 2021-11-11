@@ -205,7 +205,7 @@ function VideoChatComponent(props) {
           setCountDown(recommendedTime - timePassed);
         }
       }
-    }, 500);
+    }, 1000);
     return () => clearTimeout(timer);
   });
 
