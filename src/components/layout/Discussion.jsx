@@ -1,21 +1,25 @@
-import { Button, Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Collaboration from "./Collaboration.jsx"
-import VideoChatComponent from "../VideoDiscussion.js"
-
-import VideoChatComponentSecond from "../VideoDiscussionSecond.js";
-import { ColorLibNextButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
 
-import firebase from 'firebase';
+import { formatTime } from '../../helper/index';
 
 //context
 import { useSessionValue, usePinsValue, useActiveStepValue } from "../../context";
 
-
-
+const useStyles = makeStyles((theme) => ({
+  tealText: {
+    color: theme.palette.teal.main,
+  },
+}));
 
 const Discussion = () => {
+  const classes = useStyles();
+
   const [page, setPage] = useState(0);
   const { sessionID } = useSessionValue();
   const { pins } = usePinsValue();
@@ -25,7 +29,12 @@ const Discussion = () => {
 
   const [curPinIndex, setCurPinIndex] = useState(0);
   const [prevPinIndex, setPrevPinIndex] = useState(0);
-  
+
+  const [startTime, setStartTime] = useState(Date.now());
+  const recommendedTime = 13 * 60;
+  const [countDown, setCountDown] = useState(recommendedTime);
+  const [timeRemind, setTimeRemind] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
@@ -37,6 +46,21 @@ const Discussion = () => {
       setPage(page + 1);
     }
   }, [finishedUpdates]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (countDown > 0) {
+        const timePassed = (Date.now() - startTime) / 1000;
+        if (timePassed >= recommendedTime) {
+          setCountDown(0);
+          setTimeRemind(true);
+        } else {
+          setCountDown(recommendedTime - timePassed);
+        }
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
 
   function getConditionalContent(page) {
     switch (page) {
@@ -94,6 +118,28 @@ const Discussion = () => {
   }
   return (
     <div>
+      <div id="time_reminder" style={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        marginTop: '10px',
+        marginRight: '10px',
+        zIndex: 100,
+        textAlign: 'center',
+      }}>
+        <Typography variant="body2">
+          Recommended time left
+        </Typography>
+        <Typography variant="h4" className={classes.tealText}>
+          {formatTime(countDown)}
+        </Typography>
+      </div>
+      <ColorLibTimeReminder 
+        open={timeRemind} 
+        setOpen={setTimeRemind}
+        recommendedMinutes={recommendedTime / 60}
+        nextSection="Self Reflection"
+      />
       {getConditionalContent(page)}
       {getConditionalButton(page, setPage, pins, sessionID)}
     </div>

@@ -1,7 +1,7 @@
 import { Box, Container, Typography } from '@material-ui/core';
 import { useState, useRef, useEffect } from 'react';
 
-import ColorLibButton, { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
+import { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
@@ -16,8 +16,6 @@ const getPageTitle = (page) => {
         default: return "";
     }
 }
-
-
 
 const getPageButtons = (page, setPage, makeReflectionDoc) => {
     const handleNext = () => {
