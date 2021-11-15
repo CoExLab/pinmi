@@ -9,7 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box, Card, Typography } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
@@ -18,8 +18,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Popper from '@material-ui/core/Popper';
-import CardContent from '@material-ui/core/CardContent';
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
@@ -61,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 function VideoChatComponent(props) {
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -354,7 +352,7 @@ How did today’s mock client session go?
     console.log("loading info now...");
     setLoadingStatus(true);
     //in order to make sure it connects to the correct room
-    if (props.mode == "Discussion") {
+    if (props.mode === "Discussion" || props.mode === "PreDiscussion") {
       var roomAddOn = "Discussion";
       console.log("Discussion Room Video component")
     }
@@ -618,7 +616,8 @@ How did today’s mock client session go?
           </Box>
         </DialogActions>
       </Dialog>
-      {videoBox("mini")}
+      {props.mode === "Discussion" && videoBox("mini")}
+      {props.mode === "PreDiscussion" && videoBox("full")}
       {/* <div className="video-container"> 
         <div
           id="subscriber"

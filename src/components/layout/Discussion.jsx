@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Collaboration from "./Collaboration.jsx"
-import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibButton, { ColorLibGrayNextButton } from './ColorLibComponents/ColorLibButton';
+import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
+
+import VideoDiscussion from "../VideoDiscussion.js"
 
 import { formatTime } from '../../helper/index';
 
@@ -14,6 +17,21 @@ import { useSessionValue, usePinsValue, useActiveStepValue } from "../../context
 const useStyles = makeStyles((theme) => ({
   tealText: {
     color: theme.palette.teal.main,
+  },
+  greyNextButton: {
+    position: 'absolute',
+    right: '50px',
+    bottom: '-150px',
+    zIndex: 100,
+  },
+  description: {
+    margin: '30px 0px 30px 50px',
+    width: '200px',
+    '& > *': {
+      '&:not(:first-child)': {
+        marginTop: '10px',
+      }
+    }
   },
 }));
 
@@ -37,7 +55,7 @@ const Discussion = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [])
+  }, [page])
 
   useEffect(() => {
     console.log("before");
@@ -64,12 +82,10 @@ const Discussion = () => {
 
   function getConditionalContent(page) {
     switch (page) {
-      // case 0:
-      //   return <VideoChatComponent mode = {"Discussion"}/>;
       case 0:
+        return <div />;
+      case 1:
         return <Collaboration curPinIndex={curPinIndex} setCurPinIndex={setCurPinIndex} prevPinIndex={prevPinIndex} setPrevPinIndex={setPrevPinIndex} />;
-      // case 2:
-      //   return <VideoChatComponentSecond />;
       default:
         return <div>Unknown</div>;
     }
@@ -82,7 +98,6 @@ const Discussion = () => {
       setCurPinIndex(0);
       setFinishedUpdates(true);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
-
     } else {
       setPage(page + 1);
     }
@@ -90,25 +105,29 @@ const Discussion = () => {
 
   function getConditionalButton(page, setPage, pins, sessionID) {
     switch (page) {
-      // case 0:
-      //   return (
-      //     <div>
-      //       <Box align='center' m = {2} mb = {20}> 
-      //         <ColorLibNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
-      //           Let's talk about our pins
-      //         </ColorLibNextButton>
-      //       </Box>
-      //     </div>
-      //   );
       case 0:
         return (
-          <div>
-            <Box align='center' m={2} mb={20}>
-              <ColorLibButton variant='contained' size='medium' onClick={() => handleButton(true)}>
-                Finish Discussing Pins
-              </ColorLibButton>
-            </Box>
-          </div>
+          <Box className={classes.greyNextButton}>
+            <ColorLibPaper elevation={2} className={classes.description}>
+              <Typography variant='body2'>
+                Introduce yourself to your peer, a social worker at UPMC also learning MI.
+              </Typography>
+              <Typography variant='body2'>
+                How did today’s mock client session go?
+              </Typography>
+            </ColorLibPaper>
+            <ColorLibGrayNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
+              Let's talk about our pins
+            </ColorLibGrayNextButton>
+          </Box>
+        );
+      case 1:
+        return (
+          <Box align='center' m={2} mb={20}>
+            <ColorLibButton variant='contained' size='medium' onClick={() => handleButton(true)}>
+              Finish Discussing Pins
+            </ColorLibButton>
+          </Box>
         );
       case 2:
         return;
@@ -140,6 +159,7 @@ const Discussion = () => {
         recommendedMinutes={recommendedTime / 60}
         nextSection="Self Reflection"
       />
+      <VideoDiscussion mode = {page === 0 ? "PreDiscussion" : "Discussion"} discussionState = {1}/>
       {getConditionalContent(page)}
       {getConditionalButton(page, setPage, pins, sessionID)}
     </div>
