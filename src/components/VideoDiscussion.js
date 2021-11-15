@@ -352,7 +352,7 @@ How did today’s mock client session go?
     console.log("loading info now...");
     setLoadingStatus(true);
     //in order to make sure it connects to the correct room
-    if (props.mode === "Discussion" || props.mode === "PreDiscussion") {
+    if (props.mode === "Discussion" || props.mode === "VideoDiscussion") {
       var roomAddOn = "Discussion";
       console.log("Discussion Room Video component")
     }
@@ -616,8 +616,7 @@ How did today’s mock client session go?
           </Box>
         </DialogActions>
       </Dialog>
-      {props.mode === "Discussion" && videoBox("mini")}
-      {props.mode === "PreDiscussion" && videoBox("full")}
+      {videoBox(props.mode === "Discussion" ? "mini" : "full")}
       {/* <div className="video-container"> 
         <div
           id="subscriber"
