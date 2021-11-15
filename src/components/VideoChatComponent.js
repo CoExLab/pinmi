@@ -108,7 +108,7 @@ function VideoChatComponent(props) {
         const pinTime = thisPin.pinTime;
         const pinCreatorMode = thisPin.creatorMode;
         console.log(pinCreatorMode, userMode);
-        return `Successfully pinned at ${formatTime(pinTime)} by ${userMode === pinCreatorMode ? 'you' : 'your peer'}`;
+        return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
     }
@@ -205,7 +205,7 @@ function VideoChatComponent(props) {
           setCountDown(recommendedTime - timePassed);
         }
       }
-    }, 500);
+    }, 1000);
     return () => clearTimeout(timer);
   });
 
