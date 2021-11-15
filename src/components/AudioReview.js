@@ -209,7 +209,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             ) 
             : 
             (
-                <Typography variant='h6'>Review all pins with your peer, User Name...
+                <Typography variant='h6'>Review all pins with your peer
                 </Typography> 
             ) 
             }
