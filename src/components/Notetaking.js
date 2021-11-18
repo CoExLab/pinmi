@@ -239,13 +239,13 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     return (
         <Grid item xs={12} sm={8}>
             <ColorLibPaper elevation={1}>
-                <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
+                {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
                     {userMode}
-                </Typography>
+                </Typography> */}
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>
-                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === userMode ? "you" : "your peer"}
                         </Typography>
                     </Box>
                     : null}

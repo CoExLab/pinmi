@@ -9,7 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box, Card, Typography } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
@@ -18,8 +18,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Popper from '@material-ui/core/Popper';
-import CardContent from '@material-ui/core/CardContent';
 
 import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
@@ -37,7 +35,7 @@ import "./VideoChatComponent.scss";
 import { baseURL } from './constants';
 
 import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
-import {formatTime, generatePushId} from '../helper/index';
+import { formatTime, generatePushId } from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
 
@@ -45,14 +43,14 @@ import { usePins } from '../hooks/index';
 //styles used for icons in videocomponent
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
-      height: '120%'
+    height: '120%'
   },
   iconRoot: {
-      textAlign: 'center'
+    textAlign: 'center'
   },
   fab: {
-      marginLeft: 550,
-  },    
+    marginLeft: 550,
+  },
   display: 'flex',
   '& > * + *': {
     marginLeft: theme.spacing(5),
@@ -60,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
-  const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -79,7 +77,7 @@ function VideoChatComponent(props) {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
-      setOpen(false);
+    setOpen(false);
   };
 
   const handleNext = () => {
@@ -105,35 +103,35 @@ function VideoChatComponent(props) {
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
-  const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
-  const [pinBtnColor, setPinBtnColor] = useState("");   
+  const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
+  const [pinBtnColor, setPinBtnColor] = useState("");
 
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});
   //isArchviving is true when the achrive is actively recording
   const [isArchiving, setIsArchiving] = useState(false);
-  
+
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
-//vonage session data set by the server
-const {vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey} = useSessionValue();  
+  //vonage session data set by the server
+  const { vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey } = useSessionValue();
 
-useEffect(() => {
-  console.log("isInterviewStarted useEffect has been called: \n" + isInterviewStarted);
-  if (isInterviewStarted){
-    initializeSession(apiKey, vonageSessionID, token)
-  }
+  useEffect(() => {
+    console.log("isInterviewStarted useEffect has been called: \n" + isInterviewStarted);
+    if (isInterviewStarted) {
+      initializeSession(apiKey, vonageSessionID, token)
+    }
 
-  return function cleanup() {
-    console.log("stopStreaming called")
-    stopStreaming();
-  };
-  // isInterviewStarted
-  //   ? initializeSession(apiKey, vonageSessionID, token)
-  //   : stopStreaming();
-}, [isInterviewStarted]);
+    return function cleanup() {
+      console.log("stopStreaming called")
+      stopStreaming();
+    };
+    // isInterviewStarted
+    //   ? initializeSession(apiKey, vonageSessionID, token)
+    //   : stopStreaming();
+  }, [isInterviewStarted]);
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
@@ -156,7 +154,7 @@ useEffect(() => {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {sessionId, setMediaDuration , setMediaUrl} = useSessionValue();
+  const { sessionId, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   // get document ID
@@ -165,35 +163,35 @@ useEffect(() => {
   const transID = generatePushId();
   // hard-coded sessionID here
   const MiTrainingSessionID = "123";
-  
+
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
-      // ui on
-      setPinBtnDisabled(true);        
-      setPinBtnColor("primary");
-      // ui off
-      setTimeout(() => {
-          setPinBtnDisabled(false);
-      }, 800);
+    // ui on
+    setPinBtnDisabled(true);
+    setPinBtnColor("primary");
+    // ui off
+    setTimeout(() => {
+      setPinBtnDisabled(false);
+    }, 800);
 
-      pins.push({pinID: '', pinTime: curTime, pinInfos: {pinNote: '', pinPerspective: '', pinCategory: '', pinSkill: ''}});
-  
-    console.log("finished writing")      
-    console.log(curTime);  
+    pins.push({ pinID: '', pinTime: curTime, pinInfos: { pinNote: '', pinPerspective: '', pinCategory: '', pinSkill: '' } });
+
+    console.log("finished writing")
+    console.log(curTime);
   }
 
   const addTranscript = async () => {
     await firebase.firestore().collection("sessions").doc(sessionId).update({
       transcript: results
     })
-    .then(() => {
-        console.log("Transcript successfully written!");    
-    })
-    .catch((error) => {
+      .then(() => {
+        console.log("Transcript successfully written!");
+      })
+      .catch((error) => {
         console.error("Error writing document: ", error);
-    });
+      });
   }
 
   const {
@@ -235,9 +233,9 @@ useEffect(() => {
           <div className="video-toolbar">
             {isAudioEnabled ? (
               <Tooltip title="mic on">
-                <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                   <Button>
-                    <MicIcon classes={{root: classes.iconRoot}}
+                    <MicIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleAudio(false)}
                       className="on-icon">
                     </MicIcon>
@@ -246,9 +244,9 @@ useEffect(() => {
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
-                <Fab size="medium" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                   <Button color="#616161">
-                    <MicOffIcon classes={{root: classes.iconRoot}}
+                    <MicOffIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleAudio(true)}
                       className="off-icon">
                     </MicOffIcon>
@@ -258,9 +256,9 @@ useEffect(() => {
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
-                <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                   <Button>
-                    <VideocamIcon classes={{root: classes.iconRoot}}
+                    <VideocamIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleVideo(false)}
                       className="on-icon">
                     </VideocamIcon>
@@ -269,9 +267,9 @@ useEffect(() => {
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
-                <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                   <Button>
-                    <VideocamOffIcon classes={{root: classes.iconRoot}}
+                    <VideocamOffIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleVideo(true)}
                       className="off-icon">
                     </VideocamOffIcon>
@@ -284,22 +282,22 @@ useEffect(() => {
               <>
                 {isAudioSubscribed ? (
                   <Tooltip title="sound on">
-                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                       <Button>
-                        <VolumeUpIcon classes={{root: classes.iconRoot}}
-                        onClick={() => onToggleAudioSubscription(false)}
-                        className="on-icon">
+                        <VolumeUpIcon classes={{ root: classes.iconRoot }}
+                          onClick={() => onToggleAudioSubscription(false)}
+                          className="on-icon">
                         </VolumeUpIcon>
                       </Button>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="sound off">
-                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                       <Button>
-                        <VolumeOffIcon classes={{root: classes.iconRoot}}
-                        onClick={() => onToggleAudioSubscription(true)}
-                        className="off-icon">
+                        <VolumeOffIcon classes={{ root: classes.iconRoot }}
+                          onClick={() => onToggleAudioSubscription(true)}
+                          className="off-icon">
                         </VolumeOffIcon>
                       </Button>
                     </Fab>
@@ -307,22 +305,22 @@ useEffect(() => {
                 )}
                 {isVideoSubscribed ? (
                   <Tooltip title="screen on">
-                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                       <Button>
-                        <VisibilityIcon classes={{root: classes.iconRoot}}
-                        onClick={() => onToggleVideoSubscription(false)}
-                        className="on-icon">
+                        <VisibilityIcon classes={{ root: classes.iconRoot }}
+                          onClick={() => onToggleVideoSubscription(false)}
+                          className="on-icon">
                         </VisibilityIcon>
                       </Button>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="screen off">
-                    <Fab size="medium" color="#36454f" style={{marginBottom:10, marginRight:10, backgroundColor: '#565656'}}>
+                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
                       <Button>
-                        <VisibilityOffIcon classes={{root: classes.iconRoot}}
-                        onClick={() => onToggleVideoSubscription(true)}
-                        className="off-icon">
+                        <VisibilityOffIcon classes={{ root: classes.iconRoot }}
+                          onClick={() => onToggleVideoSubscription(true)}
+                          className="off-icon">
                         </VisibilityOffIcon>
                       </Button>
                     </Fab>
@@ -354,41 +352,41 @@ How did today’s mock client session go?
     console.log("loading info now...");
     setLoadingStatus(true);
     //in order to make sure it connects to the correct room
-    if (props.mode == "Discussion"){
+    if (props.mode === "Discussion" || props.mode === "VideoDiscussion") {
       var roomAddOn = "Discussion";
       console.log("Discussion Room Video component")
     }
-    else{
+    else {
       var roomAddOn = "";
     }
     await fetch(baseURL + "room/" + room + roomAddOn)
-    .then(function(res) {
-      return res.json()
-    })
-    .then(function(res) {
-      console.log("got server info");
-      setApiKey(res.apiKey);
-      setSessionId(res.sessionId);
-      setToken(res.token);
-    }).then( () => {
+      .then(function (res) {
+        return res.json()
+      })
+      .then(function (res) {
+        console.log("got server info");
+        setApiKey(res.apiKey);
+        setSessionId(res.sessionId);
+        setToken(res.token);
+      }).then(() => {
 
-      setLoadingStatus(false);
-      console.log("start chat now");
-      setIsInterviewStarted(true);
-      setVideoCallTimer(Date.now());
-      if(props.isArchiveHost) {
-        //props.startRec();
-        console.log("start recording");
-      }
-      //pass in videoCallTimer so we can create time stamps
-      startSpeechToText(); 
-    }) 
-    .catch((error) => {console.log(error)});
+        setLoadingStatus(false);
+        console.log("start chat now");
+        setIsInterviewStarted(true);
+        setVideoCallTimer(Date.now());
+        if (props.isArchiveHost) {
+          //props.startRec();
+          console.log("start recording");
+        }
+        //pass in videoCallTimer so we can create time stamps
+        startSpeechToText();
+      })
+      .catch((error) => { console.log(error) });
   }
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
-    if(props.isArchiveHost) {
+    if (props.isArchiveHost) {
       //setting mediaDuration to be used in AudioReview
       //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
       //props.stopRec();
@@ -396,12 +394,12 @@ How did today’s mock client session go?
     }
     //this fetches the archive url
     await saveArchiveURL()
-    .then(() => {
-      stopSpeechToText();
-      addTranscript();
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((error) => {console.log(error)});
+      .then(() => {
+        stopSpeechToText();
+        addTranscript();
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      })
+      .catch((error) => { console.log(error) });
   }
 
 
@@ -418,64 +416,64 @@ How did today’s mock client session go?
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
-      }, 
+      },
       body: JSON.stringify(data)
     })
-    //get response from the post request, 
-    //and turn it into json so you can access data from it
-    .then(response => response.json())
-    .then((archiveData) => {
-      console.log(archiveData);
-      setArchiveData(archiveData);
-    })
-    .catch((error) => {console.log(error)})
+      //get response from the post request, 
+      //and turn it into json so you can access data from it
+      .then(response => response.json())
+      .then((archiveData) => {
+        console.log(archiveData);
+        setArchiveData(archiveData);
+      })
+      .catch((error) => { console.log(error) })
   }
 
   const handleStopArchive = async () => {
-    var url = baseURL + 'archive/'+ archiveData.id + '/stop';
+    var url = baseURL + 'archive/' + archiveData.id + '/stop';
     await fetch(url, {
-      method: 'POST', 
+      method: 'POST',
     })
-    .then(res => res.json())
-    .then((res) => {
-      console.log(res);
-    })
+      .then(res => res.json())
+      .then((res) => {
+        console.log(res);
+      })
   }
 
   const getLastestArchive = async () => {
     let url = 'https://pin-mi-node-server.herokuapp.com/' + 'archive'
     await fetch(url)
-    .then((res) => {
-      return res.json()
-      //return archives[archives.length - 1];
-    })
-    .then((arc) => {
-      let latestArc = arc[arc.length-1];
-      console.log(latestArc.duration);
-      console.log(latestArc.url);
-      setMediaDuration(latestArc.duration);
-      setMediaUrl(latestArc.url);
-    })
-    .catch((e) => {console.log(e)});
+      .then((res) => {
+        return res.json()
+        //return archives[archives.length - 1];
+      })
+      .then((arc) => {
+        let latestArc = arc[arc.length - 1];
+        console.log(latestArc.duration);
+        console.log(latestArc.url);
+        setMediaDuration(latestArc.duration);
+        setMediaUrl(latestArc.url);
+      })
+      .catch((e) => { console.log(e) });
   }
 
-//if status is available and if timing checks out, and if session id is correct
+  //if status is available and if timing checks out, and if session id is correct
   const saveArchiveURL = async () => {
-    if(props.isArchiveHost) {
-      let url = baseURL + 'archive/'+ archiveData.id;
+    if (props.isArchiveHost) {
+      let url = baseURL + 'archive/' + archiveData.id;
       await fetch(url)
-      .then(res => res.json()) //return the res data as a json
-      .then((res) => {
-        setMediaDuration(res.duration);
-        setMediaUrl(res.url);
-        console.log("Media Duration:", res.duration);
-        console.log("Media URL:", res.url);  
-        
-        setDBMediaURL(res);
-      })
-      .catch((e) => {console.log(e)});
+        .then(res => res.json()) //return the res data as a json
+        .then((res) => {
+          setMediaDuration(res.duration);
+          setMediaUrl(res.url);
+          console.log("Media Duration:", res.duration);
+          console.log("Media URL:", res.url);
+
+          setDBMediaURL(res);
+        })
+        .catch((e) => { console.log(e) });
     }
-    else { 
+    else {
       //getLastestArchive()
     }
   }
@@ -484,9 +482,9 @@ How did today’s mock client session go?
     await firebase.firestore().collection("MediaURLs").doc("test").set({
       URL: res.url,
       Duration: res.duration
-  })
-  .then(() => console.log("MediaURL Added to DB"))
-  .catch((e) => {console.log(e)});
+    })
+      .then(() => console.log("MediaURL Added to DB"))
+      .catch((e) => { console.log(e) });
   }
 
 
@@ -496,131 +494,129 @@ How did today’s mock client session go?
     var mainVideoCSSClass = ""
     var secondaryVideoCSSClass = ""
     var class_name = ""
-    
-    if (CSSMode == "full"){
+
+    if (CSSMode == "full") {
       mainVideoCSSClass = "main-video";
-      secondaryVideoCSSClass  = "additional-video";
+      secondaryVideoCSSClass = "additional-video";
       class_name = "video-container"
     }
-    else if (CSSMode == "mini"){
+    else if (CSSMode == "mini") {
       mainVideoCSSClass = "discussion-video-other";
-      secondaryVideoCSSClass  = "discussion-video-other";
+      secondaryVideoCSSClass = "discussion-video-other";
       class_name = "mini-video-container"
     }
     return (
-    <>
-    {/* <Box pt = {10}>
+      <>
+        {/* <Box pt = {10}>
       {loadingStatus ? <LinearProgress /> : null}
     </Box> */}
-      <div className={class_name}> 
-        <div
-          id="subscriber"
-          className={`${
-            isStreamSubscribed ? mainVideoCSSClass : ""
-          }`}
-        >
-        {isStreamSubscribed && renderToolbar()}
+        <div className={class_name}>
+          <div
+            id="subscriber"
+            className={`${isStreamSubscribed ? mainVideoCSSClass : ""
+              }`}
+          >
+            {isStreamSubscribed && renderToolbar()}
+          </div>
+          <div
+            id="publisher"
+            className={`${isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass
+              }`}
+          >
+            {!isStreamSubscribed && renderToolbar()}
+          </div>
         </div>
-        <div
-          id="publisher"
-          className={`${
-            isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass
-          }`}
-        >
-        {!isStreamSubscribed && renderToolbar()}
-        </div> 
-        </div>
-    </>
+      </>
     );
   }
   const dialogBox1 = () => {
     <Dialog
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="alert-dialog-title"
-    aria-describedby="alert-dialog-description"
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
     >
-        <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
-        <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-                <p>You have added notes to 2 out of 3 pins.</p>
-            </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+      <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          <p>You have added notes to 2 out of 3 pins.</p>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
         <Box m={2}>
           <div direction='row' align='center'>
-          <ColorLibButton
-            variant='contained'
-            size='medium'
-            onClick={
-              () => setOpen(false)
-            }
-            autoFocus
-          >
-            Add more notes to pins
-          </ColorLibButton>
-          <Box mt={2}>
-          <ColorLibNextButton
-            variant='outlined'
-            size='medium'
-            onClick={
-              () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
-            }
-            autoFocus
-          >
-            Join Discussion
-          </ColorLibNextButton>
-          </Box>
-          
+            <ColorLibButton
+              variant='contained'
+              size='medium'
+              onClick={
+                () => setOpen(false)
+              }
+              autoFocus
+            >
+              Add more notes to pins
+            </ColorLibButton>
+            <Box mt={2}>
+              <ColorLibNextButton
+                variant='outlined'
+                size='medium'
+                onClick={
+                  () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
+                }
+                autoFocus
+              >
+                Join Discussion
+              </ColorLibNextButton>
+            </Box>
+
           </div>
-          </Box>
-        </DialogActions>
+        </Box>
+      </DialogActions>
     </Dialog>
   }
 
   return (
-    <>              
-      <Box pt = {10}>
+    <>
+      <Box pt={10}>
         {loadingStatus ? <LinearProgress /> : null}
       </Box>
       <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
-                <DialogActions>
-                <Box m={2}>
-                  <div direction='row' align='center'>
-                  <ColorLibButton
-                    variant='contained'
-                    size='medium'
-                    onClick={
-                      () => setOpen(false)
-                    }
-                    autoFocus
-                  >
-                    Add more notes to pins
-                  </ColorLibButton>
-                  <Box mt={2}>
-                  <ColorLibNextButton
-                    variant='outlined'
-                    size='medium'
-                    onClick={
-                      () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
-                    }
-                    autoFocus
-                  >
-                    Join Discussion
-                  </ColorLibNextButton>
-                  </Box>
-                  
-                  </div>
-                  </Box>
-                </DialogActions>
-            </Dialog>    
-        {videoBox("mini")}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to join the discussion?"}</DialogTitle>
+        <DialogActions>
+          <Box m={2}>
+            <div direction='row' align='center'>
+              <ColorLibButton
+                variant='contained'
+                size='medium'
+                onClick={
+                  () => setOpen(false)
+                }
+                autoFocus
+              >
+                Add more notes to pins
+              </ColorLibButton>
+              <Box mt={2}>
+                <ColorLibNextButton
+                  variant='outlined'
+                  size='medium'
+                  onClick={
+                    () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
+                  }
+                  autoFocus
+                >
+                  Join Discussion
+                </ColorLibNextButton>
+              </Box>
+
+            </div>
+          </Box>
+        </DialogActions>
+      </Dialog>
+      {videoBox(props.mode === "Discussion" ? "mini" : "full")}
       {/* <div className="video-container"> 
         <div
           id="subscriber"

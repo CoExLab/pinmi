@@ -3,14 +3,11 @@ import React, {useState} from 'react';
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
 import Transcription from '../Transcription';
-import VideoDiscussion from "../VideoDiscussion.js"
 // Others
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import VideoChatComponent from '../VideoChatComponent';
 import { useSessionValue, useActiveStepValue } from "../../context";
-import { baseURL } from 'constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
 const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
   const classes = useStyles();
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
-  
 
   // const [room, setRoom] = useState("hello");
   //   //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
@@ -83,8 +79,7 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             setCurPinIndex = {setCurPinIndex}
             prevPinIndex = {prevPinIndex}
             setPrevPinIndex = {setPrevPinIndex}
-            />
-          <VideoDiscussion mode = {"Discussion"} discussionState = {1}/>
+          />
         </Grid>
       </Container>
     </div>

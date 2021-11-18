@@ -4,8 +4,10 @@ import Notetaking from "../Notetaking";
 import AudioReview from "../AudioReview";
 import Transcription from "../Transcription";
 // Others
-import { makeStyles } from "@material-ui/core/styles";
-import { Container, Grid } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import { Container, Grid, Typography } from '@material-ui/core';
+
+import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
 
 import ColorLibButton from "./ColorLibComponents/ColorLibButton";
 import {
@@ -56,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: "calc(66.666667% - 8px)",
     },
   },
+  tealText: {
+    color: theme.palette.teal.main,
+  }
 }));
 
 const DisscussionPrep = () => {
@@ -68,6 +73,11 @@ const DisscussionPrep = () => {
   const { pins } = usePinsValue();
   const { sessionID } = useSessionValue();
   const { userID } = useUserModeValue();
+
+  const [startTime, setStartTime] = useState(Date.now());
+  const recommendedTime = 6 * 60;
+  const [countDown, setCountDown] = useState(recommendedTime);
+  const [timeRemind, setTimeRemind] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -85,39 +95,43 @@ const DisscussionPrep = () => {
     }
   }, [finishedUpdates]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (countDown > 0) {
+        const timePassed = (Date.now() - startTime) / 1000;
+        if (timePassed >= recommendedTime) {
+          setCountDown(0);
+          setTimeRemind(true);
+        } else {
+          setCountDown(recommendedTime - timePassed);
+        }
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
+
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase
-      .firestore()
-      .collection("sessions")
-      .doc(sessionID)
-      .collection("pins")
-      .add({
-        creatorID: myPin.creatorID,
-        creatorMode: myPin.creatorMode,
-        pinTime: myPin.pinTime,
-        callerPinNote: myPin.callerPinNote,
-        callerPinPerspective: myPin.callerPinPerspective,
-        callerPinCategory: myPin.callerPinCategory,
-        callerPinSkill: myPin.callerPinSkill,
-        calleePinNote: myPin.calleePinNote,
-        calleePinPerspective: myPin.calleePinPerspective,
-        calleePinCategory: myPin.calleePinCategory,
-        calleePinSkill: myPin.calleePinSkill,
-        pinEfficacy: "",
-        pinGoal: "",
-        pinStrength: "",
-        pinOpportunity: "",
-      })
-      .then((docRef) => {
-        pins[index].pinID = docRef.id;
-        console.log("current pin successfully updated");
-      })
-      .catch((e) => {
-        console.log("pin update unsuccessful: " + e);
-      });
-  };
+    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+      creatorID: myPin.creatorID,
+      creatorMode: myPin.creatorMode,
+      pinTime: myPin.pinTime,
+      callerPinNote: myPin.callerPinNote,
+      callerPinPerspective: myPin.callerPinPerspective,
+      callerPinCategory: myPin.callerPinCategory,
+      callerPinSkill: myPin.callerPinSkill,
+      calleePinNote: myPin.calleePinNote,
+      calleePinPerspective: myPin.calleePinPerspective,
+      calleePinCategory: myPin.calleePinCategory,
+      calleePinSkill: myPin.calleePinSkill,
+      pinGoal: '',
+      pinStrength: '',
+      pinOpportunity: '',
+    })
+    .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
+    .catch((e) => { console.log("pin update unsuccessful: " + e) });
+  }
 
   const handleNext = async () => {
     console.log("Pins changed in dis prep: " + curPinIndex);
@@ -140,7 +154,29 @@ const DisscussionPrep = () => {
 
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      <Container maxWidth='md'>
+        <div id="time_reminder" style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          marginTop: '10px',
+          marginRight: '10px',
+          zIndex: 100,
+          textAlign: 'center',
+        }}>
+          <Typography variant="body2">
+            Recommended time left
+          </Typography>
+          <Typography variant="h4" className={classes.tealText}>
+            {formatTime(countDown)}
+          </Typography>
+        </div>
+        <ColorLibTimeReminder 
+          open={timeRemind} 
+          setOpen={setTimeRemind}
+          recommendedMinutes={recommendedTime / 60}
+          nextSection="Discussion"
+        />
         <Grid container spacing={2} className={classes.grid}>
           {playerMode == "multiplayer" ? (
             <>
