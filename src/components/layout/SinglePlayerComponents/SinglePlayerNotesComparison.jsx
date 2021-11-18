@@ -238,7 +238,7 @@ const SinglePlayerNotesComparison = ({
 
   return (
     <>
-      <Grid item xs>
+      <Grid item xs className={classes.section}>
         <ColorLibPaper elevation={2}>
           <Typography variant="h4" style={{ textTransform: "capitalize" }}>
             {userMode}

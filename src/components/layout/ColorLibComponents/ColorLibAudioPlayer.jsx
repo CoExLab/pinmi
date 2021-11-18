@@ -188,7 +188,7 @@ const ColorLibAudioPlayer = ({
                 </Grid>
             </Grid>
             
-            <div style={{
+            {addPin && <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -217,7 +217,7 @@ const ColorLibAudioPlayer = ({
                 >
                     <Forward10Icon />
                 </JumpIconButton>
-            </div>
+            </div>}
         </Paper>
     );
 };

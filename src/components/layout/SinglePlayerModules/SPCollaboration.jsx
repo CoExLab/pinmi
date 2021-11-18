@@ -20,6 +20,8 @@ import {
 import { baseURL } from "constants";
 import SinglePlayerNotesComparison from "../SinglePlayerComponents/SinglePlayerNotesComparison";
 import SinglePlayerComment from "../SinglePlayerComponents/SinglePlayerComment";
+import SinglePlayerTranscript from "../SinglePlayerComponents/SinglePlayerTranscript";
+import SinglePlayerAudioReview from "../SinglePlayerComponents/SinglePlayerAudioReview";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,11 +130,12 @@ const SPCollaboration = ({
     <div className={classes.root}>
       <Container maxWidth="md">
         <Grid container spacing={2} className={classes.grid}>
-          <AudioReview
+          <SinglePlayerAudioReview
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
+            disableAddPin
           />
           <Grid item xs={12}>
             <Box align="center" m={2} mb={5}>
@@ -143,7 +146,8 @@ const SPCollaboration = ({
       </Container>
       <Container maxWidth="lg">
         <Grid container spacing={2} className={classes.grid}>
-          <Transcription />
+          {/* <Transcription /> */}
+          <SinglePlayerTranscript />
           <Grid item xs={8}>
             <SinglePlayerComment />
             <Grid container spacing={2} className={classes.grid}>

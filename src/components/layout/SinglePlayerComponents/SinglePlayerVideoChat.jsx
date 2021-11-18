@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import MicIcon from "@material-ui/icons/MicNone";
-import MicOffIcon from "@material-ui/icons/MicOffOutlined";
-import VideocamIcon from "@material-ui/icons/VideocamOutlined";
-import VideocamOffIcon from "@material-ui/icons/VideocamOffOutlined";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
-import VolumeOffIcon from "@material-ui/icons/VolumeOff";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { Icon, Fab } from "@material-ui/core";
 import pin from "../../../other/pin.svg";
@@ -18,22 +10,11 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Popper from "@material-ui/core/Popper";
 
 import {
   ColorLibNextButton,
   ColorLibCallEndButton,
 } from "../ColorLibComponents/ColorLibButton";
-
-import {
-  toggleAudio,
-  toggleVideo,
-  toggleAudioSubscription,
-  toggleVideoSubscription,
-  initializeSession,
-  stopStreaming,
-} from "../../VonageVideoAPIIntegration";
-import "../../VideoChatComponent.scss";
 
 import { baseURL } from "../../constants";
 
@@ -41,10 +22,11 @@ import {
   useSessionValue,
   useActiveStepValue,
   usePinsValue,
+  useSinglePlayerPinsValue,
 } from "../../../context";
-import { formatTime, generatePushId } from "../../../helper/index";
 import { firebase } from "../../../hooks/firebase";
-import { usePins } from "../../../hooks/index";
+import ReactPlayer from "react-player";
+import { transcriptArr } from "../SinglePlayerModules/config";
 
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
@@ -66,6 +48,13 @@ function SinglePlayerVideoChat(props) {
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
     useActiveStepValue();
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const player = useRef(null);
+  const handleProgress = (state) => {
+    setAudioProgress(Math.round(state.playedSeconds));
+  };
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -122,40 +111,64 @@ function SinglePlayerVideoChat(props) {
   const classes = useStyles();
 
   useEffect(() => {
-    isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
-      : stopStreaming();
-  }, [isInterviewStarted]);
-
-  useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
   }, [isSubscribed]);
 
-  const onToggleAudio = (action) => {
-    setIsAudioEnabled(action);
-    toggleAudio(action);
-  };
-  const onToggleVideo = (action) => {
-    setIsVideoEnabled(action);
-    toggleVideo(action);
-  };
-  const onToggleAudioSubscription = (action) => {
-    setIsAudioSubscribed(action);
-    toggleAudioSubscription(action);
-  };
-  const onToggleVideoSubscription = (action) => {
-    setIsVideoSubscribed(action);
-    toggleVideoSubscription(action);
-  };
   //get setter for media duration
   const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
 
+  const { singlePlayerPins } = useSinglePlayerPinsValue();
+
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
-  const addPin = async (curTime, TSIndex) => {
+  const binarySearch = (arr, l, r, x) => {
+    console.log(arr, l, r, x);
+    if (r >= l) {
+      let mid = l + Math.floor((r - l) / 2);
+
+      // If the element is present at the middle
+      // itself
+      if (
+        arr[mid] == x ||
+        ((mid + 1) >= arr.length) ||
+        (arr[mid] <= x && arr[mid + 1] > x)
+      )
+        return mid;
+
+      // If element is smaller than mid, then
+      // it can only be present in left subarray
+      if (arr[mid] > x) return binarySearch(arr, l, mid - 1, x);
+
+      // Else the element can only be present
+      // in right subarray
+      return binarySearch(arr, mid + 1, r, x);
+    }
+
+    // We reach here when element is not
+    // present in array
+    return -1;
+  };
+
+  const getTimeStamp = (transcriptArr) => {
+    return (
+      transcriptArr &&
+      transcriptArr.map((transcriptString) => {
+        var index = transcriptString.indexOf("-");
+        if (index) {
+          var tempTimeSeconds = Math.floor(
+            parseInt(transcriptString.slice(0, index), 10) / 1000
+          );
+
+          return tempTimeSeconds;
+        }
+      })
+    );
+  };
+
+  const addPin = async (curTime) => {
     // ui on
     setPinBtnDisabled(true);
     setPinBtnColor("primary");
@@ -169,16 +182,29 @@ function SinglePlayerVideoChat(props) {
     // } else{
     //   curTime = addPinDelayTime;
     // }
-    pins.push({
+    const ts = getTimeStamp(transcriptArr);
+    const TSIndex = binarySearch(ts, 0, ts.length, curTime);
+
+    singlePlayerPins.push({
       pinID: "",
+      creatorID: "",
+      creatorMode: "",
       pinTime: curTime,
-      pinInfos: {
-        pinNote: "",
-        pinPerspective: "",
-        pinCategory: "",
-        pinSkill: "",
-      }
+      callerPinNote: "",
+      callerPinPerspective: "",
+      callerPinCategory: "",
+      callerPinSkill: "",
+      calleePinNote: "",
+      calleePinPerspective: "",
+      calleePinCategory: "",
+      calleePinSkill: "",
+      pinEfficacy: "",
+      pinGoal: "",
+      pinStrength: "",
+      pinOpportunity: "",
+      transcriptindex: TSIndex,
     });
+
     console.log("Finished pushing");
   };
 
@@ -234,177 +260,14 @@ function SinglePlayerVideoChat(props) {
   const renderToolbar = () => {
     return (
       <>
-        {isInterviewStarted && (
-          <div className="video-toolbar">
-            {isAudioEnabled ? (
-              <Tooltip title="mic on">
-                <Fab
-                  size="medium"
-                  style={{
-                    marginBottom: 10,
-                    marginRight: 10,
-                    backgroundColor: "#565656",
-                  }}
-                >
-                  <Button>
-                    <MicIcon
-                      classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleAudio(false)}
-                      className="on-icon"
-                    ></MicIcon>
-                  </Button>
-                </Fab>
-              </Tooltip>
-            ) : (
-              <Tooltip title="mic off">
-                <Fab
-                  size="medium"
-                  style={{
-                    marginBottom: 10,
-                    marginRight: 10,
-                    backgroundColor: "#565656",
-                  }}
-                >
-                  <Button color="#616161">
-                    <MicOffIcon
-                      classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleAudio(true)}
-                      className="off-icon"
-                    ></MicOffIcon>
-                  </Button>
-                </Fab>
-              </Tooltip>
-            )}
-            {isVideoEnabled ? (
-              <Tooltip title="camera on">
-                <Fab
-                  size="medium"
-                  color="#36454f"
-                  style={{
-                    marginBottom: 10,
-                    marginRight: 10,
-                    backgroundColor: "#565656",
-                  }}
-                >
-                  <Button>
-                    <VideocamIcon
-                      classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleVideo(false)}
-                      className="on-icon"
-                    ></VideocamIcon>
-                  </Button>
-                </Fab>
-              </Tooltip>
-            ) : (
-              <Tooltip title="camera off">
-                <Fab
-                  size="medium"
-                  color="#36454f"
-                  style={{
-                    marginBottom: 10,
-                    marginRight: 10,
-                    backgroundColor: "#565656",
-                  }}
-                >
-                  <Button>
-                    <VideocamOffIcon
-                      classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleVideo(true)}
-                      className="off-icon"
-                    ></VideocamOffIcon>
-                  </Button>
-                </Fab>
-              </Tooltip>
-            )}
-
-            {isStreamSubscribed && (
-              <>
-                {isAudioSubscribed ? (
-                  <Tooltip title="sound on">
-                    <Fab
-                      size="medium"
-                      color="#36454f"
-                      style={{
-                        marginBottom: 10,
-                        marginRight: 10,
-                        backgroundColor: "#565656",
-                      }}
-                    >
-                      <Button>
-                        <VolumeUpIcon
-                          classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleAudioSubscription(false)}
-                          className="on-icon"
-                        ></VolumeUpIcon>
-                      </Button>
-                    </Fab>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="sound off">
-                    <Fab
-                      size="medium"
-                      color="#36454f"
-                      style={{
-                        marginBottom: 10,
-                        marginRight: 10,
-                        backgroundColor: "#565656",
-                      }}
-                    >
-                      <Button>
-                        <VolumeOffIcon
-                          classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleAudioSubscription(true)}
-                          className="off-icon"
-                        ></VolumeOffIcon>
-                      </Button>
-                    </Fab>
-                  </Tooltip>
-                )}
-                {isVideoSubscribed ? (
-                  <Tooltip title="screen on">
-                    <Fab
-                      size="medium"
-                      color="#36454f"
-                      style={{
-                        marginBottom: 10,
-                        marginRight: 10,
-                        backgroundColor: "#565656",
-                      }}
-                    >
-                      <Button>
-                        <VisibilityIcon
-                          classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleVideoSubscription(false)}
-                          className="on-icon"
-                        ></VisibilityIcon>
-                      </Button>
-                    </Fab>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="screen off">
-                    <Fab
-                      size="medium"
-                      color="#36454f"
-                      style={{
-                        marginBottom: 10,
-                        marginRight: 10,
-                        backgroundColor: "#565656",
-                      }}
-                    >
-                      <Button>
-                        <VisibilityOffIcon
-                          classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleVideoSubscription(true)}
-                          className="off-icon"
-                        ></VisibilityOffIcon>
-                      </Button>
-                    </Fab>
-                  </Tooltip>
-                )}
-              </>
-            )}
-          </div>
-        )}
+        <ReactPlayer
+          playing={true}
+          ref={player}
+          url="https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0"
+          width="80%"
+          style={{ margin: "auto" }}
+          onProgress={handleProgress}
+        />
         <Fab
           aria-describedby={id}
           type="button"
