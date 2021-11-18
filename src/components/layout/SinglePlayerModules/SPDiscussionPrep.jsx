@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 // Components
-import Notetaking from "../Notetaking";
-import AudioReview from "../AudioReview";
-import Transcription from "../Transcription";
+import Notetaking from "../../Notetaking";
+import AudioReview from "../../AudioReview";
+import Transcription from "../../Transcription";
 // Others
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Grid } from "@material-ui/core";
 
-import ColorLibButton from "./ColorLibComponents/ColorLibButton";
+import ColorLibButton from "../ColorLibComponents/ColorLibButton";
 import {
   useActiveStepValue,
   usePinsValue,
   useSessionValue,
   useUserModeValue,
   usePlayerModeValue,
-} from "../../context";
-import { firebase } from "../../hooks/firebase";
-import { formatTime, generatePushId } from "../../helper/index";
-import SinglePlayerVideo from "./SinglePlayerComponents/SinglePlayerDissPrep";
+  useSinglePlayerPinsValue,
+} from "../../../context";
+import { firebase } from "../../../hooks/firebase";
+import { formatTime, generatePushId } from "../../../helper/index";
+import SinglePlayerDissPrep from "../SinglePlayerComponents/SinglePlayerDissPrep";
 import { copyFileSync } from "fs";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
         bottom: 0,
         left: 0,
         right: 0,
-        overflowY: 'scroll',
-      }
+        overflowY: "scroll",
+      },
     },
     "& .MuiGrid-grid-sm-8": {
       maxWidth: "calc(66.666667% - 8px)",
@@ -58,17 +59,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DisscussionPrep = () => {
+const SPDisscussionPrep = () => {
   const classes = useStyles();
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
     useActiveStepValue();
   const [curPinIndex, setCurPinIndex] = useState(0);
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
-  const { pins } = usePinsValue();
+  const { singlePlayerPins } = useSinglePlayerPinsValue();
   const { sessionID } = useSessionValue();
   const { userID } = useUserModeValue();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -76,21 +77,22 @@ const DisscussionPrep = () => {
 
   useEffect(() => {
     console.log(curPinIndex);
-    console.log(pins);
-    if(finishedUpdates) {
+    console.log(singlePlayerPins);
+    if (finishedUpdates) {
       //save all pins to database and move to next module
-      pins.map((elem, id) => savePin(id));
+      singlePlayerPins.map((elem, id) => savePin(id));
+
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  
     }
   }, [finishedUpdates]);
 
   const savePin = async (index) => {
-    const myPin = pins[index];
+    const myPin = singlePlayerPins[index];
+    console.log("SAVEPIN");
     console.log(myPin);
     await firebase
       .firestore()
-      .collection("sessions")
+      .collection("singleplayer")
       .doc(sessionID)
       .collection("pins")
       .add({
@@ -109,9 +111,10 @@ const DisscussionPrep = () => {
         pinGoal: "",
         pinStrength: "",
         pinOpportunity: "",
+        transcriptindex: myPin.transcriptindex,
       })
       .then((docRef) => {
-        pins[index].pinID = docRef.id;
+        singlePlayerPins[index].pinID = docRef.id;
         console.log("current pin successfully updated");
       })
       .catch((e) => {
@@ -142,30 +145,12 @@ const DisscussionPrep = () => {
     <div className={classes.root}>
       <Container maxWidth="md">
         <Grid container spacing={2} className={classes.grid}>
-          {playerMode == "multiplayer" ? (
-            <>
-              <AudioReview
-                curPinIndex={curPinIndex}
-                setCurPinIndex={setCurPinIndex}
-                prevPinIndex={prevPinIndex}
-                setPrevPinIndex={setPrevPinIndex}
-              />
-              <Transcription />
-              <Notetaking
-                curPinIndex={curPinIndex}
-                setCurPinIndex={setCurPinIndex}
-                prevPinIndex={prevPinIndex}
-                setPrevPinIndex={setPrevPinIndex}
-              />
-            </>
-          ) : (
-            <SinglePlayerVideo
-              curPinIndex={curPinIndex}
-              setCurPinIndex={setCurPinIndex}
-              prevPinIndex={prevPinIndex}
-              setPrevPinIndex={setPrevPinIndex}
-            />
-          )}
+          <SinglePlayerDissPrep
+            curPinIndex={curPinIndex}
+            setCurPinIndex={setCurPinIndex}
+            prevPinIndex={prevPinIndex}
+            setPrevPinIndex={setPrevPinIndex}
+          />
         </Grid>
       </Container>
       <div
@@ -184,4 +169,4 @@ const DisscussionPrep = () => {
   );
 };
 
-export default DisscussionPrep;
+export default SPDisscussionPrep;

@@ -5,8 +5,10 @@ import Transcription from "../../Transcription";
 import { firebase } from "../../../hooks/firebase";
 import { useSessionValue } from "../../../context";
 import Notetaking from "../../Notetaking";
+import SinglePlayerTranscript from "./SinglePlayerTranscript";
+import SinglePlayerNotetaking from "./SinglePlayerNotetaking";
 
-const SinglePlayerVideo = ({
+const SinglePlayerDissPrep = ({
   curPinIndex,
   setCurPinIndex,
   prevPinIndex,
@@ -65,8 +67,9 @@ const SinglePlayerVideo = ({
         setPrevPinIndex={setPrevPinIndex}
         // transcript={localTrans}
       />
-      <Transcription />
-      <Notetaking
+      {/* <Transcription /> */}
+      <SinglePlayerTranscript />
+      <SinglePlayerNotetaking
         curPinIndex={curPinIndex}
         setCurPinIndex={setCurPinIndex}
         prevPinIndex={prevPinIndex}
@@ -76,4 +79,4 @@ const SinglePlayerVideo = ({
   );
 };
 
-export default SinglePlayerVideo;
+export default SinglePlayerDissPrep;

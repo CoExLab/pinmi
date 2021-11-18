@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import VideoChatComponent from "../../VideoChatComponent.js";
+import VideoChatComponent from "../../../VideoChatComponent.js";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
-import { useSessionValue, useUserModeValue, usePlayerModeValue} from "../../../context";
+import { useSessionValue, useUserModeValue, usePlayerModeValue} from "../../../../context";
+import SinglePlayerVideoChat from '../../SinglePlayerComponents/SinglePlayerVideoChat.jsx';
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
@@ -65,7 +66,7 @@ const Session = () => {
     //When we pass callee into is archive host, 
     return (
         <div> 
-            <VideoChatComponent isArchiveHost = {checkIsArchiveHost("callee")}/>
+            <SinglePlayerVideoChat isArchiveHost = {checkIsArchiveHost("callee")}/>
         </div>
     );
 }

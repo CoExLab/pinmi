@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Grid } from "@material-ui/core";
 import ReactPlayer from "react-player";
-//import audio from '../other/audio.mp3';
 import ColorLibAudioPlayer from "../../layout/ColorLibComponents/ColorLibAudioPlayer";
 import { formatTime, generatePushId } from "../../../helper/index";
 
@@ -19,12 +18,14 @@ import { useEffect } from "react";
 // firebase hook
 import { usePins, useMediaURL } from "../../../hooks/index";
 import { firebase } from "../../../hooks/firebase";
+import { transcriptArr } from "../SinglePlayerModules/config";
 
 const SinglePlayerAudioReview = ({
   curPinIndex,
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
+  disableAddPin = false
 }) => {
   const player = useRef(null);
   const { curActiveStep } = useActiveStepValue();
@@ -33,15 +34,16 @@ const SinglePlayerAudioReview = ({
     sessionID,
     setMediaDuration,
     setMediaUrl,
-    mediaUrl: audio,
-    mediaDuration: audioLen,
+    // mediaUrl: audio,
+    // mediaDuration: audioLen,
   } = useSessionValue();
+  const audio = "https://www.dropbox.com/s/vbxfztsjkcxlssd/pin_vid.m4a?dl=0";
+  const audioLen = 25;
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //fetch user data
   const { userID, userMode } = useUserModeValue();
   const { singlePlayerPins } = useSinglePlayerPinsValue();
-  console.log("Audio Pins: ", pins);
   console.log("SinglePlayerPins: ", singlePlayerPins);
 
   const [localTrans, setLocalTrans] = useState([]);
@@ -67,7 +69,6 @@ const SinglePlayerAudioReview = ({
             singlePlayerPins.push(newSinglePlayerPin);
           }
           setLocalTrans(ts);
-          console.log("Audio: ", ts);
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
@@ -79,7 +80,9 @@ const SinglePlayerAudioReview = ({
   };
 
   useEffect(() => {
-    fetchTranscript();
+    // fetchTranscript();
+    const ts = getTimeStamp(transcriptArr);
+    setLocalTrans(ts);
   }, []);
 
   const getTimeStamp = (transcriptArr) => {
@@ -115,7 +118,7 @@ const SinglePlayerAudioReview = ({
     console.log("Audio from AudioReview useEffect" + audio);
   }, []);
 
-  let playTimeArr = pins.map((pin) => pin.pinTime);
+  let playTimeArr = singlePlayerPins.map((pin) => pin.pinTime);
 
   const getDBMediaURL = async () => {
     const docRef = await firebase
@@ -185,25 +188,6 @@ const SinglePlayerAudioReview = ({
     const TSIndex = binarySearch(localTrans, 0, localTrans.length, curTime);
 
     //create a newPin object to house pin details
-    const newPin = {
-      pinID: "",
-      creatorID: userID,
-      creatorMode: userMode,
-      pinTime: curTime,
-      callerPinNote: "",
-      callerPinPerspective: "",
-      callerPinCategory: "",
-      callerPinSkill: "",
-      calleePinNote: "",
-      calleePinPerspective: "",
-      calleePinCategory: "",
-      calleePinSkill: "",
-      pinEfficacy: "",
-      pinGoal: "",
-      pinStrength: "",
-      pinOpportunity: "",
-    };
-
     const newSinglePlayerPin = {
       pinID: "",
       creatorID: userID,
@@ -225,8 +209,7 @@ const SinglePlayerAudioReview = ({
     };
 
     //now correctly add the pin into the array to maintain sortedness
-    pins.splice(curPinIndex + 1, 0, newPin);
-    // singlePlayerPins.push(newSinglePlayerPin);
+    singlePlayerPins.splice(curPinIndex + 1, 0, newSinglePlayerPin);
 
     //update the current pin index so it points to the newly created pin
     setPrevPinIndex(curPinIndex);
@@ -234,7 +217,7 @@ const SinglePlayerAudioReview = ({
   };
 
   const deletePin = async (index) => {
-    pins.splice(index, 1);
+    singlePlayerPins.splice(index, 1);
     console.log("Document successfully deleted!");
 
     // ui on
@@ -286,11 +269,11 @@ const SinglePlayerAudioReview = ({
       player.current.seekTo(currentTime);
     }
     //if the audio progress hits the next pin, update the current pin index
-    const newIndex = pins.findIndex((elem) => elem.pinTime > currentTime);
+    const newIndex = singlePlayerPins.findIndex((elem) => elem.pinTime > currentTime);
     console.log("New Index: " + newIndex);
     if (newIndex == -1) {
       setPrevPinIndex(curPinIndex);
-      setCurPinIndex(pins.length - 1);
+      setCurPinIndex(singlePlayerPins.length - 1);
     } else if (newIndex == 0) {
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(0);
@@ -346,8 +329,8 @@ const SinglePlayerAudioReview = ({
         currentTime={audioProgress}
         setCurrentTime={handleAudioProgress}
         duration={audioLen}
-        marks={pins.map((pin) => pin.pinTime)}
-        addPin={addPin}
+        marks={singlePlayerPins.map((pin) => pin.pinTime)}
+        addPin={!disableAddPin && addPin}
       />
       <ReactPlayer
         hidden

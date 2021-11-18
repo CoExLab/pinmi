@@ -5,6 +5,7 @@ import Collaboration from "./Collaboration";
 import Refresher from "./Refresher";
 import SelfReflection from "./SelfReflection";
 import SPDiscussion from "./SinglePlayerModules/SPDiscussion";
+import SPPracticeSession from "./SinglePlayerModules/SPPracticeSession";
 import Discussion from "./Discussion";
 // context
 import {
@@ -14,6 +15,7 @@ import {
 } from "../../context";
 
 import { usePins } from "../../hooks/index";
+import SPDisscussionPrep from "./SinglePlayerModules/SPDiscussionPrep";
 
 function getStepContent(step) {
   switch (step) {
@@ -37,9 +39,9 @@ function getSPStepContent(step) {
     case 0:
       return <Refresher />;
     case 1:
-      return <PracticeSession />;
+      return <SPPracticeSession />;
     case 2:
-      return <DisscussionPrep />;
+      return <SPDisscussionPrep />;
     case 3:
       return <SPDiscussion />;
     case 4:
