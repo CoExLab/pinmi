@@ -22,6 +22,7 @@ import {
   useUserModeValue,
   usePinsValue,
   PinsProvider,
+  useSinglePlayerPinsValue,
 } from "../../../context";
 import { format } from "url";
 
@@ -79,23 +80,23 @@ const SinglePlayerNotesComparison = ({
   //get sessionID
   const { sessionID } = useSessionValue();
 
-  const { pins } = usePinsValue();
+  // const { pins } = useSinglePlayerPinsValue();
 
   // // fetch raw pin data here
-  // const [pins, setPins] = useState([
-  //   {
-  //     calleePinCategory: "category",
-  //     calleePinNote:
-  //       "client acknowledged that she’s thought about quitting but it’s difficult.",
-  //     calleePinPerspective: "perspective",
-  //     calleePinSkill: "skills",
-  //     pinEfficacy: "",
-  //     pinGoal: "goal",
-  //     pinID: "id num",
-  //     pinOpportunity: "opp",
-  //     pinStrength: "strength",
-  //   },
-  // ]);
+  const [pins, setPins] = useState([
+    {
+      calleePinCategory: "category",
+      calleePinNote:
+        "client acknowledged that she’s thought about quitting but it’s difficult.",
+      calleePinPerspective: "perspective",
+      calleePinSkill: "skills",
+      pinEfficacy: "",
+      pinGoal: "goal",
+      pinID: "id num",
+      pinOpportunity: "opp",
+      pinStrength: "strength",
+    },
+  ]);
 
   // set up states for four different questions
   const [curNoteInfo, setCurNoteInfo] = useState("");
@@ -155,10 +156,18 @@ const SinglePlayerNotesComparison = ({
       .doc("elcHhttJlKQfaFlkGkYv")
       .collection("session_pins")
       .doc("user1");
+
+    const docRef2 = firebase
+      .firestore()
+      .collection("singleplayer_media")
+      .doc("g0DiUOQhbY3dKTged5II")
+      .collection("pins");
+
     await docRef
       .get()
       .then((doc) => {
         if (doc.exists) {
+          console.log(doc.data());
           setCurPerspectiveInfo2(doc.data()["calleePinPerspective"]);
           setPinType2(doc.data()["calleePinCategory"]);
           setCurSkillInfo2(doc.data()["calleePinSkill"]);
@@ -175,6 +184,14 @@ const SinglePlayerNotesComparison = ({
       .catch((error) => {
         console.log("Error getting document:", error);
       });
+
+    await docRef2.get().then((doc) => {
+      console.log(
+        doc.forEach((d) => {
+          console.log(d.data());
+        })
+      );
+    });
   };
 
   // for updating and fetching current text field value

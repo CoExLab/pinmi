@@ -105,3 +105,17 @@ export const SinglePlayerPinsProvider = ({ children }) => {
 };
 export const useSinglePlayerPinsValue = () =>
   useContext(SinglePlayerPinsContext);
+
+export const SinglePlayerSessionContext = createContext();
+export const SinglePlayerSessionProvider = ({ children }) => {
+  const [singlePlayerSessionID, setSinglePlayerSessionID] = useState([]);
+  return (
+    <SinglePlayerSessionContext.Provider
+      value={{ singlePlayerSessionID, setSinglePlayerSessionID }}
+    >
+      {children}
+    </SinglePlayerSessionContext.Provider>
+  );
+};
+export const useSinglePlayerSessionValue = () =>
+  useContext(SinglePlayerSessionContext);
