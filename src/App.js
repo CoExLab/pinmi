@@ -8,6 +8,7 @@ import {
   UserModeProvider,
   PlayerModeProvider,
   SinglePlayerPinsProvider,
+  SinglePlayerSessionProvider,
 } from "./context/index";
 import Landing from "./components/layout/Landing";
 import Content from "./components/layout/Content";
@@ -40,59 +41,55 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: [
-      'Lato', 
-      'Lato',
-      'sans-serif'
-    ].join(','),
+    fontFamily: ["Lato", "Lato", "sans-serif"].join(","),
     h1: {
-      fontFamily: 'Lato',
-      fontSize: '35px',
+      fontFamily: "Lato",
+      fontSize: "35px",
       fontWeight: 700,
       lineHeight: "52.5px",
     },
     h2: {
-      fontFamily: 'Lato',
-      fontSize: '25px',
+      fontFamily: "Lato",
+      fontSize: "25px",
       fontWeight: 600,
       lineHeight: "37.5px",
     },
     h3: {
-      fontFamily: 'Lato',
-      fontSize: '22px',
+      fontFamily: "Lato",
+      fontSize: "22px",
       fontWeight: 400,
       lineHeight: "30px",
     },
     h4: {
-      fontFamily: 'Lato',
-      fontSize: '22px',
+      fontFamily: "Lato",
+      fontSize: "22px",
       fontWeight: 600,
       lineHeight: "30px",
     },
     subtitle1: {
-      fontFamily: 'Lato',
-      fontSize: '20px',
+      fontFamily: "Lato",
+      fontSize: "20px",
       fontWeight: 700,
       lineHeight: "23.38px",
       letterSpacing: "-0.015em",
     },
     subtitle2: {
-      fontFamily: 'Lato',
-      fontSize: '16px',
+      fontFamily: "Lato",
+      fontSize: "16px",
       fontWeight: 700,
       lineHeight: "18.7px",
       letterSpacing: "-0.02em",
     },
     body1: {
-      fontFamily: 'Lato',
-      fontSize: '20px',
+      fontFamily: "Lato",
+      fontSize: "20px",
       fontWeight: 400,
       lineHeight: "23.38px",
       letterSpacing: "-0.015em",
     },
     body2: {
-      fontFamily: 'Lato',
-      fontSize: '16px',
+      fontFamily: "Lato",
+      fontSize: "16px",
       fontWeight: 400,
       lineHeight: "18.7px",
       letterSpacing: "-0.02em",
@@ -114,11 +111,13 @@ const App = () => {
                 <SessionProvider>
                   <ActiveStepProvider>
                     <SinglePlayerPinsProvider>
-                      <PinsProvider>
-                        <UserModeProvider>
-                          <Route exact path="/content" component={Content} />
-                        </UserModeProvider>
-                      </PinsProvider>
+                      <SinglePlayerSessionProvider>
+                        <PinsProvider>
+                          <UserModeProvider>
+                            <Route exact path="/content" component={Content} />
+                          </UserModeProvider>
+                        </PinsProvider>
+                      </SinglePlayerSessionProvider>
                     </SinglePlayerPinsProvider>
                   </ActiveStepProvider>
                 </SessionProvider>

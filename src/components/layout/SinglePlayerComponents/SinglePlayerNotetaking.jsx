@@ -146,26 +146,19 @@ const SinglePlayerNotetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, set
     return <div>{prev} {next}</div>;
     }
 
-
     const savePin = async (index) => {
         console.log("pins:" + singlePlayerPins + "\nindex: " + index);
         if (index >= 0 && index < singlePlayerPins.length) {
             const myPin = singlePlayerPins[index];
-            if (myPin && userMode === "caller") {
+            if (myPin) {
                 myPin.callerPinNote = curNoteInfo;
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
                 myPin.callerPinSkill = curSkillInfo;
 
                 singlePlayerPins[index] = myPin;
-            } else if(myPin) {
-                myPin.calleePinNote = curNoteInfo;
-                myPin.calleePinPerspective = curPerspectiveInfo;
-                myPin.calleePinCategory = pinType;
-                myPin.calleePinSkill = curSkillInfo;
-
-                pins[index] = myPin;
             }
+
             console.log("Pin Edited: ")
             console.log(singlePlayerPins[index]);
         }
@@ -317,7 +310,6 @@ const SinglePlayerNotetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, set
                     inputRef={skillValueRef}
                     onChange={() => setCurSkillInfo(skillValueRef.current.value)}
                 />
-
                 <Box textAlign='center'>
                     <PinNavButtons />
                 </Box>
