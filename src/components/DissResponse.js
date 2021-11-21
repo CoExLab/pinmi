@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
+import { useSelector } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
 import { Box, Grid, Paper, Typography } from '@material-ui/core';
@@ -14,7 +16,7 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useSessionValue, useUserModeValue, usePinsValue, PinsProvider } from '../context';
+import { useSessionValue, usePinsValue, PinsProvider } from '../context';
 import { format } from 'url';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
     // user mode switcher
-    const { userMode } = useUserModeValue();
+    const user = useSelector(state => state.user);
 
     const classes = useStyles();
 
@@ -83,7 +85,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const fetchCurTextVal = async (infoName) => {
         let curPin = pins[curPinIndex];
 
-        if (userMode === "caller")
+        if (user.userMode === "caller")
             setCurNoteInfo(curPin.callerPinNote);
         else
             setCurNoteInfo(curPin.calleePinNote);
@@ -148,7 +150,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>
-                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === userMode ? "you" : "your peer"}
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === user.userMode ? "you" : "your peer"}
                         </Typography>
                     </Box>
                     : null}

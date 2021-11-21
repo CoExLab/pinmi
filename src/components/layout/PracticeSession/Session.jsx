@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
 import VideoChatComponent from "../../VideoChatComponent.js";
 
 //context
-import { useSessionValue, useUserModeValue } from "../../../context";
+import { useSessionValue } from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
@@ -32,12 +34,12 @@ const Session = () => {
     //   });
     //   }
 
-    const { userMode } = useUserModeValue();
+    const user = useSelector(state => state.user);
 
     //hostName is a string that is the clients usermode that should host the archive. 
     const checkIsArchiveHost = (hostName) => {
         console.log("check is recording ran");
-        if (userMode == hostName) {
+        if (user.userMode == hostName) {
             console.log("isArchiveHost from check is rec");
             return true;
         }
