@@ -14,20 +14,6 @@ export const ActiveStepProvider = ({children}) => {
 }
 export const useActiveStepValue = () => useContext(ActiveStepContext);
 
-export const UserModeContext = createContext();
-export const UserModeProvider = ({children}) => {
-    const [userMode, setUserMode] = useState("");
-    const [userID, setUserID] = useState("");
-
-    return  (
-        <UserModeContext.Provider value = {{userMode, setUserMode, userID, setUserID}}>
-            {children}
-        </UserModeContext.Provider>
-    )
-}
-export const useUserModeValue = () => useContext(UserModeContext);
-
-
 export const SessionContext = createContext();
 const newDoc = randomString(19);
 

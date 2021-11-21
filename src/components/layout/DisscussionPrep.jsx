@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Typography } from '@material-ui/core';
 
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useActiveStepValue, usePinsValue, useSessionValue, useUserModeValue } from '../../context';
+import { useActiveStepValue, usePinsValue, useSessionValue } from '../../context';
 import { firebase } from '../../hooks/firebase';
 
 import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
@@ -65,7 +65,6 @@ const DisscussionPrep = () => {
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
   const { sessionID } = useSessionValue();
-  const { userID } = useUserModeValue();
 
   const [startTime, setStartTime] = useState(Date.now());
   const recommendedTime = 6 * 60;
