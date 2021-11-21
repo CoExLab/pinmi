@@ -1,11 +1,11 @@
 import {
-	BrowserRouter as Router,
-	Switch,
-	Route
+  BrowserRouter as Router,
+  Switch,
+  Route
 } from 'react-router-dom';
 import { Provider } from "react-redux";
 
-import {ActiveStepProvider, PinsProvider, SessionProvider, UserModeProvider} from './context/index';
+import { ActiveStepProvider, PinsProvider, SessionProvider } from './context/index';
 import Landing from './components/layout/Landing';
 import Content from './components/layout/Content';
 import Completion from './components/layout/Completion';
@@ -38,7 +38,7 @@ const theme = createMuiTheme({
   },
   typography: {
     fontFamily: [
-      'Lato', 
+      'Lato',
       'Lato',
       'sans-serif'
     ].join(','),
@@ -98,30 +98,28 @@ const theme = createMuiTheme({
 });
 
 const App = () => {
-	return (
+  return (
     <ThemeProvider theme={theme}>
       <Router>
         <main>
           <Switch>
-            <Route exact path='/' component={Landing}/>
-            <Route exact path="/completion" component={Completion}/>
-            <Route exact path='/test' component={CORsTestButtons}/>
             <Provider store={store}>
+              <Route exact path='/' component={Landing} />
               <SessionProvider>
                 <ActiveStepProvider>
                   <PinsProvider>
-                    <UserModeProvider>
-                      <Route exact path="/content" component={Content}/>
-                    </UserModeProvider>
+                    <Route exact path='/test' component={CORsTestButtons} />
+                    <Route exact path="/content" component={Content} />
                   </PinsProvider>
                 </ActiveStepProvider>
               </SessionProvider>
+              <Route exact path="/completion" component={Completion} />
             </Provider>
           </Switch>
         </main>
       </Router>
     </ThemeProvider>
-	)
+  )
 }
 
 export default App;

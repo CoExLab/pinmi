@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect} from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid } from '@material-ui/core';
 import ReactPlayer from 'react-player';
@@ -7,7 +8,7 @@ import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer
 import {formatTime, generatePushId} from '../helper/index';
 
 // context
-import { useActiveStepValue, useSessionValue, usePinsValue, useUserModeValue } from "../context";
+import { useActiveStepValue, useSessionValue, usePinsValue } from "../context";
 
 // firebase hook
 import { usePins, useMediaURL } from '../hooks/index';
@@ -21,7 +22,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     // fetch raw pin data here
     const { pins } = usePinsValue();
     //fetch user data
-    const {userID, userMode} = useUserModeValue();
+    const user = useSelector(state => state.user);
 
     // get document ID
     const pinID = generatePushId();
@@ -108,8 +109,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         //create a newPin object to house pin details
         const newPin = {
             pinID: '',
-            creatorID: userID,
-            creatorMode: userMode,
+            creatorID: user.userID,
+            creatorMode: user.userMode,
             pinTime: curTime, 
             callerPinNote: '',
             callerPinPerspective: '',

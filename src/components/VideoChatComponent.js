@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from "@material-ui/icons/MicNone";
 import MicOffIcon from "@material-ui/icons/MicOffOutlined";
@@ -35,7 +36,7 @@ import "./VideoChatComponent.scss";
 
 import { baseURL } from './constants';
 
-import { useSessionValue, useActiveStepValue, usePinsValue, useUserModeValue } from "../context";
+import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
 import { formatTime, generatePushId } from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -91,7 +92,7 @@ function VideoChatComponent(props) {
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //get user informatoin
-  const { userID, userMode } = useUserModeValue();
+  const user = useSelector(state => state.user);
 
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
@@ -107,7 +108,7 @@ function VideoChatComponent(props) {
         const thisPin = pins[pins.length - 1];
         const pinTime = thisPin.pinTime;
         const pinCreatorMode = thisPin.creatorMode;
-        console.log(pinCreatorMode, userMode);
+        console.log(pinCreatorMode, user.userMode);
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
@@ -249,8 +250,8 @@ function VideoChatComponent(props) {
     //create a newPin object to house pin details
     const newPin = {
       pinID: '',
-      creatorID: userID,
-      creatorMode: userMode,
+      creatorID: user.userID,
+      creatorMode: user.userMode,
       pinTime: curTime,
       callerPinNote: '',
       callerPinPerspective: '',
