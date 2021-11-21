@@ -1,12 +1,15 @@
-import { Box, Container, Typography } from '@material-ui/core';
 import { useState, useRef, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { Box, Container, Typography } from '@material-ui/core';
 
 import { ColorLibNextButton, ColorLibBackButton } from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
 import firebase from 'firebase';
-import { useSessionValue, useUserModeValue } from '../../context';
+import { useSessionValue } from '../../context';
+import { reset } from '../Store';
 
 const getPageTitle = (page) => {
     switch (page) {
@@ -80,7 +83,8 @@ const getPageButtons = (page, setPage, makeReflectionDoc) => {
 
 const SelfReflection = () => {
     const { sessionID } = useSessionValue();
-    const { userID } = useUserModeValue();
+    const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
 
     const [page, setPage] = useState(0);
 
@@ -225,7 +229,7 @@ const SelfReflection = () => {
 
     const makeReflectionDoc = async () => {
         // const currentInput = this.childRef.current;
-        await firebase.firestore().collection("reflection").doc(sessionID).collection("users").doc(userID).set({
+        await firebase.firestore().collection("reflection").doc(sessionID).collection("users").doc(user.userID).set({
             strength: strength,
             opportunity: opp,
             nextSteps: nextSteps,
@@ -233,6 +237,7 @@ const SelfReflection = () => {
             practice: practice,
             additional: addReflect
         });
+        dispatch(reset());
         document.location.href = "/completion";
     }
 

@@ -1,3 +1,10 @@
+import { useState } from 'react';
+import { useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from "react-router-dom";
+
+import { firebase } from '../../hooks/firebase';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid } from '@material-ui/core';
 
@@ -12,6 +19,7 @@ import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
+import { setUserID, setUserMode } from '../Store';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -75,6 +83,38 @@ const tutorialInfo = [{
 const Landing = () => {
   const classes = useStyles();
 
+  const [username, setUsername] = useState('');
+  const usernameRef = useRef('');
+
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  const history = useHistory();
+
+  const setUser = async () => {
+    console.log(username);
+
+    await firebase.firestore().collection("users").doc(username).get().then((doc) => {
+      if (doc.exists) {
+        console.log("data: " + doc.data().userID + " and " + doc.data().userMode);
+        return doc.data();
+      } else {
+        console.log("User doesn't exist.");
+      }
+    })
+    .then((data) => {
+      setStates(data);
+    })
+  }
+  
+  const setStates = (data) => {
+    const tempUserId = data.userID;
+    const tempUserMode = data.userMode;
+    dispatch(setUserID(tempUserId));
+    dispatch(setUserMode(tempUserMode));
+    history.push("/content");
+  }
+
   const tutorialSection = ({text, image, alt}, index) => {
     const isTextLeft = index % 2 === 0;
     const textGrid = 
@@ -104,6 +144,7 @@ const Landing = () => {
 
     return (
       <Grid 
+        key = {`tutorial-part-${index}`}
         container 
         className={
           isTextLeft
@@ -133,14 +174,21 @@ const Landing = () => {
       {tutorialInfo.map(tutorialSection)}
       <Container className={classes.welcome_container} maxWidth='md'>
       <Box m={1} display="inline">
-          <ColorLibTextField id="outlined-basic" label="Your Name" variant="outlined" />
+          <ColorLibTextField 
+            id="outlined-basic" 
+            label="Your Name" 
+            variant="outlined" 
+            value={username}
+            inputRef={usernameRef}
+            onChange={() => setUsername(usernameRef.current.value)}
+          />
         </Box>
         <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
 				</Box>
       </Container>
       <div className={classes.button_wrapper}>
-        <ColorLibButton variant='contained' size='large' href='/content'>
+        <ColorLibButton variant='contained' size='large' onClick={setUser}>
           Let's get started!
         </ColorLibButton>
       </div>

@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
-import { useUserModeValue, useActiveStepValue, useSessionValue } from '../../context';
+import { useActiveStepValue, useSessionValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibComponents/ColorLibToggleButton';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
+
 import { firebase } from "../../hooks/firebase";
+import { setUserID, setUserMode } from '../Store';
 
 
 const Refresher = () => {
@@ -22,7 +26,8 @@ const Refresher = () => {
 
   const [countDown, setCountDown] = useState(10 * 60);
 
-  const { userMode, setUserMode, userID, setUserID } = useUserModeValue();
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Scroll on render
@@ -45,11 +50,11 @@ const Refresher = () => {
     const caller = 'tI2fK1Py7Ibsznp3MDz4';
     const callee = '6AT1Se8aU93MPGXZ5miK';
     if (newMode !== null) {
-      setUserMode(newMode);
+      dispatch(setUserMode(newMode));
       if (newMode == 'caller') {
-        setUserID(caller);
+        dispatch(setUserID(caller));
       } else {
-        setUserID(callee);
+        dispatch(setUserID(callee));
       }
     }
   };
@@ -91,18 +96,21 @@ const Refresher = () => {
   }
 
   const makeRefresherDoc = async () => {
-    await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID).set({
+    await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(user.userID).set({
       q1: openEndedQuesAns[0],
       q2: openEndedQuesAns[1],
       q3: openEndedQuesAns[2],
       q4: openEndedQuesAns[3],
       tf1: question1Ans,
       tf2: question2Ans
+    })
+    .then(() => {
+      console.log("Refresher answers submitted.")
     });
   }
 
   const fetchCurAnswers = async () => {
-    const docRef = await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(userID);
+    const docRef = await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(user.userID);
     const curAnswers = 
       await docRef.get().then((doc) => {
         if (doc.exists) {
@@ -113,7 +121,9 @@ const Refresher = () => {
       }).catch((error) => {
         console.log("Error getting document:", error);
       })
-    setSubmittedAnswers(curAnswers);
+    if (curAnswers) {
+      setSubmittedAnswers(curAnswers);
+    }
   }
 
   const handleSubmit = async () => {
@@ -173,7 +183,6 @@ const Refresher = () => {
         <Grid
           container
           direction="row"
-          justifyContent="center"
           style={{
             alignItems: 'stretch',
             margin: '16px 0px 26px 0px',
@@ -258,7 +267,7 @@ const Refresher = () => {
       <Container maxWidth='md'>
         <Box align="left" m={2}>
           <ColorLibToggleButtonGroup
-            value={userMode}
+            value={user.userMode}
             exclusive
             onChange={handleUserMode}
             disabled={submitted}
