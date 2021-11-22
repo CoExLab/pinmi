@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { formatTime } from '../helper/index';
+import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
@@ -15,7 +16,6 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useUserModeValue } from '../context';
 import { useSessionValue, usePinsValue } from "../context";
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +55,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     // fetch raw pin data here
     const { pins } = usePinsValue();
     // user mode switcher
-    const { userMode, userID } = useUserModeValue();
+    const user = useSelector(state => state.user);
   
     const classes = useStyles();
 
@@ -149,7 +149,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         console.log("pins:" + pins + "\nindex: " + index);
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin && userMode === "caller") {
+            if (myPin && user.userMode === "caller") {
                 myPin.callerPinNote = curNoteInfo;
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
@@ -186,7 +186,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         savePin(prevPinIndex);
 
         //clear out all the states
-        if (pins[curPinIndex] && userMode === "caller") {
+        if (pins[curPinIndex] && user.userMode === "caller") {
             setPinType(pins[curPinIndex].callerPinCategory);
             setCurNoteInfo(pins[curPinIndex].callerPinNote);
             setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
@@ -205,11 +205,11 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
-        if (infoName === `${userMode}PinInfos.pinNote`) {
+        if (infoName === `${user.userMode}PinInfos.pinNote`) {
             setCurNoteInfo(input);
-        } else if (infoName === `${userMode}PinInfos.pinPerspective`) {
+        } else if (infoName === `${user.userMode}PinInfos.pinPerspective`) {
             setCurPerspectiveInfo(input);
-        } else if (infoName === `${userMode}PinInfos.pinSkill`) {
+        } else if (infoName === `${user.userMode}PinInfos.pinSkill`) {
             setCurSkillInfo(input);
         }
         // let usersUpdate = {};
@@ -239,13 +239,13 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     return (
         <Grid item xs={12} sm={8}>
             <ColorLibPaper elevation={1}>
-                <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
+                {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
                     {userMode}
-                </Typography>
+                </Typography> */}
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>
-                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])}
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === user.NotetakinguserMode ? "you" : "your peer"}
                         </Typography>
                     </Box>
                     : null}

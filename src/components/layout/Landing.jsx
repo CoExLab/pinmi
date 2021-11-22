@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from "react-router-dom";
+
 import { firebase } from '../../hooks/firebase';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,7 +19,8 @@ import pinningPreview from './../../other/tutorial/pinning-preview.gif';
 import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
-import { useUserModeValue } from '../../context';
+
+import { setUserID, setUserMode } from '../Store';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -83,29 +87,33 @@ const Landing = () => {
   const [username, setUsername] = useState('');
   const usernameRef = useRef('');
 
-  const {userID, setUserID, userMode, setUserMode} = useUserModeValue();
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  const history = useHistory();
 
   const setUser = async () => {
     console.log(username);
 
     await firebase.firestore().collection("users").doc(username).get().then((doc) => {
-      console.log("data: " + doc.data().userID + " and " + doc.data().userMode);
-      return doc.data();
+      if (doc.exists) {
+        console.log("data: " + doc.data().userID + " and " + doc.data().userMode);
+        return doc.data();
+      } else {
+        console.log("User doesn't exist.");
+      }
     })
     .then((data) => {
       setStates(data);
     })
-    
   }
   
   const setStates = (data) => {
-    console.log(data);
     const tempUserId = data.userID;
     const tempUserMode = data.userMode;
-    setUserID(tempUserId);
-    setUserMode(tempUserMode);
-    console.log("user id: " + userID + " usermode: " + userMode);
-    document.location.href="/content";
+    dispatch(setUserID(tempUserId));
+    dispatch(setUserMode(tempUserMode));
+    history.push("/content");
   }
 
   const tutorialSection = ({text, image, alt}, index) => {
@@ -137,6 +145,7 @@ const Landing = () => {
 
     return (
       <Grid 
+        key = {`tutorial-part-${index}`}
         container 
         className={
           isTextLeft
@@ -166,16 +175,23 @@ const Landing = () => {
       {tutorialInfo.map(tutorialSection)}
       <Container className={classes.welcome_container} maxWidth='md'>
       <Box m={1} display="inline">
-          <ColorLibTextField id="outlined-basic" label="Your Name" variant="outlined" value={username} inputRef={usernameRef} onChange={() => setUsername(usernameRef.current.value)}/>
+          <ColorLibTextField 
+            id="outlined-basic" 
+            label="Your Name" 
+            variant="outlined" 
+            value={username}
+            inputRef={usernameRef}
+            onChange={() => setUsername(usernameRef.current.value)}
+          />
         </Box>
         <Box m={1} display="inline">
           <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
 				</Box>
       </Container>
       <div className={classes.button_wrapper}>
-        <ColorLibNextButton variant='contained' size='large' onClick={() => setUser()}>
+        <ColorLibButton variant='contained' size='large' onClick={setUser}>
           Let's get started!
-        </ColorLibNextButton>
+        </ColorLibButton>
       </div>
 		</section>
 	);
