@@ -6,53 +6,54 @@ import csv
 import random
 
 # Use the application default credentials
-cred = credentials.ApplicationDefault()
-firebase_admin.initialize_app(cred, {
-  'projectId': "pinmi-59c77",
-})
+cred = credentials.Certificate("./pinmi-59c77-firebase-adminsdk-z692d-cb44b7b3d2.json")
+firebase_admin.initialize_app(cred)
+
 
 db = firestore.client()
 
 
 ulist = []
+keeplist = []
 
 input_file = csv.DictReader(open("users.csv"))
+output_file = open('added_users.csv', 'w', newline='')
+fieldnames = input_file.fieldnames + ['username']
+csvwriter = csv.DictWriter(output_file, fieldnames)
+csvwriter.writeheader()
+
 for row in input_file:
     fname = row["first_name"]
     lname = row["last_name"]
+    username = fname.lower() + lname.lower()
     userid = uuid.uuid4().hex
-    ulist.append({"first": fname, "last": lname, "userID": userid})
+    ulist.append({"first": fname, "last": lname, "userID": userid, "username": username})
+    csvwriter.writerow(dict(row, username='%s' % username))
 
-arr_len = ulist.size()
-room_size = arr_len // 2
-count = 0
+for user in ulist:
+    doc_ref = db.collection(u'users').document(user['username'])
+    doc_ref.set({
+        u'first': user['first'],
+        u'last': user['last'],
+        u'userID': user['userID']
+    })
 
-while(ulist.size() > 1):
-    pair = ulist[random.sample(range(0, ulist.size()), 2)]
+while(len(ulist) > 1):
+    pair = random.sample(range(0, len(ulist) - 1), 2)
     caller = ulist[pair[0]]
-    caller_username = caller.first.lower() + caller.last.lower()
     callee = ulist[pair[1]]
-    callee_username = callee.first.lower() + callee.last.lower()
     sessionID = uuid.uuid4().hex
+
+    print("caller: " + caller['first'] + ", callee: " + callee['first'] + ", session: " + sessionID)
     
-    doc_ref = db.collection(u'users').document(caller_username)
+    
+    doc_ref = db.collection(u'sessions').document(sessionID)
     doc_ref.set({
-        u'first': caller.first,
-        u'last': caller.last,
-        u'userID': caller.userID
+        u'caller_id': caller['userID'],
+        u'callee_id': callee['userID'],
+        u'media_url': u'default',
+        u'duration': u'0',
+        u'transcript': u''
     })
-    doc_ref = db.collection(u'users').document(callee_username')
-    doc_ref.set({
-        u'first': callee.first,
-        u'last': callee.last,
-        u'userID': callee.userID
-    })
-    doc_ref = db.collection(u'rooms').document(u'room'+ str(count))
-    doc_ref.set({
-        u'first': caller.first,
-        u'last': caller.last,
-        u'userID': caller.userID
-    })
-
-
-
+    ulist.pop(pair[0])
+    ulist.pop(pair[1])
