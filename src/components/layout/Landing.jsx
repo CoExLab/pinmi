@@ -20,7 +20,7 @@ import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
-import { setUserID, setUserMode } from '../Store';
+import { setUserID, setUserMode, setSessionID } from '../Store';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -97,7 +97,7 @@ const Landing = () => {
 
     await firebase.firestore().collection("users").doc(username).get().then((doc) => {
       if (doc.exists) {
-        console.log("data: " + doc.data().userID + " and " + doc.data().userMode);
+        console.log("data: " + doc.data().userID);
         return doc.data();
       } else {
         console.log("User doesn't exist.");
@@ -108,11 +108,25 @@ const Landing = () => {
     })
   }
   
-  const setStates = (data) => {
+  const setStates = async (data) => {
     const tempUserId = data.userID;
-    const tempUserMode = data.userMode;
+    const tempSessionID = data.sessionID;
+    await firebase.firestore().collection("sessions").doc(tempSessionID).get().then((doc) => {
+      if (doc.exists) {
+        if(doc.data().caller_id == tempUserId) {
+          dispatch(setUserMode('caller'));
+        } else {
+          dispatch(setUserMode('callee'));
+        }
+      } else {
+        console.log("session doesn't exist.");
+      }
+    })
+    
+    //const tempUserMode = data.userMode;
     dispatch(setUserID(tempUserId));
-    dispatch(setUserMode(tempUserMode));
+    dispatch(setSessionID(tempSessionID));
+    //dispatch(setUserMode(tempUserMode));
     history.push("/content");
   }
 

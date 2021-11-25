@@ -17,7 +17,7 @@ import { setUserID, setUserMode } from '../Store';
 const Refresher = () => {
   
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
-  const { sessionID } = useSessionValue();
+  // const { sessionID } = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
   const [submittedAnswers, setSubmittedAnswers] = useState(['', '', '', '']);
   const [question1Ans, setQuestion1Ans] = useState('');
@@ -27,6 +27,7 @@ const Refresher = () => {
   const [countDown, setCountDown] = useState(10 * 60);
 
   const user = useSelector(state => state.user);
+  const session = useSelector(state => state.session);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,18 +48,18 @@ const Refresher = () => {
   });
 
   const handleUserMode = (event, newMode) => {
-    console.log(userID);
-    console.log(userMode);
-    const caller = 'tI2fK1Py7Ibsznp3MDz4';
-    const callee = '6AT1Se8aU93MPGXZ5miK';
-    if (newMode !== null) {
-      dispatch(setUserMode(newMode));
-      if (newMode == 'caller') {
-        dispatch(setUserID(caller));
-      } else {
-        dispatch(setUserID(callee));
-      }
-    }
+    console.log(user.userID);
+    console.log(user.userMode);
+    // const caller = 'tI2fK1Py7Ibsznp3MDz4';
+    // const callee = '6AT1Se8aU93MPGXZ5miK';
+    // if (newMode !== null) {
+    //   dispatch(setUserMode(newMode));
+    //   if (newMode == 'caller') {
+    //     dispatch(setUserID(caller));
+    //   } else {
+    //     dispatch(setUserID(callee));
+    //   }
+    // }
   };
 
   const handleQuestion1 = (event, newAns) => {
@@ -86,30 +87,30 @@ const Refresher = () => {
   const makeSessionDoc = async () => {
     var caller = '';
     var callee = '';
-    if(userMode == 'callee') {
-      callee = userID;
-      await firebase.firestore().collection("sessions").doc(sessionID).set({
+    if(user.userMode == 'callee') {
+      callee = user.userID;
+      await firebase.firestore().collection("sessions").doc(session.sessionID).set({
         callee_id: callee,
         media_url: "default",
         duration: '0',
         transcript: ''
       })
       .then(() => {
-        console.log("Session doc created" + sessionID);
+        console.log("Session doc created" + session.sessionID);
         makeRefresherDoc();
       })
       .catch((err) => console.error("Error in making session ", err));
  
     } else {
-      caller = userID;
-      await firebase.firestore().collection("sessions").doc(sessionID).set({
+      caller = user.userID;
+      await firebase.firestore().collection("sessions").doc(session.sessionID).set({
         caller_id: caller,
         media_url: "default",
         duration: '0',
         transcript: ''
       })
       .then(() => {
-        console.log("Session doc created" + sessionID);
+        console.log("Session doc created" + session.sessionID);
         makeRefresherDoc();
       })
       .catch((err) => console.error("Error in making session ", err));
@@ -119,7 +120,7 @@ const Refresher = () => {
   }
 
   const makeRefresherDoc = async () => {
-    await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(user.userID).set({
+    await firebase.firestore().collection("refresher").doc(session.sessionID).collection("users").doc(user.userID).set({
       q1: openEndedQuesAns[0],
       q2: openEndedQuesAns[1],
       q3: openEndedQuesAns[2],
@@ -133,7 +134,7 @@ const Refresher = () => {
   }
 
   const fetchCurAnswers = async () => {
-    const docRef = await firebase.firestore().collection("refresher").doc(sessionID).collection("users").doc(user.userID);
+    const docRef = await firebase.firestore().collection("refresher").doc(session.sessionID).collection("users").doc(user.userID);
     const curAnswers = 
       await docRef.get().then((doc) => {
         if (doc.exists) {
@@ -150,8 +151,8 @@ const Refresher = () => {
   }
 
   const handleSubmit = async () => {
-    makeSessionDoc();
-    // makeRefresherDoc();
+    //makeSessionDoc();
+    makeRefresherDoc();
     setSubmitted(true);
     fetchCurAnswers();
   }

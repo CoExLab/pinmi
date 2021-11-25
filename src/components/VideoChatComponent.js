@@ -88,7 +88,8 @@ function VideoChatComponent(props) {
 
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   //get setter for media duration
-  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+  const session = useSelector(state => state.session);
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //get user informatoin
@@ -285,7 +286,7 @@ function VideoChatComponent(props) {
 
   const addTranscript = async () => {
     //write the transcript to the database
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       transcript: results
     })
       .then(() => {
@@ -592,10 +593,10 @@ function VideoChatComponent(props) {
   }
 
   const setDBArchiveData = async (archiveData) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       archiveID: archiveData
     })
-      .then(() => console.log("archiveData Added to DB for :" + sessionID))
+      .then(() => console.log("archiveData Added to DB for :" + session.sessionID))
       .catch((e) => { console.log(e) });
   }
 
@@ -649,7 +650,7 @@ function VideoChatComponent(props) {
   }
 
   const setDBMediaURL = async (res) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       media_url: res.url,
       duration: res.duration,
       archiveID: archiveData
@@ -659,7 +660,7 @@ function VideoChatComponent(props) {
   }
 
   const getDBMediaURL = async () => {
-    const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
+    const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID)
     docRef.get().then((doc) => {
       if (doc.exists) {
         if (doc.data().media_url != "default") {
@@ -669,7 +670,7 @@ function VideoChatComponent(props) {
         }
         else {
           //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-          console.log("URL is for session " + sessionID + " not set yet")
+          console.log("URL is for session " + session.sessionID + " not set yet")
         }
       }
       else {
