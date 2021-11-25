@@ -18,7 +18,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
     //session data
-    const {sessionID, setMediaDuration , setMediaUrl, mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
+    const session = useSelector(state => state.session);
+    const {setMediaDuration , setMediaUrl, mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
     //fetch user data
@@ -49,7 +50,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     let playTimeArr = pins.map(pin => pin.pinTime);
 
     const getDBMediaURL = async () => {
-        const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
+        const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID)
         docRef.get().then((doc) => {
           if (doc.exists) {
               if (doc.data().media_url != "default"){

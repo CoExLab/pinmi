@@ -35,7 +35,8 @@ for user in ulist:
     doc_ref.set({
         u'first': user['first'],
         u'last': user['last'],
-        u'userID': user['userID']
+        u'userID': user['userID'],
+        u'curSession': ''
     })
 
 while(len(ulist) > 1):
@@ -46,6 +47,15 @@ while(len(ulist) > 1):
 
     print("caller: " + caller['first'] + ", callee: " + callee['first'] + ", session: " + sessionID)
     
+    doc_ref = db.collection(u'users').document(caller['username'])
+    doc_ref.update({
+        u'curSession': sessionID
+    })
+
+    doc_ref = db.collection(u'users').document(callee['username'])
+    doc_ref.update({
+        u'curSession': sessionID
+    })
     
     doc_ref = db.collection(u'sessions').document(sessionID)
     doc_ref.set({

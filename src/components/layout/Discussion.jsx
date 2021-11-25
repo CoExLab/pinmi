@@ -1,6 +1,7 @@
 import { Box, Typography } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Collaboration from "./Collaboration.jsx"
 import ColorLibButton, { ColorLibGrayNextButton, ColorLibCallEndButton } from './ColorLibComponents/ColorLibButton';
@@ -39,7 +40,8 @@ const Discussion = () => {
   const classes = useStyles();
 
   const [page, setPage] = useState(0);
-  const { sessionID } = useSessionValue();
+  //const { sessionID } = useSessionValue();
+  const session = useSelector(state => state.session);
   const { pins } = usePinsValue();
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
@@ -188,7 +190,7 @@ const Discussion = () => {
       />
       <VideoDiscussion mode = {getConditionalVideoMode(page)}/>
       {getConditionalContent(page)}
-      {getConditionalButton(page, setPage, pins, sessionID)}
+      {getConditionalButton(page, setPage, pins, session.sessionID)}
     </div>
   );
 }
