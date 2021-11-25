@@ -110,7 +110,7 @@ const Landing = () => {
   
   const setStates = async (data) => {
     const tempUserId = data.userID;
-    const tempSessionID = data.sessionID;
+    const tempSessionID = data.curSession;
     await firebase.firestore().collection("sessions").doc(tempSessionID).get().then((doc) => {
       if (doc.exists) {
         if(doc.data().caller_id == tempUserId) {
