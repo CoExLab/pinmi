@@ -68,7 +68,7 @@ const DisscussionPrep = () => {
   const { sessionID } = useSessionValue();
 
   const [curPinIndex, setCurPinIndex] = useState(() => {
-    console.log(pins);
+    //console.log(pins);
     if (pins.length > 0){
       return 0;
     }
