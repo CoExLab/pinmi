@@ -45,7 +45,17 @@ const Discussion = () => {
 
   const [finishedUpdates, setFinishedUpdates] = useState(false);
 
-  const [curPinIndex, setCurPinIndex] = useState(0);
+  //If there are no pins, the current index should be -1
+  const [curPinIndex, setCurPinIndex] = useState(() => {
+    //console.log(pins);
+    if (pins.length > 0){
+      return 0;
+    }
+    else{
+      return -1;
+    }
+  });
+
   const [prevPinIndex, setPrevPinIndex] = useState(0);
 
   const [startTime, setStartTime] = useState(Date.now());
