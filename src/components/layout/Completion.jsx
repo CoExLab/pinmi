@@ -84,7 +84,7 @@ const Completion = () => {
                     <br />
                     <ColorLibButton 
                     className={classes.rescheduleButton} variant='outlined' size='large' href='/'>
-                        Schedule my next session
+                        Exit Pin-MI before returning to Zoom/Teams 
                     </ColorLibButton>
                 </Container>
             </div>
