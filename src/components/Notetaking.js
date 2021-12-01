@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 
 const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
     //session values
-    const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
+    //const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
     // user mode switcher

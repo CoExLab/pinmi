@@ -46,7 +46,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const opportunityValueRef = useRef('')
 
     //get sessionID
-    const { sessionID } = useSessionValue();
+    //const { sessionID } = useSessionValue();
 
     const { pins } = usePinsValue();
 

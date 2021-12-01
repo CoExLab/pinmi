@@ -10,6 +10,7 @@ import { Container, Grid, Typography } from '@material-ui/core';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import { useActiveStepValue, usePinsValue, useSessionValue } from '../../context';
 import { firebase } from '../../hooks/firebase';
+import { useSelector, useDispatch } from 'react-redux';
 
 import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
 
@@ -65,7 +66,8 @@ const DisscussionPrep = () => {
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
-  const { sessionID } = useSessionValue();
+  //const { sessionID } = useSessionValue();
+  const session = useSelector(state => state.session);
 
   const [curPinIndex, setCurPinIndex] = useState(() => {
     //console.log(pins);
@@ -115,7 +117,7 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
       creatorID: myPin.creatorID,
       creatorMode: myPin.creatorMode,
       pinTime: myPin.pinTime,
