@@ -114,7 +114,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     }
 
     const PinNavButtons = () => {
-        if (curPinIndex === -1)
+        //if there are 0 and only 1 pins, don't show prev and next
+        if (curPinIndex === -1 || (pins.length === 1)) 
             return null;
         const prev = 
             <ColorLibBackButton 
@@ -134,8 +135,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             >
                 Next Pin
             </ColorLibNextButton>
-
-        if (curPinIndex === 0) {
+        //only return next when its the first pin and there are more pins 
+        if (curPinIndex === 0 && (pins.length > 1)) {
             return next;
         }
         if (curPinIndex === pins.length -1) {
