@@ -594,7 +594,7 @@ function VideoChatComponent(props) {
   }
 
   const setDBArchiveData = async (archiveData) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       archiveData: archiveData
     })
       .then(() => console.log("archiveData Added to DB for :" + session.sessionID))

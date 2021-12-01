@@ -22,7 +22,7 @@ function createData(name, role, fat, carbs, protein) {
   return { name, role, fat, carbs, protein };
 }
 
-const TherapistRows = [
+const rows = [
   createData('Full Name', 'Julia Rogers', 6.0, 24, 4.0),
   createData('Reason for appointment', 'I’m going through a hard time and I’m not sure what to do.', 262, 16.0, 24, 6.0),
 ];
