@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useSelector } from "react-redux";
 import { Typography, Box, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
@@ -12,13 +13,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Transcription = () => {
     const classes = useStyles();
+    const session = useSelector(state => state.session);
 
     const [localTrans, setLocalTrans] = useState([]);
-    const {sessionID} = useSessionValue();
     // fetch trans data here
     const fetchTranscript = async () => {
         
-        const docRef = await firebase.firestore().collection("sessions").doc(sessionID);
+        const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID);
         await docRef.get().then((doc) => {
             if (doc.exists) {
                 setLocalTrans(doc.data()["transcript"]);
