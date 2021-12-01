@@ -34,7 +34,7 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { baseURL } from './constants';
+import { baseURL, usingS3 } from './constants';
 
 import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
 import { formatTime, generatePushId } from '../helper/index';
@@ -504,6 +504,7 @@ function VideoChatComponent(props) {
         setApiKey(res.apiKey);
         setSessionId(res.sessionId);
         setToken(res.token);
+
       }).then(() => {
 
         setLoadingStatus(false);
@@ -593,12 +594,22 @@ function VideoChatComponent(props) {
   }
 
   const setDBArchiveData = async (archiveData) => {
-    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
-      archiveID: archiveData
+    await firebase.firestore().collection("sessions").doc(sessionID).update({
+      archiveData: archiveData
     })
       .then(() => console.log("archiveData Added to DB for :" + session.sessionID))
       .catch((e) => { console.log(e) });
   }
+
+  // const getS3ArchiveURL = async (archiveData) => {
+  //   var archiveID = archiveData.id;
+  //   url = baseURL + 's3/' + archiveData.id;
+  //   await fetch(url)
+  //   .then((res) => {
+  //     setMediaUrl(res);
+  //   }).catch((e) => { console.log(e) });
+
+  // }
 
   const handleStopArchive = async () => {
     var url = baseURL + 'archive/' + archiveData.id + '/stop';
@@ -628,23 +639,41 @@ function VideoChatComponent(props) {
       .catch((e) => { console.log(e) });
   }
 
-  //if status is available and if timing checks out, and if session id is correct
+  //saveArchiveURL saves the archiveURL and duration locally and to 
+  //the database for the other user to access. 
   const saveArchiveURL = async () => {
     if (props.isArchiveHost) {
-      let url = baseURL + 'archive/' + archiveData.id;
-      await fetch(url)
-        .then(res => res.json()) //return the res data as a json
+      if (usingS3){
+        var archiveID = archiveData.id;
+        var url = baseURL + 's3/' + archiveData.id;
+        await fetch(url)
+        .then(res => res.json())
         .then((res) => {
-          setMediaDuration(res.duration);
+          console.log("New s3 mediaURL: ", res.s3URL);
+          console.log("archiveData: ", res.archiveData);
           setMediaUrl(res.url);
-          console.log("Media Duration:", res.duration);
-          console.log("Media URL:", res.url);
-
+          setMediaDuration(res.duration); 
           setDBMediaURL(res);
-        })
-        .catch((e) => { console.log(e) });
+        }).catch((e) => { console.log(e) });
+      }
+      else{
+        let url = baseURL + 'archive/' + archiveData.id;
+        await fetch(url)
+          .then(res => res.json()) //return the res data as a json
+          .then((res) => {
+            setMediaDuration(res.duration);
+            setMediaUrl(res.url);
+            console.log("Media Duration:", res.duration);
+            console.log("Media URL:", res.url);
+
+            setDBMediaURL(res);
+          })
+          .catch((e) => { console.log(e) });
+      }
     }
     else {
+      //when not the archive host, 
+      //the user will only need to get the mediaURL from the db
       getDBMediaURL()
     }
   }
@@ -652,8 +681,8 @@ function VideoChatComponent(props) {
   const setDBMediaURL = async (res) => {
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       media_url: res.url,
-      duration: res.duration,
-      archiveID: archiveData
+      duration: res.duration
+      // archiveID: archiveData
     })
       .then(() => console.log("MediaURL Added to DB"))
       .catch((e) => { console.log(e) });

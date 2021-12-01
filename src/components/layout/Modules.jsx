@@ -13,14 +13,12 @@ import { usePins } from '../../hooks/index';
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return <Refresher />;
-    case 1:
       return <PracticeSession />;
-    case 2:
+    case 1:
       return <DisscussionPrep />;
-    case 3:
+    case 2:
       return <Discussion />;
-    case 4:
+    case 3:
       return <SelfReflection />;
     default:
       return <div>Unknown</div>;

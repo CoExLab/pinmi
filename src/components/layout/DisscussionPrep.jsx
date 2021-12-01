@@ -61,12 +61,23 @@ const useStyles = makeStyles((theme) => ({
 const DisscussionPrep = () => {
   const classes = useStyles();
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(0);
+  
+
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
   //const { sessionID } = useSessionValue();
   const session = useSelector(state => state.session);
+
+  const [curPinIndex, setCurPinIndex] = useState(() => {
+    //console.log(pins);
+    if (pins.length > 0){
+      return 0;
+    }
+    else{
+      return -1;
+    }
+  });
 
   const [startTime, setStartTime] = useState(Date.now());
   const recommendedTime = 6 * 60;
@@ -78,7 +89,7 @@ const DisscussionPrep = () => {
   }, [])
 
   useEffect(() => {
-    console.log(curPinIndex);
+    console.log("current pin index:", curPinIndex);
     console.log(pins);
     if(finishedUpdates) {
       //save all pins to database and move to next module
@@ -131,7 +142,7 @@ const DisscussionPrep = () => {
     console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
-    setCurPinIndex(0);
+    setCurPinIndex(curPinIndex);//MAIN ISSUE!!!!! 
     //allow next step in logic to occur
     setFinishedUpdates(true);
   };

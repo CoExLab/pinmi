@@ -65,20 +65,32 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
-    const [curGoalInfo, setCurGoalInfo] = useState(pins[curPinIndex].pinGoal);
-    const [curStrengthInfo, setCurStrengthInfo] = useState(pins[curPinIndex].pinStrength);
-    const [curOpporunityInfo, setCurOpportunityInfo] = useState(pins[curPinIndex].pinOpportunity);
+    //This function handles the empty pin array case
+    const getCurrentPinInfo = (pinInfo) => {
+        if (pins.length>0){
+            return pins[curPinIndex][pinInfo];
+        }
+        else{ //if there are no pins the array, return an empty string. 
+            return "";
+        }
+    }
+
+    const [curGoalInfo, setCurGoalInfo] = useState(getCurrentPinInfo("pinGoal"));
+    const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo("pinStrength"));
+    const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo("pinOpportunity"));
 
     useEffect(() => {
-        fetchCurTextVal();
-        pins[prevPinIndex].pinGoal = curGoalInfo;
-        pins[prevPinIndex].pinStrength = curStrengthInfo;
-        pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
-        setCurGoalInfo(pins[curPinIndex].pinGoal);
-        setCurStrengthInfo(pins[curPinIndex].pinStrength);
-        setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [curPinIndex])
+        if (pins.length > 0){
+            fetchCurTextVal();
+            pins[prevPinIndex].pinGoal = curGoalInfo;
+            pins[prevPinIndex].pinStrength = curStrengthInfo;
+            pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
+            setCurGoalInfo(pins[curPinIndex].pinGoal);
+            setCurStrengthInfo(pins[curPinIndex].pinStrength);
+            setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }
+    }, [curPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
 
     // for updating and fetching current text field value
@@ -143,6 +155,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
     return (
         <Grid item xs={12} sm={8}>
+            {curPinIndex !== -1 ?
             <ColorLibPaper elevation={1}>
                 {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
                     {userMode}
@@ -305,6 +318,13 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     <PinNavButtons />
                 </Box>
             </ColorLibPaper>
+            : 
+            <Box fontStyle="italic">
+                <Typography>
+                {"\n"}No pins to see. Try adding some!!!{"\n\n"}
+                </Typography>
+            </Box>
+            }
         </Grid>
     );
 };
