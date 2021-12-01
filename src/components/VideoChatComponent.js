@@ -547,7 +547,7 @@ function VideoChatComponent(props) {
 
     //this fetches the archive url
     await saveArchiveURL()
-      .then(() => {
+      .then((res) => {
         stopSpeechToText();
         addTranscript();
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -638,21 +638,52 @@ function VideoChatComponent(props) {
       .catch((e) => { console.log(e) });
   }
 
+  //This is written based on the '/s3/:archiveId' route in the pinmiSummerServer
+  const checkIfMediaURLReady = async (serverURL, timeout = 0) => {
+    await fetch(serverURL)
+    .then((res) => {
+      console.log("res.status: ", res.status);
+      let rs = res.status;
+      if (rs == 200){ //if the status is 200, that means it should return a valid URL + archive data
+          console.log("if the status is 200,");
+          return res;
+      }
+      else if (rs == 202){//if the status is 202, that means the url is not ready yet. 
+          setTimeout(() => {console.log("polling in ", timeout ,"miliseconds")}, timeout);
+          return checkIfMediaURLReady(serverURL, timeout + 2000)
+      }
+      else{//***write in more cases for other potential case handling***
+          return null; //returns null if case isn't handled. 
+      }
+    }).catch((e) => { console.log(e) });
+  }
+
   //saveArchiveURL saves the archiveURL and duration locally and to 
   //the database for the other user to access. 
   const saveArchiveURL = async () => {
-    if (props.isArchiveHost) {
+    console.log("saveArchiveURL");
+    if (true) {
       if (usingS3){
         var archiveID = archiveData.id;
-        var url = baseURL + 's3/' + archiveData.id;
-        await fetch(url)
-        .then(res => res.json())
+        var url = baseURL + 's3/' + archiveID;
+        console.log()
+        await checkIfMediaURLReady(url, 0)
         .then((res) => {
-          console.log("New s3 mediaURL: ", res.s3URL);
-          console.log("archiveData: ", res.archiveData);
+          console.log("res line 673 ", res)
+          if (res == null){
+            throw new Error("error accessing archive");
+          }
+          else{
+            return res.json()
+          }
+        })
+        .then((res) => {
+          console.log("New s3 mediaURL: ", res.url);
+          console.log("archiveData.duration: ", res.duration);
           setMediaUrl(res.url);
           setMediaDuration(res.duration); 
           setDBMediaURL(res);
+          return(res)
         }).catch((e) => { console.log(e) });
       }
       else{
@@ -675,6 +706,7 @@ function VideoChatComponent(props) {
       //the user will only need to get the mediaURL from the db
       getDBMediaURL()
     }
+    return -1;
   }
 
   const setDBMediaURL = async (res) => {
