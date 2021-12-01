@@ -59,16 +59,33 @@ const userSlice = createSlice({
   }
 })
 
+const sessionSlice = createSlice({
+  name: 'session',
+  initialState: {
+    sessionID: '',
+  },
+  reducers: {
+    setSessionID: (state, action) => {
+      state.sessionID = action.payload;
+    },
+    sReset: (state) => {
+      state.sessonID = '';
+    }
+  }
+})
+
 const userReducer = userSlice.reducer;
+const sessionReducer = sessionSlice.reducer;
 
 export const { setUserID, setUserMode, reset } = userSlice.actions;
-
+export const {setSessionID, sReset} = sessionSlice.actions;
 
 // Root Reducers
 const rootReducer = combineReducers({
   videoChat: subscriberReducer,
   //VideoChat: publisherReducer
   user: userReducer,
+  session: sessionReducer
 });
 
 // Store
