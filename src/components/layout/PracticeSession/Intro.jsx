@@ -7,6 +7,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import { useSelector } from 'react-redux';
+
+import { user } from '../../Store';
 
 
 const useStyles = makeStyles({
@@ -21,14 +24,24 @@ function createData(name, role, fat, carbs, protein) {
   return { name, role, fat, carbs, protein };
 }
 
-const rows = [
+const TherapistRows = [
   createData('Your role', 'Therapist', 6.0, 24, 4.0),
   createData('Your peers role', 'Client', 237, 9.0, 37, 4.3),
   createData('Your goal', 'Build rapport and analyze the client’s situation', 262, 16.0, 24, 6.0),
 ];
 
+const ClientRows = [
+  createData('Your role', 'Client', 6.0, 24, 4.0),
+  createData('Your peers role', 'Therapist', 237, 9.0, 37, 4.3),
+];
+
 const Intro = () => {
   const classes = useStyles();
+  const user = useSelector(state => state.user);
+  var rows = TherapistRows;
+  if (user.userMode == "callee") {
+    rows = ClientRows;
+  }
   return (
     <div>
       <Box align="center" m={6}>
