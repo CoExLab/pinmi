@@ -12,7 +12,6 @@ import {
   useActiveStepValue,
   usePinsValue,
   useSessionValue,
-  useUserModeValue,
   usePlayerModeValue,
   useSinglePlayerPinsValue,
 } from "../../../context";
@@ -68,7 +67,6 @@ const SPDisscussionPrep = () => {
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   const { sessionID } = useSessionValue();
-  const { userID } = useUserModeValue();
 
   useEffect(() => {
     window.scrollTo(0, 0);

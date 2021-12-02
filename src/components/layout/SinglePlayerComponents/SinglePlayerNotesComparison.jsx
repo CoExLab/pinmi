@@ -17,14 +17,8 @@ import { usePins } from "../../../hooks/index";
 import { firebase } from "../../../hooks/firebase";
 
 //context
-import {
-  useSessionValue,
-  useUserModeValue,
-  usePinsValue,
-  PinsProvider,
-  useSinglePlayerPinsValue,
-} from "../../../context";
-import { format } from "url";
+import { useSessionValue, useSinglePlayerPinsValue } from "../../../context";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,23 +41,6 @@ const useStyles = makeStyles((theme) => ({
       position: "relative",
       margin: "8px",
       maxWidth: "calc(33.333333% - 8px)",
-      // "& .MuiPaper-root": {
-      //   position: "absolute",
-      //   top: 0,
-      //   bottom: 0,
-      //   overflowY: "scroll",
-      //   "& ::-webkit-scrollbar": {
-      //     width: "12px",
-      //   },
-      //   "& ::-webkit-scrollbar-track": {
-      //     background: "orange",
-      //   },
-      //   "& ::-webkit-scrollbar-thumb": {
-      //     backgroundColor: "blue",
-      //     borderRadius: "20px",
-      //     border: "3px solid orange",
-      //   },
-      // },
     },
     "& .MuiGrid-grid-sm-8": {
       maxWidth: "calc(66.666667% - 8px)",
@@ -107,7 +84,7 @@ const SinglePlayerNotesComparison = ({
   peerPins,
 }) => {
   // user mode switcher
-  const { userMode } = useUserModeValue();
+  const user = useSelector((state) => state.user);
 
   const classes = useStyles();
 
@@ -222,7 +199,7 @@ const SinglePlayerNotesComparison = ({
   const fetchCurTextVal = async (infoName) => {
     let curPin = singlePlayerPins[curPinIndex];
 
-    if (userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
+    if (user.userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
     else setCurNoteInfo(curPin.calleePinNote);
 
     setCurPerspectiveInfo1(curPin.calleePinPerspective);
