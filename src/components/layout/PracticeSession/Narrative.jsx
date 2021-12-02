@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
 import { Typography } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 
 const useStyles = makeStyles({
@@ -20,14 +21,24 @@ function createData(name, role, fat, carbs, protein) {
   return { name, role, fat, carbs, protein };
 }
 
-const rows = [
+const TherapistRows = [
   createData('Full Name', 'Julia Rogers', 6.0, 24, 4.0),
   createData('Reason for appointment', 'I’m going through a hard time and I’m not sure what to do.', 262, 16.0, 24, 6.0),
+];
+
+const ClientRows = [
+  createData('Full Name', 'Julia Rogers', 6.0, 24, 4.0),
+  createData('Your prompt:', 'You are going through a hard time and don’t know what to do. Draw inspiration from a real-life change that you are considering or wanting to make.', 262, 16.0, 24, 6.0),
 ];
 
 
 const Narrative = () => {
   const classes = useStyles();
+  const user = useSelector(state => state.user);
+  var rows = TherapistRows;
+  if (user.userMode == "callee") {
+    rows = ClientRows;
+  }
   return (
     <div>
       <Box align="center" m={6}>

@@ -146,9 +146,10 @@ function VideoChatComponentSecond(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const {sessionID, setMediaDuration , setMediaUrl} = useSessionValue();
+  const session = useSelector(state => state.session);
+  //const {, setMediaDuration , setMediaUrl} = useSessionValue();
   // fetch raw pin data here
-  const { pins, setPins } = usePins(sessionID);
+  const { pins, setPins } = usePins(session.sessionID);
   // get document ID
   const pinID = generatePushId();
   // get trans ID

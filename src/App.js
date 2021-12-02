@@ -5,8 +5,6 @@ import {
   ActiveStepProvider,
   PinsProvider,
   SessionProvider,
-  UserModeProvider,
-  PlayerModeProvider,
   SinglePlayerPinsProvider,
   SinglePlayerSessionProvider,
 } from "./context/index";
@@ -17,6 +15,7 @@ import CORsTestButtons from "./components/layout/CORsTestButtons";
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { useState } from "react";
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */
@@ -103,25 +102,21 @@ const App = () => {
       <Router>
         <main>
           <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/completion" component={Completion} />
-            <Route exact path="/test" component={CORsTestButtons} />
             <Provider store={store}>
-              <PlayerModeProvider>
-                <SessionProvider>
-                  <ActiveStepProvider>
-                    <SinglePlayerPinsProvider>
-                      <SinglePlayerSessionProvider>
-                        <PinsProvider>
-                          <UserModeProvider>
-                            <Route exact path="/content" component={Content} />
-                          </UserModeProvider>
-                        </PinsProvider>
-                      </SinglePlayerSessionProvider>
-                    </SinglePlayerPinsProvider>
-                  </ActiveStepProvider>
-                </SessionProvider>
-              </PlayerModeProvider>
+              <Route exact path="/" component={Landing} />
+              <SessionProvider>
+                <ActiveStepProvider>
+                  <SinglePlayerPinsProvider>
+                    <SinglePlayerSessionProvider>
+                      <PinsProvider>
+                        <Route exact path="/test" component={CORsTestButtons} />
+                        <Route exact path="/content" component={Content} />
+                      </PinsProvider>
+                    </SinglePlayerSessionProvider>
+                  </SinglePlayerPinsProvider>
+                </ActiveStepProvider>
+              </SessionProvider>
+              <Route exact path="/completion" component={Completion} />
             </Provider>
           </Switch>
         </main>

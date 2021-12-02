@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Box, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import ColorLibPaper from "./layout/ColorLibComponents/ColorLibPaper";
-import ColorLibTextField from "./layout/ColorLibComponents/ColorLibTextField";
+import React, {useEffect, useState} from 'react';
+import { useSelector } from "react-redux";
+import { Typography, Box, Grid } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
+import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import { firebase } from "../hooks/firebase";
 import { useSessionValue } from "../context";
 
@@ -11,30 +12,26 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Transcription = () => {
-  const classes = useStyles();
+    const classes = useStyles();
+    const session = useSelector(state => state.session);
 
-  const [localTrans, setLocalTrans] = useState([]);
-  const { sessionID } = useSessionValue();
-  // fetch trans data here
-  const fetchTranscript = async () => {
-    const docRef = await firebase
-      .firestore()
-      .collection("sessions")
-      .doc(sessionID);
-    await docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          setLocalTrans(doc.data()["transcript"]);
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting document:", error);
-      });
-  };
+    const [localTrans, setLocalTrans] = useState([]);
+    // fetch trans data here
+    const fetchTranscript = async () => {
+        
+        const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID);
+        await docRef.get().then((doc) => {
+            if (doc.exists) {
+                setLocalTrans(doc.data()["transcript"]);
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        })
+        .catch((error) => {
+            console.log("Error getting document:", error);
+        });
+    }
 
   useEffect(() => {
     fetchTranscript();

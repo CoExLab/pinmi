@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { formatTime } from '../helper/index';
+import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
@@ -15,7 +16,6 @@ import { usePins } from '../hooks/index';
 import { firebase } from "../hooks/firebase";
 
 //context
-import { useUserModeValue } from '../context';
 import { useSessionValue, usePinsValue } from "../context";
 
 const useStyles = makeStyles(theme => ({
@@ -51,11 +51,11 @@ const useStyles = makeStyles(theme => ({
 
 const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
     //session values
-    const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
+    //const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
     // user mode switcher
-    const { userMode, userID } = useUserModeValue();
+    const user = useSelector(state => state.user);
   
     const classes = useStyles();
 
@@ -114,7 +114,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     }
 
     const PinNavButtons = () => {
-        if (curPinIndex === -1)
+        //if there are 0 and only 1 pins, don't show prev and next
+        if (curPinIndex === -1 || (pins.length === 1)) 
             return null;
         const prev = 
             <ColorLibBackButton 
@@ -134,8 +135,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             >
                 Next Pin
             </ColorLibNextButton>
-
-        if (curPinIndex === 0) {
+        //only return next when its the first pin and there are more pins 
+        if (curPinIndex === 0 && (pins.length > 1)) {
             return next;
         }
         if (curPinIndex === pins.length -1) {
@@ -148,7 +149,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const savePin = async (index) => {
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
-            if (myPin && userMode === "caller") {
+            if (myPin && user.userMode === "caller") {
                 myPin.callerPinNote = curNoteInfo;
                 myPin.callerPinPerspective = curPerspectiveInfo;
                 myPin.callerPinCategory = pinType;
@@ -185,7 +186,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         savePin(prevPinIndex);
 
         //clear out all the states
-        if (pins[curPinIndex] && userMode === "caller") {
+        if (pins[curPinIndex] && user.userMode === "caller") {
             setPinType(pins[curPinIndex].callerPinCategory);
             setCurNoteInfo(pins[curPinIndex].callerPinNote);
             setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
@@ -204,11 +205,11 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // for pin information modifying
     const handlePinInfo = (infoName, input) => {
-        if (infoName === `${userMode}PinInfos.pinNote`) {
+        if (infoName === `${user.userMode}PinInfos.pinNote`) {
             setCurNoteInfo(input);
-        } else if (infoName === `${userMode}PinInfos.pinPerspective`) {
+        } else if (infoName === `${user.userMode}PinInfos.pinPerspective`) {
             setCurPerspectiveInfo(input);
-        } else if (infoName === `${userMode}PinInfos.pinSkill`) {
+        } else if (infoName === `${user.userMode}PinInfos.pinSkill`) {
             setCurSkillInfo(input);
         }
         // let usersUpdate = {};
@@ -244,7 +245,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>
-                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === userMode ? "you" : "your peer"}
+                            The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by {pins[curPinIndex].creatorMode === user.NotetakinguserMode ? "you" : "your peer"}
                         </Typography>
                     </Box>
                     : null}

@@ -1,4 +1,5 @@
 import { createStore, combineReducers } from "redux";
+import { createSlice } from '@reduxjs/toolkit';
 
 // Types
 const HANDLE_SUBSCRIPTION = "HANDLE_SUBSCRIPTION";
@@ -38,12 +39,53 @@ const publisherReducer = (state = defaultState, action) => {
   }
 };
 
+const userSlice = createSlice({
+  name: 'user',
+  initialState: {
+    userID: '',
+    userMode: '',
+  },
+  reducers: {
+    setUserID: (state, action) => {
+      state.userID = action.payload;
+    },
+    setUserMode: (state, action) => {
+      state.userMode = action.payload;
+    },
+    reset: (state) => {
+      state.userID = '';
+      state.userMode = '';
+    }
+  }
+})
+
+const sessionSlice = createSlice({
+  name: 'session',
+  initialState: {
+    sessionID: '',
+  },
+  reducers: {
+    setSessionID: (state, action) => {
+      state.sessionID = action.payload;
+    },
+    sReset: (state) => {
+      state.sessonID = '';
+    }
+  }
+})
+
+const userReducer = userSlice.reducer;
+const sessionReducer = sessionSlice.reducer;
+
+export const { setUserID, setUserMode, reset } = userSlice.actions;
+export const {setSessionID, sReset} = sessionSlice.actions;
 
 // Root Reducers
 const rootReducer = combineReducers({
   videoChat: subscriberReducer,
   //VideoChat: publisherReducer
-
+  user: userReducer,
+  session: sessionReducer
 });
 
 // Store
