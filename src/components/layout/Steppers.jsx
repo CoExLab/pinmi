@@ -47,12 +47,11 @@ function ColorlibStepIcon(props) {
 	const { active, completed } = props;
 	
 	const icons = {
-		1: <RefreshIcon />,
-		2: <VoiceChatIcon />,
-		3: <CreateIcon />,
-		4: <QuestionAnswerIcon />,
-		5: <PersonIcon />,
-		6: <DoneIcon />
+		1: <VoiceChatIcon />,
+		2: <CreateIcon />,
+		3: <QuestionAnswerIcon />,
+		4: <PersonIcon />,
+		5: <DoneIcon />
 	};
 	
 	return (
@@ -128,7 +127,7 @@ const ColorlibConnector = withStyles((theme) => ({
  }))(StepConnector);
 
 const Steppers = () => {
-	const steps = ['MI Refresher', 'Practice Session', 'Discussion Prep', 'Discussion', 'Self-Reflection', 'Complete'];
+	const steps = ['Practice Session', 'Discussion Prep', 'Discussion', 'Self-Reflection', 'Complete'];
 	const classes = useStepperStyles();
 	const {curActiveStep: activeStep} = useActiveStepValue();
 

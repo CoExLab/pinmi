@@ -8,19 +8,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Typography } from '@material-ui/core';
 
 import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
-
-import ColorLibButton from "./ColorLibComponents/ColorLibButton";
-import {
-  useActiveStepValue,
-  usePinsValue,
-  useSessionValue,
-  useUserModeValue,
-  usePlayerModeValue,
-} from "../../context";
-import { firebase } from "../../hooks/firebase";
-import { formatTime, generatePushId } from "../../helper/index";
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import { useActiveStepValue, usePinsValue, usePlayerModeValue} from '../../context';
+import { firebase } from '../../hooks/firebase';
+import { useSelector, useDispatch } from 'react-redux';
+import { formatTime } from "../../helper/index";
 import SinglePlayerVideo from "./SinglePlayerComponents/SinglePlayerDissPrep";
-import { copyFileSync } from "fs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,14 +58,24 @@ const useStyles = makeStyles((theme) => ({
 
 const DisscussionPrep = () => {
   const classes = useStyles();
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
-    useActiveStepValue();
-  const [curPinIndex, setCurPinIndex] = useState(0);
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  
+
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
-  const { sessionID } = useSessionValue();
-  const { userID } = useUserModeValue();
+  //const { sessionID } = useSessionValue();
+  const session = useSelector(state => state.session);
+
+  const [curPinIndex, setCurPinIndex] = useState(() => {
+    //console.log(pins);
+    if (pins.length > 0){
+      return 0;
+    }
+    else{
+      return -1;
+    }
+  });
 
   const [startTime, setStartTime] = useState(Date.now());
   const recommendedTime = 6 * 60;
@@ -85,7 +88,7 @@ const DisscussionPrep = () => {
   const { playerMode } = usePlayerModeValue();
 
   useEffect(() => {
-    console.log(curPinIndex);
+    console.log("current pin index:", curPinIndex);
     console.log(pins);
     if(finishedUpdates) {
       //save all pins to database and move to next module
@@ -113,7 +116,7 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(sessionID).collection("pins").add({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
       creatorID: myPin.creatorID,
       creatorMode: myPin.creatorMode,
       pinTime: myPin.pinTime,
@@ -137,7 +140,7 @@ const DisscussionPrep = () => {
     console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
-    setCurPinIndex(0);
+    setCurPinIndex(curPinIndex);//MAIN ISSUE!!!!! 
     //allow next step in logic to occur
     setFinishedUpdates(true);
   };

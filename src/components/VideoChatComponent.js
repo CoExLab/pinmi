@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from "@material-ui/icons/MicNone";
 import MicOffIcon from "@material-ui/icons/MicOffOutlined";
@@ -33,9 +34,9 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { baseURL } from './constants';
+import { baseURL, usingS3 } from './constants';
 
-import { useSessionValue, useActiveStepValue, usePinsValue, useUserModeValue } from "../context";
+import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
 import { formatTime, generatePushId } from '../helper/index';
 import { firebase } from "../hooks/firebase";
 import { usePins } from '../hooks/index';
@@ -87,11 +88,12 @@ function VideoChatComponent(props) {
 
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   //get setter for media duration
-  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+  const session = useSelector(state => state.session);
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //get user informatoin
-  const { userID, userMode } = useUserModeValue();
+  const user = useSelector(state => state.user);
 
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
@@ -107,7 +109,7 @@ function VideoChatComponent(props) {
         const thisPin = pins[pins.length - 1];
         const pinTime = thisPin.pinTime;
         const pinCreatorMode = thisPin.creatorMode;
-        console.log(pinCreatorMode, userMode);
+        console.log(pinCreatorMode, user.userMode);
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
@@ -249,8 +251,8 @@ function VideoChatComponent(props) {
     //create a newPin object to house pin details
     const newPin = {
       pinID: '',
-      creatorID: userID,
-      creatorMode: userMode,
+      creatorID: user.userID,
+      creatorMode: user.userMode,
       pinTime: curTime,
       callerPinNote: '',
       callerPinPerspective: '',
@@ -284,7 +286,7 @@ function VideoChatComponent(props) {
 
   const addTranscript = async () => {
     //write the transcript to the database
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       transcript: results
     })
       .then(() => {
@@ -502,6 +504,7 @@ function VideoChatComponent(props) {
         setApiKey(res.apiKey);
         setSessionId(res.sessionId);
         setToken(res.token);
+
       }).then(() => {
 
         setLoadingStatus(false);
@@ -591,12 +594,22 @@ function VideoChatComponent(props) {
   }
 
   const setDBArchiveData = async (archiveData) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
-      archiveID: archiveData
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
+      archiveData: archiveData
     })
-      .then(() => console.log("archiveData Added to DB for :" + sessionID))
+      .then(() => console.log("archiveData Added to DB for :" + session.sessionID))
       .catch((e) => { console.log(e) });
   }
+
+  // const getS3ArchiveURL = async (archiveData) => {
+  //   var archiveID = archiveData.id;
+  //   url = baseURL + 's3/' + archiveData.id;
+  //   await fetch(url)
+  //   .then((res) => {
+  //     setMediaUrl(res);
+  //   }).catch((e) => { console.log(e) });
+
+  // }
 
   const handleStopArchive = async () => {
     var url = baseURL + 'archive/' + archiveData.id + '/stop';
@@ -626,39 +639,57 @@ function VideoChatComponent(props) {
       .catch((e) => { console.log(e) });
   }
 
-  //if status is available and if timing checks out, and if session id is correct
+  //saveArchiveURL saves the archiveURL and duration locally and to 
+  //the database for the other user to access. 
   const saveArchiveURL = async () => {
     if (props.isArchiveHost) {
-      let url = baseURL + 'archive/' + archiveData.id;
-      await fetch(url)
-        .then(res => res.json()) //return the res data as a json
+      if (usingS3){
+        var archiveID = archiveData.id;
+        var url = baseURL + 's3/' + archiveData.id;
+        await fetch(url)
+        .then(res => res.json())
         .then((res) => {
-          setMediaDuration(res.duration);
+          console.log("New s3 mediaURL: ", res.s3URL);
+          console.log("archiveData: ", res.archiveData);
           setMediaUrl(res.url);
-          console.log("Media Duration:", res.duration);
-          console.log("Media URL:", res.url);
-
+          setMediaDuration(res.duration); 
           setDBMediaURL(res);
-        })
-        .catch((e) => { console.log(e) });
+        }).catch((e) => { console.log(e) });
+      }
+      else{
+        let url = baseURL + 'archive/' + archiveData.id;
+        await fetch(url)
+          .then(res => res.json()) //return the res data as a json
+          .then((res) => {
+            setMediaDuration(res.duration);
+            setMediaUrl(res.url);
+            console.log("Media Duration:", res.duration);
+            console.log("Media URL:", res.url);
+
+            setDBMediaURL(res);
+          })
+          .catch((e) => { console.log(e) });
+      }
     }
     else {
+      //when not the archive host, 
+      //the user will only need to get the mediaURL from the db
       getDBMediaURL()
     }
   }
 
   const setDBMediaURL = async (res) => {
-    await firebase.firestore().collection("sessions").doc(sessionID).update({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       media_url: res.url,
-      duration: res.duration,
-      archiveID: archiveData
+      duration: res.duration
+      // archiveID: archiveData
     })
       .then(() => console.log("MediaURL Added to DB"))
       .catch((e) => { console.log(e) });
   }
 
   const getDBMediaURL = async () => {
-    const docRef = await firebase.firestore().collection("sessions").doc(sessionID)
+    const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID)
     docRef.get().then((doc) => {
       if (doc.exists) {
         if (doc.data().media_url != "default") {
@@ -668,7 +699,7 @@ function VideoChatComponent(props) {
         }
         else {
           //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-          console.log("URL is for session " + sessionID + " not set yet")
+          console.log("URL is for session " + session.sessionID + " not set yet")
         }
       }
       else {
