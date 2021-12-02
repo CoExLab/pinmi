@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
-import { usePins } from '../hooks/index';
-import { randomString} from "../helper";
+import { usePins } from "../hooks/index";
+import { randomString } from "../helper";
+import { firebase } from "../hooks/firebase";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({ children }) => {
@@ -59,12 +60,17 @@ const newDoc = randomString(19);
 
 //temporarily use date as sessionID
 const date = new Date();
-const [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()];
-const tempNewDoc = (month+"-"+day+"-"+year)
+const [month, day, year] = [
+  date.getMonth(),
+  date.getDate(),
+  date.getFullYear(),
+];
+const tempNewDoc = month + "-" + day + "-" + year;
 
 export const SessionProvider = ({ children }) => {
-
-  const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
+  const [mediaUrl, setMediaUrl] = useState(
+    "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg"
+  );
   const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
   const [button, setButton] = useState(false);
   const [sessionID, setSessionID] = useState(tempNewDoc);
@@ -73,7 +79,23 @@ export const SessionProvider = ({ children }) => {
   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
 
   return (
-    <SessionContext.Provider value={{sessionID, vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey, mediaUrl, setMediaUrl, mediaDuration, setMediaDuration, button, setButton}}>
+    <SessionContext.Provider
+      value={{
+        sessionID,
+        vonageSessionID,
+        setVonageSessionID,
+        token,
+        setToken,
+        apiKey,
+        setApiKey,
+        mediaUrl,
+        setMediaUrl,
+        mediaDuration,
+        setMediaDuration,
+        button,
+        setButton,
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );
@@ -85,9 +107,7 @@ export const PinsContext = createContext();
 var pins = [];
 export const PinsProvider = ({ children }) => {
   return (
-    <PinsContext.Provider value={{pins}}>
-      {children}
-    </PinsContext.Provider>
+    <PinsContext.Provider value={{ pins }}>{children}</PinsContext.Provider>
   );
 };
 export const usePinsValue = () => useContext(PinsContext);
@@ -109,6 +129,7 @@ export const useSinglePlayerPinsValue = () =>
 export const SinglePlayerSessionContext = createContext();
 export const SinglePlayerSessionProvider = ({ children }) => {
   const [singlePlayerSessionID, setSinglePlayerSessionID] = useState([]);
+
   return (
     <SinglePlayerSessionContext.Provider
       value={{ singlePlayerSessionID, setSinglePlayerSessionID }}
