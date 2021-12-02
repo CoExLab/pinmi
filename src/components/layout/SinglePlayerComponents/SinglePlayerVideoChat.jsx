@@ -23,10 +23,12 @@ import {
   useActiveStepValue,
   usePinsValue,
   useSinglePlayerPinsValue,
+  useSinglePlayerSessionValue,
 } from "../../../context";
 import { firebase } from "../../../hooks/firebase";
 import ReactPlayer from "react-player";
 import { transcriptArr } from "../SinglePlayerModules/config";
+import "../../VideoChatComponent.scss";
 
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
@@ -120,6 +122,7 @@ function SinglePlayerVideoChat(props) {
   const { pins } = usePinsValue();
 
   const { singlePlayerPins } = useSinglePlayerPinsValue();
+  const { singlePlayerSessionID } = useSinglePlayerSessionValue();
 
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
@@ -133,7 +136,7 @@ function SinglePlayerVideoChat(props) {
       // itself
       if (
         arr[mid] == x ||
-        ((mid + 1) >= arr.length) ||
+        mid + 1 >= arr.length ||
         (arr[mid] <= x && arr[mid + 1] > x)
       )
         return mid;
@@ -184,6 +187,7 @@ function SinglePlayerVideoChat(props) {
     // }
     const ts = getTimeStamp(transcriptArr);
     const TSIndex = binarySearch(ts, 0, ts.length, curTime);
+    console.log(TSIndex);
 
     singlePlayerPins.push({
       pinID: "",
@@ -261,11 +265,11 @@ function SinglePlayerVideoChat(props) {
     return (
       <>
         <ReactPlayer
-          playing={true}
+          playing={!loadingStatus}
           ref={player}
           url="https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0"
-          width="80%"
-          style={{ margin: "auto" }}
+          width="100%"
+          height="100%"
           onProgress={handleProgress}
         />
         <Fab
@@ -301,6 +305,34 @@ function SinglePlayerVideoChat(props) {
     } else {
       var roomAddOn = "";
     }
+    console.log(singlePlayerSessionID);
+    // await firebase
+    //   .firestore()
+    //   .collection("singleplayer_media")
+    //   .get()
+    //   .then((doc) => {
+    //     const SPSessionArr = [];
+    //     doc.forEach((d) => {
+    //       SPSessionArr.push(d.data());
+    //     });
+    //     SPSessionArr.sort((a, b) => (a.view_count > b.view_count && 1) || -1);
+    //     setSinglePlayerSessionID(SPSessionArr[0]);
+    //   });
+
+    //   await firebase
+    //   .firestore()
+    //   .collection("singleplayer_media")
+    //   .doc()
+    //   .get()
+    //   .then((doc) => {
+    //     const SPSessionArr = [];
+    //     doc.forEach((d) => {
+    //       SPSessionArr.push(d.data());
+    //     });
+    //     SPSessionArr.sort((a, b) => (a.view_count > b.view_count && 1) || -1);
+    //     setSinglePlayerSessionID(SPSessionArr[0]);
+    //   });
+
     await fetch(baseURL + "room/" + room + roomAddOn)
       .then(function (res) {
         return res.json();
@@ -446,7 +478,11 @@ function SinglePlayerVideoChat(props) {
 
   return (
     <>
-      <Box pt={10}>{loadingStatus ? <LinearProgress /> : null}</Box>
+      {loadingStatus && (
+        <Box pt={10}>
+          <LinearProgress />
+        </Box>
+      )}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -485,14 +521,6 @@ function SinglePlayerVideoChat(props) {
 
       <div className="video-container">
         <div
-          id="subscriber"
-          className={`${
-            isStreamSubscribed ? "main-video" : "additional-video"
-          }`}
-        >
-          {isStreamSubscribed && renderToolbar()}
-        </div>
-        <div
           id="publisher"
           className={`${
             isStreamSubscribed ? "additional-video" : "main-video"
@@ -510,28 +538,6 @@ function SinglePlayerVideoChat(props) {
         >
           Begin Discussion Prep
         </ColorLibCallEndButton>
-        {props.isArchiveHost ? (
-          <Button
-            onClick={() => handleStartArchive()}
-            color="secondary"
-            variant="contained"
-          >
-            Start Recording
-          </Button>
-        ) : (
-          <div></div>
-        )}
-        {props.isArchiveHost ? (
-          <Button
-            onClick={() => handleStopArchive()}
-            color="secondary"
-            variant="contained"
-          >
-            Stop Recording
-          </Button>
-        ) : (
-          <div></div>
-        )}
       </div>
     </>
   );

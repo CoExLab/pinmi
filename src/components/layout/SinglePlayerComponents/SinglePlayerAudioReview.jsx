@@ -25,7 +25,7 @@ const SinglePlayerAudioReview = ({
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
-  disableAddPin = false
+  disableAddPin = false,
 }) => {
   const player = useRef(null);
   const { curActiveStep } = useActiveStepValue();
@@ -269,7 +269,9 @@ const SinglePlayerAudioReview = ({
       player.current.seekTo(currentTime);
     }
     //if the audio progress hits the next pin, update the current pin index
-    const newIndex = singlePlayerPins.findIndex((elem) => elem.pinTime > currentTime);
+    const newIndex = singlePlayerPins.findIndex(
+      (elem) => elem.pinTime > currentTime
+    );
     console.log("New Index: " + newIndex);
     if (newIndex == -1) {
       setPrevPinIndex(curPinIndex);

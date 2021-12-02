@@ -7,7 +7,6 @@ import { useSessionValue, useUserModeValue, usePlayerModeValue} from "../../../.
 import SinglePlayerVideoChat from '../../SinglePlayerComponents/SinglePlayerVideoChat.jsx';
 
 const Session = () => {
-    const [room, setRoom] = useState("hellooo");
     // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
     // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
     // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
