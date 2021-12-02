@@ -19,11 +19,11 @@ import { firebase } from "../../../hooks/firebase";
 //context
 import {
   useSessionValue,
-  useUserModeValue,
   usePinsValue,
   PinsProvider,
 } from "../../../context";
 import { format } from "url";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,9 +60,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SinglePlayerComment = () => {
-  // user mode switcher
-  const { userMode } = useUserModeValue();
-
   const classes = useStyles();
 
   //creating a refernce for TextField Components

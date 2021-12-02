@@ -3,8 +3,9 @@ import VideoChatComponent from "../../../VideoChatComponent.js";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
-import { useSessionValue, useUserModeValue, usePlayerModeValue} from "../../../../context";
+import { useSessionValue, usePlayerModeValue} from "../../../../context";
 import SinglePlayerVideoChat from '../../SinglePlayerComponents/SinglePlayerVideoChat.jsx';
+import { useSelector } from 'react-redux';
 
 const Session = () => {
     // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
@@ -32,14 +33,14 @@ const Session = () => {
     //   });
     //   }
 
-    const { userMode } = useUserModeValue();
+    const user = useSelector(state => state.user);
     const { playerMode } = usePlayerModeValue();
     console.log(playerMode);
 
     //hostName is a string that is the clients usermode that should host the archive. 
     const checkIsArchiveHost = (hostName) => {
         console.log("check is recording ran");
-        if (userMode == hostName){
+        if (user.userMode == hostName){
             console.log("isArchiveHost from check is rec");
             return true;
         }

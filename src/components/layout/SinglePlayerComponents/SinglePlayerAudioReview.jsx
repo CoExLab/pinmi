@@ -4,13 +4,13 @@ import { Typography, Grid } from "@material-ui/core";
 import ReactPlayer from "react-player";
 import ColorLibAudioPlayer from "../../layout/ColorLibComponents/ColorLibAudioPlayer";
 import { formatTime, generatePushId } from "../../../helper/index";
+import { useSelector } from 'react-redux';
 
 // context
 import {
   useActiveStepValue,
   useSessionValue,
   usePinsValue,
-  useUserModeValue,
   useSinglePlayerPinsValue,
 } from "../../../context";
 import { useEffect } from "react";
@@ -42,7 +42,7 @@ const SinglePlayerAudioReview = ({
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //fetch user data
-  const { userID, userMode } = useUserModeValue();
+  const user = useSelector(state => state.user);
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   console.log("SinglePlayerPins: ", singlePlayerPins);
 
@@ -190,8 +190,8 @@ const SinglePlayerAudioReview = ({
     //create a newPin object to house pin details
     const newSinglePlayerPin = {
       pinID: "",
-      creatorID: userID,
-      creatorMode: userMode,
+      creatorID: user.userID,
+      creatorMode: user.userMode,
       pinTime: curTime,
       callerPinNote: "",
       callerPinPerspective: "",

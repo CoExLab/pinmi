@@ -18,9 +18,8 @@ import { usePins } from "../../../hooks/index";
 import { firebase } from "../../../hooks/firebase";
 
 //context
-import { useUserModeValue } from "../../../context";
-import { useSessionValue, usePinsValue } from "../../../context";
-import { useSinglePlayerPinsValue } from "../../../context";
+import { useSessionValue, useSinglePlayerPinsValue } from "../../../context";
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   toggleGroup: {
@@ -70,7 +69,7 @@ const SinglePlayerNotetaking = ({
   // fetch raw pin data here
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   // user mode switcher
-  const { userMode, userID } = useUserModeValue();
+  const user = useSelector(state => state.user);
 
   const classes = useStyles();
 
@@ -209,11 +208,11 @@ const SinglePlayerNotetaking = ({
 
   // for pin information modifying
   const handlePinInfo = (infoName, input) => {
-    if (infoName === `${userMode}PinInfos.pinNote`) {
+    if (infoName === `${user.userMode}PinInfos.pinNote`) {
       setCurNoteInfo(input);
-    } else if (infoName === `${userMode}PinInfos.pinPerspective`) {
+    } else if (infoName === `${user.userMode}PinInfos.pinPerspective`) {
       setCurPerspectiveInfo(input);
-    } else if (infoName === `${userMode}PinInfos.pinSkill`) {
+    } else if (infoName === `${user.userMode}PinInfos.pinSkill`) {
       setCurSkillInfo(input);
     }
     // let usersUpdate = {};
