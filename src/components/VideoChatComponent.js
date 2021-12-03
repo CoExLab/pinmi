@@ -823,7 +823,7 @@ function VideoChatComponent(props) {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Are you sure you want to finish discussing pins?"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Are you sure you want to end this session?"}</DialogTitle>
                 <DialogActions>
                 <Box m={2}>
                   <div direction='row' align='center'>
