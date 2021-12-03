@@ -98,6 +98,8 @@ function VideoChatComponent(props) {
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
   const [openEnd, setOpenEnd] = useState(false);
+  const [buttonDis, setButtonDis] = useState(false);
+  const [buttonDisStop, setButtonDisStop] = useState(true);
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
@@ -592,6 +594,8 @@ function VideoChatComponent(props) {
         setDBArchiveData(archiveData);
       })
       .catch((error) => { console.log(error) })
+    setButtonDis(true);
+    setButtonDisStop(false);
   }
 
   const setDBArchiveData = async (archiveData) => {
@@ -621,6 +625,7 @@ function VideoChatComponent(props) {
       .then((res) => {
         console.log(res);
       })
+    setButtonDisStop(true);
   }
 
   const getLastestArchive = async () => {
@@ -886,6 +891,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStartArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDis}
           >Start Recording
           </Button> :
           <div></div>}
@@ -894,6 +900,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStopArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDisStop}
           >Stop Recording
           </Button> :
           <div></div>}
