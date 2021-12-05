@@ -12,7 +12,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
 import { Icon, Fab, Popper, Fade } from '@material-ui/core';
-import { Dialog, DialogContent, DialogContentText } from "@material-ui/core";
+import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from "@material-ui/core";
 import pin from '../other/pin.svg';
 import useSpeechToText from './transcript';
 
@@ -97,6 +97,9 @@ function VideoChatComponent(props) {
 
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
+  const [openEnd, setOpenEnd] = useState(false);
+  const [buttonDis, setButtonDis] = useState(false);
+  const [buttonDisStop, setButtonDisStop] = useState(true);
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
@@ -593,6 +596,8 @@ function VideoChatComponent(props) {
         setDBArchiveData(archiveData);
       })
       .catch((error) => { console.log(error) })
+    setButtonDis(true);
+    setButtonDisStop(false);
   }
 
   const setDBArchiveData = async (archiveData) => {
@@ -622,6 +627,7 @@ function VideoChatComponent(props) {
       .then((res) => {
         console.log(res);
       })
+    setButtonDisStop(true);
   }
 
   const getLastestArchive = async () => {
@@ -813,6 +819,42 @@ function VideoChatComponent(props) {
         </DialogContent>
       </Dialog>
 
+      <Dialog
+            open={openEnd}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Are you sure you want to end this session?"}</DialogTitle>
+                <DialogActions>
+                <Box m={2}>
+                  <div direction='row' align='center'>
+                  <ColorLibButton
+                    variant='contained'
+                    size='medium'
+                    onClick={
+                      () => setOpenEnd(false)
+                    }
+                    autoFocus
+                  >
+                    Continue Session
+                  </ColorLibButton>
+                  <Box mt={2}>
+                  <ColorLibNextButton
+                    variant='outlined'
+                    size='medium'
+                    onClick={() => handleFinishChat()}
+                    autoFocus
+                  >
+                    End Session
+                  </ColorLibNextButton>
+                  </Box>
+                  
+                  </div>
+                  </Box>
+                </DialogActions>
+            </Dialog>    
+
       <ColorLibTimeReminder 
         open={timeRemind} 
         setOpen={setTimeRemind}
@@ -841,7 +883,7 @@ function VideoChatComponent(props) {
         <ColorLibCallEndButton
           variant="contained"
           size="medium"
-          onClick={() => handleFinishChat()}
+          onClick={() => setOpenEnd(true)}
           disabled={!isInterviewStarted}
         >
           Begin Discussion Prep
@@ -851,6 +893,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStartArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDis}
           >Start Recording
           </Button> :
           <div></div>}
@@ -859,6 +902,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStopArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDisStop}
           >Stop Recording
           </Button> :
           <div></div>}
