@@ -112,7 +112,6 @@ function VideoChatComponent(props) {
         const thisPin = pins[pins.length - 1];
         const pinTime = thisPin.pinTime;
         const pinCreatorMode = thisPin.creatorMode;
-        console.log(pinCreatorMode, user.userMode);
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
@@ -201,9 +200,10 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!open && countDown > 0) {
+      if (!open && countDown > 0 && videoCallTimer != 0) {
         const timePassed = (Date.now() - videoCallTimer) / 1000;
         if (timePassed >= recommendedTime) {
+          console.log("Time passed: " + timePassed);
           setCountDown(0);
           setTimeRemind(true);
         } else {
@@ -513,7 +513,7 @@ function VideoChatComponent(props) {
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
-        setVideoCallTimer(Date.now());
+        // setVideoCallTimer(Date.now());
         // Disable audio / video buttons as set before
         if (!isAudioEnabled) {
           onToggleAudio(false);
@@ -527,21 +527,6 @@ function VideoChatComponent(props) {
         }
         //pass in videoCallTimer so we can create time stamps
         startSpeechToText();
-        setPopperOpen(true);
-        setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 5000);
-        setTimeout(() => {
-          setPopperOpen(true);
-          setPopperContentIndex(0);
-        }, 300000);
-        setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 305000);
       })
       .catch((error) => { console.log(error) });
   }
@@ -589,6 +574,23 @@ function VideoChatComponent(props) {
       //and turn it into json so you can access data from it
       .then(response => response.json())
       .then((archiveData) => {
+        setVideoCallTimer(Date.now());
+        setPopperOpen(true);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 5000);
+        setTimeout(() => {
+          setPopperOpen(true);
+          setPopperContentIndex(0);
+        }, recommendedTime / 2 * 1000);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, recommendedTime / 2 * 1000 + 5000);
+
         console.log(archiveData);
         setArchiveData(archiveData);
         setDBArchiveData(archiveData);
