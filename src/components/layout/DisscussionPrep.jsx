@@ -80,7 +80,7 @@ const DisscussionPrep = () => {
   });
 
   const [startTime, setStartTime] = useState(Date.now());
-  const recommendedTime = 6 * 60;
+  const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
   
