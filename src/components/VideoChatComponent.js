@@ -104,6 +104,13 @@ function VideoChatComponent(props) {
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
 
+  var line1 = "situations where you struggled to use MI";
+  var line2 = "instances of effective MI use ";
+  if (user.userMode == "callee") {
+    line1 = "situations where your peer struggled to use MI";
+    line2 = "instances of effective MI use by your peer";
+  }
+
   const getPopperContent = (index) => {
     switch (index) {
       case 0:
@@ -779,8 +786,8 @@ function VideoChatComponent(props) {
               <Typography variant='body2'>
                 <p>Click on the pin to create time marks of</p>
                 <ul style={{ fontWeight: 700 }}>
-                  <li>situations where you struggled to use MI</li>
-                  <li>instances of effective MI use</li>
+                  <li>{line1}</li>
+                  <li>{line2}</li>
                 </ul>
                 <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
               </Typography>
