@@ -550,7 +550,9 @@ function VideoChatComponent(props) {
       .then((res) => {
         stopSpeechToText();
         addTranscript();
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        // if (res != -1){
+        //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        // }
       })
       .catch((error) => { console.log(error) });
 
@@ -644,8 +646,8 @@ function VideoChatComponent(props) {
     .then((res) => {
       console.log("res.status: ", res.status);
       let rs = res.status;
-      if (rs == 200){ //if the status is 200, that means it should return a valid URL + archive data
-          console.log("if the status is 200,");
+      if (rs === 200){ //if the status is 200, that means it should return a valid URL + archive data
+          console.log("if the status is 200, this is res:", res);
           return res;
       }
       else if (rs == 202){//if the status is 202, that means the url is not ready yet. 
