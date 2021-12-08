@@ -61,7 +61,7 @@ const Discussion = () => {
   const [prevPinIndex, setPrevPinIndex] = useState(0);
 
   const [startTime, setStartTime] = useState(Date.now());
-  const recommendedTime = 13 * 60;
+  const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
 
