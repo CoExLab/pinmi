@@ -306,7 +306,7 @@ const Refresher = () => {
             exclusive
             onChange={handlePlayerMode}
           >
-            <SinglePlayerToggleButton size="small" value="multiplayer">
+            <SinglePlayerToggleButton size="small" value="multiplayer" onChange={handlePlayerMode}>
               Multiplayer
             </SinglePlayerToggleButton>
             <SinglePlayerToggleButton size="small" value="singleplayer">

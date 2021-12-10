@@ -4,7 +4,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 
 //context
 import { useSessionValue, usePlayerModeValue} from "../../../../context";
-import SinglePlayerVideoChat from '../../SinglePlayerComponents/SinglePlayerVideoChat.jsx';
+import SinglePlayerVideoChat from '../../SinglePlayerComponents/temp.jsx';
 import { useSelector } from 'react-redux';
 
 const Session = () => {

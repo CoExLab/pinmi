@@ -322,7 +322,7 @@ const SinglePlayerAudioReview = ({
         </Typography>
       ) : (
         <Typography variant="h6">
-          Review all pins with your peer, User Name...
+          Review Your Peer’s Pins and Give Comments
         </Typography>
       )}
       <ColorLibAudioPlayer

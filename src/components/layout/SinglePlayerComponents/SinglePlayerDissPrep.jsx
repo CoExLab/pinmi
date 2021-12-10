@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import SinglePlayerAudioReview from "./SinglePlayerAudioReview";
 import Transcription from "../../Transcription";
 import { firebase } from "../../../hooks/firebase";
-import { useSessionValue } from "../../../context";
+import { useSessionValue, useSinglePlayerPinsValue } from "../../../context";
 import Notetaking from "../../Notetaking";
 import SinglePlayerTranscript from "./SinglePlayerTranscript";
 import SinglePlayerNotetaking from "./SinglePlayerNotetaking";
@@ -16,6 +16,7 @@ const SinglePlayerDissPrep = ({
 }) => {
   // const [localTrans, setLocalTrans] = useState([]);
   const { sessionID } = useSessionValue();
+  const { singlePlayerPins } = useSinglePlayerPinsValue();
   // // fetch trans data here
   // const fetchTranscript = async () => {
   //   const docRef = await firebase
@@ -67,8 +68,12 @@ const SinglePlayerDissPrep = ({
         setPrevPinIndex={setPrevPinIndex}
         // transcript={localTrans}
       />
-      {/* <Transcription /> */}
-      <SinglePlayerTranscript />
+      <SinglePlayerTranscript
+        selectedIndex={
+          singlePlayerPins[curPinIndex] &&
+          singlePlayerPins[curPinIndex].transcriptindex
+        }
+      />
       <SinglePlayerNotetaking
         curPinIndex={curPinIndex}
         setCurPinIndex={setCurPinIndex}
