@@ -34,15 +34,25 @@ function getStepContent(step) {
 
 function getSPStepContent(step) {
   switch (step) {
+    // case 0:
+    //   return <Refresher />;
+    // case 1:
+    //   return <SPPracticeSession />;
+    // case 2:
+    //   return <SPDisscussionPrep />;
+    // case 3:
+    //   return <SPDiscussion />;
+    // case 4:
+    //   return <SelfReflection />;
+    // default:
+    //   return <div>Unknown</div>;
     case 0:
-      return <Refresher />;
-    case 1:
       return <SPPracticeSession />;
+    case 1:
+      return<SPDisscussionPrep />;
     case 2:
-      return <SPDisscussionPrep />;
-    case 3:
       return <SPDiscussion />;
-    case 4:
+    case 3:
       return <SelfReflection />;
     default:
       return <div>Unknown</div>;
@@ -52,7 +62,8 @@ function getSPStepContent(step) {
 const Modules = () => {
   const { sessionID } = useSessionValue();
   const { curActiveStep } = useActiveStepValue();
-  const { playerMode } = usePlayerModeValue();
+  // const { playerMode } = usePlayerModeValue();
+  const playerMode = "singleplayer";
   const { pins } = usePins();
 
   return (

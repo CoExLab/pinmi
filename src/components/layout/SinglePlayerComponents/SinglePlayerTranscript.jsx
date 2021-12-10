@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   textField_font: theme.typography.body2,
 }));
 
-const SinglePlayerTranscript = () => {
+const SinglePlayerTranscript = ({ selectedIndex }) => {
   const classes = useStyles();
 
   const [localTrans, setLocalTrans] = useState([]);
@@ -77,25 +77,29 @@ const SinglePlayerTranscript = () => {
   };
 
   const renderTranscript = () => {
-    return localTrans && localTrans.map((item) => (
-      <div style={{ margin: "8px 0px" }}>
-        <ColorLibTextField
-          label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
-          fullWidth
-          variant="outlined"
-          multiline
-          margin="dense"
-          // size="small"
-          value={getText(item)}
-          InputProps={{
-            readOnly: true,
-            classes: {
-              input: classes.textField_font,
-            },
-          }}
-        />
-      </div>
-    ));
+    return (
+      localTrans &&
+      localTrans.map((item, index) => (
+        <div style={{ margin: "8px 0px" }}>
+          <ColorLibTextField
+            label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
+            fullWidth
+            variant="outlined"
+            multiline
+            margin="dense"
+            focused={index == selectedIndex}
+            // size="small"
+            value={getText(item)}
+            InputProps={{
+              readOnly: true,
+              classes: {
+                input: classes.textField_font,
+              },
+            }}
+          />
+        </div>
+      ))
+    );
   };
   console.log(localTrans);
 

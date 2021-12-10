@@ -91,7 +91,6 @@ const SPCollaboration = ({
     useActiveStepValue();
   const { singlePlayerSessionID } = useSinglePlayerSessionValue();
   const { singlePlayerPins } = useSinglePlayerPinsValue();
-
   const [peerPins, setPeerPins] = useState([]);
 
   useEffect(() => {
@@ -242,11 +241,18 @@ const SPCollaboration = ({
       </Container>
       <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={2} className={classes.grid}>
-          {/* <Transcription /> */}
-          <SinglePlayerTranscript />
+          <SinglePlayerTranscript
+            selectedIndex={
+              singlePlayerPins[curPinIndex] &&
+              singlePlayerPins[curPinIndex].transcriptindex
+            }
+          />
           <Grid item xs={8} className={classes.grid}>
-            <SinglePlayerComment />
-            <Grid container spacing={2} style={{ height: "80vh", overflow: "scroll" }}>
+            <Grid
+              container
+              spacing={2}
+              style={{ height: "80vh", overflow: "scroll" }}
+            >
               <SinglePlayerNotesComparison
                 curPinIndex={curPinIndex}
                 setCurPinIndex={setCurPinIndex}

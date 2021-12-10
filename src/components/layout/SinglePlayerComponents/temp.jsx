@@ -1,7 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
+
+import pinningClick from "../../../other/tutorial/pinning-click.png";
+import videoPlay from "../../../other/tutorial/video-play.png";
+
+import ColorLibButton, {
+  ColorLibNextButton,
+  ColorLibCallEndButton,
+} from "../ColorLibComponents/ColorLibButton";
+import ColorLibPaper from "../ColorLibComponents/ColorLibPaper";
+
+import "../../VideoChatComponent.scss";
+
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import {
+  Typography,
+  Tooltip,
+  Button,
+  LinearProgress,
+  Box,
+  Popper,
+} from "@material-ui/core";
 import { Icon, Fab } from "@material-ui/core";
 import pin from "../../../other/pin.svg";
 import useSpeechToText from "../../transcript";
@@ -10,12 +29,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-
-import {
-  ColorLibNextButton,
-  ColorLibCallEndButton,
-} from "../ColorLibComponents/ColorLibButton";
-
 import { baseURL } from "../../constants";
 
 import {
@@ -29,6 +42,8 @@ import { firebase } from "../../../hooks/firebase";
 import ReactPlayer from "react-player";
 import { transcriptArr } from "../SinglePlayerModules/config";
 import "../../VideoChatComponent.scss";
+
+import { formatTime } from "../../../helper/index";
 
 const useStyles = makeStyles((theme) => ({
   imageIcon: {
@@ -44,32 +59,94 @@ const useStyles = makeStyles((theme) => ({
   "& > * + *": {
     marginLeft: theme.spacing(5),
   },
+  dialog: {
+    "& .MuiDialogContentText-root": {
+      color: theme.palette.gray.dark,
+      display: "flex",
+      "& video": {
+        borderRadius: "5px",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "black",
+      },
+      "& .MuiFab-root": {
+        left: "calc(50% - 50px)",
+        width: "45px",
+        height: "45px",
+        backgroundColor: "white",
+        border: "solid 1px " + theme.palette.teal.light,
+        "& .MuiSvgIcon-root": {
+          fill: theme.palette.teal.dark,
+        },
+        "&:last-child": {
+          marginLeft: "10px",
+        },
+      },
+    },
+  },
 }));
 
 function SinglePlayerVideoChat(props) {
+  const pinBtn = useRef(null);
+
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
     useActiveStepValue();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const [audioPlaying, setAudioPlaying] = useState(false);
-  const [audioProgress, setAudioProgress] = useState(0);
+  //get setter for media duration
+  const session = useSelector((state) => state.session);
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
+  // fetch raw pin data here
+  const { pins } = usePinsValue();
+  //get user informatoin
+  const user = useSelector((state) => state.user);
+  //video player
   const player = useRef(null);
+  const [audioProgress, setAudioProgress] = useState(0);
   const handleProgress = (state) => {
     setAudioProgress(Math.round(state.playedSeconds));
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
+  const [openWarning, setOpenWarning] = useState(false);
+
+  const [popperContentIndex, setPopperContentIndex] = useState(0);
+  const [popperOpen, setPopperOpen] = useState(false);
+
+  const recommendedTime = 10 * 60;
+  const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
+
+  const getPopperContent = (index) => {
+    switch (index) {
+      case 0:
+        return "Don’t forget to pin at least twice";
+      case 1:
+        const thisPin = singlePlayerPins[singlePlayerPins.length - 1];
+        const pinTime = thisPin.pinTime;
+        const pinCreatorMode = thisPin.creatorMode;
+        console.log(pinCreatorMode, user.userMode);
+        return `Successfully pinned at ${formatTime(pinTime)}`;
+      default:
+        return "Invalid Pin Content.";
+    }
   };
 
   const handlePinButtonClick = () => {
+    if (videoCallTimer === 0) {
+      return;
+    }
+    if (popperOpen) {
+      setPopperOpen(false);
+      return;
+    }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
     console.log("added a pin");
     addPin(pinTime);
+    // ui on
+    setPinBtnDisabled(true);
+    setPinBtnColor("primary");
+    // ui off
+    setTimeout(() => {
+      setPinBtnDisabled(false);
+    }, 800);
   };
-
-  const openPopper = Boolean(anchorEl);
-  const id = openPopper ? "simple-popper" : undefined;
 
   const [open, setOpen] = useState(true);
 
@@ -82,10 +159,6 @@ function SinglePlayerVideoChat(props) {
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioSubscribed, setIsAudioSubscribed] = useState(true);
-  const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
@@ -112,18 +185,21 @@ function SinglePlayerVideoChat(props) {
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
+  // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
+  // const
+
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
+    console.log("STREAM SUBSCRIBED FROM SELECTOR UPDATED");
   }, [isSubscribed]);
 
   //get setter for media duration
-  const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+  // const { sessionID, setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
-  const { pins } = usePinsValue();
+  // const { pins } = usePinsValue();
 
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   const { singlePlayerSessionID } = useSinglePlayerSessionValue();
-
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
 
@@ -170,21 +246,14 @@ function SinglePlayerVideoChat(props) {
       })
     );
   };
-
   const addPin = async (curTime) => {
-    // ui on
-    setPinBtnDisabled(true);
-    setPinBtnColor("primary");
-    // ui off
-    setTimeout(() => {
-      setPinBtnDisabled(false);
-    }, 800);
+    if (
+      singlePlayerPins.length > 0 &&
+      singlePlayerPins[singlePlayerPins.length - 1].pinTime == curTime
+    ) {
+      return;
+    }
 
-    // if(curTime > addPinDelayTime){
-    //   curTime -= addPinDelayTime;
-    // } else{
-    //   curTime = addPinDelayTime;
-    // }
     const ts = getTimeStamp(transcriptArr);
     const TSIndex = binarySearch(ts, 0, ts.length, curTime);
     console.log(TSIndex);
@@ -209,14 +278,21 @@ function SinglePlayerVideoChat(props) {
       transcriptindex: TSIndex,
     });
 
+    setPopperContentIndex(1);
+    setPopperOpen(true);
+    setTimeout(() => {
+      setPopperOpen(false);
+    }, 3000);
+
     console.log("Finished pushing");
   };
 
   const addTranscript = async () => {
+    //write the transcript to the database
     await firebase
       .firestore()
       .collection("sessions")
-      .doc(sessionID)
+      .doc(session.sessionID)
       .update({
         transcript: results,
       })
@@ -233,7 +309,6 @@ function SinglePlayerVideoChat(props) {
     interimResult,
     isRecording,
     results,
-    resultsArr,
     startSpeechToText,
     stopSpeechToText,
   } = useSpeechToText({
@@ -264,28 +339,44 @@ function SinglePlayerVideoChat(props) {
   const renderToolbar = () => {
     return (
       <>
-        <ReactPlayer
-          playing={isInterviewStarted}
-          ref={player}
-          url="https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0"
-          width="100%"
-          height="100%"
-          onProgress={handleProgress}
-        />
+        {isInterviewStarted && (
+          <ReactPlayer
+            playing={isInterviewStarted}
+            ref={player}
+            url="https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0"
+            width="100%"
+            height="100%"
+            onProgress={handleProgress}
+          />
+        )}
         <Fab
-          aria-describedby={id}
+          aria-describedby={"addPin"}
+          aria-label="addPin"
           type="button"
           color="default"
-          aria-label="addPin"
           className="pin-Btn"
           onClick={() => {
             handlePinButtonClick();
           }}
+          ref={pinBtn}
         >
           <Icon classes={{ root: classes.iconRoot }}>
             <img className={classes.imageIcon} src={pin} alt="" />
           </Icon>
         </Fab>
+        <Popper
+          open={popperOpen}
+          anchorEl={pinBtn.current}
+          placement="right"
+          style={{ zIndex: 3 }}
+          transition
+        >
+          <ColorLibPaper elevation={2}>
+            <Typography variant="body2">
+              {getPopperContent(popperContentIndex)}
+            </Typography>
+          </ColorLibPaper>
+        </Popper>
       </>
     );
   };
@@ -305,34 +396,6 @@ function SinglePlayerVideoChat(props) {
     } else {
       var roomAddOn = "";
     }
-    console.log(singlePlayerSessionID);
-    // await firebase
-    //   .firestore()
-    //   .collection("singleplayer_media")
-    //   .get()
-    //   .then((doc) => {
-    //     const SPSessionArr = [];
-    //     doc.forEach((d) => {
-    //       SPSessionArr.push(d.data());
-    //     });
-    //     SPSessionArr.sort((a, b) => (a.view_count > b.view_count && 1) || -1);
-    //     setSinglePlayerSessionID(SPSessionArr[0]);
-    //   });
-
-    //   await firebase
-    //   .firestore()
-    //   .collection("singleplayer_media")
-    //   .doc()
-    //   .get()
-    //   .then((doc) => {
-    //     const SPSessionArr = [];
-    //     doc.forEach((d) => {
-    //       SPSessionArr.push(d.data());
-    //     });
-    //     SPSessionArr.sort((a, b) => (a.view_count > b.view_count && 1) || -1);
-    //     setSinglePlayerSessionID(SPSessionArr[0]);
-    //   });
-
     await fetch(baseURL + "room/" + room + roomAddOn)
       .then(function (res) {
         return res.json();
@@ -353,6 +416,21 @@ function SinglePlayerVideoChat(props) {
           console.log("start recording");
         }
         //pass in videoCallTimer so we can create time stamps
+        setPopperOpen(true);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 5000);
+        setTimeout(() => {
+          setPopperOpen(true);
+          setPopperContentIndex(0);
+        }, 300000);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 305000);
       })
       .catch((error) => {
         console.log(error);
@@ -361,164 +439,123 @@ function SinglePlayerVideoChat(props) {
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
-    if (props.isArchiveHost) {
-      //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      //props.stopRec();
-      console.log("stop recording");
+    addTranscript();
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
+    //sort the array
+    singlePlayerPins.sort(function (a, b) {
+      return a.pinTime - b.pinTime;
+    });
+
+    console.log(singlePlayerPins);
+    if (singlePlayerPins[0]) {
+      console.log(singlePlayerPins[0]);
     }
-
-    //this fetches the archive url
-    await saveArchiveURL()
-      .then(() => {
-        stopSpeechToText();
-        addTranscript();
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleStartArchive = async () => {
-    //create json to send as the body for post
-    const data = {
-      sessionId: sessionId,
-      resolution: "640x480",
-      outputMode: "composed",
-      hasVideo: "false",
-    };
-    //send post request to server
-    await fetch(baseURL + "archive/start", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      //get response from the post request,
-      //and turn it into json so you can access data from it
-      .then((response) => response.json())
-      .then((archiveData) => {
-        console.log(archiveData);
-        setArchiveData(archiveData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleStopArchive = async () => {
-    var url = baseURL + "archive/" + archiveData.id + "/stop";
-    await fetch(url, {
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-      });
-  };
-
-  const getLastestArchive = async () => {
-    let url = "https://pin-mi-node-server.herokuapp.com/" + "archive";
-    await fetch(url)
-      .then((res) => {
-        return res.json();
-        //return archives[archives.length - 1];
-      })
-      .then((arc) => {
-        let latestArc = arc[arc.length - 1];
-        console.log(latestArc.duration);
-        console.log(latestArc.url);
-        setMediaDuration(latestArc.duration);
-        setMediaUrl(latestArc.url);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  //if status is available and if timing checks out, and if session id is correct
-  const saveArchiveURL = async () => {
-    if (props.isArchiveHost) {
-      let url = baseURL + "archive/" + archiveData.id;
-      await fetch(url)
-        .then((res) => res.json()) //return the res data as a json
-        .then((res) => {
-          setMediaDuration(res.duration);
-          setMediaUrl(res.url);
-          console.log("Media Duration:", res.duration);
-          console.log("Media URL:", res.url);
-
-          setDBMediaURL(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    } else {
-      //getLastestArchive()
-    }
-  };
-
-  const setDBMediaURL = async (res) => {
-    await firebase
-      .firestore()
-      .collection("sessions")
-      .doc(sessionID)
-      .update({
-        media_url: res.url,
-        duration: res.duration,
-      })
-      .then(() => console.log("MediaURL Added to DB"))
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   return (
     <>
-      {loadingStatus && (
-        <Box pt={10}>
-          <LinearProgress />
-        </Box>
-      )}
+      <Box pt={10}>{loadingStatus ? <LinearProgress /> : null}</Box>
       <Dialog
+        className={classes.dialog}
+        maxWidth="sm"
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"What is pinning for? "}
-        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <p>Click on the pin to create time marks of</p>
-            <ul>
-              <li>situations where you struggled to use MI</li>
-              <li>instances of effective MI use</li>
-            </ul>
-            <p>
-              Your peer will also be pinning, and you will review and discuss
-              all pins after the client session.
-            </p>
+            {openWarning ? (
+              <div style={{ marginRight: "20px", display: "flex" }}>
+                <div>
+                  <img
+                    src={videoPlay}
+                    alt={"Icon of clicking the pin"}
+                    style={{
+                      margin: "30px 50px 10px 50px",
+                      height: "80px",
+                    }}
+                  />
+                </div>
+                <div>
+                  <Typography variant="h4">Warning</Typography>
+                  <Typography variant="body2">
+                    <p>
+                      You will not be able to pause once you started the video
+                      in order to provide a more realistic interviewing
+                      experience for you.
+                    </p>
+                  </Typography>
+                  <div style={{ marginTop: "30px" }}>
+                    <ColorLibNextButton
+                      variant="contained"
+                      size="medium"
+                      onClick={() =>
+                        handleStartChat(
+                          setApiKey,
+                          setSessionId,
+                          setToken,
+                          baseURL
+                        )
+                      }
+                      autoFocus
+                    >
+                      Start Video
+                    </ColorLibNextButton>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginRight: "20px" }}>
+                <img
+                  src={pinningClick}
+                  alt={"Icon of clicking the pin"}
+                  style={{
+                    margin: "20px 0px 10px 0px",
+                    height: "80px",
+                  }}
+                />
+                <Typography variant="h4">What is pinning for?</Typography>
+                <Typography variant="body2">
+                  <p>Click on the pin to create time marks of</p>
+                  <ul style={{ fontWeight: 700 }}>
+                    <li>situations where you struggled to use MI</li>
+                    <li>instances of effective MI use</li>
+                  </ul>
+                  <p>
+                    Your peer will also be pinning, and you will review and
+                    discuss all pins after the client session.
+                  </p>
+                </Typography>
+                <div style={{ marginTop: "20px" }}>
+                  <ColorLibNextButton
+                    variant="contained"
+                    size="medium"
+                    onClick={() => {
+                      setOpenWarning(true);
+                      return;
+                    }}
+                    autoFocus
+                  >
+                    Next
+                  </ColorLibNextButton>
+                </div>
+              </div>
+            )}
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <ColorLibNextButton
-            variant="contained"
-            size="medium"
-            onClick={() =>
-              handleStartChat(setApiKey, setSessionId, setToken, baseURL)
-            }
-            autoFocus
-          >
-            Start Video
-          </ColorLibNextButton>
-        </DialogActions>
       </Dialog>
 
       <div className="video-container">
+        <div
+          id="subscriber"
+          className={`${
+            isStreamSubscribed ? "main-video" : "additional-video"
+          }`}
+        >
+          {isStreamSubscribed && renderToolbar()}
+        </div>
         <div
           id="publisher"
           className={`${
@@ -528,6 +565,7 @@ function SinglePlayerVideoChat(props) {
           {!isStreamSubscribed && renderToolbar()}
         </div>
       </div>
+
       <div className="actions-btns">
         <ColorLibCallEndButton
           variant="contained"

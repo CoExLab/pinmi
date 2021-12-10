@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import {
   ActiveStepProvider,
   PinsProvider,
+  PlayerModeProvider,
   SessionProvider,
   SinglePlayerPinsProvider,
   SinglePlayerSessionProvider,
@@ -106,14 +107,20 @@ const App = () => {
               <Route exact path="/" component={Landing} />
               <SessionProvider>
                 <ActiveStepProvider>
-                  <SinglePlayerPinsProvider>
-                    <SinglePlayerSessionProvider>
-                      <PinsProvider>
-                        <Route exact path="/test" component={CORsTestButtons} />
-                        <Route exact path="/content" component={Content} />
-                      </PinsProvider>
-                    </SinglePlayerSessionProvider>
-                  </SinglePlayerPinsProvider>
+                  <PlayerModeProvider>
+                    <SinglePlayerPinsProvider>
+                      <SinglePlayerSessionProvider>
+                        <PinsProvider>
+                          <Route
+                            exact
+                            path="/test"
+                            component={CORsTestButtons}
+                          />
+                          <Route exact path="/content" component={Content} />
+                        </PinsProvider>
+                      </SinglePlayerSessionProvider>
+                    </SinglePlayerPinsProvider>
+                  </PlayerModeProvider>
                 </ActiveStepProvider>
               </SessionProvider>
               <Route exact path="/completion" component={Completion} />

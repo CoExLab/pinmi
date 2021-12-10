@@ -256,7 +256,7 @@ const SinglePlayerNotesComparison = ({
 
   return (
     <>
-      <Grid item xs className={classes.grid}>
+      <Grid item xs className={classes.grid} >
         <ColorLibPaper elevation={2}>
           <Typography variant="h4" style={{ textTransform: "capitalize" }}>
             Your Pin Notes
@@ -283,10 +283,6 @@ const SinglePlayerNotesComparison = ({
             margin="normal"
             value={curNoteInfo}
           />
-          <Box fontStyle="italic" marginTop="16px">
-            <Typography variant="h3">Talk with your peer about:</Typography>
-          </Box>
-
           <Box textAlign="left">
             <Typography>
               What is your perspective of what happened at this pin?
@@ -424,10 +420,6 @@ const SinglePlayerNotesComparison = ({
                 margin="normal"
                 value={peerNoteInfo}
               />
-              <Box fontStyle="italic" marginTop="16px">
-                <Typography variant="h3">Talk with your peer about:</Typography>
-              </Box>
-
               <Box textAlign="left">
                 <Typography>
                   What is your perspective of what happened at this pin?
