@@ -11,10 +11,9 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Icon, Fab, Popper, Fade } from '@material-ui/core';
+import { Icon, Fab, Popper } from '@material-ui/core';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from "@material-ui/core";
 import pin from '../other/pin.svg';
-import useSpeechToText from './transcript';
 
 import Webcam from "react-webcam";
 
@@ -33,6 +32,11 @@ import {
   stopStreaming,
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
+
+import {
+  startSpeechToTextTest,
+  stopSpeechToTextTest
+} from "./symblAITranscription";
 
 import { baseURL, usingS3 } from './constants';
 
@@ -163,9 +167,6 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
-  const isPublishing = useSelector(
-    (state) => state.videoChat.isStreamSubscribed
-  );
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
@@ -294,7 +295,7 @@ function VideoChatComponent(props) {
     console.log("Finished pin creation");
   }
 
-  const addTranscript = async () => {
+  const addTranscript = async (results) => {
     //write the transcript to the database
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       transcript: results
@@ -306,39 +307,6 @@ function VideoChatComponent(props) {
         console.error("Error writing document: ", error);
       });
   }
-
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
-  }
-
 
   const renderToolbar = () => {
     return (
@@ -520,7 +488,6 @@ function VideoChatComponent(props) {
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
-        // setVideoCallTimer(Date.now());
         // Disable audio / video buttons as set before
         if (!isAudioEnabled) {
           onToggleAudio(false);
@@ -532,8 +499,6 @@ function VideoChatComponent(props) {
           //props.startRec();
           console.log("start recording");
         }
-        //pass in videoCallTimer so we can create time stamps
-        startSpeechToText();
       })
       .catch((error) => { console.log(error) });
   }
@@ -544,8 +509,8 @@ function VideoChatComponent(props) {
     //this fetches the archive url
     await saveArchiveURL()
       .then(() => {
-        stopSpeechToText();
-        addTranscript();
+        const results = stopSpeechToTextTest();
+        addTranscript(results);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((error) => { console.log(error) });
@@ -569,6 +534,7 @@ function VideoChatComponent(props) {
       outputMode: 'composed',
       hasVideo: 'false',
     };
+
     //send post request to server
     await fetch(baseURL + 'archive/start', {
       method: 'POST',
@@ -582,6 +548,11 @@ function VideoChatComponent(props) {
       .then(response => response.json())
       .then((archiveData) => {
         setVideoCallTimer(Date.now());
+        console.log(Date.now());
+
+        // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
+        startSpeechToTextTest(Date.now());
+
         setPopperOpen(true);
         setTimeout(() => {
           if (popperContentIndex === 0) {
