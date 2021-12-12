@@ -208,7 +208,7 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             player.current.seekTo(currentTime);
         }
         // If the audio progress is near a pin, set the pin index to it.
-        const newIndex = pins.findIndex((elem) => Math.abs(elem.pinTime - currentTime) <= 1);
+        const newIndex = pins.findIndex((elem) => Math.abs(elem.pinTime - currentTime) <= Math.max(1, audioLen/50));
         if (newIndex !== -1) {
             setPrevPinIndex(curPinIndex);
             setCurPinIndex(newIndex);
