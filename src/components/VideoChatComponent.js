@@ -548,6 +548,7 @@ function VideoChatComponent(props) {
       .then(response => response.json())
       .then((archiveData) => {
         setVideoCallTimer(Date.now());
+        console.log(Date.now());
 
         // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
         startSpeechToTextTest(Date.now());
