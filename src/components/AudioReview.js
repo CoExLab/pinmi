@@ -51,16 +51,19 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const [audioPlaying, setAudioPlaying] = useState(false);
     
     const [loadURL, setLoadURL] = useState(false)
+
     useEffect(() => {
         if (AudioProgressStartingValue(pins) == 0){
             setAudioProgress(0);
+            console.log("Audio Progress set to: " + 0);
         }
         else{
             const time = pins[curPinIndex].pinTime;
-            setAudioProgress(Math.max(0, time - 10));
+            setAudioProgress(Math.max(0, time));
+            console.log("Audio Progress set to: " + Math.max(0, time));
         }
 
-        console.log("Audio from AudioReview useEffect" + audio)
+        console.log("Audio from AudioReview useEffect " + audio)
     }, [curPinIndex]);
     
     //list of all pin times
@@ -204,18 +207,11 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         if (player.current != null) {
             player.current.seekTo(currentTime);
         }
-        //if the audio progress hits the next pin, update the current pin index
-        const newIndex = pins.findIndex((elem) => elem.pinTime > currentTime);
-        console.log("New Index: " + newIndex);
-        if(newIndex == -1) {
+        // If the audio progress is near a pin, set the pin index to it.
+        const newIndex = pins.findIndex((elem) => Math.abs(elem.pinTime - currentTime) <= Math.max(1, audioLen/50));
+        if (newIndex !== -1) {
             setPrevPinIndex(curPinIndex);
-            setCurPinIndex(pins.length - 1);
-        } else if (newIndex == 0) {
-            setPrevPinIndex(curPinIndex);
-            setCurPinIndex(0);
-        } else {
-            setPrevPinIndex(curPinIndex);
-            setCurPinIndex(newIndex - 1);
+            setCurPinIndex(newIndex);
         }
     }
 
