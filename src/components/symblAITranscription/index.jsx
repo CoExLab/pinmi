@@ -1,8 +1,45 @@
-let ws;
+let ws, accessToken;
 let results = [];
 
+async function getAccessToken() {
+    const url = "https://api.symbl.ai/oauth2/token:generate";
+    const appId = "774b314253685171587331614f4d616e55395a656a38796d4b654a336c766f7a";
+    const appSecret = "49544f6f39577273566353333447762d5f64496d4a52316855653852584b7a4551314643476f6f585948344e317849535f7237517a777444432d70662d514655";
+    const request = require('request');
+
+    const authOptions = {
+        method: 'post',
+        url: url,
+        body: {
+            type: "application",
+            appId: appId,
+            appSecret: appSecret
+        },
+        json: true
+    };
+
+    accessToken = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: 'application',
+            appId: appId,
+            appSecret: appSecret
+        })
+    }).then(res => res.json())
+    .then(data => data.accessToken)
+}
+
 export async function startSpeechToTextTest(startTime) {
-    const accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFVUTRNemhDUVVWQk1rTkJNemszUTBNMlFVVTRRekkyUmpWQ056VTJRelUxUTBVeE5EZzFNUSJ9.eyJodHRwczovL3BsYXRmb3JtLnN5bWJsLmFpL3VzZXJJZCI6IjUzNTQzNjI3NDMyOTE5MDQiLCJpc3MiOiJodHRwczovL2RpcmVjdC1wbGF0Zm9ybS5hdXRoMC5jb20vIiwic3ViIjoid0sxQlNoUXFYczFhT01hblU5WmVqOHltS2VKM2x2b3pAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vcGxhdGZvcm0ucmFtbWVyLmFpIiwiaWF0IjoxNjM5Mjk1NzY1LCJleHAiOjE2MzkzODIxNjUsImF6cCI6IndLMUJTaFFxWHMxYU9NYW5VOVplajh5bUtlSjNsdm96IiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.CSU3hy5lxaBcfDcNNKBuC2nJsFAIVp_MOXWlg4weYtH6K5mexHKVKOobh9njs2EKEVnG-plkK4jeb9xmdaQ20BnGbeJDLOW2zaujq0ru2vzVIFDc9JtmTYgaisrGS75QNM5mN_duPw1Hm_H72ymAMERo5hYDWUqKZq1J4WR6kYTMnwtYz-fVFjKObDoNP64YT9bUNC6Tu4T6C6xrCvvvy96Y3pEcYpg3VQBG0mf3iO4OeYzDhFLgCT4wK4TDCj3zN-zB_Lk1NK00M_1WttP0pFJm19Cr2_9qIT06iuLhwZ6hFjIXzftNoxQK_0yzYaKgbGIW6gDwcG5MBkrFmaqjEg';
+    await getAccessToken();
+    if (!accessToken) {
+        console.log("Access Token can't be generated");
+    } else {
+        console.log("Symbl AI access token generated.");
+    }
     const uniqueMeetingId = btoa("user@example.com");
     const symblEndpoint = `wss://api.symbl.ai/v1/realtime/insights/${uniqueMeetingId}?access_token=${accessToken}`;
 
@@ -13,7 +50,7 @@ export async function startSpeechToTextTest(startTime) {
         if (data.type === 'message_response') {
             for (let message of data.messages) {
                 const transcript = `${Date.parse(message.duration.startTime) - startTime}-${message.payload.content}`;
-                console.log(transcript);
+                // console.log(transcript);
                 results.push(transcript);
             }
         }
@@ -45,6 +82,7 @@ export async function startSpeechToTextTest(startTime) {
                 name: 'Example Sample',
             }
         }));
+        console.log("Symbl AI API websocket connected.")
     };
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -78,6 +116,6 @@ export function stopSpeechToTextTest() {
     ws.send(JSON.stringify({
         "type": "stop_request"
     }));
-    console.log(results);
+    console.log("Transcription:", results);
     return results;
 }
