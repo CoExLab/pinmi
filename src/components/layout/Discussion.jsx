@@ -135,7 +135,7 @@ const Discussion = () => {
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
               <Typography variant='body2'>
-                Introduce yourself to your peer, a social worker at UPMC also learning MI.
+                Introduce yourself to your peer, a nurse at Highmark also learning MI.
               </Typography>
               <Typography variant='body2'>
                 How did today’s mock client session go?

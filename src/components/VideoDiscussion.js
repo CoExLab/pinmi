@@ -12,7 +12,6 @@ import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
 import { Icon, Fab } from '@material-ui/core';
 import pin from '../other/pin.svg';
-import useSpeechToText from './transcript';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -182,49 +181,8 @@ function VideoChatComponent(props) {
     console.log(curTime);
   }
 
-  const addTranscript = async () => {
-    await firebase.firestore().collection("sessions").doc(sessionId).update({
-      transcript: results
-    })
-      .then(() => {
-        console.log("Transcript successfully written!");
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
-      });
-  }
-
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
-  }
+ 
+  
 
   const renderToolbar = () => {
     return (
@@ -379,7 +337,6 @@ How did today’s mock client session go?
           console.log("start recording");
         }
         //pass in videoCallTimer so we can create time stamps
-        startSpeechToText();
       })
       .catch((error) => { console.log(error) });
   }
@@ -395,8 +352,6 @@ How did today’s mock client session go?
     //this fetches the archive url
     await saveArchiveURL()
       .then(() => {
-        stopSpeechToText();
-        addTranscript();
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((error) => { console.log(error) });
