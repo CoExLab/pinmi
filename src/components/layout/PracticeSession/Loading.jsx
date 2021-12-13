@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useActiveStepValue, usePinsValue } from "../../../context";
 import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -13,12 +13,22 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function Loading() {
+export default function Loading(props) {
     //require isReady and finishLoading functions, and we call it by props.isReady
     //isReady: send a get request - ENTEREDROOM(vonage api sessionid)
     //once isReady returns true, run finishLoading
 
     const classes = useStyles();
+    const[ready, setReady] = useState(false);
+
+    useEffect( async () => {
+        await props.finishLoading();
+    }, [ready]);
+
+    useEffect(async () => {
+        await props.isReady()
+        .then(res => setReady(res));
+    }, [])
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>

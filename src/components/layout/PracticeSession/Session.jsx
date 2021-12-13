@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import VideoChatComponent from "../../VideoChatComponent.js";
+import Loading from "./Loading";
+import { baseURL, usingS3 } from '../../constants';
+import { firebase } from '../../../hooks/firebase';
 
 //context
-import { useSessionValue } from "../../../context";
+import { useSessionValue, usePinsValue, useActiveStepValue } from "../../../context";
 
 const Session = () => {
     const [room, setRoom] = useState("hellooo");
+    const [nextPage, setNextPage] = useState(false);
+    const { pins } = usePinsValue();
+    const {setActiveStep} = useActiveStepValue();
+    const session = useSelector(state => state.session);
 
     // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
     // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
@@ -20,7 +27,7 @@ const Session = () => {
 
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
-    const { setMediaUrl } = useSessionValue();
+    const { setMediaUrl, vonageSessionID } = useSessionValue();
 
     // const addMediaUrlDB = async (mediaUrl) => {
     //     await firebase.firestore().collection("URL").doc("media").set({
@@ -62,10 +69,36 @@ const Session = () => {
     //     window.scrollTo(0,0);
     // }, [mediaBlobUrl]);
 
+    const loadPins = async () => {
+        pins.splice(0, pins.length);
+        const snapshot = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get();
+        snapshot.docs.map(doc => {
+          pins.append(doc.data());
+        })
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+
+    var timeout = 1;
+    
+    const pingServer = async () => {
+        await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
+        .then((res) => {
+            return res.json();
+        })
+        .then((data) => {
+            if(JSON.parse(data).roomExited) {
+                return true;
+            } else {
+                timeout = timeout * 2;
+                return setTimeout(pingServer, timeout);
+            }
+        })
+    }
     //When we pass callee into is archive host, 
-    return (
+  return (  
         <div>
-            <VideoChatComponent isArchiveHost={checkIsArchiveHost("callee")} />
+            {!nextPage ? <VideoChatComponent setNextPage={setNextPage} isArchiveHost={checkIsArchiveHost("callee")} />
+            : <Loading isReady={pingServer} finishLoading={loadPins}/>}
         </div>
     );
 }
