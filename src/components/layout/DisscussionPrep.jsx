@@ -94,10 +94,18 @@ const DisscussionPrep = () => {
     if(finishedUpdates) {
       //save all pins to database and move to next module
       pins.map((elem, id) => savePin(id));
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  
+      //return Loading module
     }
   }, [finishedUpdates]);
+
+  const loadPins = async () => {
+    pins.splice(0, pins.length);
+    const snapshot = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get();
+    snapshot.docs.map(doc => {
+      pins.append(doc.data());
+    })
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {

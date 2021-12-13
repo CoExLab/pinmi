@@ -511,7 +511,9 @@ function VideoChatComponent(props) {
       .then(() => {
         const results = stopSpeechToTextTest();
         addTranscript(results);
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        //call to the parent to move to Loading Page
+        props.setNextPage(true); 
       })
       .catch((error) => { console.log(error) });
 
