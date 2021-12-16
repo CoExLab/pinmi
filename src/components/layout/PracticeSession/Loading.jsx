@@ -25,8 +25,8 @@ export default function Loading(props) {
         await props.finishLoading();
     }, [ready]);
 
-    useEffect(async () => {
-        await props.isReady()
+    useEffect(() => {
+        props.isReady()
         .then(res => setReady(res));
     }, [])
 

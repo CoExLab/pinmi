@@ -171,9 +171,10 @@ function VideoChatComponent(props) {
   // needed vonage info
   const [room, setRoom] = useState("hello");
   //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
-  const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  const [token, setToken] = useState("YOUR_TOKEN");
+  //const [apiKey, setApiKey] = useState("YOUR_API_KEY");
+  //const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
+  //const [token, setToken] = useState("YOUR_TOKEN");
+  const {vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey} = useSessionValue();
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -197,7 +198,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     isInterviewStarted
-      ? initializeSession(apiKey, sessionId, token)
+      ? initializeSession(apiKey, vonageSessionID, token)
       : stopStreaming();
   }, [isInterviewStarted]);
 
@@ -482,9 +483,9 @@ function VideoChatComponent(props) {
         setApiKey(res.apiKey);
         setSessionId(res.sessionId);
         setToken(res.token);
-
+        //tells the server that the user entered the room. 
+        enterRoom(user.userMode, res.sessionId);
       }).then(() => {
-
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
@@ -505,12 +506,15 @@ function VideoChatComponent(props) {
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
+    
+    //letting the server know that the user exited the room
+    exitRoom(user.userMode, vonageSessionID);
 
     //this fetches the archive url
     await saveArchiveURL()
       .then(() => {
-        const results = stopSpeechToTextTest();
-        addTranscript(results);
+        //const results = stopSpeechToTextTest();
+        //addTranscript(results);
         // setActiveStep((prevActiveStep) => prevActiveStep + 1);
         //call to the parent to move to Loading Page
         props.setNextPage(true); 
@@ -531,7 +535,7 @@ function VideoChatComponent(props) {
   const handleStartArchive = async () => {
     //create json to send as the body for post
     const data = {
-      sessionId: sessionId,
+      sessionId: vonageSessionID,
       resolution: '640x480',
       outputMode: 'composed',
       hasVideo: 'false',
@@ -579,6 +583,34 @@ function VideoChatComponent(props) {
     setButtonDis(true);
     setButtonDisStop(false);
   }
+
+  //this function sends a put request to the server
+  //to indicate that someone has entered the video room. 
+  //userMode is either "callee" or "caller", and 
+  const enterRoom = (userMode, sessionID) => {
+    
+    let url = baseURL + 'enteredRoom/' + userMode+"/"+sessionID;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+  }
+    //this function sends a put request to the server
+  //to indicate that someone has exited the video room and gone to the loading page.
+  //userMode is either "callee" or "caller", and 
+  const exitRoom = (userMode, sessionID) => {
+  
+    let url = baseURL + 'exitedRoom/' + userMode+"/"+sessionID;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+  }
+
 
   const setDBArchiveData = async (archiveData) => {
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
@@ -633,7 +665,7 @@ function VideoChatComponent(props) {
     if (props.isArchiveHost) {
       if (usingS3){
         var archiveID = archiveData.id;
-        var url = baseURL + 's3/' + archiveData.id;
+        var url = baseURL + 's3/' + archiveID;
         await fetch(url)
         .then(res => res.json())
         .then((res) => {
@@ -641,7 +673,7 @@ function VideoChatComponent(props) {
           console.log("archiveData: ", res.archiveData);
           setMediaUrl(res.url);
           setMediaDuration(res.duration); 
-          setDBMediaURL(res);
+          setDBMediaURL(res.url, res.duration);
         }).catch((e) => { console.log(e) });
       }
       else{
@@ -653,7 +685,6 @@ function VideoChatComponent(props) {
             setMediaUrl(res.url);
             console.log("Media Duration:", res.duration);
             console.log("Media URL:", res.url);
-
             setDBMediaURL(res);
           })
           .catch((e) => { console.log(e) });
@@ -666,10 +697,10 @@ function VideoChatComponent(props) {
     }
   }
 
-  const setDBMediaURL = async (res) => {
+  const setDBMediaURL = async (url, duration) => {
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
-      media_url: res.url,
-      duration: res.duration
+      media_url: url,
+      duration: duration
       // archiveID: archiveData
     })
       .then(() => console.log("MediaURL Added to DB"))
@@ -769,7 +800,7 @@ function VideoChatComponent(props) {
                   variant='contained'
                   size='medium'
                   onClick={
-                    () => handleStartChat(setApiKey, setSessionId, setToken, baseURL)
+                    () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
                   }
                   autoFocus
                 >

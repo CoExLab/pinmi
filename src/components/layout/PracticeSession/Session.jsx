@@ -10,11 +10,10 @@ import { firebase } from '../../../hooks/firebase';
 import { useSessionValue, usePinsValue, useActiveStepValue } from "../../../context";
 
 const Session = () => {
-    const [room, setRoom] = useState("hellooo");
     const [nextPage, setNextPage] = useState(false);
     const { pins } = usePinsValue();
-    const {setActiveStep} = useActiveStepValue();
     const session = useSelector(state => state.session);
+    const {setCurActiveStep} = useActiveStepValue();
 
     // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
     // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
@@ -69,18 +68,20 @@ const Session = () => {
     //     window.scrollTo(0,0);
     // }, [mediaBlobUrl]);
 
+    //loadPins is a function that grabs all pins in the db and saves them locally
     const loadPins = async () => {
         pins.splice(0, pins.length);
         const snapshot = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get();
         snapshot.docs.map(doc => {
-          pins.append(doc.data());
+          pins.push(doc.data());
         })
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setCurActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
     var timeout = 1;
     
     const pingServer = async () => {
+        console.log("pinging server with isRoomEmpty");
         await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
         .then((res) => {
             return res.json();
