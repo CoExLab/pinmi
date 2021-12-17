@@ -1,11 +1,6 @@
 import { Button, Box } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import SPCollaboration from "./SPCollaboration.jsx";
-import Collaboration from "../Collaboration.jsx";
-import VideoChatComponent from "../../VideoDiscussion.js";
-
-import VideoChatComponentSecond from "../../VideoDiscussionSecond.js";
-import { ColorLibNextButton } from "../ColorLibComponents/ColorLibButton";
 import ColorLibButton from "../ColorLibComponents/ColorLibButton";
 
 import firebase from "firebase";
