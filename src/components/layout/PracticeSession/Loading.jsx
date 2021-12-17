@@ -22,12 +22,22 @@ export default function Loading(props) {
     const[ready, setReady] = useState(false);
 
     useEffect( async () => {
-        await props.finishLoading();
+        if(ready) {
+            //run finishLoading function
+            await props.finishLoading();
+            //reset ready for future uses
+            setReady(false);
+        }
     }, [ready]);
 
-    useEffect(() => {
-        props.isReady()
-        .then(res => setReady(res));
+    useEffect(async () => {
+        await props.isReady()
+        .then((res) => {
+            console.log("RES: ", res);
+            if(res) {
+                setReady(res);
+            }
+        })
     }, [])
 
     return (

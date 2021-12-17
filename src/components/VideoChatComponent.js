@@ -129,7 +129,7 @@ function VideoChatComponent(props) {
     }
   }
 
-  const handlePinButtonClick = () => {
+  const handlePinButtonClick = async () => {
     if (videoCallTimer === 0) {
       return;
     }
@@ -138,13 +138,16 @@ function VideoChatComponent(props) {
       return;
     }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
-    console.log("added a pin");
-    addPin(pinTime);
-    setPopperContentIndex(1);
-    setPopperOpen(true);
-    setTimeout(() => {
-      setPopperOpen(false);
-    }, 3000);
+    await addPin(pinTime)
+    .then(() => {
+      setPopperContentIndex(1);
+      setPopperOpen(true);
+      setTimeout(() => {
+        setPopperOpen(false);
+      }, 3000);
+      console.log("added a pin");
+    });
+    
   }
 
   const [open, setOpen] = useState(true);
@@ -155,7 +158,7 @@ function VideoChatComponent(props) {
   };
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -261,7 +264,7 @@ function VideoChatComponent(props) {
     }
 
     //create a newPin object to house pin details
-    const newPin = {
+    const myPin = {
       pinID: '',
       creatorID: user.userID,
       creatorMode: user.userMode,
@@ -279,20 +282,25 @@ function VideoChatComponent(props) {
       pinOpportunity: '',
     };
 
-    //Use this code if the pins context doesn't work correctly to save pin information from both users
-    // await firebase.firestore().collection("sessions").doc(sessionID).collection('pins').add(newPin)
-    // .then((docRef) => {
-    //   pins.push({
-    //     pinID: docRef.id,
-    //     pinInfo: newPin
-    //   })
-    // .then(() => {console.log("New pin successfully written to db");})
-    // .catch((err) => {console.error("Error writing pin document ", err);})
-    // });
-
     //Otherwise, use this code, as it will save reads and writes in the long run:
-    pins.push(newPin);
-
+    let docRef = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
+      creatorID: myPin.creatorID,
+      creatorMode: myPin.creatorMode,
+      pinTime: myPin.pinTime,
+      callerPinNote: myPin.callerPinNote,
+      callerPinPerspective: myPin.callerPinPerspective,
+      callerPinCategory: myPin.callerPinCategory,
+      callerPinSkill: myPin.callerPinSkill,
+      calleePinNote: myPin.calleePinNote,
+      calleePinPerspective: myPin.calleePinPerspective,
+      calleePinCategory: myPin.calleePinCategory,
+      calleePinSkill: myPin.calleePinSkill,
+      pinGoal: '',
+      pinStrength: '',
+      pinOpportunity: '',
+    });
+    myPin.pinID = docRef.id;
+    pins.push(myPin);
     console.log("Finished pin creation");
   }
 
@@ -669,8 +677,10 @@ function VideoChatComponent(props) {
         await fetch(url)
         .then(res => res.json())
         .then((res) => {
-          console.log("New s3 mediaURL: ", res.s3URL);
-          console.log("archiveData: ", res.archiveData);
+          console.log("New s3 mediaURL: ");
+          console.log(res.s3URL);
+          console.log("archiveData: ");
+          console.log(res.archiveData);
           setMediaUrl(res.url);
           setMediaDuration(res.duration); 
           setDBMediaURL(res.url, res.duration);
