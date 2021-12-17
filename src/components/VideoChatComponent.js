@@ -11,10 +11,9 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Icon, Fab, Popper, Fade } from '@material-ui/core';
-import { Dialog, DialogContent, DialogContentText } from "@material-ui/core";
+import { Icon, Fab, Popper } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from "@material-ui/core";
 import pin from '../other/pin.svg';
-import useSpeechToText from './transcript';
 
 import Webcam from "react-webcam";
 
@@ -33,6 +32,11 @@ import {
   stopStreaming,
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
+
+import {
+  startSpeechToTextTest,
+  stopSpeechToTextTest
+} from "./symblAITranscription";
 
 import { baseURL, usingS3 } from './constants';
 
@@ -97,9 +101,19 @@ function VideoChatComponent(props) {
 
   const [popperContentIndex, setPopperContentIndex] = useState(0);
   const [popperOpen, setPopperOpen] = useState(false);
+  const [openEnd, setOpenEnd] = useState(false);
+  const [buttonDis, setButtonDis] = useState(false);
+  const [buttonDisStop, setButtonDisStop] = useState(true);
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
+
+  var line1 = "situations where you struggled to use MI";
+  var line2 = "instances of effective MI use ";
+  if (user.userMode == "callee") {
+    line1 = "situations where your peer struggled to use MI";
+    line2 = "instances of effective MI use by your peer";
+  }
 
   const getPopperContent = (index) => {
     switch (index) {
@@ -109,7 +123,6 @@ function VideoChatComponent(props) {
         const thisPin = pins[pins.length - 1];
         const pinTime = thisPin.pinTime;
         const pinCreatorMode = thisPin.creatorMode;
-        console.log(pinCreatorMode, user.userMode);
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
@@ -154,9 +167,6 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
-  const isPublishing = useSelector(
-    (state) => state.videoChat.isStreamSubscribed
-  );
 
   // needed vonage info
   const [room, setRoom] = useState("hello");
@@ -198,9 +208,10 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!open && countDown > 0) {
+      if (!open && countDown > 0 && videoCallTimer != 0) {
         const timePassed = (Date.now() - videoCallTimer) / 1000;
         if (timePassed >= recommendedTime) {
+          console.log("Time passed: " + timePassed);
           setCountDown(0);
           setTimeRemind(true);
         } else {
@@ -284,7 +295,7 @@ function VideoChatComponent(props) {
     console.log("Finished pin creation");
   }
 
-  const addTranscript = async () => {
+  const addTranscript = async (results) => {
     //write the transcript to the database
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       transcript: results
@@ -296,39 +307,6 @@ function VideoChatComponent(props) {
         console.error("Error writing document: ", error);
       });
   }
-
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText
-  } = useSpeechToText({
-    continuous: true,
-    crossBrowser: true,
-    googleApiKey: process.env.REACT_APP_API_KEY,
-    speechRecognitionProperties: { interimResults: true },
-    timeout: 10000
-  });
-
-  if (error) {
-    return (
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: '100px auto',
-          textAlign: 'center'
-        }}
-      >
-        <p>
-          {error}
-          <span style={{ fontSize: '3rem' }}>🤷‍</span>
-        </p>
-      </div>
-    );
-  }
-
 
   const renderToolbar = () => {
     return (
@@ -510,7 +488,6 @@ function VideoChatComponent(props) {
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
-        setVideoCallTimer(Date.now());
         // Disable audio / video buttons as set before
         if (!isAudioEnabled) {
           onToggleAudio(false);
@@ -522,23 +499,6 @@ function VideoChatComponent(props) {
           //props.startRec();
           console.log("start recording");
         }
-        //pass in videoCallTimer so we can create time stamps
-        startSpeechToText();
-        setPopperOpen(true);
-        setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 5000);
-        setTimeout(() => {
-          setPopperOpen(true);
-          setPopperContentIndex(0);
-        }, 300000);
-        setTimeout(() => {
-          if (popperContentIndex === 0) {
-            setPopperOpen(false);
-          }
-        }, 305000);
       })
       .catch((error) => { console.log(error) });
   }
@@ -549,8 +509,8 @@ function VideoChatComponent(props) {
     //this fetches the archive url
     await saveArchiveURL()
       .then(() => {
-        stopSpeechToText();
-        addTranscript();
+        const results = stopSpeechToTextTest();
+        addTranscript(results);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((error) => { console.log(error) });
@@ -574,6 +534,7 @@ function VideoChatComponent(props) {
       outputMode: 'composed',
       hasVideo: 'false',
     };
+
     //send post request to server
     await fetch(baseURL + 'archive/start', {
       method: 'POST',
@@ -586,11 +547,35 @@ function VideoChatComponent(props) {
       //and turn it into json so you can access data from it
       .then(response => response.json())
       .then((archiveData) => {
+        setVideoCallTimer(Date.now());
+        console.log(Date.now());
+
+        // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
+        startSpeechToTextTest(Date.now());
+
+        setPopperOpen(true);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, 5000);
+        setTimeout(() => {
+          setPopperOpen(true);
+          setPopperContentIndex(0);
+        }, recommendedTime / 2 * 1000);
+        setTimeout(() => {
+          if (popperContentIndex === 0) {
+            setPopperOpen(false);
+          }
+        }, recommendedTime / 2 * 1000 + 5000);
+
         console.log(archiveData);
         setArchiveData(archiveData);
         setDBArchiveData(archiveData);
       })
       .catch((error) => { console.log(error) })
+    setButtonDis(true);
+    setButtonDisStop(false);
   }
 
   const setDBArchiveData = async (archiveData) => {
@@ -620,6 +605,7 @@ function VideoChatComponent(props) {
       .then((res) => {
         console.log(res);
       })
+    setButtonDisStop(true);
   }
 
   const getLastestArchive = async () => {
@@ -771,8 +757,8 @@ function VideoChatComponent(props) {
               <Typography variant='body2'>
                 <p>Click on the pin to create time marks of</p>
                 <ul style={{ fontWeight: 700 }}>
-                  <li>situations where you struggled to use MI</li>
-                  <li>instances of effective MI use</li>
+                  <li>{line1}</li>
+                  <li>{line2}</li>
                 </ul>
                 <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
               </Typography>
@@ -811,6 +797,42 @@ function VideoChatComponent(props) {
         </DialogContent>
       </Dialog>
 
+      <Dialog
+            open={openEnd}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Are you sure you want to end this session?"}</DialogTitle>
+                <DialogActions>
+                <Box m={2}>
+                  <div direction='row' align='center'>
+                  <ColorLibButton
+                    variant='contained'
+                    size='medium'
+                    onClick={
+                      () => setOpenEnd(false)
+                    }
+                    autoFocus
+                  >
+                    Continue Session
+                  </ColorLibButton>
+                  <Box mt={2}>
+                  <ColorLibNextButton
+                    variant='outlined'
+                    size='medium'
+                    onClick={() => handleFinishChat()}
+                    autoFocus
+                  >
+                    End Session
+                  </ColorLibNextButton>
+                  </Box>
+                  
+                  </div>
+                  </Box>
+                </DialogActions>
+            </Dialog>    
+
       <ColorLibTimeReminder 
         open={timeRemind} 
         setOpen={setTimeRemind}
@@ -839,7 +861,7 @@ function VideoChatComponent(props) {
         <ColorLibCallEndButton
           variant="contained"
           size="medium"
-          onClick={() => handleFinishChat()}
+          onClick={() => setOpenEnd(true)}
           disabled={!isInterviewStarted}
         >
           Begin Discussion Prep
@@ -849,6 +871,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStartArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDis}
           >Start Recording
           </Button> :
           <div></div>}
@@ -857,6 +880,7 @@ function VideoChatComponent(props) {
             onClick={() => handleStopArchive()}
             color='secondary'
             variant="contained"
+            disabled={buttonDisStop}
           >Stop Recording
           </Button> :
           <div></div>}

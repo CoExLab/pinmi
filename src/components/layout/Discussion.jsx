@@ -61,7 +61,7 @@ const Discussion = () => {
   const [prevPinIndex, setPrevPinIndex] = useState(0);
 
   const [startTime, setStartTime] = useState(Date.now());
-  const recommendedTime = 13 * 60;
+  const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
 
@@ -135,7 +135,7 @@ const Discussion = () => {
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
               <Typography variant='body2'>
-                Introduce yourself to your peer, a social worker at UPMC also learning MI.
+                Introduce yourself to your peer, a nurse at Highmark also learning MI.
               </Typography>
               <Typography variant='body2'>
                 How did today’s mock client session go?
