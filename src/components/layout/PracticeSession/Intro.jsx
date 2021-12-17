@@ -25,14 +25,15 @@ function createData(name, role, fat, carbs, protein) {
 }
 
 const TherapistRows = [
-  createData('Your role', 'Therapist', 6.0, 24, 4.0),
-  createData('Your peers role', 'Client', 237, 9.0, 37, 4.3),
-  createData('Your goal', 'Build rapport and analyze the client’s situation', 262, 16.0, 24, 6.0),
+  createData('Your role', 'Therapist'),
+  createData('Your peers role', 'Client'),
+  createData('Your goal', 'Build rapport and analyze the client’s situation'),
 ];
 
 const ClientRows = [
-  createData('Your role', 'Client', 6.0, 24, 4.0),
-  createData('Your peers role', 'Therapist', 237, 9.0, 37, 4.3),
+  createData('Your role', 'Client'),
+  createData('Your peers role', 'Therapist'),
+  createData('Your goal', 'Real play as a client and use pins to assess your peer’s MI skills'),
 ];
 
 const Intro = () => {

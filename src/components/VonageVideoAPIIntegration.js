@@ -12,7 +12,6 @@ let session, publisher, subscriber;
 
 export function initializeSession(apiKey, sessionId, token) {
   session = OT.initSession(apiKey, sessionId);
-  
   // Create a publisher
   publisher = OT.initPublisher(
     "publisher",
@@ -62,14 +61,14 @@ export function stopStreaming() {
   session && session.unpublish(publisher);
 
   // console.log("stopStreaming event called");
-  
+
   // // then removing the event handler that automatically subscribes to new streams
   // session && session.off();
 
   // //var isSubscribed = store.getState().videoChat.isStreamSubscribed;
 
   // //if the client is subscribed to another stream, then end the subscription
-  if (subscriber){
+  if (subscriber) {
     console.log("unsubscribing to subscriber");
     session.unsubscribe(subscriber);
     store.dispatch(handleSubscription(false));
@@ -83,6 +82,7 @@ export function toggleVideo(state) {
 export function toggleAudio(state) {
   publisher.publishAudio(state);
 }
+
 export function toggleAudioSubscription(state) {
   subscriber.subscribeToAudio(state);
 }
