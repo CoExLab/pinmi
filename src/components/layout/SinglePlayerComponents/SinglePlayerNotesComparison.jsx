@@ -129,13 +129,6 @@ const SinglePlayerNotesComparison = ({
   const [curSkillInfo1, setCurSkillInfo1] = useState("");
   const [curSkillInfo2, setCurSkillInfo2] = useState("");
 
-  const [curEfficacyInfo, setCurEfficacyInfo] = useState(
-    singlePlayerPins[curPinIndex].pinEfficacy
-  );
-  const [peerEfficacyInfo, setPeerEfficacyInfo] = useState(
-    singlePlayerPins[curPinIndex].pinEfficacy
-  );
-
   const [curGoalInfo, setCurGoalInfo] = useState(
     singlePlayerPins[curPinIndex].pinGoal
   );
@@ -160,11 +153,9 @@ const SinglePlayerNotesComparison = ({
   useEffect(() => {
     fetchCurTextVal();
     fetchPeerPins();
-    singlePlayerPins[prevPinIndex].pinEfficacy = curEfficacyInfo;
     singlePlayerPins[prevPinIndex].pinGoal = curGoalInfo;
     singlePlayerPins[prevPinIndex].pinStrength = curStrengthInfo;
     singlePlayerPins[prevPinIndex].pinOpportunity = curOpporunityInfo;
-    setCurEfficacyInfo(singlePlayerPins[curPinIndex].pinEfficacy);
     setCurGoalInfo(singlePlayerPins[curPinIndex].pinGoal);
     setCurStrengthInfo(singlePlayerPins[curPinIndex].pinStrength);
     setCurOpportunityInfo(singlePlayerPins[curPinIndex].pinOpportunity);
@@ -187,7 +178,6 @@ const SinglePlayerNotesComparison = ({
       setPinType2(peerPin["calleePinCategory"]);
       setCurSkillInfo2(peerPin["calleePinSkill"]);
       setPeerNoteInfo(peerPin["calleePinNote"]);
-      setPeerEfficacyInfo(peerPin["pinEfficacy"]);
       setPeerGoalInfo(peerPin["pinGoal"]);
       setPeerStrengthInfo(peerPin["pinStrength"]);
       setPeerOpportunityInfo(peerPin["pinOpportunity"]);
@@ -292,7 +282,6 @@ const SinglePlayerNotesComparison = ({
             disabled
             label=""
             id="outlined-secondary"
-            label="caller's perspective"
             fullWidth
             variant="outlined"
             multiline
@@ -325,25 +314,6 @@ const SinglePlayerNotesComparison = ({
           </Box>
           <Box textAlign="left">
             <Typography>
-              Why was the pinned situation effective or ineffective?
-            </Typography>
-          </Box>
-          <ColorLibTextField
-            disabled
-            label=""
-            id="outlined-secondary"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={3}
-            margin="normal"
-            value={curEfficacyInfo}
-            inputRef={efficacyValueRef}
-            onChange={() => setCurEfficacyInfo(efficacyValueRef.current.value)}
-          />
-
-          <Box textAlign="left">
-            <Typography>
               What was the goal during the pinned situation?
             </Typography>
           </Box>
@@ -366,6 +336,7 @@ const SinglePlayerNotesComparison = ({
           </Box>
           <ColorLibTextField
             disabled
+            label=""
             id="outlined-secondary"
             fullWidth
             variant="outlined"
@@ -376,7 +347,6 @@ const SinglePlayerNotesComparison = ({
             inputRef={strengthValueRef}
             onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
           />
-
           <Box textAlign="left">
             <Typography>What could be improved to achieve the goal?</Typography>
           </Box>
@@ -462,26 +432,6 @@ const SinglePlayerNotesComparison = ({
                 </ToggleButtonGroup>
               </Box>
               <MISkillsSheet />
-              <Box textAlign="left">
-                <Typography>
-                  Why was the pinned situation effective or ineffective?
-                </Typography>
-              </Box>
-              <ColorLibTextField
-                disabled
-                label=""
-                id="outlined-secondary"
-                fullWidth
-                variant="outlined"
-                multiline
-                rows={3}
-                margin="normal"
-                value={peerEfficacyInfo}
-                inputRef={efficacyValueRef}
-                onChange={() =>
-                  setCurEfficacyInfo(efficacyValueRef.current.value)
-                }
-              />
 
               <Box textAlign="left">
                 <Typography>

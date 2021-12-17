@@ -34,22 +34,10 @@ function getStepContent(step) {
 
 function getSPStepContent(step) {
   switch (step) {
-    // case 0:
-    //   return <Refresher />;
-    // case 1:
-    //   return <SPPracticeSession />;
-    // case 2:
-    //   return <SPDisscussionPrep />;
-    // case 3:
-    //   return <SPDiscussion />;
-    // case 4:
-    //   return <SelfReflection />;
-    // default:
-    //   return <div>Unknown</div>;
     case 0:
       return <SPPracticeSession />;
     case 1:
-      return<SPDisscussionPrep />;
+      return <SPDisscussionPrep />;
     case 2:
       return <SPDiscussion />;
     case 3:
