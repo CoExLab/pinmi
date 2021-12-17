@@ -125,7 +125,7 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
+    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").update({
       creatorID: myPin.creatorID,
       creatorMode: myPin.creatorMode,
       pinTime: myPin.pinTime,
@@ -141,7 +141,7 @@ const DisscussionPrep = () => {
       pinStrength: '',
       pinOpportunity: '',
     })
-    .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
+    .then(() => {console.log("current pin successfully updated") })
     .catch((e) => { console.log("pin update unsuccessful: " + e) });
   }
 
@@ -187,7 +187,8 @@ const DisscussionPrep = () => {
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
           />
-          <Transcription />
+          {//<Transcription />
+          }
           <Notetaking
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}

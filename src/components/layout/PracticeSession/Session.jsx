@@ -70,30 +70,41 @@ const Session = () => {
 
     //loadPins is a function that grabs all pins in the db and saves them locally
     const loadPins = async () => {
+        //empty the pins array
         pins.splice(0, pins.length);
-        const snapshot = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get();
-        snapshot.docs.map(doc => {
-          pins.push(doc.data());
+        console.log(pins);
+        await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get()
+        .then((snapshot) => {
+            snapshot.docs.map(doc => {
+            pins.push(doc.data());
+            })
         })
-        setCurActiveStep((prevActiveStep) => prevActiveStep + 1);
+        .then(() => {
+            setCurActiveStep((prevActiveStep) => prevActiveStep + 1);
+        })
+        .catch((err) => console.error("Error in loadPins functions: ", err));
     }
 
     var timeout = 1;
     
     const pingServer = async () => {
         console.log("pinging server with isRoomEmpty");
-        await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
+        let result = await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
         .then((res) => {
             return res.json();
         })
         .then((data) => {
-            if(JSON.parse(data).roomExited) {
+            if(data.roomExited) {
                 return true;
             } else {
                 timeout = timeout * 2;
-                return setTimeout(pingServer, timeout);
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => resolve(pingServer()), timeout)
+                  });
             }
         })
+        console.log("pingServer result: ", result);
+        return result;
     }
     //When we pass callee into is archive host, 
   return (  
