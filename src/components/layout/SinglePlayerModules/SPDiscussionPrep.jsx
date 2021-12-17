@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from "react";
-// Components
-import Notetaking from "../../Notetaking";
-import AudioReview from "../../AudioReview";
-import Transcription from "../../Transcription";
-// Others
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Grid } from "@material-ui/core";
 
 import ColorLibButton from "../ColorLibComponents/ColorLibButton";
 import {
   useActiveStepValue,
-  usePinsValue,
   useSessionValue,
   usePlayerModeValue,
   useSinglePlayerPinsValue,
 } from "../../../context";
 import { firebase } from "../../../hooks/firebase";
-import { formatTime, generatePushId } from "../../../helper/index";
 import SinglePlayerDissPrep from "../SinglePlayerComponents/SinglePlayerDissPrep";
-import { copyFileSync } from "fs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,11 +59,6 @@ const SPDisscussionPrep = () => {
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   const { sessionID } = useSessionValue();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  const { playerMode } = usePlayerModeValue();
 
   useEffect(() => {
     console.log(curPinIndex);

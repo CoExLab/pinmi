@@ -19,7 +19,7 @@ import { firebase } from "../../../hooks/firebase";
 
 //context
 import { useSessionValue, useSinglePlayerPinsValue } from "../../../context";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   toggleGroup: {
@@ -69,7 +69,7 @@ const SinglePlayerNotetaking = ({
   // fetch raw pin data here
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   // user mode switcher
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
 
   const classes = useStyles();
 
@@ -78,6 +78,9 @@ const SinglePlayerNotetaking = ({
   const noteValueRef = useRef("");
   const perspectiveValueRef = useRef("");
   const skillValueRef = useRef("");
+  const goalValueRef = useRef("");
+  const strengthValueRef = useRef("");
+  const opportunityValueRef = useRef("");
 
   // set up states for four different questions
   const [pinType, setPinType] = useState("");
@@ -85,6 +88,9 @@ const SinglePlayerNotetaking = ({
   const [curNoteInfo, setCurNoteInfo] = useState("");
   const [curPerspectiveInfo, setCurPerspectiveInfo] = useState("");
   const [curSkillInfo, setCurSkillInfo] = useState("");
+  const [curGoalInfo, setCurGoalInfo] = useState("");
+  const [curStrengthInfo, setCurStrengthInfo] = useState("");
+  const [curOpportunityInfo, setCurOpportunityInfo] = useState("");
 
   const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
   const [pinBtnColor, setPinBtnColor] = useState("");
@@ -170,6 +176,9 @@ const SinglePlayerNotetaking = ({
         myPin.calleePinPerspective = curPerspectiveInfo;
         myPin.calleePinCategory = pinType;
         myPin.calleePinSkill = curSkillInfo;
+        myPin.pinStrength = curStrengthInfo;
+        myPin.pinOpportunity = curOpportunityInfo;
+        myPin.pinGoal = curGoalInfo;
 
         singlePlayerPins[index] = myPin;
       }
@@ -184,6 +193,9 @@ const SinglePlayerNotetaking = ({
     setCurNoteInfo(noteValueRef.current.value);
     setCurPerspectiveInfo(perspectiveValueRef.current.value);
     setCurSkillInfo(skillValueRef.current.value);
+    setCurGoalInfo(goalValueRef.current.value);
+    setCurStrengthInfo(strengthValueRef.current.value);
+    setCurOpportunityInfo(opportunityValueRef.current.value);
 
     //pin info saved
     console.log("Current note: " + curNoteInfo);
@@ -199,11 +211,17 @@ const SinglePlayerNotetaking = ({
       setCurNoteInfo(singlePlayerPins[curPinIndex].calleePinNote);
       setCurPerspectiveInfo(singlePlayerPins[curPinIndex].calleePinPerspective);
       setCurSkillInfo(singlePlayerPins[curPinIndex].calleePinSkill);
+      setCurGoalInfo(singlePlayerPins[curPinIndex].pinGoal);
+      setCurStrengthInfo(singlePlayerPins[curPinIndex].pinStrength);
+      setCurOpportunityInfo(singlePlayerPins[curPinIndex].pinOpportunity);
     }
     //reset all the refs
     noteValueRef.current.value = curNoteInfo;
     perspectiveValueRef.current.value = curPerspectiveInfo;
     skillValueRef.current.value = curSkillInfo;
+    goalValueRef.current.value = curGoalInfo;
+    strengthValueRef.current.value = curStrengthInfo;
+    opportunityValueRef.current.value = curOpportunityInfo;
   }, [curPinIndex]);
 
   // for pin information modifying
@@ -321,6 +339,53 @@ const SinglePlayerNotetaking = ({
           value={curSkillInfo}
           inputRef={skillValueRef}
           onChange={() => setCurSkillInfo(skillValueRef.current.value)}
+        />
+        <Box textAlign="left">
+          <Typography>
+            What was the goal during the pinned situation?
+          </Typography>
+        </Box>
+        <ColorLibTextField
+          id="outlined-secondary"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={3}
+          margin="normal"
+          value={curGoalInfo}
+          inputRef={goalValueRef}
+          onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+        />
+        <Box textAlign="left">
+          <Typography>What worked well to achieve the goal?</Typography>
+        </Box>
+        <ColorLibTextField
+          id="outlined-secondary"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={3}
+          margin="normal"
+          value={curStrengthInfo}
+          inputRef={strengthValueRef}
+          onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
+        />
+
+        <Box textAlign="left">
+          <Typography>What could be improved to achieve the goal?</Typography>
+        </Box>
+        <ColorLibTextField
+          id="outlined-secondary"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={3}
+          margin="normal"
+          value={curOpportunityInfo}
+          inputRef={opportunityValueRef}
+          onChange={() =>
+            setCurOpportunityInfo(opportunityValueRef.current.value)
+          }
         />
         <Box textAlign="center">
           <PinNavButtons />

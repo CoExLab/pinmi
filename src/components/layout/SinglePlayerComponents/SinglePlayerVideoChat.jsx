@@ -264,14 +264,14 @@ function SinglePlayerVideoChat(props) {
   const renderToolbar = () => {
     return (
       <>
-        <ReactPlayer
+        {/* <ReactPlayer
           playing={isInterviewStarted}
           ref={player}
           url="https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0"
           width="100%"
           height="100%"
           onProgress={handleProgress}
-        />
+        /> */}
         <Fab
           aria-describedby={id}
           type="button"
