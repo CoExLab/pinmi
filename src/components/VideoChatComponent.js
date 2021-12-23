@@ -172,7 +172,7 @@ function VideoChatComponent(props) {
   );
 
   // needed vonage info
-  const [room, setRoom] = useState("hello");
+  const room = session.sessionID;
   //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
   //const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   //const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
@@ -284,6 +284,7 @@ function VideoChatComponent(props) {
 
     //Otherwise, use this code, as it will save reads and writes in the long run:
     let docRef = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
+      pinID: '',
       creatorID: myPin.creatorID,
       creatorMode: myPin.creatorMode,
       pinTime: myPin.pinTime,
@@ -300,6 +301,10 @@ function VideoChatComponent(props) {
       pinOpportunity: '',
     });
     myPin.pinID = docRef.id;
+    //update with pinID
+    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(docRef.id).update({
+      pinID: myPin.pinID
+    })
     pins.push(myPin);
     console.log("Finished pin creation");
   }

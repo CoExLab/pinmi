@@ -68,6 +68,7 @@ const DisscussionPrep = () => {
   const { pins } = usePinsValue();
   //const { sessionID } = useSessionValue();
   const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
 
   const [curPinIndex, setCurPinIndex] = useState(() => {
     //console.log(pins);
@@ -93,19 +94,11 @@ const DisscussionPrep = () => {
     console.log(pins);
     if(finishedUpdates) {
       //save all pins to database and move to next module
-      pins.map((elem, id) => savePin(id));
+      //pins.forEach((elem, id) => savePin(id));
       //return Loading module
+      setActiveStep(activeStep + 1);
     }
   }, [finishedUpdates]);
-
-  const loadPins = async () => {
-    pins.splice(0, pins.length);
-    const snapshot = await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get();
-    snapshot.docs.map(doc => {
-      pins.append(doc.data());
-    })
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -125,24 +118,25 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").update({
-      creatorID: myPin.creatorID,
-      creatorMode: myPin.creatorMode,
-      pinTime: myPin.pinTime,
-      callerPinNote: myPin.callerPinNote,
-      callerPinPerspective: myPin.callerPinPerspective,
-      callerPinCategory: myPin.callerPinCategory,
-      callerPinSkill: myPin.callerPinSkill,
-      calleePinNote: myPin.calleePinNote,
-      calleePinPerspective: myPin.calleePinPerspective,
-      calleePinCategory: myPin.calleePinCategory,
-      calleePinSkill: myPin.calleePinSkill,
-      pinGoal: '',
-      pinStrength: '',
-      pinOpportunity: '',
-    })
-    .then(() => {console.log("current pin successfully updated") })
-    .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    if(user.userMode === "callee") {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        calleePinNote: myPin.calleePinNote,
+        calleePinPerspective: myPin.calleePinPerspective,
+        calleePinCategory: myPin.calleePinCategory,
+        calleePinSkill: myPin.calleePinSkill,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    } else {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        callerPinNote: myPin.calleePinNote,
+        callerPinPerspective: myPin.calleePinPerspective,
+        callerPinCategory: myPin.calleePinCategory,
+        callerPinSkill: myPin.calleePinSkill,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    }
   }
 
   const handleNext = async () => {
@@ -150,7 +144,11 @@ const DisscussionPrep = () => {
     console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
-    setCurPinIndex(curPinIndex);//MAIN ISSUE!!!!! 
+    if(curPinIndex === 0) {
+      setCurPinIndex(curPinIndex + 1);//MAIN ISSUE!!!!! 
+    } else {
+      setCurPinIndex(0);
+    }
     //allow next step in logic to occur
     setFinishedUpdates(true);
   };

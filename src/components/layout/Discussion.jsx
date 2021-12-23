@@ -2,6 +2,7 @@ import { Box, Typography } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
+import { firebase } from '../../hooks/firebase';
 
 import Collaboration from "./Collaboration.jsx"
 import ColorLibButton, { ColorLibGrayNextButton, ColorLibCallEndButton } from './ColorLibComponents/ColorLibButton';
@@ -73,6 +74,7 @@ const Discussion = () => {
     console.log("before");
     if (finishedUpdates) {
       console.log("after");
+      console.log(page + 1);
       setPage(page + 1);
     }
   }, [finishedUpdates]);
@@ -124,8 +126,30 @@ const Discussion = () => {
       setFinishedUpdates(true);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
-      setPage(page + 1);
+      if(page === 0) {
+        //pull pin updates
+        loadPins();
+      } else {
+        setPage(page + 1);
+      }
     }
+  }
+  
+  const loadPins = async () => {
+    //empty the pins array
+    pins.splice(0, pins.length);
+    console.log(pins);
+    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get()
+    .then((snapshot) => {
+        snapshot.docs.map(doc => {
+        pins.push(doc.data());
+        })
+        pins.sort((a, b) => a.pinTime - b.pinTime);
+    })
+    .then(() => {
+      setPage(page + 1);
+    })
+    .catch((err) => console.error("Error in loadPins functions: ", err));
   }
 
   function getConditionalButton(page, setPage, pins, sessionID) {
