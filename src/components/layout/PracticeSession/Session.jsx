@@ -78,6 +78,7 @@ const Session = () => {
             snapshot.docs.map(doc => {
             pins.push(doc.data());
             })
+            pins.sort((a, b) => a.pinTime - b.pinTime);
         })
         .then(() => {
             setCurActiveStep((prevActiveStep) => prevActiveStep + 1);
