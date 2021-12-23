@@ -73,7 +73,8 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             prevPinIndex = {prevPinIndex}
             setPrevPinIndex = {setPrevPinIndex}
           />
-          <Transcription />
+          {//<Transcription />
+          }
           <DissResponse 
             curPinIndex = {curPinIndex}
             setCurPinIndex = {setCurPinIndex}
