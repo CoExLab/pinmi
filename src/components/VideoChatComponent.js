@@ -130,6 +130,8 @@ function VideoChatComponent(props) {
   }
 
   const handlePinButtonClick = async () => {
+    console.log("calling handlePinButtonClick");
+    console.log("current videoCallTimer:" + videoCallTimer);
     if (videoCallTimer === 0) {
       return;
     }
@@ -138,6 +140,7 @@ function VideoChatComponent(props) {
       return;
     }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+    console.log("calling addPin from HandlePinButton");
     await addPin(pinTime)
     .then(() => {
       setPopperContentIndex(1);
@@ -170,6 +173,9 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
+  const isArchiving = useSelector(
+    (state) => state.archive.isStreamArchiving
+  );
 
   // needed vonage info
   const room = session.sessionID;
@@ -187,7 +193,7 @@ function VideoChatComponent(props) {
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});
   //isArchviving is true when the achrive is actively recording
-  const [isArchiving, setIsArchiving] = useState(false);
+  //const [isArchiving, setIsArchiving] = useState(false);
 
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
@@ -209,6 +215,15 @@ function VideoChatComponent(props) {
     setIsStreamSubscribed(isSubscribed);
     console.log("STREAM SUBSCRIBED FROM SELECTOR UPDATED")
   }, [isSubscribed]);
+
+
+  //set the videoCallTimer after the archive event has occured 
+  useEffect(() => {
+    console.log("Hey look! They archive status changed from VCC!!");
+    if (isArchiving === true){
+      setVideoCallTimer(Date.now());
+    } 
+  }, [isArchiving])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -251,6 +266,7 @@ function VideoChatComponent(props) {
   const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
+    console.log("Calling addPin for " + curTime);
     // ui on
     setPinBtnDisabled(true);
     setPinBtnColor("primary");
@@ -511,7 +527,7 @@ function VideoChatComponent(props) {
         }
         if (props.isArchiveHost) {
           //props.startRec();
-          console.log("start recording");
+          //console.log("start recording");
         }
       })
       .catch((error) => { console.log(error) });
@@ -597,7 +613,7 @@ function VideoChatComponent(props) {
     setButtonDisStop(false);
   }
 
-  //this function sends a put request to the server
+  //this function sends a post request to the server
   //to indicate that someone has entered the video room. 
   //userMode is either "callee" or "caller", and 
   const enterRoom = (userMode, sessionID) => {
