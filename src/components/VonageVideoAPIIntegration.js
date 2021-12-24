@@ -1,5 +1,5 @@
 import { store } from "./Store";
-import { handleSubscription } from "./Store";
+import { handleSubscription, handleArchive } from "./Store";
 import OT from "@opentok/client";
 
 function handleError(error) {
@@ -40,9 +40,19 @@ export function initializeSession(apiKey, sessionId, token) {
     store.dispatch(handleSubscription(true));
   });
 
+  session.on("archiveStarted", function (event) {
+    console.log("The archive has started");
+    store.dispatch(handleArchive(true));
+  });
+
+  session.on("archiveStopped", function (event) {
+    //console.log("The archive has ended");
+    store.dispatch(handleArchive(false));
+  });
+  
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
-    console.log("The Video chat has ended");
+    //console.log("The Video chat has ended");
     store.dispatch(handleSubscription(false));
   });
 
