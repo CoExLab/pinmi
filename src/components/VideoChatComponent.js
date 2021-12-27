@@ -541,6 +541,7 @@ function VideoChatComponent(props) {
     
 
     //this fetches the archive url
+
     await exitRoom(user.userMode, vonageSessionID)
        .then(() => {
     //     //const results = stopSpeechToTextTest();
@@ -550,6 +551,7 @@ function VideoChatComponent(props) {
         props.setNextPage(true); 
        })
        .catch((error) => { console.log(error) });
+
 
     //sort the array
     pins.sort(function (a, b) {
