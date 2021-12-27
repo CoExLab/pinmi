@@ -668,6 +668,8 @@ function VideoChatComponent(props) {
       .then(res => res.json())
       .then((res) => {
         console.log(res);
+        const results = stopSpeechToTextTest();
+        addTranscript(results);
       })
     setButtonDisStop(true);
   }
