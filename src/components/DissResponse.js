@@ -68,7 +68,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     //This function handles the empty pin array case
     const getCurrentPinInfo = (pinInfo) => {
         if (pins.length>0){
-            return pins[curPinIndex][pinInfo];
+            return pins[curPinIndex];
         }
         else{ //if there are no pins the array, return an empty string. 
             return "";

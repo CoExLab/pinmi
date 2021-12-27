@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useActiveStepValue, usePinsValue } from "../../../context";
 import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -13,12 +13,49 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function Loading() {
+export default function Loading(props) {
     //require isReady and finishLoading functions, and we call it by props.isReady
     //isReady: send a get request - ENTEREDROOM(vonage api sessionid)
     //once isReady returns true, run finishLoading
 
     const classes = useStyles();
+    const[roomEmpty, setRoomEmpty] = useState(false);
+    const[archiveReady, setArchiveReady] = useState(false);
+
+
+    useEffect(async () => {
+            await props.isRoomEmpty()
+            .then((res) => {
+                console.log("RES: ", res);
+                if(res) {
+                    setRoomEmpty(res);
+                }
+            })
+            .catch((e) => { console.log(e) });
+
+    }, [])
+
+    useEffect(async () => {
+        if (roomEmpty) {  
+            await props.isArchiveReady()
+                .then((res) => {
+                    console.log("RES: ", res);
+                    if(res) {
+                        setArchiveReady(res);
+                    }
+                })
+                .catch((e) => { console.log(e) });
+        }
+    }, [roomEmpty])
+
+    useEffect( async () => {
+        if(archiveReady) {
+            //run finishLoading function
+            await props.finishLoading();
+            //reset ready for future uses
+            setArchiveReady(false);
+        }
+    }, [archiveReady]);
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>

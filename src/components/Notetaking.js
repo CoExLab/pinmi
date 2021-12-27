@@ -139,14 +139,14 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         if (curPinIndex === 0 && (pins.length > 1)) {
             return next;
         }
-        if (curPinIndex === pins.length -1) {
+        if ((curPinIndex === pins.length - 1) && (pins.length > 1)) {
             return prev;
         }
     return <div>{prev} {next}</div>;
     }
 
 
-    const savePin = async (index) => {
+    const savePin = (index) => {
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
             if (myPin && user.userMode === "caller") {
