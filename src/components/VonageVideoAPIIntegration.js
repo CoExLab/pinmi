@@ -41,13 +41,15 @@ export function initializeSession(apiKey, sessionId, token) {
   });
 
   session.on("archiveStarted", function (event) {
-    console.log("The archive has started");
-    store.dispatch(handleArchive(true));
+    var archiveID = event.id;
+    console.log("The archive has started: " + archiveID);
+    store.dispatch(handleArchive({isStreamArchiving :true, archiveID: archiveID}));
   });
 
   session.on("archiveStopped", function (event) {
     //console.log("The archive has ended");
-    store.dispatch(handleArchive(false));
+    var archiveID = event.id;
+    store.dispatch(handleArchive({isStreamArchiving :false, archiveID: archiveID}));
   });
   
   // Do some action on destroying the stream

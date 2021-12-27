@@ -538,17 +538,18 @@ function VideoChatComponent(props) {
     
     //letting the server know that the user exited the room
     exitRoom(user.userMode, vonageSessionID);
+    props.setNextPage(true);
 
     //this fetches the archive url
-    await saveArchiveURL()
-      .then(() => {
-        //const results = stopSpeechToTextTest();
-        //addTranscript(results);
-        // setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        //call to the parent to move to Loading Page
-        props.setNextPage(true); 
-      })
-      .catch((error) => { console.log(error) });
+    // await saveArchiveURL()
+    //   .then(() => {
+    //     //const results = stopSpeechToTextTest();
+    //     //addTranscript(results);
+    //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //     //call to the parent to move to Loading Page
+    //     props.setNextPage(true); 
+    //   })
+    //   .catch((error) => { console.log(error) });
 
     //sort the array
     pins.sort(function (a, b) {
