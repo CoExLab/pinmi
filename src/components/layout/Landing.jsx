@@ -198,9 +198,6 @@ const Landing = () => {
             onChange={() => setUsername(usernameRef.current.value)}
           />
         </Box>
-        <Box m={1} display="inline">
-          <ColorLibTextField id="outlined-basic" label="Room Name" variant="outlined" />
-				</Box>
       </Container>
       <div className={classes.button_wrapper}>
         <ColorLibButton variant='contained' size='large' onClick={setUser}>
