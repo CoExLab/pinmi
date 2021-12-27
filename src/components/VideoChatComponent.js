@@ -206,6 +206,7 @@ function VideoChatComponent(props) {
 
 
   useEffect(() => {
+    console.log("isInterviewStarted changed to", isInterviewStarted);
     isInterviewStarted
       ? initializeSession(apiKey, vonageSessionID, token)
       : stopStreaming();
@@ -537,20 +538,18 @@ function VideoChatComponent(props) {
     setIsInterviewStarted(false);
     
     //letting the server know that the user exited the room
-    exitRoom(user.userMode, vonageSessionID);
-    props.setNextPage(true);
     
 
     //this fetches the archive url
-    // await saveArchiveURL()
-    //   .then(() => {
+    await exitRoom(user.userMode, vonageSessionID)
+       .then(() => {
     //     //const results = stopSpeechToTextTest();
     //     //addTranscript(results);
     //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     //     //call to the parent to move to Loading Page
-    //     props.setNextPage(true); 
-    //   })
-    //   .catch((error) => { console.log(error) });
+        props.setNextPage(true); 
+       })
+       .catch((error) => { console.log(error) });
 
     //sort the array
     pins.sort(function (a, b) {
@@ -631,7 +630,7 @@ function VideoChatComponent(props) {
     //this function sends a put request to the server
   //to indicate that someone has exited the video room and gone to the loading page.
   //userMode is either "callee" or "caller", and 
-  const exitRoom = (userMode, sessionID) => {
+  const exitRoom  = async (userMode, sessionID) => {
   
     let url = baseURL + 'exitedRoom/' + userMode+"/"+sessionID;
     fetch(url, {
