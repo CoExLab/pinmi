@@ -71,6 +71,7 @@ export function initializeSession(apiKey, sessionId, token) {
 
 export function stopStreaming() {
   session && session.unpublish(publisher);
+  console.log(subscriber);
 
   // console.log("stopStreaming event called");
 
