@@ -539,6 +539,7 @@ function VideoChatComponent(props) {
     //letting the server know that the user exited the room
     exitRoom(user.userMode, vonageSessionID);
     props.setNextPage(true);
+    
 
     //this fetches the archive url
     // await saveArchiveURL()
