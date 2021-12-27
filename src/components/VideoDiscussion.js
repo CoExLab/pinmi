@@ -153,18 +153,21 @@ function VideoChatComponent(props) {
     toggleVideoSubscription(action);
   };
   //get setter for media duration
-  const { sessionId, setMediaDuration, setMediaUrl } = useSessionValue();
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
+  const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
+
   // get document ID
-  const pinID = generatePushId();
+  //const pinID = generatePushId();
   // get trans ID
-  const transID = generatePushId();
+  //const transID = generatePushId();
   // hard-coded sessionID here
-  const MiTrainingSessionID = "123";
+  //const MiTrainingSessionID = "123";
 
   //what is going on with addPinDelayTime????
-  const addPinDelayTime = 20;
+  //const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
     // ui on
@@ -181,7 +184,34 @@ function VideoChatComponent(props) {
     console.log(curTime);
   }
 
- 
+  const readyToJoin = () => {
+    pins.forEach((elem, id) => savePin(id));
+    handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
+  }
+
+  const savePin = async (index) => {
+    const myPin = pins[index];
+    console.log(myPin);
+    if(user.userMode === "callee") {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        calleePinNote: myPin.calleePinNote,
+        calleePinPerspective: myPin.calleePinPerspective,
+        calleePinCategory: myPin.calleePinCategory,
+        calleePinSkill: myPin.calleePinSkill,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    } else {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        callerPinNote: myPin.callerPinNote,
+        callerPinPerspective: myPin.callerPinPerspective,
+        callerPinCategory: myPin.callerPinCategory,
+        callerPinSkill: myPin.callerPinSkill,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    }
+  }
   
 
   const renderToolbar = () => {
@@ -361,7 +391,7 @@ How did today’s mock client session go?
   const handleStartArchive = async () => {
     //create json to send as the body for post
     const data = {
-      sessionId: sessionId,
+      sessionId: session.sessionID,
       resolution: '640x480',
       outputMode: 'composed',
       hasVideo: 'false',
@@ -558,9 +588,7 @@ How did today’s mock client session go?
                 <ColorLibNextButton
                   variant='outlined'
                   size='medium'
-                  onClick={
-                    () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
-                  }
+                  onClick={readyToJoin}
                   autoFocus
                 >
                   Join Discussion
