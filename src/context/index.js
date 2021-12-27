@@ -25,7 +25,7 @@ const tempNewDoc = (month+"-"+day+"-"+year)
 export const SessionProvider = ({ children }) => {
 
   const [mediaUrl, setMediaUrl] = useState("https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg");
-  const [mediaDuration, setMediaDuration] = useState("MEDIA_BLOB");
+  const [mediaDuration, setMediaDuration] = useState(0);
   const [button, setButton] = useState(false);
   //const [sessionID, setSessionID] = useState(tempNewDoc);
   const [vonageSessionID, setVonageSessionID] = useState("YOUR_SESSION_ID");

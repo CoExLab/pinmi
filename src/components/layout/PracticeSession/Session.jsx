@@ -26,7 +26,8 @@ const Session = () => {
 
 
     //setting the global mediaUrl context to mediaBlobUrl to be played in AudioReview
-    const { setMediaUrl, vonageSessionID } = useSessionValue();
+    const { vonageSessionID, setMediaDuration, setMediaUrl } = useSessionValue();
+    
 
     // const addMediaUrlDB = async (mediaUrl) => {
     //     await firebase.firestore().collection("URL").doc("media").set({
@@ -86,9 +87,73 @@ const Session = () => {
         .catch((err) => console.error("Error in loadPins functions: ", err));
     }
 
-    var timeout = 1;
+        
+    //archiveID redux variable
+    const archiveID = useSelector(
+        (state) => state.archive.archiveID
+    );
+    var timeout1 = 10; //1/100 second 
+    var timeout2 = 10;
+    var isRoomEmptyURL = baseURL + 'isRoomEmpty/' + vonageSessionID;
+    var isArchiveReadyURL = baseURL + 's3/' + archiveID;
     
-    const pingServer = async () => {
+
+    //first pass in the url for the isRoomEmpty server request. 
+    //Once isRoomEmpty returns true, 
+    // const pingServerx = async (url) => {
+    //     console.log("pinging server with " + url);
+    //     let result = await fetch(url)
+    //     .then((res) => {
+    //         return res.json();
+    //     })
+    //     .then((data) => {
+    //         //if the room has been exited this should return true
+    //         if (url == isRoomEmptyURL){
+    //             if(data.roomExited) {
+    //                 console.log("Room has been exited by all participants. ")
+    //                 timeout = 1;
+    //                 return new Promise((resolve, reject) => {
+    //                     setTimeout(() => resolve(pingServer(isArchiveReadyURL)), timeout)
+    //                   });
+    //             }
+    //             else {
+    //                 timeout = timeout * 2;
+    //                 console.log("pinging server for isRoomEmpty with timeout: " + timeout);
+    //                 return new Promise((resolve, reject) => {
+    //                     setTimeout(() => resolve(pingServer(isRoomEmptyURL)), timeout)
+    //                   });
+    //             }
+    //         }//get archive ID! This is a thing that maybe needs to be global. 
+    //         else if (url == isArchiveReadyURL){
+    //             //base case
+    //             if(data.arcStatus == "uploaded") {
+    //                 console.log("archive is Ready in s3");
+    //                 setMediaUrl(data.url);
+    //                 setMediaDuration(data.duration); 
+    //                 return true;
+    //             }
+    //             else {
+    //                 timeout = timeout * 2;
+    //                 return new Promise((resolve, reject) => {
+    //                     setTimeout(() => resolve(pingServer(isArchiveReadyURL)), timeout)
+    //                   });
+    //             }
+    //         }
+    //         else{
+    //             console.log("pingServer was called with a route that doesn't exist");
+    //             console.log(data);
+    //             return false;
+    //         }
+    //     })
+    //     .catch((e) => { 
+    //         console.log(e)
+    //         return false;
+    //     });
+    //     console.log("pingServer result: ", result);
+    //     return result;
+    // }
+
+    const pingServer1 = async () => {
         console.log("pinging server with isRoomEmpty");
         let result = await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
         .then((res) => {
@@ -98,20 +163,45 @@ const Session = () => {
             if(data.roomExited) {
                 return true;
             } else {
-                timeout = timeout * 2;
+                timeout1 = timeout1 * 2;
                 return new Promise((resolve, reject) => {
-                    setTimeout(() => resolve(pingServer()), timeout)
+                    setTimeout(() => resolve(pingServer1()), timeout1)
                   });
             }
         })
         console.log("pingServer result: ", result);
         return result;
     }
+    const pingServer2 = async () => {
+        console.log("pinging server with isArchiveReady");
+        let result = await fetch(baseURL + 's3/' + archiveID)
+        .then((res) => {
+            return res.json();
+        })
+        .then((data) => {
+            if(data.arcStatus == "uploaded") {
+                setMediaUrl(data.url);
+                setMediaDuration(data.duration); 
+                return true;
+            } else {
+                timeout2 = timeout2 * 2;
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => resolve(pingServer2()), timeout2)
+                  });
+            }
+        })
+        console.log("pingServer result: ", result);
+        return result;
+    }
+
+    var pingArray = [pingServer1,pingServer2]
+
+
     //When we pass callee into is archive host, 
   return (  
         <div>
             {!nextPage ? <VideoChatComponent setNextPage={setNextPage} isArchiveHost={checkIsArchiveHost("callee")} />
-            : <Loading isReady={pingServer} finishLoading={loadPins}/>}
+            : <Loading isRoomEmpty={pingServer1} isArchiveReady = {pingServer2} finishLoading={loadPins}/>}
         </div>
     );
 }

@@ -46,8 +46,8 @@ const publisherReducer = (state = defaultState, action) => {
 };
 const archiveReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case HANDLE_ARCHIVE:
-      return { ...state, isStreamArchiving: action.payload };
+    case HANDLE_ARCHIVE: //archiveReducer saves the archiveID and the active streaming status
+      return { ...state, isStreamArchiving: action.payload.isStreamArchiving, archiveID: action.payload.archiveID};
     default:
       return state;
   }

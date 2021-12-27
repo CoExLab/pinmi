@@ -19,26 +19,43 @@ export default function Loading(props) {
     //once isReady returns true, run finishLoading
 
     const classes = useStyles();
-    const[ready, setReady] = useState(false);
+    const[roomEmpty, setRoomEmpty] = useState(false);
+    const[archiveReady, setArchiveReady] = useState(false);
+
+
+    useEffect(async () => {
+            await props.isRoomEmpty()
+            .then((res) => {
+                console.log("RES: ", res);
+                if(res) {
+                    setRoomEmpty(res);
+                }
+            })
+            .catch((e) => { console.log(e) });
+
+    }, [])
+
+    useEffect(async () => {
+        if (roomEmpty) {  
+            await props.isArchiveReady()
+                .then((res) => {
+                    console.log("RES: ", res);
+                    if(res) {
+                        setArchiveReady(res);
+                    }
+                })
+                .catch((e) => { console.log(e) });
+        }
+    }, [roomEmpty])
 
     useEffect( async () => {
-        if(ready) {
+        if(archiveReady) {
             //run finishLoading function
             await props.finishLoading();
             //reset ready for future uses
-            setReady(false);
+            setArchiveReady(false);
         }
-    }, [ready]);
-
-    useEffect(async () => {
-        await props.isReady()
-        .then((res) => {
-            console.log("RES: ", res);
-            if(res) {
-                setReady(res);
-            }
-        })
-    }, [])
+    }, [archiveReady]);
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>
