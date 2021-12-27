@@ -509,8 +509,7 @@ function VideoChatComponent(props) {
     //this fetches the archive url
     await saveArchiveURL()
       .then(() => {
-        const results = stopSpeechToTextTest();
-        addTranscript(results);
+        
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((error) => { console.log(error) });
@@ -604,6 +603,8 @@ function VideoChatComponent(props) {
       .then(res => res.json())
       .then((res) => {
         console.log(res);
+        const results = stopSpeechToTextTest();
+        addTranscript(results);
       })
     setButtonDisStop(true);
   }
