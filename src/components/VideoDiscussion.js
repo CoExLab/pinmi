@@ -10,15 +10,14 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
-import { Icon, Fab } from '@material-ui/core';
-import pin from '../other/pin.svg';
+import { Fab } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { ColorLibNextButton, ColorLibCallEndButton } from './layout/ColorLibComponents/ColorLibButton';
+import { ColorLibNextButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
 
 import {
@@ -34,9 +33,7 @@ import "./VideoChatComponent.scss";
 import { baseURL } from './constants';
 
 import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
-import { formatTime, generatePushId } from '../helper/index';
 import { firebase } from "../hooks/firebase";
-import { usePins } from '../hooks/index';
 
 
 //styles used for icons in videocomponent
@@ -57,30 +54,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VideoChatComponent(props) {
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const { setCurActiveStep: setActiveStep } = useActiveStepValue();
 
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const handlePinButtonClick = () => {
-    var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000)
-    console.log("added a pin")
-    addPin(pinTime);
-  }
-
-  const openPopper = Boolean(anchorEl);
-  const id = openPopper ? 'simple-popper' : undefined;
 
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -94,7 +74,7 @@ function VideoChatComponent(props) {
   );
 
   // needed vonage info
-  const [room, setRoom] = useState("hello1");
+  const [room] = useState("hello1");
   //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
   // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
@@ -102,16 +82,12 @@ function VideoChatComponent(props) {
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
-  const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
-  const [pinBtnColor, setPinBtnColor] = useState("");
-
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});
   //isArchviving is true when the achrive is actively recording
-  const [isArchiving, setIsArchiving] = useState(false);
 
   // self-made timer
-  const [videoCallTimer, setVideoCallTimer] = useState(0);
+  const [setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
   //vonage session data set by the server
@@ -159,31 +135,7 @@ function VideoChatComponent(props) {
   const session = useSelector(state => state.session);
   const user = useSelector(state => state.user);
 
-  // get document ID
-  //const pinID = generatePushId();
-  // get trans ID
-  //const transID = generatePushId();
-  // hard-coded sessionID here
-  //const MiTrainingSessionID = "123";
-
-  //what is going on with addPinDelayTime????
-  //const addPinDelayTime = 20;
-
-  const addPin = async (curTime) => {
-    // ui on
-    setPinBtnDisabled(true);
-    setPinBtnColor("primary");
-    // ui off
-    setTimeout(() => {
-      setPinBtnDisabled(false);
-    }, 800);
-
-    pins.push({ pinID: '', pinTime: curTime, pinInfos: { pinNote: '', pinPerspective: '', pinCategory: '', pinSkill: '' } });
-
-    console.log("finished writing")
-    console.log(curTime);
-  }
-
+  
   const readyToJoin = () => {
     pins.forEach((elem, id) => savePin(id));
     handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)

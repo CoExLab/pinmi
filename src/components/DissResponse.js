@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
-import { Box, Grid, Paper, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 
 import { ColorLibNextButton, ColorLibBackButton } from './layout/ColorLibComponents/ColorLibButton';
@@ -11,13 +11,9 @@ import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
 
-// firebase hook
-import { usePins } from '../hooks/index';
-import { firebase } from "../hooks/firebase";
 
 //context
-import { useSessionValue, usePinsValue, PinsProvider } from '../context';
-import { format } from 'url';
+import { usePinsValue } from '../context';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,7 +86,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }
-    }, [curPinIndex])//curPinIndex shouldn't change if there are not pins. 
+    }, [curPinIndex, curGoalInfo, curOpporunityInfo, curStrengthInfo, pins, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
 
     // for updating and fetching current text field value

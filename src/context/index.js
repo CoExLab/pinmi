@@ -1,6 +1,4 @@
 import React, { useState, createContext, useContext } from "react";
-import { usePins } from '../hooks/index';
-import { randomString} from "../helper";
 
 export const ActiveStepContext = createContext();
 export const ActiveStepProvider = ({children}) => {
@@ -15,12 +13,7 @@ export const ActiveStepProvider = ({children}) => {
 export const useActiveStepValue = () => useContext(ActiveStepContext);
 
 export const SessionContext = createContext();
-const newDoc = randomString(19);
 
-//temporarily use date as sessionID
-const date = new Date();
-const [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()];
-const tempNewDoc = (month+"-"+day+"-"+year)
 
 export const SessionProvider = ({ children }) => {
 

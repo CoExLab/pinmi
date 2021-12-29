@@ -38,12 +38,11 @@ import {
   stopSpeechToTextTest
 } from "./symblAITranscription";
 
-import { baseURL, usingS3 } from './constants';
+import { baseURL } from './constants';
 
-import { useSessionValue, useActiveStepValue, usePinsValue } from "../context";
-import { formatTime, generatePushId } from '../helper/index';
+import { useSessionValue, usePinsValue } from "../context";
+import { formatTime } from '../helper/index';
 import { firebase } from "../hooks/firebase";
-import { usePins } from '../hooks/index';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -90,10 +89,8 @@ const useStyles = makeStyles((theme) => ({
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   //get setter for media duration
   const session = useSelector(state => state.session);
-  const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //get user informatoin
@@ -110,7 +107,7 @@ function VideoChatComponent(props) {
 
   var line1 = "situations where you struggled to use MI";
   var line2 = "instances of effective MI use ";
-  if (user.userMode == "callee") {
+  if (user.userMode === "callee") {
     line1 = "situations where your peer struggled to use MI";
     line2 = "instances of effective MI use by your peer";
   }
@@ -122,7 +119,6 @@ function VideoChatComponent(props) {
       case 1:
         const thisPin = pins[pins.length - 1];
         const pinTime = thisPin.pinTime;
-        const pinCreatorMode = thisPin.creatorMode;
         return `Successfully pinned at ${formatTime(pinTime)}`;
       default:
         return "Invalid Pin Content."
@@ -160,9 +156,6 @@ function VideoChatComponent(props) {
     setOpen(false);
   };
 
-  const handleNext = () => {
-    //setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -187,8 +180,8 @@ function VideoChatComponent(props) {
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
-  const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
-  const [pinBtnColor, setPinBtnColor] = useState("");
+  const [setPinBtnDisabled] = useState(false);
+  const [setPinBtnColor] = useState("");
 
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});
@@ -210,7 +203,7 @@ function VideoChatComponent(props) {
     isInterviewStarted
       ? initializeSession(apiKey, vonageSessionID, token)
       : stopStreaming();
-  }, [isInterviewStarted]);
+  }, [isInterviewStarted, apiKey, token, vonageSessionID]);
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
@@ -228,7 +221,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!open && countDown > 0 && videoCallTimer != 0) {
+      if (!open && countDown > 0 && videoCallTimer !== 0) {
         const timePassed = (Date.now() - videoCallTimer) / 1000;
         if (timePassed >= recommendedTime) {
           console.log("Time passed: " + timePassed);
@@ -264,7 +257,6 @@ function VideoChatComponent(props) {
   // const { pins } = usePinsValue();
 
   //what is going on with addPinDelayTime????
-  const addPinDelayTime = 20;
 
   const addPin = async (curTime) => {
     console.log("Calling addPin for " + curTime);
@@ -276,7 +268,7 @@ function VideoChatComponent(props) {
       setPinBtnDisabled(false);
     }, 800);
 
-    if (pins.length > 0 && pins[pins.length - 1].pinTime == curTime) {
+    if (pins.length > 0 && pins[pins.length - 1].pinTime === curTime) {
       return;
     }
 
@@ -497,7 +489,7 @@ function VideoChatComponent(props) {
     setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);
-    if (props.mode == "Discussion") {
+    if (props.mode === "Discussion") {
       var roomAddOn = "Discussion";
       console.log("Discussion Room Video component")
     }
@@ -671,98 +663,12 @@ function VideoChatComponent(props) {
       .then((res) => {
         console.log(res);
         const results = stopSpeechToTextTest();
+        console.log(results);
         addTranscript(results);
       })
     setButtonDisStop(true);
   }
 
-  const getLastestArchive = async () => {
-    let url = 'https://pin-mi-node-server.herokuapp.com/' + 'archive'
-    await fetch(url)
-      .then((res) => {
-        return res.json()
-        //return archives[archives.length - 1];
-      })
-      .then((arc) => {
-        let latestArc = arc[arc.length - 1];
-        console.log(latestArc.duration);
-        console.log(latestArc.url);
-        setMediaDuration(latestArc.duration);
-        setMediaUrl(latestArc.url);
-      })
-      .catch((e) => { console.log(e) });
-  }
-
-  //saveArchiveURL saves the archiveURL and duration locally and to 
-  //the database for the other user to access. 
-  const saveArchiveURL = async () => {
-    if (props.isArchiveHost) {
-      if (usingS3){
-        var archiveID = archiveData.id;
-        var url = baseURL + 's3/' + archiveID;
-        await fetch(url)
-        .then(res => res.json())
-        .then((res) => {
-          console.log("New s3 mediaURL: ");
-          console.log(res.s3URL);
-          console.log("archiveData: ");
-          console.log(res.archiveData);
-          setMediaUrl(res.url);
-          setMediaDuration(res.duration); 
-          setDBMediaURL(res.url, res.duration);
-        }).catch((e) => { console.log(e) });
-      }
-      else{
-        let url = baseURL + 'archive/' + archiveData.id;
-        await fetch(url)
-          .then(res => res.json()) //return the res data as a json
-          .then((res) => {
-            setMediaDuration(res.duration);
-            setMediaUrl(res.url);
-            console.log("Media Duration:", res.duration);
-            console.log("Media URL:", res.url);
-            setDBMediaURL(res);
-          })
-          .catch((e) => { console.log(e) });
-      }
-    }
-    else {
-      //when not the archive host, 
-      //the user will only need to get the mediaURL from the db
-      getDBMediaURL()
-    }
-  }
-
-  const setDBMediaURL = async (url, duration) => {
-    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
-      media_url: url,
-      duration: duration
-      // archiveID: archiveData
-    })
-      .then(() => console.log("MediaURL Added to DB"))
-      .catch((e) => { console.log(e) });
-  }
-
-  const getDBMediaURL = async () => {
-    const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID)
-    docRef.get().then((doc) => {
-      if (doc.exists) {
-        if (doc.data().media_url != "default") {
-          console.log("caller db mediaURL getter:" + doc.data().media_url)
-          setMediaDuration(doc.data().duration);
-          setMediaUrl(doc.data().media_url);
-        }
-        else {
-          //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-          console.log("URL is for session " + session.sessionID + " not set yet")
-        }
-      }
-      else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-    });
-  }
 
 
   const PreviewMicButton = () => (

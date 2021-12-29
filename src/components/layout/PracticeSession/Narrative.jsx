@@ -36,7 +36,7 @@ const Narrative = () => {
   const classes = useStyles();
   const user = useSelector(state => state.user);
   var rows = TherapistRows;
-  if (user.userMode == "callee") {
+  if (user.userMode ===   "callee") {
     rows = ClientRows;
   }
   return (
