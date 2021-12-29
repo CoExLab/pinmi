@@ -7,8 +7,7 @@ import VoiceChatIcon from '@material-ui/icons/VoiceChat';
 import CreateIcon from '@material-ui/icons/Create';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import PersonIcon from '@material-ui/icons/Person';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import DoneIcon from '@material-ui/icons/Done';
+
 // context
 import { useActiveStepValue } from "../../context";
 

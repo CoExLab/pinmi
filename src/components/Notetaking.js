@@ -11,12 +11,8 @@ import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
 
-// firebase hook
-import { usePins } from '../hooks/index';
-import { firebase } from "../hooks/firebase";
-
 //context
-import { useSessionValue, usePinsValue } from "../context";
+import { usePinsValue } from "../context";
 
 const useStyles = makeStyles(theme => ({
     toggleGroup: {
@@ -60,7 +56,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const classes = useStyles();
 
     //creating a reference for TextField Component
-    const player = useRef(null);
     const noteValueRef = useRef('')
     const perspectiveValueRef = useRef('')
     const skillValueRef = useRef('')
@@ -72,10 +67,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
 
-    const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
-    const [pinBtnColor, setPinBtnColor] = useState("");
-    const [audioProgress, setAudioProgress] = useState(0);
-    const [loadURL, setLoadURL] = useState(false)
 
     // // back to last pin
     // const handleLastPin = (index) => {
@@ -201,32 +192,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current.value = curSkillInfo;
-    }, [curPinIndex])
+    }, [curPinIndex, curNoteInfo, curPerspectiveInfo, curSkillInfo, pins, prevPinIndex, user.userMode])
 
-    // for pin information modifying
-    const handlePinInfo = (infoName, input) => {
-        if (infoName === `${user.userMode}PinInfos.pinNote`) {
-            setCurNoteInfo(input);
-        } else if (infoName === `${user.userMode}PinInfos.pinPerspective`) {
-            setCurPerspectiveInfo(input);
-        } else if (infoName === `${user.userMode}PinInfos.pinSkill`) {
-            setCurSkillInfo(input);
-        }
-        // let usersUpdate = {};
-        // usersUpdate[`${infoName}`] = input;
-        // firebase
-        //     .firestore()
-        //     .collection("Pins")
-        //     .doc(formatTime(pins.map(pin => pin.pinTime)[curPinIndex]))        
-        //     .update(usersUpdate)    
-        //     .then(() => {
-        //         console.log("Document successfully updated!");
-        //     })
-        //     .catch((error) => {
-        //         // The document probably doesn't exist.
-        //         console.error("Error updating document: ", error);
-        //     });
-    }
+   
 
     // for handling pin tyep switching
     const handlePinType = (event, newPinType) => {

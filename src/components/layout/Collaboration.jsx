@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 // Components
 import DissResponse from '../DissResponse';
 import AudioReview from '../AudioReview';
@@ -6,8 +6,7 @@ import Transcription from '../Transcription';
 // Others
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
-import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useSessionValue, useActiveStepValue } from "../../context";
+import { useActiveStepValue } from "../../context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,8 +72,8 @@ const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             prevPinIndex = {prevPinIndex}
             setPrevPinIndex = {setPrevPinIndex}
           />
-          {//<Transcription />
-          }
+          <Transcription />
+          
           <DissResponse 
             curPinIndex = {curPinIndex}
             setCurPinIndex = {setCurPinIndex}

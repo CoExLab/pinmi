@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import { firebase } from "../hooks/firebase";
-import { useSessionValue } from '../context';
 
 const useStyles = makeStyles((theme) => ({
     textField_font: theme.typography.body2,
@@ -23,6 +22,7 @@ const Transcription = () => {
         await docRef.get().then((doc) => {
             if (doc.exists) {
                 setLocalTrans(doc.data()["transcript"]);
+                console.log("transcript in transcription:", localTrans);
             } else {
                 // doc.data() will be undefined in this case
                 console.log("No such document!");

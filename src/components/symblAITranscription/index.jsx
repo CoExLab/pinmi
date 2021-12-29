@@ -5,18 +5,7 @@ async function getAccessToken() {
     const url = "https://api.symbl.ai/oauth2/token:generate";
     const appId = "774b314253685171587331614f4d616e55395a656a38796d4b654a336c766f7a";
     const appSecret = "49544f6f39577273566353333447762d5f64496d4a52316855653852584b7a4551314643476f6f585948344e317849535f7237517a777444432d70662d514655";
-    const request = require('request');
 
-    const authOptions = {
-        method: 'post',
-        url: url,
-        body: {
-            type: "application",
-            appId: appId,
-            appSecret: appSecret
-        },
-        json: true
-    };
 
     accessToken = await fetch(url, {
         method: 'POST',

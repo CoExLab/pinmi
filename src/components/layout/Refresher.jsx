@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { Box, Container, Grid } from '@material-ui/core';
 import { Fragment } from 'react';
-import { useActiveStepValue, useSessionValue } from '../../context';
+import { useActiveStepValue } from '../../context';
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
 import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibToggleButton, { ColorLibToggleButtonGroup } from './ColorLibComponents/ColorLibToggleButton';
@@ -11,12 +11,11 @@ import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import Typography from '@material-ui/core/Typography';
 
 import { firebase } from "../../hooks/firebase";
-import { setUserID, setUserMode } from '../Store';
 
 
 const Refresher = () => {
   
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+  const { setCurActiveStep: setActiveStep } = useActiveStepValue();
   // const { sessionID } = useSessionValue();
   const [submitted, setSubmitted] = useState(false);
   const [submittedAnswers, setSubmittedAnswers] = useState(['', '', '', '']);
@@ -28,7 +27,6 @@ const Refresher = () => {
 
   const user = useSelector(state => state.user);
   const session = useSelector(state => state.session);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     // Scroll on render
@@ -84,40 +82,7 @@ const Refresher = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const makeSessionDoc = async () => {
-    var caller = '';
-    var callee = '';
-    if(user.userMode == 'callee') {
-      callee = user.userID;
-      await firebase.firestore().collection("sessions").doc(session.sessionID).set({
-        callee_id: callee,
-        media_url: "default",
-        duration: '0',
-        transcript: ''
-      })
-      .then(() => {
-        console.log("Session doc created" + session.sessionID);
-        makeRefresherDoc();
-      })
-      .catch((err) => console.error("Error in making session ", err));
- 
-    } else {
-      caller = user.userID;
-      await firebase.firestore().collection("sessions").doc(session.sessionID).set({
-        caller_id: caller,
-        media_url: "default",
-        duration: '0',
-        transcript: ''
-      })
-      .then(() => {
-        console.log("Session doc created" + session.sessionID);
-        makeRefresherDoc();
-      })
-      .catch((err) => console.error("Error in making session ", err));
- 
-    }
-    
-  }
+  
 
   const makeRefresherDoc = async () => {
     await firebase.firestore().collection("refresher").doc(session.sessionID).collection("users").doc(user.userID).set({

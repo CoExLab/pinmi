@@ -8,9 +8,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Typography } from '@material-ui/core';
 
 import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useActiveStepValue, usePinsValue, useSessionValue } from '../../context';
+import { useActiveStepValue, usePinsValue } from '../../context';
 import { firebase } from '../../hooks/firebase';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
 
@@ -185,8 +185,8 @@ const DisscussionPrep = () => {
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
           />
-          {//<Transcription />
-          }
+          <Transcription />
+          
           <Notetaking
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}

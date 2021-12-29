@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import VideoChatComponent from "../../VideoChatComponent.js";
 import Loading from "./Loading";
-import { baseURL, usingS3 } from '../../constants';
+import { baseURL } from '../../constants';
 import { firebase } from '../../../hooks/firebase';
 
 //context
@@ -46,7 +46,7 @@ const Session = () => {
     //hostName is a string that is the clients usermode that should host the archive. 
     const checkIsArchiveHost = (hostName) => {
         console.log("check is recording ran");
-        if (user.userMode == hostName) {
+        if (user.userMode === hostName) {
             console.log("isArchiveHost from check is rec");
             return true;
         }
@@ -94,64 +94,7 @@ const Session = () => {
     );
     var timeout1 = 10; //1/100 second 
     var timeout2 = 10;
-    var isRoomEmptyURL = baseURL + 'isRoomEmpty/' + vonageSessionID;
-    var isArchiveReadyURL = baseURL + 's3/' + archiveID;
-    
 
-    //first pass in the url for the isRoomEmpty server request. 
-    //Once isRoomEmpty returns true, 
-    // const pingServerx = async (url) => {
-    //     console.log("pinging server with " + url);
-    //     let result = await fetch(url)
-    //     .then((res) => {
-    //         return res.json();
-    //     })
-    //     .then((data) => {
-    //         //if the room has been exited this should return true
-    //         if (url == isRoomEmptyURL){
-    //             if(data.roomExited) {
-    //                 console.log("Room has been exited by all participants. ")
-    //                 timeout = 1;
-    //                 return new Promise((resolve, reject) => {
-    //                     setTimeout(() => resolve(pingServer(isArchiveReadyURL)), timeout)
-    //                   });
-    //             }
-    //             else {
-    //                 timeout = timeout * 2;
-    //                 console.log("pinging server for isRoomEmpty with timeout: " + timeout);
-    //                 return new Promise((resolve, reject) => {
-    //                     setTimeout(() => resolve(pingServer(isRoomEmptyURL)), timeout)
-    //                   });
-    //             }
-    //         }//get archive ID! This is a thing that maybe needs to be global. 
-    //         else if (url == isArchiveReadyURL){
-    //             //base case
-    //             if(data.arcStatus == "uploaded") {
-    //                 console.log("archive is Ready in s3");
-    //                 setMediaUrl(data.url);
-    //                 setMediaDuration(data.duration); 
-    //                 return true;
-    //             }
-    //             else {
-    //                 timeout = timeout * 2;
-    //                 return new Promise((resolve, reject) => {
-    //                     setTimeout(() => resolve(pingServer(isArchiveReadyURL)), timeout)
-    //                   });
-    //             }
-    //         }
-    //         else{
-    //             console.log("pingServer was called with a route that doesn't exist");
-    //             console.log(data);
-    //             return false;
-    //         }
-    //     })
-    //     .catch((e) => { 
-    //         console.log(e)
-    //         return false;
-    //     });
-    //     console.log("pingServer result: ", result);
-    //     return result;
-    // }
 
     const pingServer1 = async () => {
         console.log("pinging server with isRoomEmpty");
@@ -179,7 +122,7 @@ const Session = () => {
             return res.json();
         })
         .then((data) => {
-            if(data.arcStatus == "uploaded") {
+            if(data.arcStatus === "uploaded") {
                 setMediaUrl(data.url);
                 setMediaDuration(data.duration); 
                 return true;
@@ -193,8 +136,6 @@ const Session = () => {
         console.log("pingServer result: ", result);
         return result;
     }
-
-    var pingArray = [pingServer1,pingServer2]
 
 
     //When we pass callee into is archive host, 
