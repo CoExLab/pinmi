@@ -1,5 +1,5 @@
 import { store } from "./Store";
-import { handleSubscription, handleArchive } from "./Store";
+import { handleSubscription, handleArchive, handleConnection } from "./Store";
 import OT from "@opentok/client";
 
 function handleError(error) {
@@ -64,6 +64,7 @@ export function initializeSession(apiKey, sessionId, token) {
     if (error) {
       handleError(error);
     } else {
+      store.dispatch(handleConnection(true))
       session.publish(publisher, handleError);
     }
   });
