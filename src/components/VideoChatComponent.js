@@ -348,6 +348,18 @@ function VideoChatComponent(props) {
       });
   }
 
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    iconRoot: {
+      textAlign: 'center'
+    }
+  }));
+
+  const classes = useStyles();
+
   const renderToolbar = () => {
     return (
       <>
@@ -371,6 +383,7 @@ function VideoChatComponent(props) {
         )}
         {isInterviewStarted && (
           <div className="video-toolbar">
+
             {isAudioEnabled ? (
               <Tooltip title="mic on">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
