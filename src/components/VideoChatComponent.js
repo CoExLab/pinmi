@@ -166,6 +166,10 @@ function VideoChatComponent(props) {
   const isSubscribed = useSelector(
     (state) => state.videoChat.isStreamSubscribed
   );
+
+  const isSessionConnected = useSelector(
+    (state) => state.videoChat.isSessionConnected
+  );
   const isArchiving = useSelector(
     (state) => state.archive.isStreamArchiving
   );
@@ -204,6 +208,17 @@ function VideoChatComponent(props) {
       ? initializeSession(apiKey, vonageSessionID, token)
       : stopStreaming();
   }, [isInterviewStarted, apiKey, token, vonageSessionID]);
+
+  //this useEffect occurs when the session.connect() method succeeds in 
+  //VonageVideoAPIIntegration
+  useEffect(()=>{
+    //what do we want to do when the stream connects? 
+    //maybe if they are the callee, start the archive here
+    console.log("Session has successfully connected");
+    if (isSessionConnected && props.isArchiveHost){
+      handleStartArchive();
+    }
+  }, [isSessionConnected])
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
@@ -528,12 +543,12 @@ function VideoChatComponent(props) {
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
+    if (props.isArchiveHost){
+      handleStopArchive();
+    }
     
+  
     //letting the server know that the user exited the room
-    
-
-    //this fetches the archive url
-
     await exitRoom(user.userMode, vonageSessionID)
        .then(() => {
     //     //const results = stopSpeechToTextTest();
@@ -608,6 +623,22 @@ function VideoChatComponent(props) {
     setButtonDisStop(false);
   }
 
+  const handleStopArchive = async () => {
+    var url = baseURL + 'archive/' + archiveData.id + '/stop';
+    await fetch(url, {
+      method: 'POST',
+    })
+      .then(res => res.json())
+      .then((res) => {
+        console.log(res);
+        const results = stopSpeechToTextTest();
+        console.log(results);
+        addTranscript(results);
+      })
+    setButtonDisStop(true);
+  }
+
+
   //this function sends a post request to the server
   //to indicate that someone has entered the video room. 
   //userMode is either "callee" or "caller", and 
@@ -653,23 +684,6 @@ function VideoChatComponent(props) {
   //   }).catch((e) => { console.log(e) });
 
   // }
-
-  const handleStopArchive = async () => {
-    var url = baseURL + 'archive/' + archiveData.id + '/stop';
-    await fetch(url, {
-      method: 'POST',
-    })
-      .then(res => res.json())
-      .then((res) => {
-        console.log(res);
-        const results = stopSpeechToTextTest();
-        console.log(results);
-        addTranscript(results);
-      })
-    setButtonDisStop(true);
-  }
-
-
 
   const PreviewMicButton = () => (
     isAudioEnabled ?

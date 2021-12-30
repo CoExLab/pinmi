@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Types
 const HANDLE_SUBSCRIPTION = "HANDLE_SUBSCRIPTION";
-const HANDLE_PUBLISH = "HANDLE_PUBLISH";
+const HANDLE_CONNECTION = "HANDLE_CONNECTION";
 const HANDLE_ARCHIVE = "HANDLE_ARCHIVE";
 
 // Actions
@@ -11,8 +11,8 @@ export const handleSubscription = (payload) => ({
   type: HANDLE_SUBSCRIPTION,
   payload,
 });
-export const handlePublish = (payload) => ({
-  type: HANDLE_PUBLISH,
+export const handleConnection = (payload) => ({
+  type: HANDLE_CONNECTION,
   payload,
 });
 export const handleArchive = (payload) => ({
@@ -23,7 +23,7 @@ export const handleArchive = (payload) => ({
 
 const defaultState = {
   isStreamSubscribed: false,
-  isStreamPublishing: false,
+  isSessionConnected: false,
   isStreamArchiving: false,
 };
 
@@ -32,6 +32,15 @@ const subscriberReducer = (state = defaultState, action) => {
   switch (action.type) {
     case HANDLE_SUBSCRIPTION:
       return { ...state, isStreamSubscribed: action.payload };
+    default:
+      return state;
+  }
+};
+
+const connectionReducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case HANDLE_CONNECTION:
+      return { ...state, isSessionConnected: action.payload };
     default:
       return state;
   }
@@ -90,6 +99,7 @@ export const {setSessionID, sReset} = sessionSlice.actions;
 // Root Reducers
 const rootReducer = combineReducers({
   videoChat: subscriberReducer,
+  videoChat: connectionReducer,
   archive: archiveReducer,
   user: userReducer,
   session: sessionReducer
