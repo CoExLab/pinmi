@@ -139,7 +139,13 @@ const Session = () => {
                   });
             }
         })
-        .catch((err) => console.error("Error in checking if archive is ready ", err));
+        .catch((err) => {
+            console.error("Error in checking if archive is ready ", err)
+            timeout2 = timeout2 * 2;
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => resolve(pingServer2()), timeout2)
+                  });
+        });
         console.log("pingServer result: ", result);
         return result;
     }
