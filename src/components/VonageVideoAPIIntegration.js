@@ -51,6 +51,10 @@ export function initializeSession(apiKey, sessionId, token) {
     var archiveID = event.id;
     store.dispatch(handleArchive({isStreamArchiving :false, archiveID: archiveID}));
   });
+
+  // session.on("sessionDisconnected", function(event) {
+  //   alert("The session disconnected. " + event.reason);
+  // });
   
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
@@ -64,8 +68,8 @@ export function initializeSession(apiKey, sessionId, token) {
     if (error) {
       handleError(error);
     } else {
-      store.dispatch(handleConnection(true))
       session.publish(publisher, handleError);
+      store.dispatch(handleConnection(true))
     }
   });
 }
