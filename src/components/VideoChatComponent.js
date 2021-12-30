@@ -168,7 +168,7 @@ function VideoChatComponent(props) {
   );
 
   const isSessionConnected = useSelector(
-    (state) => state.videoChat.isSessionConnected
+    (state) => state.connection.isSessionConnected
   );
   const isArchiving = useSelector(
     (state) => state.archive.isStreamArchiving

@@ -99,7 +99,7 @@ export const {setSessionID, sReset} = sessionSlice.actions;
 // Root Reducers
 const rootReducer = combineReducers({
   videoChat: subscriberReducer,
-  videoChat: connectionReducer,
+  connection: connectionReducer,
   archive: archiveReducer,
   user: userReducer,
   session: sessionReducer
