@@ -115,13 +115,19 @@ const Session = () => {
         console.log("pingServer result: ", result);
         return result;
     }
+
     const pingServer2 = async () => {
         console.log("pinging server with isArchiveReady");
+        var status;
         let result = await fetch(baseURL + 's3/' + archiveID)
         .then((res) => {
+            status = res.status;
             return res.json();
         })
         .then((data) => {
+            if (status === 503){
+                console.log("Status 503!")
+            }
             if(data.arcStatus === "uploaded") {
                 setMediaUrl(data.url);
                 setMediaDuration(data.duration); 
@@ -133,6 +139,15 @@ const Session = () => {
                   });
             }
         })
+        .catch((err) => {
+            console.error("Error in checking if archive is ready ", err);
+            
+            //try calling the server again if there is a 503 error
+            timeout2 = 10;//reset the timeout 
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(pingServer2()), timeout2)
+            });
+        });
         console.log("pingServer result: ", result);
         return result;
     }
