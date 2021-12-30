@@ -215,14 +215,16 @@ function VideoChatComponent(props) {
     //what do we want to do when the stream connects? 
     //maybe if they are the callee, start the archive here
     console.log("Session has successfully connected");
-    if (isSessionConnected && props.isArchiveHost){
-      handleStartArchive();
-    }
+    // if (isSessionConnected && props.isArchiveHost){
+    //   handleStartArchive();
+    // }
   }, [isSessionConnected])
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
-    console.log("STREAM SUBSCRIBED FROM SELECTOR UPDATED")
+    if (isSubscribed && isSessionConnected && props.isArchiveHost){
+      handleStartArchive();
+    }
   }, [isSubscribed]);
 
 
