@@ -141,14 +141,12 @@ const Session = () => {
         })
         .catch((err) => {
             console.error("Error in checking if archive is ready ", err);
+            
             //try calling the server again if there is a 503 error
-            if (err.response.status === 503){
-                console.log("on 503 status, repinging");
-                timeout2 = 10;//reset the timeout 
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => resolve(pingServer2()), timeout2)
-                });
-            }
+            timeout2 = 10;//reset the timeout 
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(pingServer2()), timeout2)
+            });
         });
         console.log("pingServer result: ", result);
         return result;
