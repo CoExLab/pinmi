@@ -190,7 +190,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
-                        label="caller's perspective"
+                        label="Therapist's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -201,7 +201,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
-                        label="callee's perspective"
+                        label="Client's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -234,7 +234,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
                         disabled
-                        label="caller's MI skill"
+                        label="Therapist's MI skill"
                         id="outlined-secondary"
                         fullWidth
                         variant="outlined"
@@ -245,7 +245,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     />
                     <ColorLibTextField
                         disabled
-                        label="callee's MI skill"
+                        label="Client's MI skill"
                         id="outlined-secondary"
                         fullWidth
                         variant="outlined"
@@ -263,7 +263,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline
@@ -281,7 +281,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline
@@ -299,7 +299,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline
