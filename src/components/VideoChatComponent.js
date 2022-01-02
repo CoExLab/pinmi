@@ -184,8 +184,8 @@ function VideoChatComponent(props) {
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
-  const [setPinBtnDisabled] = useState(false);
-  const [setPinBtnColor] = useState("");
+  const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
+  const [pinBtnColor, setPinBtnColor] = useState("");
 
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});

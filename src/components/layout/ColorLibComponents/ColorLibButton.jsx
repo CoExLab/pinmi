@@ -57,7 +57,7 @@ export const ColorLibCallEndButton = (props) => {
     root: {
       backgroundColor: '#DB0000',
       color: 'white',
-      opacity: '62%',
+      opacity: '80%',
       '&:hover': {
         backgroundColor: '#DB0000',
         opacity: '100%',
@@ -77,7 +77,7 @@ export const ColorLibGrayNextButton = (props) => {
     root: {
       backgroundColor: 'black',
       color: 'white',
-      opacity: '50%',
+      opacity: '80%',
       '&:hover': {
         backgroundColor: 'black',
         opacity: '100%',
