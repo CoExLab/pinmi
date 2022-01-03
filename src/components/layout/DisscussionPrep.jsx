@@ -142,6 +142,7 @@ const DisscussionPrep = () => {
   const handleNext = async () => {
     
     console.log("Pins changed in dis prep: " + curPinIndex);
+    savePin(curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
     if(curPinIndex === 0) {
