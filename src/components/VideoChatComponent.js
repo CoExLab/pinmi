@@ -335,7 +335,7 @@ function VideoChatComponent(props) {
     console.log("Finished pin creation");
   }
 
-  const addTranscript = async (results) => {
+  const addTranscript = async (results, userMode) => {
     //write the transcript to the database
     //create a space to upload caller and callee transcripts separately
     if (userMode == "callee") {
@@ -649,7 +649,7 @@ function VideoChatComponent(props) {
         console.log(res);
         const results = stopSpeechToTextTest();
         console.log(results);
-        addTranscript(results);
+        addTranscript(results, user.userMode);
       })
     setButtonDisStop(true);
   }
