@@ -233,6 +233,8 @@ function VideoChatComponent(props) {
     console.log("Hey look! They archive status changed from VCC!!");
     if (isArchiving === true){
       setVideoCallTimer(Date.now());
+      // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
+      startSpeechToTextTest(Date.now());
     } 
   }, [isArchiving])
 
@@ -559,6 +561,9 @@ function VideoChatComponent(props) {
 
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
+    const results = stopSpeechToTextTest();
+    console.log(results);
+    addTranscript(results, user.userMode);
     if (props.isArchiveHost){
       handleStopArchive();
     }
@@ -611,8 +616,7 @@ function VideoChatComponent(props) {
         setVideoCallTimer(Date.now());
         console.log(Date.now());
 
-        // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
-        startSpeechToTextTest(Date.now());
+        
 
         setPopperOpen(true);
         setTimeout(() => {
@@ -647,9 +651,7 @@ function VideoChatComponent(props) {
       .then(res => res.json())
       .then((res) => {
         console.log(res);
-        const results = stopSpeechToTextTest();
-        console.log(results);
-        addTranscript(results, user.userMode);
+        
       })
     setButtonDisStop(true);
   }
