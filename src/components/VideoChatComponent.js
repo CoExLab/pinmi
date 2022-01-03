@@ -337,15 +337,29 @@ function VideoChatComponent(props) {
 
   const addTranscript = async (results) => {
     //write the transcript to the database
-    await firebase.firestore().collection("sessions").doc(session.sessionID).update({
-      transcript: results
-    })
-      .then(() => {
-        console.log("Transcript successfully written!");
+    //create a space to upload caller and callee transcripts separately
+    if (userMode == "callee") {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).update({
+        calleeTranscript: results
       })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
-      });
+        .then(() => {
+          console.log("Callee transcript successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+    }
+    else {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).update({
+        callerTranscript: results
+      })
+        .then(() => {
+          console.log("Caller transcript successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
+    }
   }
 
   const renderToolbar = () => {
