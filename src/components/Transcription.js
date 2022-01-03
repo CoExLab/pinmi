@@ -21,7 +21,7 @@ const Transcription = () => {
         const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID);
         await docRef.get().then((doc) => {
             if (doc.exists) {
-                setLocalTrans(doc.data()["transcript"]);
+                setLocalTrans(doc.data()["calleeTranscript"]);
                 console.log("transcript in transcription:", localTrans);
             } else {
                 // doc.data() will be undefined in this case
