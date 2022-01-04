@@ -196,10 +196,6 @@ function VideoChatComponentSecond(props) {
     console.log(curTime);  
   }
 
-  
-
-
-
   const renderToolbar = () => {
     return (
       <>
@@ -320,7 +316,32 @@ function VideoChatComponentSecond(props) {
     );
   };
 
+  const savePin = async (index) => {
+    const myPin = pins[index];
+    console.log(myPin);
+    if(user.userMode === "callee") {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        calleePinGoal: myPin.calleePinGoal,
+        calleePinStrength: myPin.calleePinStrength,
+        calleePinOpportunity: myPin.calleePinOpportunity,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    } else {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        callerPinGoal: myPin.callerPinGoal,
+        callerPinStrength: myPin.callerPinStrength,
+        callerPinOpportunity: myPin.callerPinOpportunity,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    }
+  }
+
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
+    //save pins to db
+    pins.forEach((elem, id) => savePin(id));
+    //rest
     setOpen(false);
     console.log("loading info now...");
     setLoadingStatus(true);

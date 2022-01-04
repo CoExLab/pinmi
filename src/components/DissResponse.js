@@ -75,18 +75,59 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo("pinStrength"));
     const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo("pinOpportunity"));
 
+    const savePin = (index) => {
+        const lastPin = pins[index];
+        if(user.userMode === 'caller') {
+            lastPin.callerPinGoal = curGoalInfo;
+            lastPin.callerPinStrength = curStrengthInfo;
+            lastPin.callerPinOpportunity = curOpporunityInfo;
+        } else {
+            lastPin.calleePinGoal = curGoalInfo;
+            lastPin.calleePinStrength = curStrengthInfo;
+            lastPin.calleePinOpportunity = curOpporunityInfo;
+        }
+        pins[index] = lastPin;
+    }
+
     useEffect(() => {
         if (pins.length > 0){
             fetchCurTextVal();
-            pins[prevPinIndex].pinGoal = curGoalInfo;
-            pins[prevPinIndex].pinStrength = curStrengthInfo;
-            pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
-            setCurGoalInfo(pins[curPinIndex].pinGoal);
-            setCurStrengthInfo(pins[curPinIndex].pinStrength);
-            setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
+    
+            setCurGoalInfo(goalValueRef.current.value);
+            setCurStrengthInfo(strengthValueRef.current.value);
+            setCurOpportunityInfo(opportunityValueRef.current.value);
+
+            console.log("prevPinIndex: " + prevPinIndex);
+            console.log("curPinIndex: " + curPinIndex);
+
+            const lastPin = pins[prevPinIndex];
+            if(lastPin) {
+                savePin(prevPinIndex);
+            }
+            const nextPin = pins[curPinIndex];
+            console.log(lastPin);
+            if(nextPin && user.userMode === 'caller') {  
+                setCurGoalInfo(nextPin.callerPinGoal);
+                setCurStrengthInfo(nextPin.callerPinStrength);
+                setCurOpportunityInfo(nextPin.callerPinOpportunity);
+            } else if (nextPin) {
+                setCurGoalInfo(nextPin.calleePinGoal);
+                setCurStrengthInfo(nextPin.calleePinStrength);
+                setCurOpportunityInfo(nextPin.calleePinOpportunity);
+            } else {
+                console.log("???")
+            }
             // eslint-disable-next-line react-hooks/exhaustive-deps
+            //reset all the refs
+            console.log("curGoalInfo: " + curGoalInfo);
+            console.log("curStrengthInfo: " + curStrengthInfo);
+            console.log("curOpportunityInfo: " + curOpporunityInfo);
+
+            goalValueRef.current.value = curGoalInfo;
+            strengthValueRef.current.value = curStrengthInfo;
+            opportunityValueRef.current.value = curOpporunityInfo;
         }
-    }, [curPinIndex, pins, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
+    }, [curPinIndex, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
 
     // for updating and fetching current text field value
@@ -106,6 +147,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
         setCurSkillInfo1(curPin.callerPinSkill);
         setCurSkillInfo2(curPin.calleePinSkill);
+
     }
 
     const handlePrevPin = () => {
