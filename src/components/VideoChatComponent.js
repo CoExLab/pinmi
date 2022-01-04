@@ -305,9 +305,12 @@ function VideoChatComponent(props) {
       calleePinPerspective: '',
       calleePinCategory: '',
       calleePinSkill: '',
-      pinGoal: '',
-      pinStrength: '',
-      pinOpportunity: '',
+      callerPinGoal: '',
+      callerPinStrength: '',
+      callerPinOpportunity: '',
+      calleePinGoal: '',
+      calleePinStrength: '',
+      calleePinOpportunity: '',
     };
 
     //Otherwise, use this code, as it will save reads and writes in the long run:
@@ -324,9 +327,12 @@ function VideoChatComponent(props) {
       calleePinPerspective: myPin.calleePinPerspective,
       calleePinCategory: myPin.calleePinCategory,
       calleePinSkill: myPin.calleePinSkill,
-      pinGoal: '',
-      pinStrength: '',
-      pinOpportunity: '',
+      callerPinGoal: '',
+      callerPinStrength: '',
+      callerPinOpportunity: '',
+      calleePinGoal: '',
+      calleePinStrength: '',
+      calleePinOpportunity: '',
     });
     myPin.pinID = docRef.id;
     //update with pinID
