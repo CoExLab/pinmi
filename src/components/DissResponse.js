@@ -86,7 +86,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }
-    }, [curPinIndex, curGoalInfo, curOpporunityInfo, curStrengthInfo, pins, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
+    }, [curPinIndex, pins, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
 
     // for updating and fetching current text field value
