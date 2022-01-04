@@ -43,6 +43,7 @@ const Discussion = () => {
   const [page, setPage] = useState(0);
   //const { sessionID } = useSessionValue();
   const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
   const { pins } = usePinsValue();
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
@@ -74,8 +75,12 @@ const Discussion = () => {
     console.log("before");
     if (finishedUpdates) {
       console.log("after");
+      if(page === 1){
+        pins.forEach((elem, id) => savePin(id));
+      }
       console.log(page + 1);
       setPage(page + 1);
+      setFinishedUpdates(false);
     }
   }, [finishedUpdates]);
 
@@ -118,6 +123,29 @@ const Discussion = () => {
     }
   }
 
+  const savePin = async (index) => {
+    const myPin = pins[index];
+    console.log(myPin);
+    if(user.userMode === "callee") {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        calleePinGoal: myPin.calleePinGoal,
+        calleePinStrength: myPin.calleePinStrength,
+        calleePinOpportunity: myPin.calleePinOpportunity,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    } else {
+      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
+        callerPinGoal: myPin.callerPinGoal,
+        callerPinStrength: myPin.callerPinStrength,
+        callerPinOpportunity: myPin.callerPinOpportunity,
+      })
+      .then(() => {console.log("current pin successfully updated") })
+      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    }
+  }
+
+
   const handleButton = (finished) => {
     if (finished) {
       console.log("handlebutton");
@@ -129,6 +157,14 @@ const Discussion = () => {
       if(page === 0) {
         //pull pin updates
         loadPins();
+      } else if(page === 1){
+        setPrevPinIndex(curPinIndex);
+        if(curPinIndex === 0) {
+          setCurPinIndex(1);
+        } else {
+          setCurPinIndex(0);
+        }
+        setFinishedUpdates(true);
       } else {
         setPage(page + 1);
       }
