@@ -18,7 +18,6 @@ export const generatePushId = (() => {
     const PUSH_CHARS =
       "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   
-    const lastRandChars = [];
   
     return function () {
       let now = new Date().getTime();

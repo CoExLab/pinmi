@@ -12,7 +12,6 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import ColorLibButton from "./ColorLibComponents/ColorLibButton";
 import ColorLibTextField from "./ColorLibComponents/ColorLibTextField";
-import ColorLibNextButton from "./ColorLibComponents/ColorLibButton";
 import Navbar from "./Navbar";
 
 import pinningPreview from "./../../other/tutorial/pinning-preview.gif";
@@ -204,18 +203,11 @@ const Landing = () => {
         <Box m={1} display="inline">
           <ColorLibTextField
             id="outlined-basic"
-            label="Your Name"
+            label="Your Unique ID"
             variant="outlined"
             value={username}
             inputRef={usernameRef}
             onChange={() => setUsername(usernameRef.current.value)}
-          />
-        </Box>
-        <Box m={1} display="inline">
-          <ColorLibTextField
-            id="outlined-basic"
-            label="Room Name"
-            variant="outlined"
           />
         </Box>
       </Container>

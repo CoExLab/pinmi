@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { formatTime } from '../helper/index';
-import { Box, Grid, Paper, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 
 import { ColorLibNextButton, ColorLibBackButton } from './layout/ColorLibComponents/ColorLibButton';
@@ -11,13 +11,9 @@ import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 import ColorLibTextField from './layout/ColorLibComponents/ColorLibTextField';
 import MISkillsSheet from './layout/MISkillsSheet';
 
-// firebase hook
-import { usePins } from '../hooks/index';
-import { firebase } from "../hooks/firebase";
 
 //context
-import { useSessionValue, usePinsValue, PinsProvider } from '../context';
-import { format } from 'url';
+import { usePinsValue } from '../context';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -68,7 +64,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     //This function handles the empty pin array case
     const getCurrentPinInfo = (pinInfo) => {
         if (pins.length>0){
-            return pins[curPinIndex][pinInfo];
+            return pins[curPinIndex];
         }
         else{ //if there are no pins the array, return an empty string. 
             return "";
@@ -79,18 +75,59 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo("pinStrength"));
     const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo("pinOpportunity"));
 
+    const savePin = (index) => {
+        const lastPin = pins[index];
+        if(user.userMode === 'caller') {
+            lastPin.callerPinGoal = curGoalInfo;
+            lastPin.callerPinStrength = curStrengthInfo;
+            lastPin.callerPinOpportunity = curOpporunityInfo;
+        } else {
+            lastPin.calleePinGoal = curGoalInfo;
+            lastPin.calleePinStrength = curStrengthInfo;
+            lastPin.calleePinOpportunity = curOpporunityInfo;
+        }
+        pins[index] = lastPin;
+    }
+
     useEffect(() => {
         if (pins.length > 0){
             fetchCurTextVal();
-            pins[prevPinIndex].pinGoal = curGoalInfo;
-            pins[prevPinIndex].pinStrength = curStrengthInfo;
-            pins[prevPinIndex].pinOpportunity = curOpporunityInfo;
-            setCurGoalInfo(pins[curPinIndex].pinGoal);
-            setCurStrengthInfo(pins[curPinIndex].pinStrength);
-            setCurOpportunityInfo(pins[curPinIndex].pinOpportunity);
+    
+            setCurGoalInfo(goalValueRef.current.value);
+            setCurStrengthInfo(strengthValueRef.current.value);
+            setCurOpportunityInfo(opportunityValueRef.current.value);
+
+            console.log("prevPinIndex: " + prevPinIndex);
+            console.log("curPinIndex: " + curPinIndex);
+
+            const lastPin = pins[prevPinIndex];
+            if(lastPin) {
+                savePin(prevPinIndex);
+            }
+            const nextPin = pins[curPinIndex];
+            console.log(lastPin);
+            if(nextPin && user.userMode === 'caller') {  
+                setCurGoalInfo(nextPin.callerPinGoal);
+                setCurStrengthInfo(nextPin.callerPinStrength);
+                setCurOpportunityInfo(nextPin.callerPinOpportunity);
+            } else if (nextPin) {
+                setCurGoalInfo(nextPin.calleePinGoal);
+                setCurStrengthInfo(nextPin.calleePinStrength);
+                setCurOpportunityInfo(nextPin.calleePinOpportunity);
+            } else {
+                console.log("???")
+            }
             // eslint-disable-next-line react-hooks/exhaustive-deps
+            //reset all the refs
+            console.log("curGoalInfo: " + curGoalInfo);
+            console.log("curStrengthInfo: " + curStrengthInfo);
+            console.log("curOpportunityInfo: " + curOpporunityInfo);
+
+            goalValueRef.current.value = curGoalInfo;
+            strengthValueRef.current.value = curStrengthInfo;
+            opportunityValueRef.current.value = curOpporunityInfo;
         }
-    }, [curPinIndex])//curPinIndex shouldn't change if there are not pins. 
+    }, [curPinIndex, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
 
     // for updating and fetching current text field value
@@ -110,6 +147,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
         setCurSkillInfo1(curPin.callerPinSkill);
         setCurSkillInfo2(curPin.calleePinSkill);
+
     }
 
     const handlePrevPin = () => {
@@ -194,7 +232,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
-                        label="caller's perspective"
+                        label="Therapist's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -205,7 +243,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
-                        label="callee's perspective"
+                        label="Client's perspective"
                         fullWidth
                         variant="outlined"
                         multiline
@@ -238,7 +276,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
                         disabled
-                        label="caller's MI skill"
+                        label="Therapist's MI skill"
                         id="outlined-secondary"
                         fullWidth
                         variant="outlined"
@@ -249,7 +287,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                     />
                     <ColorLibTextField
                         disabled
-                        label="callee's MI skill"
+                        label="Client's MI skill"
                         id="outlined-secondary"
                         fullWidth
                         variant="outlined"
@@ -267,7 +305,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline
@@ -285,7 +323,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline
@@ -303,7 +341,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
                 <ColorLibTextField
                     id="outlined-secondary"
-                    label="Personal Notes..."
+                    label="Type a response..."
                     fullWidth
                     variant="outlined"
                     multiline

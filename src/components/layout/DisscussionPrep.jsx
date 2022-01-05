@@ -4,15 +4,19 @@ import Notetaking from "../Notetaking";
 import AudioReview from "../AudioReview";
 import Transcription from "../Transcription";
 // Others
-import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Typography } from '@material-ui/core';
+import { makeStyles } from "@material-ui/core/styles";
+import { Container, Grid, Typography } from "@material-ui/core";
 
-import ColorLibTimeReminder from './ColorLibComponents/ColorLibTimeReminder';
-import ColorLibButton from './ColorLibComponents/ColorLibButton';
-import { useActiveStepValue, usePinsValue, usePlayerModeValue} from '../../context';
-import { firebase } from '../../hooks/firebase';
-import { useSelector, useDispatch } from 'react-redux';
+import ColorLibTimeReminder from "./ColorLibComponents/ColorLibTimeReminder";
+import ColorLibButton from "./ColorLibComponents/ColorLibButton";
+import { useActiveStepValue, usePinsValue } from "../../context";
+import { firebase } from "../../hooks/firebase";
+import { useSelector } from "react-redux";
+
+import ColorLibTimeReminder from "./ColorLibComponents/ColorLibTimeReminder";
+
 import { formatTime } from "../../helper/index";
+
 import SinglePlayerVideo from "./SinglePlayerComponents/SinglePlayerDissPrep";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,8 +48,8 @@ const useStyles = makeStyles((theme) => ({
         bottom: 0,
         left: 0,
         right: 0,
-        overflowY: 'scroll',
-      }
+        overflowY: "scroll",
+      },
     },
     "& .MuiGrid-grid-sm-8": {
       maxWidth: "calc(66.666667% - 8px)",
@@ -53,26 +57,26 @@ const useStyles = makeStyles((theme) => ({
   },
   tealText: {
     color: theme.palette.teal.main,
-  }
+  },
 }));
 
 const DisscussionPrep = () => {
   const classes = useStyles();
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
-  
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
+    useActiveStepValue();
 
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [finishedUpdates, setFinishedUpdates] = useState(false);
   const { pins } = usePinsValue();
   //const { sessionID } = useSessionValue();
-  const session = useSelector(state => state.session);
+  const session = useSelector((state) => state.session);
+  const user = useSelector((state) => state.user);
 
   const [curPinIndex, setCurPinIndex] = useState(() => {
     //console.log(pins);
-    if (pins.length > 0){
+    if (pins.length > 0) {
       return 0;
-    }
-    else{
+    } else {
       return -1;
     }
   });
@@ -81,7 +85,7 @@ const DisscussionPrep = () => {
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -90,11 +94,11 @@ const DisscussionPrep = () => {
   useEffect(() => {
     console.log("current pin index:", curPinIndex);
     console.log(pins);
-    if(finishedUpdates) {
+    if (finishedUpdates) {
       //save all pins to database and move to next module
-      pins.map((elem, id) => savePin(id));
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  
+      pins.forEach((elem, id) => savePin(id));
+      //return Loading module
+      setActiveStep(activeStep + 1);
     }
   }, [finishedUpdates]);
 
@@ -116,31 +120,56 @@ const DisscussionPrep = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").add({
-      creatorID: myPin.creatorID,
-      creatorMode: myPin.creatorMode,
-      pinTime: myPin.pinTime,
-      callerPinNote: myPin.callerPinNote,
-      callerPinPerspective: myPin.callerPinPerspective,
-      callerPinCategory: myPin.callerPinCategory,
-      callerPinSkill: myPin.callerPinSkill,
-      calleePinNote: myPin.calleePinNote,
-      calleePinPerspective: myPin.calleePinPerspective,
-      calleePinCategory: myPin.calleePinCategory,
-      calleePinSkill: myPin.calleePinSkill,
-      pinGoal: '',
-      pinStrength: '',
-      pinOpportunity: '',
-    })
-    .then((docRef) => { pins[index].pinID = docRef.id; console.log("current pin successfully updated") })
-    .catch((e) => { console.log("pin update unsuccessful: " + e) });
-  }
+    if (user.userMode === "callee") {
+      await firebase
+        .firestore()
+        .collection("sessions")
+        .doc(session.sessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          calleePinNote: myPin.calleePinNote,
+          calleePinPerspective: myPin.calleePinPerspective,
+          calleePinCategory: myPin.calleePinCategory,
+          calleePinSkill: myPin.calleePinSkill,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
+    } else {
+      await firebase
+        .firestore()
+        .collection("sessions")
+        .doc(session.sessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          callerPinNote: myPin.calleePinNote,
+          callerPinPerspective: myPin.calleePinPerspective,
+          callerPinCategory: myPin.calleePinCategory,
+          callerPinSkill: myPin.calleePinSkill,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
+    }
+  };
 
   const handleNext = async () => {
     console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
-    setCurPinIndex(curPinIndex);//MAIN ISSUE!!!!! 
+    if (curPinIndex === 0) {
+      setCurPinIndex(curPinIndex + 1); //MAIN ISSUE!!!!!
+    } else {
+      setCurPinIndex(0);
+    }
     //allow next step in logic to occur
     setFinishedUpdates(true);
   };
@@ -157,25 +186,26 @@ const DisscussionPrep = () => {
 
   return (
     <div className={classes.root}>
-      <Container maxWidth='md'>
-        <div id="time_reminder" style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          marginTop: '10px',
-          marginRight: '10px',
-          zIndex: 100,
-          textAlign: 'center',
-        }}>
-          <Typography variant="body2">
-            Recommended time left
-          </Typography>
+      <Container maxWidth="md">
+        <div
+          id="time_reminder"
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            marginTop: "10px",
+            marginRight: "10px",
+            zIndex: 100,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="body2">Recommended time left</Typography>
           <Typography variant="h4" className={classes.tealText}>
             {formatTime(countDown)}
           </Typography>
         </div>
-        <ColorLibTimeReminder 
-          open={timeRemind} 
+        <ColorLibTimeReminder
+          open={timeRemind}
           setOpen={setTimeRemind}
           recommendedMinutes={recommendedTime / 60}
           nextSection="Discussion"

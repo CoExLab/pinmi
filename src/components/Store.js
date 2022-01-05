@@ -3,22 +3,28 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Types
 const HANDLE_SUBSCRIPTION = "HANDLE_SUBSCRIPTION";
-const HANDLE_PUBLISH = "HANDLE_PUBLISH";
+const HANDLE_CONNECTION = "HANDLE_CONNECTION";
+const HANDLE_ARCHIVE = "HANDLE_ARCHIVE";
 
 // Actions
 export const handleSubscription = (payload) => ({
   type: HANDLE_SUBSCRIPTION,
   payload,
 });
-export const handlePublish = (payload) => ({
-  type: HANDLE_PUBLISH,
+export const handleConnection = (payload) => ({
+  type: HANDLE_CONNECTION,
+  payload,
+});
+export const handleArchive = (payload) => ({
+  type: HANDLE_ARCHIVE,
   payload,
 });
 
 
 const defaultState = {
   isStreamSubscribed: false,
-  isStreamPublishing: false,
+  isSessionConnected: false,
+  isStreamArchiving: false,
 };
 
 // Reducers
@@ -30,10 +36,20 @@ const subscriberReducer = (state = defaultState, action) => {
       return state;
   }
 };
-const publisherReducer = (state = defaultState, action) => {
+
+const connectionReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case HANDLE_PUBLISH:
-      return { ...state, isStreamPublished: action.payload };
+    case HANDLE_CONNECTION:
+      return { ...state, isSessionConnected: action.payload };
+    default:
+      return state;
+  }
+};
+
+const archiveReducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case HANDLE_ARCHIVE: //archiveReducer saves the archiveID and the active streaming status
+      return { ...state, isStreamArchiving: action.payload.isStreamArchiving, archiveID: action.payload.archiveID};
     default:
       return state;
   }
@@ -83,7 +99,8 @@ export const {setSessionID, sReset} = sessionSlice.actions;
 // Root Reducers
 const rootReducer = combineReducers({
   videoChat: subscriberReducer,
-  //VideoChat: publisherReducer
+  connection: connectionReducer,
+  archive: archiveReducer,
   user: userReducer,
   session: sessionReducer
 });

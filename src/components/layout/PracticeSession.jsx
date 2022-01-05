@@ -3,9 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Intro from "./PracticeSession/Intro.jsx"
 import Narrative from "./PracticeSession/Narrative.jsx"
 import Session from "./PracticeSession/Session.jsx"
-import Loading from "./PracticeSession/Loading.jsx"
 
-import { useActiveStepValue, useSessionValue } from "../../context";
+import { useSessionValue } from "../../context";
 import ColorLibButton, { ColorLibNextButton } from './ColorLibComponents/ColorLibButton';
 
 
