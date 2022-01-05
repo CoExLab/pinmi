@@ -1,8 +1,0 @@
-.SliderbarOverlay {
-  z-index: 1;
-  position: absolute;
-  cursor: wait;
-}
-.SliderbarContext {
-  position: absolute;
-}
