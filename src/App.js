@@ -16,7 +16,6 @@ import CORsTestButtons from "./components/layout/CORsTestButtons";
 import { store } from "./components/Store";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
-import { useState } from "react";
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */

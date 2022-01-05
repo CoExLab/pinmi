@@ -1,35 +1,28 @@
 import React, { useRef, useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid } from '@material-ui/core';
 import ReactPlayer from 'react-player';
 //import audio from '../other/audio.mp3';
 import ColorLibAudioPlayer from './layout/ColorLibComponents/ColorLibAudioPlayer';
-import {formatTime, generatePushId} from '../helper/index';
 
 // context
 import { useActiveStepValue, useSessionValue, usePinsValue } from "../context";
 
 // firebase hook
-import { usePins, useMediaURL } from '../hooks/index';
-import { firebase } from "../hooks/firebase";
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
     const player = useRef(null);
     const {curActiveStep} = useActiveStepValue();
     //session data
-    const session = useSelector(state => state.session);
-    const {setMediaDuration , setMediaUrl, mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
+    const {mediaUrl: audio, mediaDuration: audioLen} = useSessionValue();
     // fetch raw pin data here
     const { pins } = usePinsValue();
     //fetch user data
     const user = useSelector(state => state.user);
 
     // get document ID
-    const pinID = generatePushId();
+
     // hard-coded sessionID here
-    const MiTrainingSessionID = "123";
     
     //first pin (either -1 if there isn't one, or an actual value)
     const AudioProgressStartingValue = (pinsArray) => {
@@ -44,17 +37,16 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // const { mediaURL: audio, setMediaURL } = useMediaURL();
 
-    const [pinBtnDisabled, setPinBtnDisabled] = useState(false); 
-    const [pinBtnColor, setPinBtnColor] = useState("");
+    const [setPinBtnDisabled] = useState(false); 
+    const [setPinBtnColor] = useState("");
 
     const [audioProgress, setAudioProgress] = useState(AudioProgressStartingValue(pins));
     useState(0);
     const [audioPlaying, setAudioPlaying] = useState(false);
     
-    const [loadURL, setLoadURL] = useState(false)
 
     useEffect(() => {
-        if (AudioProgressStartingValue(pins) == 0){
+        if (AudioProgressStartingValue(pins) === 0){
             setAudioProgress(0);
             console.log("Audio Progress set to: " + 0);
         }
@@ -65,59 +57,12 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         }
 
         console.log("Audio from AudioReview useEffect " + audio)
-    }, [curPinIndex]);
+    }, [curPinIndex, audio, pins]);
     
     //list of all pin times
     //let playTimeArr = pins.map(pin => pin.pinTime);
 
-    const getDBMediaURL = async () => {
-        const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID)
-        docRef.get().then((doc) => {
-          if (doc.exists) {
-              if (doc.data().media_url != "default"){
-                console.log("caller db mediaURL getter:"+ doc.data().media_url)
-                setMediaDuration(doc.data().duration);
-                setMediaUrl(doc.data().media_url);
-                return(doc.data().media_url);
-              }
-              else{
-                //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-                console.log("URL is not set yet")
-                return("default")
-              }
-            } 
-          else{
-              // doc.data() will be undefined in this case
-              console.log("No such document!");
-          }
-        });
-      }
-
-    // back to last pin
-    // const handleLastPin = (index) => {   
-    //     console.log(audio);
-    //     console.log(audioLen);
-    //     console.log(audioProgress);
-    //     if(curPinIndex > 0){
-    //         setCurPinIndex(index - 1);
-    //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index - 1]));
-    //     }
-    // };
-
-    // go to next pin
-    // const handleNextPin = (index, remove = false) => {
-    //     console.log("interesting: " + curPinIndex + " length: " + pins.length);
-    //     if(curPinIndex < pins.length - 1){
-    //         console.log("Index: " + index);
-    //         if(!remove){
-    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-    //             setCurPinIndex(index);
-    //         } else{                
-    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index ]));
-    //             setCurPinIndex(index);
-    //         }
-    //     }
-    // };
+ 
 
     const addPin = async (curTime) => {
         // ui on
@@ -142,9 +87,12 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             calleePinPerspective: '',
             calleePinCategory: '',
             calleePinSkill: '',
-            pinGoal: '',
-            pinStrength: '',
-            pinOpportunity: '',
+            callerPinGoal: '',
+            callerPinStrength: '',
+            callerPinOpportunity: '',
+            calleePinGoal: '',
+            calleePinStrength: '',
+            calleePinOpportunity: '',
         }; 
 
         //now correctly add the pin into the array to maintain sortedness
@@ -155,48 +103,6 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         setCurPinIndex(curPinIndex + 1);
     }
 
-    const deletePin = async (index) => {
-
-        pins.splice(index, 1);
-        console.log("Document successfully deleted!");
-        
-        // ui on
-        setPinBtnDisabled(true);
-        setPinBtnColor("secondary");
-        // ui off
-        setTimeout(() => {
-            setPinBtnDisabled(false);
-        }, 800);
-    };
-
-    const handlePin = () => {
-        const curTime = Math.round(player.current.getCurrentTime());
-        //let index = playTimeArr.indexOf(curTime);
-        addPin(curTime);
-        // if (pins.map(pin => pin.pinTime).indexOf(curTime) !== -1) {
-        //     // remove current pin
-        //     deletePin(index);
-        //     // auto jump to next available pin point
-        //     console.log(pins.length);
-        //     if(pins.map(pin => pin.pinTime).length === 0) {
-        //         player.current.seekTo(parseFloat(0));
-        //     }
-        //     else if(pins.map(pin => pin.pinTime).length === 2){
-        //         curPinIndex === 0 ? 
-        //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[1])) : 
-        //         handleLastPin(curPinIndex - 1)
-        //     }
-        //     else{
-        //         curPinIndex === pins.map(pin => pin.pinTime).length - 1 || 
-        //         curPinIndex === pins.map(pin => pin.pinTime).length ? 
-        //         handleLastPin(curPinIndex - 1) : 
-        //         handleNextPin(curPinIndex + 1, true);
-        //     }
-        // } else {
-        //     // add current playtime as a new pin and seek to it
-        //     addPin(curTime);
-        // }
-    };
 
     const handleProgress = state => {
         setAudioProgress(Math.round(state.playedSeconds)); 

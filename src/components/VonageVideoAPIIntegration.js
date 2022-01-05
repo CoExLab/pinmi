@@ -1,5 +1,5 @@
 import { store } from "./Store";
-import { handleSubscription } from "./Store";
+import { handleSubscription, handleArchive, handleConnection } from "./Store";
 import OT from "@opentok/client";
 
 function handleError(error) {
@@ -40,9 +40,25 @@ export function initializeSession(apiKey, sessionId, token) {
     store.dispatch(handleSubscription(true));
   });
 
+  session.on("archiveStarted", function (event) {
+    var archiveID = event.id;
+    console.log("The archive has started: " + archiveID);
+    store.dispatch(handleArchive({isStreamArchiving :true, archiveID: archiveID}));
+  });
+
+  session.on("archiveStopped", function (event) {
+    //console.log("The archive has ended");
+    var archiveID = event.id;
+    store.dispatch(handleArchive({isStreamArchiving :false, archiveID: archiveID}));
+  });
+
+  // session.on("sessionDisconnected", function(event) {
+  //   alert("The session disconnected. " + event.reason);
+  // });
+  
   // Do some action on destroying the stream
   session.on("streamDestroyed", function (event) {
-    console.log("The Video chat has ended");
+    //console.log("The Video chat has ended");
     store.dispatch(handleSubscription(false));
   });
 
@@ -53,12 +69,14 @@ export function initializeSession(apiKey, sessionId, token) {
       handleError(error);
     } else {
       session.publish(publisher, handleError);
+      store.dispatch(handleConnection(true))
     }
   });
 }
 
 export function stopStreaming() {
   session && session.unpublish(publisher);
+  console.log(subscriber);
 
   // console.log("stopStreaming event called");
 
