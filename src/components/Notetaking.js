@@ -177,22 +177,23 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         savePin(prevPinIndex);
 
         //clear out all the states
-        if (pins[curPinIndex] && user.userMode === "caller") {
-            setPinType(pins[curPinIndex].callerPinCategory);
-            setCurNoteInfo(pins[curPinIndex].callerPinNote);
-            setCurPerspectiveInfo(pins[curPinIndex].callerPinPerspective);
-            setCurSkillInfo(pins[curPinIndex].callerPinSkill);
-        } else if(pins[curPinIndex]){
-            setPinType(pins[curPinIndex].calleePinCategory);
-            setCurNoteInfo(pins[curPinIndex].calleePinNote);
-            setCurPerspectiveInfo(pins[curPinIndex].calleePinPerspective);
-            setCurSkillInfo(pins[curPinIndex].calleePinSkill);
+        const nextPin = pins[curPinIndex];
+        if (nextPin && user.userMode === "caller") {
+            setPinType(nextPin.callerPinCategory);
+            setCurNoteInfo(nextPin.callerPinNote);
+            setCurPerspectiveInfo(nextPin.callerPinPerspective);
+            setCurSkillInfo(nextPin.callerPinSkill);
+        } else if(nextPin){
+            setPinType(nextPin.calleePinCategory);
+            setCurNoteInfo(nextPin.calleePinNote);
+            setCurPerspectiveInfo(nextPin.calleePinPerspective);
+            setCurSkillInfo(nextPin.calleePinSkill);
         }
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current.value = curSkillInfo;
-    }, [curPinIndex, curNoteInfo, curPerspectiveInfo, curSkillInfo, pins, prevPinIndex, user.userMode])
+    }, [ prevPinIndex, curPinIndex])
 
    
 
