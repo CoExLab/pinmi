@@ -94,7 +94,7 @@ const DisscussionPrep = () => {
     console.log(pins);
     if(finishedUpdates) {
       //save all pins to database and move to next module
-      //pins.forEach((elem, id) => savePin(id));
+      pins.forEach((elem, id) => savePin(id));
       //return Loading module
       setActiveStep(activeStep + 1);
     }
@@ -142,7 +142,6 @@ const DisscussionPrep = () => {
   const handleNext = async () => {
     
     console.log("Pins changed in dis prep: " + curPinIndex);
-    savePin(curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
     if(curPinIndex === 0) {

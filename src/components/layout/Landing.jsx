@@ -190,7 +190,7 @@ const Landing = () => {
       <Box m={1} display="inline">
           <ColorLibTextField 
             id="outlined-basic" 
-            label="Your Name" 
+            label="Your Unique ID" 
             variant="outlined" 
             value={username}
             inputRef={usernameRef}
