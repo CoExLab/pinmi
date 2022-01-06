@@ -300,7 +300,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
                 <Box textAlign="left">
                     <Typography>
-                        What was the goal during the pinned situation?
+                    What was the therapist trying to achieve during this pin?
                     </Typography>
                 </Box>
                 <ColorLibTextField
