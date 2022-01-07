@@ -1,3 +1,4 @@
+//This code file defines the top-level rendering of the Discussion section of the pin-mi app
 import { Box, Typography } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +17,7 @@ import { formatTime } from '../../../helper/helper';
 //context
 import { useSessionValue, usePinsValue, useActiveStepValue } from "../../../storage/context";
 
+//style
 const useStyles = makeStyles((theme) => ({
   tealText: {
     color: theme.palette.teal.main,
@@ -37,21 +39,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//actual export
 const Discussion = () => {
+  //style
   const classes = useStyles();
 
+  //current page in the Discussion section
   const [page, setPage] = useState(0);
-  //const { sessionID } = useSessionValue();
+
+  //session and user information taken from Redux
   const session = useSelector(state => state.session);
   const user = useSelector(state => state.user);
+
+  //local pins array
   const { pins } = usePinsValue();
+
+  //active step states, used to keep track of progress through the pin-mi app
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
+  //state variable used to switch on and off database information retrieval/pushes
   const [finishedUpdates, setFinishedUpdates] = useState(false);
 
-  //If there are no pins, the current index should be -1
+  //Pin index states, used to keep track of the current pin edited and the associated info
+  const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [curPinIndex, setCurPinIndex] = useState(() => {
-    //console.log(pins);
+    //If there are no pins, the current index should be -1
     if (pins.length > 0){
       return 0;
     }
@@ -60,8 +72,7 @@ const Discussion = () => {
     }
   });
 
-  const [prevPinIndex, setPrevPinIndex] = useState(0);
-
+  //timer information
   const [startTime, setStartTime] = useState(Date.now());
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
@@ -71,6 +82,8 @@ const Discussion = () => {
     window.scrollTo(0, 0);
   }, [page])
 
+  //effect that activates when finishedUpdate is changed. if updates are "finished", depending on the current page,
+  //pins information is saved to the database and the next page is rendered
   useEffect(() => {
     console.log("before");
     if (finishedUpdates) {
@@ -84,6 +97,7 @@ const Discussion = () => {
     }
   }, [finishedUpdates]);
 
+  //this effect controls the timer rendering
   useEffect(() => {
     const timer = setTimeout(() => {
       if (countDown > 0) {
@@ -99,6 +113,8 @@ const Discussion = () => {
     return () => clearTimeout(timer);
   });
 
+  //This function is used to conditionally render pages within the dicussion section. 
+  //Page must be an integer between 0 and 2. 
   function getConditionalContent(page) {
     switch (page) {
       case 0:
@@ -111,6 +127,8 @@ const Discussion = () => {
     }
   }
 
+  //This function is used to conditionally render the type of videocall interface shown to the user
+  //Page must be an integer between 0 and 2.
   function getConditionalVideoMode(page) {
     switch (page) {
       case 0:
@@ -123,6 +141,8 @@ const Discussion = () => {
     }
   }
 
+  //savePin takes in the array index of a pin in the pins array and sends updates to the database based on the 
+  // pin information that was edited
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
@@ -145,25 +165,32 @@ const Discussion = () => {
     }
   }
 
-
+  //This function is used to define button functionality on this page
+  //It takes in a variable "finished", that when true, indicates that the Discussion section has been copleted nad that
+  //the next section should be loaded. If "finished" is false, then the next page in the Discussion section is loaded
   const handleButton = (finished) => {
     if (finished) {
-      console.log("handlebutton");
+      //pin indices are reset to force the last pin to save
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(0);
+      //finishedUpdates is set to true to force pin info to be sent to the db
       setFinishedUpdates(true);
+      //next section is accessed
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
       if(page === 0) {
-        //pull pin updates
+        //pull pin updates from previous section and from both users
+        //loadPins automatically moves to the next page after completion
         loadPins();
       } else if(page === 1){
+        //pin indices are reset to force the last pin to save
         setPrevPinIndex(curPinIndex);
         if(curPinIndex === 0) {
           setCurPinIndex(1);
         } else {
           setCurPinIndex(0);
         }
+        //finishedUpdates is set to true to force pin info to be sent to the db
         setFinishedUpdates(true);
       } else {
         setPage(page + 1);
@@ -171,24 +198,30 @@ const Discussion = () => {
     }
   }
   
+  //loadPins is a function used to sync the local pins array with edits from both users
+  //after syncing the pins array, the next page in the section is loaded.
   const loadPins = async () => {
     //empty the pins array
     pins.splice(0, pins.length);
-    console.log(pins);
+    //pull information from the database into pins
     await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").get()
     .then((snapshot) => {
         snapshot.docs.map(doc => {
-        pins.push(doc.data());
+          pins.push(doc.data());
         })
+        //used to properly sort the pins by time
         pins.sort((a, b) => a.pinTime - b.pinTime);
     })
     .then(() => {
+
       setPage(page + 1);
     })
     .catch((err) => console.error("Error in loadPins functions: ", err));
   }
 
-  function getConditionalButton(page, setPage, pins, sessionID) {
+  //function used to conditionally render and determine button behavior in the discussion section
+  //page must be a valid integer between 0 and 2
+  function getConditionalButton(page) {
     switch (page) {
       case 0:
         return (
@@ -234,6 +267,8 @@ const Discussion = () => {
         return <div>Unknown</div>;
     }
   }
+
+  //actual rendering
   return (
     <div>
       <div id="time_reminder" style={{
@@ -260,7 +295,7 @@ const Discussion = () => {
       />
       <VideoDiscussion mode = {getConditionalVideoMode(page)}/>
       {getConditionalContent(page)}
-      {getConditionalButton(page, setPage, pins, session.sessionID)}
+      {getConditionalButton(page)}
     </div>
   );
 }

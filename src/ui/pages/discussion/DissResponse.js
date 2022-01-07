@@ -1,3 +1,5 @@
+//This code file defines the text area component for each pin rendered in the Collaboration file
+
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -15,6 +17,7 @@ import MISkillsSheet from '../../components/MISkillsSheet';
 //context
 import { usePinsValue } from '../../../storage/context';
 
+//style
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -30,24 +33,23 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+//actual export
+//takes in state variables for the current pin index and the last pin index that was changed in order to 
+// properly render and save pin information
 const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
-    // user mode switcher
-    const user = useSelector(state => state.user);
-
+    //style 
     const classes = useStyles();
 
+    // user information fetched from Redux
+    const user = useSelector(state => state.user);
+    
     //creating a refernce for TextField Components
     const goalValueRef = useRef('')
     const strengthValueRef = useRef('')
     const opportunityValueRef = useRef('')
 
-    //get sessionID
-    //const { sessionID } = useSessionValue();
-
+    //local pins array
     const { pins } = usePinsValue();
-
-    // // fetch raw pin data here
-    // const [pins, setPins] = useState([]);
 
     // set up states for four different questions
     const [curNoteInfo, setCurNoteInfo] = useState('');
@@ -61,8 +63,9 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const [curSkillInfo1, setCurSkillInfo1] = useState('');
     const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
-    //This function handles the empty pin array case
-    const getCurrentPinInfo = (pinInfo) => {
+    //This function either returns the pin specified by curPinIndex, or returns an empty string to handle 
+    //the empty pin array case
+    const getCurrentPinInfo = () => {
         if (pins.length>0){
             return pins[curPinIndex];
         }
@@ -71,10 +74,13 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
         }
     }
 
-    const [curGoalInfo, setCurGoalInfo] = useState(getCurrentPinInfo("pinGoal"));
-    const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo("pinStrength"));
-    const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo("pinOpportunity"));
+    //states defined for each of the text input areas
+    const [curGoalInfo, setCurGoalInfo] = useState(getCurrentPinInfo());
+    const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo());
+    const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo());
 
+    //savePin takes in the array index of a pin in the pins array and updates the object at that index with 
+    // information edited by the user
     const savePin = (index) => {
         const lastPin = pins[index];
         if(user.userMode === 'caller') {
@@ -89,21 +95,25 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
         pins[index] = lastPin;
     }
 
+    //this effect activates when the user navigates to a different pin. It is used to save information related to the 
+    // current pin and update the information rendered to represent the pin navigated to (either the next or previous pin)
     useEffect(() => {
         if (pins.length > 0){
+            //retrieve the non-editable pin information for the new pin
             fetchCurTextVal();
     
+            //update state values with the most recent information from the user
             setCurGoalInfo(goalValueRef.current.value);
             setCurStrengthInfo(strengthValueRef.current.value);
             setCurOpportunityInfo(opportunityValueRef.current.value);
-
-            console.log("prevPinIndex: " + prevPinIndex);
-            console.log("curPinIndex: " + curPinIndex);
-
+            
+            //find the pin just edited
             const lastPin = pins[prevPinIndex];
             if(lastPin) {
                 savePin(prevPinIndex);
             }
+
+            //get the pin recently navigated to and update the state values to represent information from that pin
             const nextPin = pins[curPinIndex];
             console.log(lastPin);
             if(nextPin && user.userMode === 'caller') {  
@@ -117,12 +127,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             } else {
                 console.log("???")
             }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            //reset all the refs
-            console.log("curGoalInfo: " + curGoalInfo);
-            console.log("curStrengthInfo: " + curStrengthInfo);
-            console.log("curOpportunityInfo: " + curOpporunityInfo);
 
+            //reset all the refs
             goalValueRef.current.value = curGoalInfo;
             strengthValueRef.current.value = curStrengthInfo;
             opportunityValueRef.current.value = curOpporunityInfo;
@@ -150,16 +156,19 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
     }
 
+    //called when the previous button is hit. This changes the pin index states to represent the new pin
     const handlePrevPin = () => {
         setPrevPinIndex(curPinIndex);
         setCurPinIndex(curPinIndex - 1);
     }
 
+    //called when the next button is hit. This changes the pin index states to represent the new pin
     const handleNextPin = () => {
         setPrevPinIndex(curPinIndex);
         setCurPinIndex(curPinIndex + 1);
     }
 
+    //This function defines the rendering of the previous and next buttons depending on pin the user is on
     const PinNavButtons = () => {
         if (curPinIndex === -1)
             return null;
@@ -191,13 +200,11 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     return <Fragment> {prev} {next} </Fragment>;
     }
 
+    //Actual rendering
     return (
         <Grid item xs={12} sm={8}>
             {curPinIndex !== -1 ?
             <ColorLibPaper elevation={1}>
-                {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
-                    {userMode}
-                </Typography> */}
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>

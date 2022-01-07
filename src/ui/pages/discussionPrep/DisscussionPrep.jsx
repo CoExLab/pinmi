@@ -1,3 +1,5 @@
+//This file is the code related to the dicussion prep page in the pin-mi app
+
 import React, { useState, useEffect } from 'react';
 // Components
 import Notetaking from './Notetaking';
@@ -16,7 +18,7 @@ import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTi
 
 import { formatTime } from '../../../helper/helper';
 
-
+//Style
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -58,20 +60,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+//Actual export
 const DisscussionPrep = () => {
+  //style
   const classes = useStyles();
+
+  //active step states, used to keep track of progress through the pin-mi app
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
   
-
+  //Pin index states, used to keep track of the current pin edited and the associated info
   const [prevPinIndex, setPrevPinIndex] = useState(0);
-  const [finishedUpdates, setFinishedUpdates] = useState(false);
-  const { pins } = usePinsValue();
-  //const { sessionID } = useSessionValue();
-  const session = useSelector(state => state.session);
-  const user = useSelector(state => state.user);
-
   const [curPinIndex, setCurPinIndex] = useState(() => {
-    //console.log(pins);
     if (pins.length > 0){
       return 0;
     }
@@ -80,6 +79,17 @@ const DisscussionPrep = () => {
     }
   });
 
+  //state used to determine if all information associated with pins has been updated to the db
+  const [finishedUpdates, setFinishedUpdates] = useState(false);
+
+  //array of local pins
+  const { pins } = usePinsValue();
+
+  //session and user information taken from Redux
+  const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
+
+  //timer information
   const [startTime, setStartTime] = useState(Date.now());
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
@@ -89,6 +99,7 @@ const DisscussionPrep = () => {
     window.scrollTo(0, 0);
   }, [])
 
+  //effect used to automatically save pin info to the db and move to next page
   useEffect(() => {
     console.log("current pin index:", curPinIndex);
     console.log(pins);
@@ -100,6 +111,7 @@ const DisscussionPrep = () => {
     }
   }, [finishedUpdates]);
 
+  //effect used to adjust the timer
   useEffect(() => {
     const timer = setTimeout(() => {
       if (countDown > 0) {
@@ -115,9 +127,10 @@ const DisscussionPrep = () => {
     return () => clearTimeout(timer);
   });
 
+  //savePin takes in the array index of a pin and updates the db document associated with that pin with relevant edits
+  //index must be a valid integer between 0 and the length of the array
   const savePin = async (index) => {
     const myPin = pins[index];
-    console.log(myPin);
     if(user.userMode === "callee") {
       await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
         calleePinNote: myPin.calleePinNote,
@@ -139,13 +152,12 @@ const DisscussionPrep = () => {
     }
   }
 
+  //handleNext is called when the user is ready to join the discussion
   const handleNext = async () => {
-    
-    console.log("Pins changed in dis prep: " + curPinIndex);
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
     if(curPinIndex === 0) {
-      setCurPinIndex(curPinIndex + 1);//MAIN ISSUE!!!!! 
+      setCurPinIndex(curPinIndex + 1); 
     } else {
       setCurPinIndex(0);
     }
@@ -153,6 +165,7 @@ const DisscussionPrep = () => {
     setFinishedUpdates(true);
   };
 
+  //actual page rendering
   return (
     <div className={classes.root}>
       <Container maxWidth='md'>
