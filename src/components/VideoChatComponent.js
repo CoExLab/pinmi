@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
   },
   dialog: {
-    '& .MuiDialogContentText-root': {
+    '& .MuiDialogContent-root': {
       color: theme.palette.gray.dark,
       display: 'flex',
       '& video': {
@@ -754,7 +754,6 @@ function VideoChatComponent(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
             <div style={{ marginRight: '20px', width: 'calc(45% - 20px)' }}>
               <img
                 src={pinningClick}
@@ -767,7 +766,7 @@ function VideoChatComponent(props) {
               <Typography variant='h4'>
                 What is pinning for?
               </Typography>
-              <Typography variant='body2'>
+              <Typography variant='body2' component='div'>
                 <p>Click on the pin to create time marks of</p>
                 <ul style={{ fontWeight: 700 }}>
                   <li>{line1}</li>
@@ -806,7 +805,6 @@ function VideoChatComponent(props) {
                 <PreviewVideoButton />
               </div>
             </div>
-          </DialogContentText>
         </DialogContent>
       </Dialog>
 
