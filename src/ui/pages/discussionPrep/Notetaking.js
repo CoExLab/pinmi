@@ -1,3 +1,5 @@
+//The code in this page defines the text area components in the discussion prep page of the pin-mi app
+
 import React, { useState, useRef, useEffect } from 'react';
 import { formatTime } from '../../../helper/helper';
 import { useSelector } from 'react-redux';
@@ -14,6 +16,7 @@ import MISkillsSheet from '../../components/MISkillsSheet';
 //context
 import { usePinsValue } from "../../../storage/context";
 
+//style
 const useStyles = makeStyles(theme => ({
     toggleGroup: {
         marginTop: '8px',
@@ -45,14 +48,15 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+//actual export
+//takes in state variables for the current pin index and the last pin index that was changed in order to 
+// properly render and save pin information
 const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex }) => {
-    //session values
-    //const { sessionID, mediaUrl: audio, setMediaUrl, setMediaDuration, mediaDuration: audioLen } = useSessionValue();
-    // fetch raw pin data here
+    // local pins array
     const { pins } = usePinsValue();
-    // user mode switcher
+    //user information from redux
     const user = useSelector(state => state.user);
-  
+    //style
     const classes = useStyles();
 
     //creating a reference for TextField Component
@@ -62,48 +66,25 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // set up states for four different questions
     const [pinType, setPinType] = useState('');
-
     const [curNoteInfo, setCurNoteInfo] = useState('');
     const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
     const [curSkillInfo, setCurSkillInfo] = useState('');
 
-
-    // // back to last pin
-    // const handleLastPin = (index) => {
-    //     console.log(audio);
-    //     console.log(audioLen);
-    //     console.log(audioProgress);
-    //     if (curPinIndex > 0) {
-    //         setCurPinIndex(index);
-    //         player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-    //     }
-    // };
-
-    // // go to next pin
-    // const handleNextPin = (index, remove = false) => {
-    //     if (curPinIndex < pins.map(pin => pin.pinTime).length - 1) {
-    //         if (!remove) {
-    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-    //             setCurPinIndex(index);
-    //         } else {
-    //             player.current.seekTo(parseFloat(pins.map(pin => pin.pinTime)[index]));
-    //             setCurPinIndex(index - 1);
-    //         }
-    //     }
-    // };
-
-
-
+    //handlePrevPin is called when the back button is hit
+    //This function changes the pin indices to allow the user to switch to the pin marked prior to the current one
     const handlePrevPin = () => {
         setPrevPinIndex(curPinIndex);
         setCurPinIndex(curPinIndex - 1);
     }
 
+    //handleNextPin is called when the forward button is hit
+    //This function changes the pin indices to allow the user to switch to the pin marked ahead of the current one
     const handleNextPin = () => {
         setPrevPinIndex(curPinIndex);
         setCurPinIndex(curPinIndex + 1);
     }
 
+    //Defines the rendering for the back and forward buttons that allow navigation between different pins
     const PinNavButtons = () => {
         //if there are 0 and only 1 pins, don't show prev and next
         if (curPinIndex === -1 || (pins.length === 1)) 
@@ -136,7 +117,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     return <div>{prev} {next}</div>;
     }
 
-
+    //savePin takes in the array index of a pin in the pins array and updates the object at that index with 
+    // information edited by the user
     const savePin = (index) => {
         if (index >= 0 && index < pins.length) {
             const myPin = pins[index];
@@ -160,23 +142,24 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         }
     }
 
+    //this effect activates when the user navigates to a different pin
     useEffect(() => {
         console.log("previous index: " + prevPinIndex);
         console.log("current index: " + curPinIndex);
-        //update pin values
+        
+        //update pin values with the ones just edited by the user
         setCurNoteInfo(noteValueRef.current.value);
         setCurPerspectiveInfo(perspectiveValueRef.current.value);
         setCurSkillInfo(skillValueRef.current.value);
 
-        //pin info saved
         console.log("Current note: " + curNoteInfo);
         console.log("Perspective info: " + curPerspectiveInfo);
         console.log("Skill Info: " + curSkillInfo);
 
-        //save pin info
+        //save pin info in the local pins array
         savePin(prevPinIndex);
 
-        //clear out all the states
+        //updates pin information states to render either the next or previous pin
         const nextPin = pins[curPinIndex];
         if (nextPin && user.userMode === "caller") {
             setPinType(nextPin.callerPinCategory);
@@ -189,28 +172,22 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             setCurPerspectiveInfo(nextPin.calleePinPerspective);
             setCurSkillInfo(nextPin.calleePinSkill);
         }
+
         //reset all the refs
         noteValueRef.current.value = curNoteInfo;
         perspectiveValueRef.current.value = curPerspectiveInfo;
         skillValueRef.current.value = curSkillInfo;
     }, [ prevPinIndex, curPinIndex])
 
-   
-
-    // for handling pin tyep switching
+    // for handling pin type switching
     const handlePinType = (event, newPinType) => {
         setPinType(newPinType);
-        // handlePinInfo(`${userMode}PinInfos.pinCategory`, newPinType);
     };
 
-    
-
+    //Actual component rendering
     return (
         <Grid item xs={12} sm={8}>
             <ColorLibPaper elevation={1}>
-                {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
-                    {userMode}
-                </Typography> */}
                 {curPinIndex !== -1 ?
                     <Box fontStyle="italic">
                         <Typography>

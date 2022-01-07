@@ -1,3 +1,5 @@
+//This code file defines the rendering of the pins page in the Discussion step of the pin-mi app
+
 import React from 'react';
 // Components
 import DissResponse from './DissResponse';
@@ -8,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid } from '@material-ui/core';
 import { useActiveStepValue } from "../../../storage/context";
 
+//style
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -46,22 +49,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//actual export
+//takes in state variables for the current pin index and the last pin index that was changed in order to 
+// properly render and save pin information
 const Collaboration = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex}) => {
+  //style
   const classes = useStyles();
+
+  //active step states, used to keep track of progress through the pin-mi app
   const {curActiveStep: activeStep, setCurActiveStep: setActiveStep} = useActiveStepValue();
 
-  // const [room, setRoom] = useState("hello");
-  //   //const [baseURL, setBaseURL] = useState('https://pinmi-test.herokuapp.com/room/' + room);
-  //   const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  //   const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  //   const [token, setToken] = useState("YOUR_TOKEN");
-  //   const [readyMessage, setReadyMessage] = useState("video is not ready");
-  //   const isRecording = false;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
+  //Page rendering
   return (
     <div className={classes.root}>
       <Container maxWidth='md'>
