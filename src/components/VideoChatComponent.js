@@ -138,15 +138,15 @@ function VideoChatComponent(props) {
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
     console.log("calling addPin from HandlePinButton");
     await addPin(pinTime)
-    .then(() => {
-      setPopperContentIndex(1);
-      setPopperOpen(true);
-      setTimeout(() => {
-        setPopperOpen(false);
-      }, 3000);
-      console.log("added a pin");
-    });
-    
+      .then(() => {
+        setPopperContentIndex(1);
+        setPopperOpen(true);
+        setTimeout(() => {
+          setPopperOpen(false);
+        }, 3000);
+        console.log("added a pin");
+      });
+
   }
 
   const [open, setOpen] = useState(true);
@@ -180,7 +180,7 @@ function VideoChatComponent(props) {
   //const [apiKey, setApiKey] = useState("YOUR_API_KEY");
   //const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
   //const [token, setToken] = useState("YOUR_TOKEN");
-  const {vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey} = useSessionValue();
+  const { vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey } = useSessionValue();
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -211,7 +211,7 @@ function VideoChatComponent(props) {
 
   //this useEffect occurs when the session.connect() method succeeds in 
   //VonageVideoAPIIntegration
-  useEffect(()=>{
+  useEffect(() => {
     //what do we want to do when the stream connects? 
     //maybe if they are the callee, start the archive here
     console.log("Session has successfully connected");
@@ -222,7 +222,7 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
-    if (isSubscribed && isSessionConnected && props.isArchiveHost){
+    if (isSubscribed && isSessionConnected && props.isArchiveHost) {
       handleStartArchive();
     }
   }, [isSubscribed]);
@@ -231,11 +231,11 @@ function VideoChatComponent(props) {
   //set the videoCallTimer after the archive event has occured 
   useEffect(() => {
     console.log("Hey look! They archive status changed from VCC!!");
-    if (isArchiving === true){
+    if (isArchiving === true) {
       setVideoCallTimer(Date.now());
       // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
       startSpeechToTextTest(Date.now());
-    } 
+    }
   }, [isArchiving])
 
   useEffect(() => {
@@ -396,46 +396,38 @@ function VideoChatComponent(props) {
             {isAudioEnabled ? (
               <Tooltip title="mic on">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
-                    <MicIcon classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleAudio(false)}
-                      className="on-icon">
-                    </MicIcon>
-                  </Button>
+                  <MicIcon classes={{ root: classes.iconRoot }}
+                    onClick={() => onToggleAudio(false)}
+                    className="on-icon">
+                  </MicIcon>
                 </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button color="#616161">
                     <MicOffIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleAudio(true)}
                       className="off-icon">
                     </MicOffIcon>
-                  </Button>
                 </Fab>
               </Tooltip>
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
                     <VideocamIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleVideo(false)}
                       className="on-icon">
                     </VideocamIcon>
-                  </Button>
                 </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
                     <VideocamOffIcon classes={{ root: classes.iconRoot }}
                       onClick={() => onToggleVideo(true)}
                       className="off-icon">
                     </VideocamOffIcon>
-                  </Button>
                 </Fab>
               </Tooltip>
             )}
@@ -445,46 +437,38 @@ function VideoChatComponent(props) {
                 {isAudioSubscribed ? (
                   <Tooltip title="sound on">
                     <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
                         <VolumeUpIcon classes={{ root: classes.iconRoot }}
                           onClick={() => onToggleAudioSubscription(false)}
                           className="on-icon">
                         </VolumeUpIcon>
-                      </Button>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="sound off">
                     <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
                         <VolumeOffIcon classes={{ root: classes.iconRoot }}
                           onClick={() => onToggleAudioSubscription(true)}
                           className="off-icon">
                         </VolumeOffIcon>
-                      </Button>
                     </Fab>
                   </Tooltip>
                 )}
                 {isVideoSubscribed ? (
                   <Tooltip title="screen on">
                     <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
                         <VisibilityIcon classes={{ root: classes.iconRoot }}
                           onClick={() => onToggleVideoSubscription(false)}
                           className="on-icon">
                         </VisibilityIcon>
-                      </Button>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="screen off">
                     <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
                         <VisibilityOffIcon classes={{ root: classes.iconRoot }}
                           onClick={() => onToggleVideoSubscription(true)}
                           className="off-icon">
                         </VisibilityOffIcon>
-                      </Button>
                     </Fab>
                   </Tooltip>
                 )}
@@ -570,21 +554,21 @@ function VideoChatComponent(props) {
     const results = stopSpeechToTextTest();
     console.log(results);
     addTranscript(results, user.userMode);
-    if (props.isArchiveHost){
+    if (props.isArchiveHost) {
       handleStopArchive();
     }
-    
-  
+
+
     //letting the server know that the user exited the room
     await exitRoom(user.userMode, vonageSessionID)
-       .then(() => {
-    //     //const results = stopSpeechToTextTest();
-    //     //addTranscript(results);
-    //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    //     //call to the parent to move to Loading Page
-        props.setNextPage(true); 
-       })
-       .catch((error) => { console.log(error) });
+      .then(() => {
+        //     //const results = stopSpeechToTextTest();
+        //     //addTranscript(results);
+        //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        //     //call to the parent to move to Loading Page
+        props.setNextPage(true);
+      })
+      .catch((error) => { console.log(error) });
 
 
     //sort the array
@@ -622,7 +606,7 @@ function VideoChatComponent(props) {
         setVideoCallTimer(Date.now());
         console.log(Date.now());
 
-        
+
 
         setPopperOpen(true);
         setTimeout(() => {
@@ -657,7 +641,7 @@ function VideoChatComponent(props) {
       .then(res => res.json())
       .then((res) => {
         console.log(res);
-        
+
       })
     setButtonDisStop(true);
   }
@@ -667,8 +651,8 @@ function VideoChatComponent(props) {
   //to indicate that someone has entered the video room. 
   //userMode is either "callee" or "caller", and 
   const enterRoom = (userMode, sessionID) => {
-    
-    let url = baseURL + 'enteredRoom/' + userMode+"/"+sessionID;
+
+    let url = baseURL + 'enteredRoom/' + userMode + "/" + sessionID;
     fetch(url, {
       method: 'POST',
       headers: {
@@ -676,12 +660,12 @@ function VideoChatComponent(props) {
       },
     })
   }
-    //this function sends a put request to the server
+  //this function sends a put request to the server
   //to indicate that someone has exited the video room and gone to the loading page.
   //userMode is either "callee" or "caller", and 
-  const exitRoom  = async (userMode, sessionID) => {
-  
-    let url = baseURL + 'exitedRoom/' + userMode+"/"+sessionID;
+  const exitRoom = async (userMode, sessionID) => {
+
+    let url = baseURL + 'exitedRoom/' + userMode + "/" + sessionID;
     fetch(url, {
       method: 'POST',
       headers: {
@@ -754,98 +738,98 @@ function VideoChatComponent(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogContent>
-            <div style={{ marginRight: '20px', width: 'calc(45% - 20px)' }}>
-              <img
-                src={pinningClick}
-                alt={"Icon of clicking the pin"}
-                style={{
-                  margin: '20px 0px 10px 0px',
-                  height: '80px'
-                }}
+          <div style={{ marginRight: '20px', width: 'calc(45% - 20px)' }}>
+            <img
+              src={pinningClick}
+              alt={"Icon of clicking the pin"}
+              style={{
+                margin: '20px 0px 10px 0px',
+                height: '80px'
+              }}
+            />
+            <Typography variant='h4'>
+              What is pinning for?
+            </Typography>
+            <Typography variant='body2' component='div'>
+              <p>Click on the pin to create time marks of</p>
+              <ul style={{ fontWeight: 700 }}>
+                <li>{line1}</li>
+                <li>{line2}</li>
+              </ul>
+              <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
+            </Typography>
+            <div style={{ marginTop: '20px' }}>
+              <ColorLibNextButton
+                variant='contained'
+                size='medium'
+                onClick={
+                  () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
+                }
+                autoFocus
+              >
+                Join Now
+              </ColorLibNextButton>
+            </div>
+          </div>
+          <div style={{ width: '55%' }}>
+            {isVideoEnabled
+              ? <Webcam
+                mirrored
+                audio={isAudioEnabled}
+                muted="muted"
               />
-              <Typography variant='h4'>
-                What is pinning for?
-              </Typography>
-              <Typography variant='body2' component='div'>
-                <p>Click on the pin to create time marks of</p>
-                <ul style={{ fontWeight: 700 }}>
-                  <li>{line1}</li>
-                  <li>{line2}</li>
-                </ul>
-                <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
-              </Typography>
-              <div style={{ marginTop: '20px' }}>
-                <ColorLibNextButton
-                  variant='contained'
-                  size='medium'
-                  onClick={
-                    () => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
-                  }
-                  autoFocus
-                >
-                  Join Now
-                </ColorLibNextButton>
-              </div>
+              : <div style={{
+                height: '100%',
+                width: '100%',
+                backgroundColor: 'black',
+                borderRadius: '5px'
+              }} />}
+            <div style={{ marginTop: '-65px' }}>
+              <PreviewMicButton />
+              <PreviewVideoButton />
             </div>
-            <div style={{ width: '55%' }}>
-              {isVideoEnabled
-                ? <Webcam
-                  mirrored
-                  audio={isAudioEnabled}
-                  muted="muted"
-                />
-                : <div style={{
-                  height: '100%',
-                  width: '100%',
-                  backgroundColor: 'black',
-                  borderRadius: '5px'
-                }} />}
-              <div style={{ marginTop: '-65px' }}>
-                <PreviewMicButton />
-                <PreviewVideoButton />
-              </div>
-            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
       <Dialog
-            open={openEnd}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Are you sure you want to end this session?"}</DialogTitle>
-                <DialogActions>
-                <Box m={2}>
-                  <div direction='row' align='center'>
-                  <ColorLibButton
-                    variant='contained'
-                    size='medium'
-                    onClick={
-                      () => setOpenEnd(false)
-                    }
-                    autoFocus
-                  >
-                    Continue Session
-                  </ColorLibButton>
-                  <Box mt={2}>
-                  <ColorLibNextButton
-                    variant='outlined'
-                    size='medium'
-                    onClick={() => handleFinishChat()}
-                    autoFocus
-                  >
-                    End Session
-                  </ColorLibNextButton>
-                  </Box>
-                  
-                  </div>
-                  </Box>
-                </DialogActions>
-            </Dialog>    
+        open={openEnd}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to end this session?"}</DialogTitle>
+        <DialogActions>
+          <Box m={2}>
+            <div direction='row' align='center'>
+              <ColorLibButton
+                variant='contained'
+                size='medium'
+                onClick={
+                  () => setOpenEnd(false)
+                }
+                autoFocus
+              >
+                Continue Session
+              </ColorLibButton>
+              <Box mt={2}>
+                <ColorLibNextButton
+                  variant='outlined'
+                  size='medium'
+                  onClick={() => handleFinishChat()}
+                  autoFocus
+                >
+                  End Session
+                </ColorLibNextButton>
+              </Box>
 
-      <ColorLibTimeReminder 
-        open={timeRemind} 
+            </div>
+          </Box>
+        </DialogActions>
+      </Dialog>
+
+      <ColorLibTimeReminder
+        open={timeRemind}
         setOpen={setTimeRemind}
         recommendedMinutes={recommendedTime / 60}
         nextSection="Discussion Prep"
