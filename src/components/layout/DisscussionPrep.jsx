@@ -9,11 +9,9 @@ import { Container, Grid, Typography } from "@material-ui/core";
 
 import ColorLibTimeReminder from "./ColorLibComponents/ColorLibTimeReminder";
 import ColorLibButton from "./ColorLibComponents/ColorLibButton";
-import { useActiveStepValue, usePinsValue } from "../../context";
+import { useActiveStepValue, usePinsValue, usePlayerModeValue } from "../../context";
 import { firebase } from "../../hooks/firebase";
 import { useSelector } from "react-redux";
-
-import ColorLibTimeReminder from "./ColorLibComponents/ColorLibTimeReminder";
 
 import { formatTime } from "../../helper/index";
 
