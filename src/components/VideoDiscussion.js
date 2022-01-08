@@ -87,7 +87,6 @@ function VideoChatComponent(props) {
   //isArchviving is true when the achrive is actively recording
 
   // self-made timer
-  const [setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
   //vonage session data set by the server
@@ -293,16 +292,13 @@ How did today’s mock client session go?
         setSessionId(res.sessionId);
         setToken(res.token);
       }).then(() => {
-
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
-        setVideoCallTimer(Date.now());
         if (props.isArchiveHost) {
           //props.startRec();
           console.log("start recording");
         }
-        //pass in videoCallTimer so we can create time stamps
       })
       .catch((error) => { console.log(error) });
   }
@@ -310,9 +306,6 @@ How did today’s mock client session go?
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     if (props.isArchiveHost) {
-      //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      //props.stopRec();
       console.log("stop recording");
     }
     //this fetches the archive url
