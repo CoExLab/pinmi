@@ -552,7 +552,6 @@ function VideoChatComponent(props) {
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
-    console.log(results);
     addTranscript(results, user.userMode);
     if (props.isArchiveHost) {
       handleStopArchive();
