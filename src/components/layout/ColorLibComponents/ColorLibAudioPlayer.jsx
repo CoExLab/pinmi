@@ -136,6 +136,8 @@ const ColorLibAudioPlayer = ({
         }
     }))(IconButton);
     
+    // Before creating mark information for pins, check there are no duplicates.
+    marks = [...new Set(marks)];
     const pinMarks = marks.map(markTime => {
         const leftPercentage = Math.max((markTime-10)/duration * 100, 0);
         const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
@@ -168,7 +170,6 @@ const ColorLibAudioPlayer = ({
                 </Grid>
                 
                 <Grid item xs={9} style={{alignItems: 'center'}}>
-                    {/* <Slider */}
                     <AudioSlider
                         value = {currentTime}
                         onChange = {(event, newValue) => {
