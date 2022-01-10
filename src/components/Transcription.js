@@ -67,8 +67,8 @@ const Transcription = () => {
     }
 
     const renderTranscript = () => {
-        return localTrans.map((item) => (
-            <div style={{margin:'8px 0px'}}>
+        return localTrans.map((item, index) => (
+            <div style={{margin:'8px 0px'}} key={`line-${index}`}>
                 <ColorLibTextField 
                     label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
                     fullWidth

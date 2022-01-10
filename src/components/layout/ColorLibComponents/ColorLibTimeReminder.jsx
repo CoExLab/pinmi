@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@material-ui/core";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
 import ColorLibButton from './ColorLibButton';
 
 const ColorLibTimeReminder = ({
@@ -17,10 +17,8 @@ const ColorLibTimeReminder = ({
             Time Reminder
         </DialogTitle>
         <DialogContent>
-            <DialogContentText id="timer-dialog-description">
-                <Box m={1}>You have spent {recommendedMinutes} minutes in the section.</Box>
-                <Box m={1}>Time to wrap up the conversation and begin {nextSection}.</Box>
-            </DialogContentText>
+            <Box m={1}>You have spent {recommendedMinutes} minutes in the section.</Box>
+            <Box m={1}>Time to wrap up the conversation and begin {nextSection}.</Box>
         </DialogContent>
         <DialogActions>
             <ColorLibButton
