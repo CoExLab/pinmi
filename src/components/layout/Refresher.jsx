@@ -172,7 +172,7 @@ const Refresher = () => {
           fullWidth
           variant="outlined"
           multiline
-          rowsMax={2}
+          maxRows={2}
           margin="normal"
           value={openEndedQuesAns[index]}
           onChange={event => handleOpenEndedQues(event.target.value, index)}
