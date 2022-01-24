@@ -87,7 +87,6 @@ function VideoChatComponent(props) {
   //isArchviving is true when the achrive is actively recording
 
   // self-made timer
-  const [setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
   //vonage session data set by the server
@@ -135,7 +134,7 @@ function VideoChatComponent(props) {
   const session = useSelector(state => state.session);
   const user = useSelector(state => state.user);
 
-  
+
   const readyToJoin = () => {
     pins.forEach((elem, id) => savePin(id));
     handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)
@@ -144,15 +143,15 @@ function VideoChatComponent(props) {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    if(user.userMode === "callee") {
+    if (user.userMode === "callee") {
       await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
         calleePinNote: myPin.calleePinNote,
         calleePinPerspective: myPin.calleePinPerspective,
         calleePinCategory: myPin.calleePinCategory,
         calleePinSkill: myPin.calleePinSkill,
       })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+        .then(() => { console.log("current pin successfully updated") })
+        .catch((e) => { console.log("pin update unsuccessful: " + e) });
     } else {
       await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
         callerPinNote: myPin.callerPinNote,
@@ -160,11 +159,11 @@ function VideoChatComponent(props) {
         callerPinCategory: myPin.callerPinCategory,
         callerPinSkill: myPin.callerPinSkill,
       })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+        .then(() => { console.log("current pin successfully updated") })
+        .catch((e) => { console.log("pin update unsuccessful: " + e) });
     }
   }
-  
+
 
   const renderToolbar = () => {
     return (
@@ -174,46 +173,38 @@ function VideoChatComponent(props) {
             {isAudioEnabled ? (
               <Tooltip title="mic on">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
-                    <MicIcon classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleAudio(false)}
-                      className="on-icon">
-                    </MicIcon>
-                  </Button>
+                  <MicIcon classes={{ root: classes.iconRoot }}
+                    onClick={() => onToggleAudio(false)}
+                    className="on-icon">
+                  </MicIcon>
                 </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
                 <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button color="#616161">
-                    <MicOffIcon classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleAudio(true)}
-                      className="off-icon">
-                    </MicOffIcon>
-                  </Button>
+                  <MicOffIcon classes={{ root: classes.iconRoot }}
+                    onClick={() => onToggleAudio(true)}
+                    className="off-icon">
+                  </MicOffIcon>
                 </Fab>
               </Tooltip>
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
-                <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
-                    <VideocamIcon classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleVideo(false)}
-                      className="on-icon">
-                    </VideocamIcon>
-                  </Button>
+                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                  <VideocamIcon classes={{ root: classes.iconRoot }}
+                    onClick={() => onToggleVideo(false)}
+                    className="on-icon">
+                  </VideocamIcon>
                 </Fab>
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
-                <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                  <Button>
-                    <VideocamOffIcon classes={{ root: classes.iconRoot }}
-                      onClick={() => onToggleVideo(true)}
-                      className="off-icon">
-                    </VideocamOffIcon>
-                  </Button>
+                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                  <VideocamOffIcon classes={{ root: classes.iconRoot }}
+                    onClick={() => onToggleVideo(true)}
+                    className="off-icon">
+                  </VideocamOffIcon>
                 </Fab>
               </Tooltip>
             )}
@@ -222,47 +213,39 @@ function VideoChatComponent(props) {
               <>
                 {isAudioSubscribed ? (
                   <Tooltip title="sound on">
-                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
-                        <VolumeUpIcon classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleAudioSubscription(false)}
-                          className="on-icon">
-                        </VolumeUpIcon>
-                      </Button>
+                    <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                      <VolumeUpIcon classes={{ root: classes.iconRoot }}
+                        onClick={() => onToggleAudioSubscription(false)}
+                        className="on-icon">
+                      </VolumeUpIcon>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="sound off">
-                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
-                        <VolumeOffIcon classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleAudioSubscription(true)}
-                          className="off-icon">
-                        </VolumeOffIcon>
-                      </Button>
+                    <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                      <VolumeOffIcon classes={{ root: classes.iconRoot }}
+                        onClick={() => onToggleAudioSubscription(true)}
+                        className="off-icon">
+                      </VolumeOffIcon>
                     </Fab>
                   </Tooltip>
                 )}
                 {isVideoSubscribed ? (
                   <Tooltip title="screen on">
-                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
-                        <VisibilityIcon classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleVideoSubscription(false)}
-                          className="on-icon">
-                        </VisibilityIcon>
-                      </Button>
+                    <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                      <VisibilityIcon classes={{ root: classes.iconRoot }}
+                        onClick={() => onToggleVideoSubscription(false)}
+                        className="on-icon">
+                      </VisibilityIcon>
                     </Fab>
                   </Tooltip>
                 ) : (
                   <Tooltip title="screen off">
-                    <Fab size="medium" color="#36454f" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
-                      <Button>
-                        <VisibilityOffIcon classes={{ root: classes.iconRoot }}
-                          onClick={() => onToggleVideoSubscription(true)}
-                          className="off-icon">
-                        </VisibilityOffIcon>
-                      </Button>
+                    <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                      <VisibilityOffIcon classes={{ root: classes.iconRoot }}
+                        onClick={() => onToggleVideoSubscription(true)}
+                        className="off-icon">
+                      </VisibilityOffIcon>
                     </Fab>
                   </Tooltip>
                 )}
@@ -309,16 +292,13 @@ How did today’s mock client session go?
         setSessionId(res.sessionId);
         setToken(res.token);
       }).then(() => {
-
         setLoadingStatus(false);
         console.log("start chat now");
         setIsInterviewStarted(true);
-        setVideoCallTimer(Date.now());
         if (props.isArchiveHost) {
           //props.startRec();
           console.log("start recording");
         }
-        //pass in videoCallTimer so we can create time stamps
       })
       .catch((error) => { console.log(error) });
   }
@@ -326,9 +306,6 @@ How did today’s mock client session go?
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     if (props.isArchiveHost) {
-      //setting mediaDuration to be used in AudioReview
-      //setMediaDuration(Math.floor((Date.now() - videoCallTimer) / 1000));
-      //props.stopRec();
       console.log("stop recording");
     }
     //this fetches the archive url

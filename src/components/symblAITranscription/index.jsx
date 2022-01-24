@@ -102,9 +102,11 @@ export async function startSpeechToTextTest(startTime) {
 }
 
 export function stopSpeechToTextTest() {
-    ws.send(JSON.stringify({
-        "type": "stop_request"
-    }));
-    console.log("Transcription:", results);
+    if (ws) {
+        ws.send(JSON.stringify({
+            "type": "stop_request"
+        }));
+        console.log("Transcription:", results);
+    } 
     return results;
 }

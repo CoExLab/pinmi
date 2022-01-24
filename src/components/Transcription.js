@@ -16,7 +16,7 @@ const Transcription = () => {
 
     const [localTrans, setLocalTrans] = useState([]);
     // fetch trans data here
-    const fetchTranscript = async () => {
+    const fetchTranscript = async () => { 
         
         const docRef = await firebase.firestore().collection("sessions").doc(session.sessionID);
         await docRef.get().then((doc) => {
@@ -67,37 +67,28 @@ const Transcription = () => {
     var minutes = dateObj.getUTCMinutes();
     var seconds = dateObj.getSeconds();
 
-    var timeString =
-      hours.toString().padStart(2, "0") +
-      ":" +
-      minutes.toString().padStart(2, "0") +
-      ":" +
-      seconds.toString().padStart(2, "0");
+    const renderTranscript = () => {
+        return localTrans.map((item, index) => (
+            <div style={{margin:'8px 0px'}} key={`line-${index}`}>
+                <ColorLibTextField 
+                    label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    margin="dense"
+                    // size="small"
+                    value={getText(item)}
+                    InputProps={{
+                      readOnly: true,
+                      classes: {
+                          input: classes.textField_font,
+                      }
+                    }}
+                />
+            </div>
+        ));
+    }
 
-    return timeString;
-  };
-
-  const renderTranscript = () => {
-    return localTrans && localTrans.map((item) => (
-      <div style={{ margin: "8px 0px" }}>
-        <ColorLibTextField
-          label={<Box fontWeight="bold">{getTimeStamp(item)}</Box>}
-          fullWidth
-          variant="outlined"
-          multiline
-          margin="dense"
-          // size="small"
-          value={getText(item)}
-          InputProps={{
-            readOnly: true,
-            classes: {
-              input: classes.textField_font,
-            },
-          }}
-        />
-      </div>
-    ));
-  };
   console.log(localTrans);
 
   return (
@@ -110,6 +101,6 @@ const Transcription = () => {
       </ColorLibPaper>
     </Grid>
   );
-};
+}};
 
 export default Transcription;

@@ -99,7 +99,7 @@ const AudioSlider = withStyles((theme) => ({
     borderRadius: "6px",
     // left: "0 !important",
     opacity: 0.6,
-    lineHeight: "30px"
+    lineHeight: "30px",
   },
 }))(Slider);
 
@@ -143,25 +143,25 @@ const ColorLibAudioPlayer = ({
     },
   }))(IconButton);
 
+  // Before creating mark information for pins, check there are no duplicates.
+  marks = [...new Set(marks)];
   const pinMarks = marks.map((markTime, index) => {
-    const leftPercentage = Math.max((((markTime - 10) / duration) * 100), 15);
+    const leftPercentage = Math.max(((markTime - 10) / duration) * 100, 0);
     const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
     return {
       value: markTime,
       label: (
-        <>
-          <div
-            style={{
-              height: "6px",
-              marginLeft: `calc(${leftPercentage}% - 15px)`,
-              width: `calc(${widthPercentage}% + 30px)`,
-              borderRadius: "6px",
-              backgroundColor: "#FDA2A9",
-              zIndex: "20"
-            }}
-          />
+        <div
+          style={{
+            height: "6px",
+            marginLeft: `calc(${leftPercentage}% - 15px)`,
+            width: `calc(${widthPercentage}% + 30px)`,
+            borderRadius: "6px",
+            backgroundColor: "#FDA2A9",
+          }}
+        >
           {index + 1}
-        </>
+        </div>
       ),
     };
   });
@@ -189,7 +189,6 @@ const ColorLibAudioPlayer = ({
         </Grid>
 
         <Grid item xs={9} style={{ alignItems: "center" }}>
-          {/* <Slider */}
           <AudioSlider
             value={currentTime}
             onChange={(event, newValue) => {
@@ -212,32 +211,30 @@ const ColorLibAudioPlayer = ({
         </Grid>
       </Grid>
 
-      {addPin && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: "-15px",
-          }}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "-15px",
+        }}
+      >
+        <JumpIconButton
+          onClick={() => setCurrentTime(Math.max(0, currentTime - 10))}
         >
-          <JumpIconButton
-            onClick={() => setCurrentTime(Math.max(0, currentTime - 10))}
-          >
-            <Replay10Icon />
-          </JumpIconButton>
-          <PinIconButton onClick={() => addPin(currentTime)}>
-            <Icon>
-              <img src={pin} alt="pin" style={{ height: "100%" }} />
-            </Icon>
-          </PinIconButton>
-          <JumpIconButton
-            onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}
-          >
-            <Forward10Icon />
-          </JumpIconButton>
-        </div>
-      )}
+          <Replay10Icon />
+        </JumpIconButton>
+        <PinIconButton onClick={() => addPin(currentTime)}>
+          <Icon>
+            <img src={pin} alt="pin" style={{ height: "100%" }} />
+          </Icon>
+        </PinIconButton>
+        <JumpIconButton
+          onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}
+        >
+          <Forward10Icon />
+        </JumpIconButton>
+      </div>
     </Paper>
   );
 };

@@ -126,7 +126,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={strength}
                             inputRef={strengthRef}
@@ -143,7 +143,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={opp}
                             inputRef={oppRef}
@@ -163,7 +163,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={nextSteps}
                             inputRef={nextStepsRef}
@@ -179,7 +179,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={obstacles}
                             inputRef={obstaclesRef}
@@ -199,7 +199,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={practice}
                             inputRef={practiceRef}
@@ -215,7 +215,7 @@ const SelfReflection = () => {
                             fullWidth
                             variant="outlined"
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             margin="normal"
                             value={addReflect}
                             inputRef={addReflectRef}

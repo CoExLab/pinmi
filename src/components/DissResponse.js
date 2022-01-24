@@ -131,7 +131,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
 
     // for updating and fetching current text field value
-    const fetchCurTextVal = async (infoName) => {
+    const fetchCurTextVal = async () => {
         let curPin = pins[curPinIndex];
 
         if (user.userMode === "caller")
@@ -227,8 +227,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                         What is your perspective of what happened at this pin?
                     </Typography>
                 </Box>
-                <form className={classes.root} noValidate autoCo
-                    mplete="off">
+                <form className={classes.root} noValidate autoComplete="off">
                     <ColorLibTextField
                         disabled
                         id="outlined-secondary"
@@ -264,10 +263,10 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                         exclusive
                         size="large"
                     >
-                        <ToggleButton >
+                        <ToggleButton value={pinType1 ?? 'pinType1'}>
                             {pinType1}
                         </ToggleButton>
-                        <ToggleButton >
+                        <ToggleButton value={pinType2 ?? 'pinType2'}>
                             {pinType2}
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -300,7 +299,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
                 <Box textAlign="left">
                     <Typography>
-                        What was the goal during the pinned situation?
+                    What was the therapist trying to achieve during this pin?
                     </Typography>
                 </Box>
                 <ColorLibTextField
