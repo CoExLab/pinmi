@@ -4,7 +4,7 @@ import { Typography, Grid } from "@material-ui/core";
 import ReactPlayer from "react-player";
 import ColorLibAudioPlayer from "../../layout/ColorLibComponents/ColorLibAudioPlayer";
 import { formatTime, generatePushId } from "../../../helper/index";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 // context
 import {
@@ -42,7 +42,7 @@ const SinglePlayerAudioReview = ({
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //fetch user data
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   console.log("SinglePlayerPins: ", singlePlayerPins);
 
@@ -333,6 +333,7 @@ const SinglePlayerAudioReview = ({
         duration={audioLen}
         marks={singlePlayerPins.map((pin) => pin.pinTime)}
         addPin={!disableAddPin && addPin}
+        curPinIndex={curPinIndex}
       />
       <ReactPlayer
         hidden
