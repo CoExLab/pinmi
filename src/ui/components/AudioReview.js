@@ -37,8 +37,8 @@ const AudioReview = ({curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
 
     // const { mediaURL: audio, setMediaURL } = useMediaURL();
 
-    const [setPinBtnDisabled] = useState(false); 
-    const [setPinBtnColor] = useState("");
+    const [pinDisabled, setPinBtnDisabled] = useState(false); 
+    const [pinBtnColor, setPinBtnColor] = useState("");
 
     const [audioProgress, setAudioProgress] = useState(AudioProgressStartingValue(pins));
     useState(0);

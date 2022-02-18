@@ -12,12 +12,12 @@ import Completion from './ui/pages/Completion';
 //tbr import CORsTestButtons from './ui/layout/CORsTestButtons';
 import { store } from "./storage/store";
 
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { createTheme, ThemeProvider } from "@material-ui/core";
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     teal: {
       dark: '#005E7D',
