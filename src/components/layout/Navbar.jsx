@@ -39,9 +39,17 @@ export default function ButtonAppBar() {
             variant="text" 
             size="small"
             className={classes.navbar_button} 
-            href="/"
+            href="/Home"
           >
             Home
+          </ColorLibButton>
+          <ColorLibButton 
+            variant="text" 
+            size="small"
+            className={classes.navbar_button} 
+            href="/"
+          >
+            Project
           </ColorLibButton>
           {["Practice", "Review"].map((label) => (
             <ColorLibButton 
