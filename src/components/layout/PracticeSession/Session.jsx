@@ -129,8 +129,10 @@ const Session = () => {
                 console.log("Status 503!")
             }
             if(data.arcStatus === "uploaded") {
+                console.log(data)
                 setMediaUrl(data.url);
                 setMediaDuration(data.duration); 
+                console.log("archive duration: ", data.duration)
                 return true;
             } else {
                 timeout2 = timeout2 * 2;
