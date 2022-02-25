@@ -25,6 +25,13 @@ import AccessAlarmsIcon from "@material-ui/icons/AccessAlarms";
 
 import { setUserID, setUserMode, setSessionID } from "../Store";
 
+import imgBK from "../../other/team_BK.jpeg";
+import imgLD from "../../other/team_LD.jpeg";
+import imgTC from "../../other/team_TC.jpeg";
+import imgED from "../../other/team_ED.JPG";
+import imgYC from "../../other/team_YC.jpeg";
+import imgMA from "../../other/team_MA.jpeg";
+
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
     padding: "50px 68px 50px 68px",
@@ -87,7 +94,20 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px 20px",
     color: theme.palette.teal.dark,
   },
+  team: {
+    paddingTop: "50px",
+    display: "inline-flex",
+  },
 }));
+
+const teamMembers = [
+  { name: "Tiangying Chen", email: "tianyinc@andrew.cmu.edu", image: imgTC },
+  { name: "Emily Ding", email: "eding@andrew.cmu.edu", image: imgED },
+  { name: "Mansi Agarwal", email: "mragarwa@andrew.cmu.edu ", image: imgMA },
+  { name: "Laura Dabbish", email: "dabbish@andrew.cmu.edu", image: imgLD },
+  { name: "Bob Kraut", email: "robert.kraut@cmu.edu", image: imgBK },
+  { name: "Yo-Lei Chen", email: "yoleic@andrew.cmu.edu", image: imgYC },
+];
 
 const Home = () => {
   const classes = useStyles();
@@ -183,12 +203,35 @@ const Home = () => {
             ..... to make up an interdisciplinary research team.
           </p>
           <br />
-          <h1 className={classes.page_link}>
-            View Our Team <span>&#8594;</span>
-          </h1>
         </>
       ),
       alt: "Discussion Prep Interface",
+    },
+    {
+      header: "",
+      text: (
+        <div>
+          {teamMembers.map((i) => (
+            <div className={classes.team}>
+              <div style={{ alignItems: "center" }}>
+                <img
+                  src={i.image}
+                  style={{
+                    width: "300px",
+                    height: "300px",
+                    marginRight: "50px",
+                    borderRadius: "50%",
+                  }}
+                />
+              </div>
+              <div>
+                <h1>{i.name}</h1>
+                <p>{i.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
     },
     {
       header: "The Work so Far",
@@ -318,6 +361,26 @@ const Home = () => {
 
     const rightTextGrid = (
       <Grid item xs={6} className={classes.tutorial_grid}>
+        <Typography
+          variant="body2"
+          className={classes.tutorial_text}
+          style={{
+            width: "95%",
+            lineHeight: "2",
+          }}
+        >
+          {text}
+        </Typography>
+      </Grid>
+    );
+
+    const midTextGrid = (
+      <Grid
+        item
+        xs={6}
+        className={classes.tutorial_grid}
+        style={{ marginLeft: "20%" }}
+      >
         <Typography
           variant="body2"
           className={classes.tutorial_text}
