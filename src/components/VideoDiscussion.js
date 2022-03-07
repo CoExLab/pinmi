@@ -73,6 +73,13 @@ function VideoChatComponent(props) {
     (state) => state.videoChat.isStreamSubscribed
   );
 
+  const isSessionConnected = useSelector(
+    (state) => state.connection.isSessionConnected
+  );
+  const isArchiving = useSelector(
+    (state) => state.archive.isStreamArchiving
+  );
+
   // needed vonage info
   const [room] = useState("hello1");
   //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
@@ -96,12 +103,16 @@ function VideoChatComponent(props) {
     console.log("isInterviewStarted useEffect has been called: \n" + isInterviewStarted);
     if (isInterviewStarted) {
       initializeSession(apiKey, vonageSessionID, token)
-    }
-
-    return function cleanup() {
+    } else {
       console.log("stopStreaming called")
       stopStreaming();
-    };
+    }
+
+    // return function cleanup() {
+    //   console.log("stopStreaming called")
+    //   stopStreaming();
+    // };
+
     // isInterviewStarted
     //   ? initializeSession(apiKey, vonageSessionID, token)
     //   : stopStreaming();
@@ -109,6 +120,9 @@ function VideoChatComponent(props) {
 
   useEffect(() => {
     setIsStreamSubscribed(isSubscribed);
+    if (isSubscribed && isSessionConnected && props.isArchiveHost) {
+      handleStartArchive();
+    }
   }, [isSubscribed]);
 
   const onToggleAudio = (action) => {
@@ -307,20 +321,22 @@ How did today’s mock client session go?
     setIsInterviewStarted(false);
     if (props.isArchiveHost) {
       console.log("stop recording");
+      handleStopArchive();
     }
+    
     //this fetches the archive url
-    await saveArchiveURL()
-      .then(() => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      })
-      .catch((error) => { console.log(error) });
+    // await saveArchiveURL()
+    //   .then(() => {
+    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //   })
+    //   .catch((error) => { console.log(error) });
   }
 
 
   const handleStartArchive = async () => {
     //create json to send as the body for post
     const data = {
-      sessionId: session.sessionID,
+      sessionId: vonageSessionID,
       resolution: '640x480',
       outputMode: 'composed',
       hasVideo: 'false',
@@ -345,6 +361,7 @@ How did today’s mock client session go?
 
   const handleStopArchive = async () => {
     var url = baseURL + 'archive/' + archiveData.id + '/stop';
+    console.log(baseURL + 'archive/' + archiveData.id);
     await fetch(url, {
       method: 'POST',
     })
@@ -566,8 +583,25 @@ How did today’s mock client session go?
         </Button> :
         <div></div>}
       </div> */}
+      {props.isArchiveHost ? 
+        <Button 
+          onClick = {() => handleStartArchive()}
+          color='secondary'
+          variant="contained"
+        >Start Recording
+        </Button> :
+        <div></div>}
+        {props.isArchiveHost? 
+        <Button 
+          onClick = {() => handleStopArchive()}
+          color='secondary'
+          variant="contained"
+        >Stop Recording
+        </Button> :
+        <div></div>}
     </>
   );
 }
 
 export default VideoChatComponent;
+
