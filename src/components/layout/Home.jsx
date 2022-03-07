@@ -217,8 +217,8 @@ const Home = () => {
                 <img
                   src={i.image}
                   style={{
-                    width: "300px",
-                    height: "300px",
+                    width: "200px",
+                    height: "200px",
                     marginRight: "50px",
                     borderRadius: "50%",
                   }}
@@ -361,26 +361,6 @@ const Home = () => {
 
     const rightTextGrid = (
       <Grid item xs={6} className={classes.tutorial_grid}>
-        <Typography
-          variant="body2"
-          className={classes.tutorial_text}
-          style={{
-            width: "95%",
-            lineHeight: "2",
-          }}
-        >
-          {text}
-        </Typography>
-      </Grid>
-    );
-
-    const midTextGrid = (
-      <Grid
-        item
-        xs={6}
-        className={classes.tutorial_grid}
-        style={{ marginLeft: "20%" }}
-      >
         <Typography
           variant="body2"
           className={classes.tutorial_text}
