@@ -106,121 +106,147 @@ const ColorLibAudioPlayer = ({
     marks, // List of integers, each in seconds
     addPin = null
 }) => {
-    const jumpPercentage = 10 / duration * 100;
+  const jumpPercentage = (10 / duration) * 100;
 
-    const JumpIconButton = withStyles((theme) => ({
-        root: {
-            color: theme.palette.teal.main,
-            padding: '10px',
-        },
-        label: {
-            '& .MuiSvgIcon-root': {
-                width: '40px',
-                height: '40px',
-            },
-        }
-    }))(IconButton);
+  const JumpIconButton = withStyles((theme) => ({
+    root: {
+      color: theme.palette.teal.main,
+      padding: "10px",
+    },
+    label: {
+      "& .MuiSvgIcon-root": {
+        width: "40px",
+        height: "40px",
+      },
+    },
+  }))(IconButton);
 
-    const PinIconButton = withStyles((theme) => ({
-        root: {
-            padding: '15px',
-            boxShadow: "0px 6px 8px rgba(51, 126, 146, 0.25)",
-            border: '1.5px solid',
-            borderColor: theme.palette.teal.lighter,
-        },
-        label: {
-            '& .MuiIcon-root': {
-                width: '27px',
-                height: '27px',
-            },
-        }
-    }))(IconButton);
-    
-    // Before creating mark information for pins, check there are no duplicates.
-    marks = [...new Set(marks)];
-    const pinMarks = marks.map(markTime => {
-        const leftPercentage = Math.max((markTime-10)/duration * 100, 0);
-        const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
-        return {
-            value: markTime,
-            label: 
-            <div 
-                style={{
-                    height: '6px',
-                    marginLeft: `calc(${leftPercentage}% + 3px)`,
-                    width: `calc(${widthPercentage}%)`,
-                    borderRadius: '6px',
-                    backgroundColor: '#FDA2A9',
-                }}
-            />,
-        };
-    });
+  const PinIconButton = withStyles((theme) => ({
+    root: {
+      padding: "15px",
+      boxShadow: "0px 6px 8px rgba(51, 126, 146, 0.25)",
+      border: "1.5px solid",
+      borderColor: theme.palette.teal.lighter,
+    },
+    label: {
+      "& .MuiIcon-root": {
+        width: "27px",
+        height: "27px",
+      },
+    },
+  }))(IconButton);
 
-    return (
-        <Paper variant='outlined' style={{ padding: '10px 10px 20px 10px', marginTop: 10 }}>  
-            <Grid container>
-                <Grid item xs={1} style={{alignItems: 'center', justifyContent: 'center'}}>
-                    {getIconByPlayerStatus(playerStatus, setPlayerStatus)}
-                </Grid>
+  // Before creating mark information for pins, check there are no duplicates.
+  marks = [...new Set(marks)];
+  const pinMarks = marks.map((markTime, index) => {
+    const centerPercentage = (markTime / duration) * 100;
+    const tenSecPercentage = (10 / duration) * 100
+    const leftPercentage = ((markTime - 10) / duration) * 100;
+    const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
+    const left =
+      leftPercentage < 0 ? centerPercentage * -1 : tenSecPercentage * -1;
+    const leftNewWidth = leftPercentage < 0 ? centerPercentage : tenSecPercentage;
+    const rightNewWidth =
+      centerPercentage + tenSecPercentage > 100
+        ? leftNewWidth + (100 - centerPercentage)
+        : leftNewWidth + tenSecPercentage;
 
-                <Grid item xs={1} style={{alignItems: 'center', justifyContent: 'center'}}>
-                    <Typography variant="body2">
-                        {displayTime(currentTime)}
-                    </Typography>
-                </Grid>
-                
-                <Grid item xs={9} style={{alignItems: 'center'}}>
-                    <AudioSlider
-                        value = {currentTime}
-                        onChange = {(event, newValue) => {
-                            // console.log(event, newValue);
-                            setCurrentTime(newValue);
-                        }}
-                        max = {duration}
-                        step = {1}
-                        marks = {pinMarks}
-                    />
-                </Grid>
+    return {
+      value: markTime,
+      label: (
+        <>
+          <div
+            style={{
+              height: "6px",
+              position: "relative",
+              left: `calc(${left}%)`,
+              width: `${rightNewWidth}%`,
+              borderRadius: "6px",
+              backgroundColor: "#FDA2A9",
+            }}
+          />
+          <div
+            style={{
+              marginRight: `calc(${leftPercentage}% + 3px)`,
+              width: `calc(${widthPercentage}%)`,
+            }}
+          >
+            {index + 1}
+          </div>
+        </>
+      ),
+    };
+  });
 
-                <Grid item xs={1} style={{alignItems: 'center', justifyContent: 'center'}}>
-                    <Typography variant="body2">
-                        {displayTime(duration)}
-                    </Typography>
-                </Grid>
-            </Grid>
-            
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: '-15px',
-            }}>
-                <JumpIconButton 
-                    onClick={() => 
-                        setCurrentTime(Math.max(0,currentTime-10))
-                    }
-                >
-                    <Replay10Icon />
-                </JumpIconButton>
-                <PinIconButton 
-                    onClick={() => 
-                        addPin(currentTime)
-                    }
-                >
-                    <Icon>
-                        <img src={pin} alt="pin" style={{height: '100%'}} />
-                    </Icon>
-                </PinIconButton>
-                <JumpIconButton 
-                    onClick={() => 
-                        setCurrentTime(Math.min(duration, currentTime+10))
-                    }
-                >
-                    <Forward10Icon />
-                </JumpIconButton>
-            </div>
-        </Paper>
-    );
+  return (
+    <Paper
+      variant="outlined"
+      style={{ padding: "10px 10px 20px 10px", marginTop: 10 }}
+    >
+      <Grid container>
+        <Grid
+          item
+          xs={1}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          {getIconByPlayerStatus(playerStatus, setPlayerStatus)}
+        </Grid>
+
+        <Grid
+          item
+          xs={1}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <Typography variant="body2">{displayTime(currentTime)}</Typography>
+        </Grid>
+
+        <Grid item xs={9} style={{ alignItems: "center" }}>
+          <AudioSlider
+            value={currentTime}
+            onChange={(event, newValue) => {
+              setCurrentTime(newValue);
+            }}
+            max={duration}
+            step={1}
+            marks={pinMarks}
+          />
+        </Grid>
+
+        <Grid
+          item
+          xs={1}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <Typography variant="body2">{displayTime(duration)}</Typography>
+        </Grid>
+      </Grid>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "-15px",
+        }}
+      >
+        <JumpIconButton
+          onClick={() => setCurrentTime(Math.max(0, currentTime - 10))}
+        >
+          <Replay10Icon />
+        </JumpIconButton>
+        <PinIconButton onClick={() => addPin(currentTime)}>
+          <Icon>
+            <img src={pin} alt="pin" style={{ height: "100%" }} />
+          </Icon>
+        </PinIconButton>
+        <JumpIconButton
+          onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}
+        >
+          <Forward10Icon />
+        </JumpIconButton>
+      </div>
+    </Paper>
+  );
 };
 
 export default ColorLibAudioPlayer;
