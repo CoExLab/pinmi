@@ -46,7 +46,7 @@ const getIconByPlayerStatus = (playerStatus, setPlayerStatus) => {
   );
 };
 
-const AudioSlider = withStyles((theme) => ({
+const AudioSlider = withStyles((theme, index) => ({
   marked: {
     marginBottom: "0px",
   },
@@ -95,7 +95,7 @@ const AudioSlider = withStyles((theme) => ({
     top: "inherit",
     transform: "none",
     height: "6px",
-    // width: "100%",
+    width: "100%",
     borderRadius: "6px",
     // left: "0 !important",
     opacity: 0.6,
@@ -151,17 +151,26 @@ const ColorLibAudioPlayer = ({
     return {
       value: markTime,
       label: (
-        <div
-          style={{
-            height: "6px",
-            marginLeft: `calc(${leftPercentage}% - 15px)`,
-            width: `calc(${widthPercentage}% + 30px)`,
-            borderRadius: "6px",
-            backgroundColor: "#FDA2A9",
-          }}
-        >
-          {index + 1}
-        </div>
+        <>
+          <div
+            style={{
+              height: "6px",
+              position: "relative",
+              left: `calc(${(widthPercentage / 2) * -1}%)`,
+              width: `calc(${widthPercentage}%)`,
+              borderRadius: "6px",
+              backgroundColor: "#FDA2A9",
+            }}
+          />
+          <div
+            style={{
+              marginRight: `calc(${leftPercentage}% + 3px)`,
+              width: `calc(${widthPercentage}%)`,
+            }}
+          >
+            {index + 1}
+          </div>
+        </>
       ),
     };
   });
@@ -192,7 +201,6 @@ const ColorLibAudioPlayer = ({
           <AudioSlider
             value={currentTime}
             onChange={(event, newValue) => {
-              // console.log(event, newValue);
               setCurrentTime(newValue);
             }}
             max={duration}
