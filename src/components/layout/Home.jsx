@@ -102,10 +102,10 @@ const useStyles = makeStyles((theme) => ({
 
 const teamMembers = [
   { name: "Tiangying Chen", email: "tianyinc@andrew.cmu.edu", image: imgTC },
-  { name: "Emily Ding", email: "eding@andrew.cmu.edu", image: imgED },
-  { name: "Mansi Agarwal", email: "mragarwa@andrew.cmu.edu ", image: imgMA },
   { name: "Laura Dabbish", email: "dabbish@andrew.cmu.edu", image: imgLD },
   { name: "Bob Kraut", email: "robert.kraut@cmu.edu", image: imgBK },
+  { name: "Emily Ding", email: "eding@andrew.cmu.edu", image: imgED },
+  { name: "Mansi Agarwal", email: "mragarwa@andrew.cmu.edu ", image: imgMA },
   { name: "Yo-Lei Chen", email: "yoleic@andrew.cmu.edu", image: imgYC },
 ];
 
