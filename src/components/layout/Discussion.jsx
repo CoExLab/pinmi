@@ -258,7 +258,7 @@ const Discussion = () => {
         recommendedMinutes={recommendedTime / 60}
         nextSection="Self Reflection"
       />
-      <VideoDiscussion mode = {getConditionalVideoMode(page)}/>
+      <VideoDiscussion mode = {getConditionalVideoMode(page)} isArchiveHost={user.userMode === "callee"}/>
       {getConditionalContent(page)}
       {getConditionalButton(page, setPage, pins, session.sessionID)}
     </div>
