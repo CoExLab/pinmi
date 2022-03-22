@@ -146,8 +146,18 @@ const ColorLibAudioPlayer = ({
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
   const pinMarks = marks.map((markTime, index) => {
-    const leftPercentage = Math.max(((markTime - 10) / duration) * 100, 0);
+    const centerPercentage = (markTime / duration) * 100;
+    const tenSecPercentage = (10 / duration) * 100
+    const leftPercentage = ((markTime - 10) / duration) * 100;
     const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
+    const left =
+      leftPercentage < 0 ? centerPercentage * -1 : tenSecPercentage * -1;
+    const leftNewWidth = leftPercentage < 0 ? centerPercentage : tenSecPercentage;
+    const rightNewWidth =
+      centerPercentage + tenSecPercentage > 100
+        ? leftNewWidth + (100 - centerPercentage)
+        : leftNewWidth + tenSecPercentage;
+
     return {
       value: markTime,
       label: (
@@ -156,8 +166,8 @@ const ColorLibAudioPlayer = ({
             style={{
               height: "6px",
               position: "relative",
-              left: `calc(${(widthPercentage / 2) * -1}%)`,
-              width: `calc(${widthPercentage}%)`,
+              left: `calc(${left}%)`,
+              width: `${rightNewWidth}%`,
               borderRadius: "6px",
               backgroundColor: "#FDA2A9",
             }}
@@ -206,7 +216,6 @@ const ColorLibAudioPlayer = ({
             max={duration}
             step={1}
             marks={pinMarks}
-            valueLabelDisplay="on"
           />
         </Grid>
 

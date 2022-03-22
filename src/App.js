@@ -10,6 +10,7 @@ import {
   SinglePlayerSessionProvider,
 } from "./context/index";
 import Landing from "./components/layout/Landing";
+import Home from './components/layout/Home';
 import Content from "./components/layout/Content";
 import Completion from "./components/layout/Completion";
 import CORsTestButtons from "./components/layout/CORsTestButtons";
@@ -96,6 +97,7 @@ const theme = createTheme({
   },
 });
 
+
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -103,7 +105,8 @@ const App = () => {
         <main>
           <Switch>
             <Provider store={store}>
-              <Route exact path="/" component={Landing} />
+            <Route exact path='/Home' component={Home} />
+              <Route exact path='/' component={Landing} />
               <SessionProvider>
                 <ActiveStepProvider>
                   <PlayerModeProvider>
