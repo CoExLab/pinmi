@@ -92,8 +92,9 @@ const AudioSlider = withStyles((theme) => ({
             height: '6px',
             width: '100%',
             borderRadius: '6px',
-            left: '0 !important',
+            // left: '0 !important',
             opacity: 0.6,
+            lineHeight: "30px",
         }
     }))(Slider);
 
@@ -138,7 +139,11 @@ const ColorLibAudioPlayer = ({
 
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
-  const pinMarks = marks.map((markTime, index) => {
+  const pinMarks = marks.map((m, index) => {
+    console.log(m);
+    const markTime = m.markTime;
+    const creatorMode = m.creatorMode;
+
     const centerPercentage = (markTime / duration) * 100;
     const tenSecPercentage = (10 / duration) * 100
     const leftPercentage = ((markTime - 10) / duration) * 100;
@@ -169,6 +174,7 @@ const ColorLibAudioPlayer = ({
             style={{
               marginRight: `calc(${leftPercentage}% + 3px)`,
               width: `calc(${widthPercentage}%)`,
+              color: creatorMode == "callee" ? "#FC6D78" : "#337193"
             }}
           >
             {index + 1}
