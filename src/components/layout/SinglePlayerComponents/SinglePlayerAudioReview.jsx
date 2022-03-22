@@ -331,7 +331,9 @@ const SinglePlayerAudioReview = ({
         currentTime={audioProgress}
         setCurrentTime={handleAudioProgress}
         duration={audioLen}
-        marks={singlePlayerPins.map((pin) => pin.pinTime)}
+        marks={singlePlayerPins.map((pin) => {
+          return { pinTime: pin.pinTime, creatorMode: pin.creatorMode };
+        })}
         addPin={!disableAddPin && addPin}
         curPinIndex={curPinIndex}
       />

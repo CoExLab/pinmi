@@ -145,14 +145,19 @@ const ColorLibAudioPlayer = ({
 
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
-  const pinMarks = marks.map((markTime, index) => {
+  const pinMarks = marks.map((m, index) => {
+    const markTime = m.pinTime
+    const markCreatorMode = m.creatorMode
+    console.log(m);
+
     const centerPercentage = (markTime / duration) * 100;
-    const tenSecPercentage = (10 / duration) * 100
+    const tenSecPercentage = (10 / duration) * 100;
     const leftPercentage = ((markTime - 10) / duration) * 100;
     const widthPercentage = Math.min(100 - leftPercentage, 2 * jumpPercentage);
     const left =
       leftPercentage < 0 ? centerPercentage * -1 : tenSecPercentage * -1;
-    const leftNewWidth = leftPercentage < 0 ? centerPercentage : tenSecPercentage;
+    const leftNewWidth =
+      leftPercentage < 0 ? centerPercentage : tenSecPercentage;
     const rightNewWidth =
       centerPercentage + tenSecPercentage > 100
         ? leftNewWidth + (100 - centerPercentage)
@@ -176,6 +181,7 @@ const ColorLibAudioPlayer = ({
             style={{
               marginRight: `calc(${leftPercentage}% + 3px)`,
               width: `calc(${widthPercentage}%)`,
+              color: markCreatorMode == "callee" ? "#FDA2A9" : "black"
             }}
           >
             {index + 1}
