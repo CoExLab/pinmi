@@ -96,14 +96,22 @@ const useStyles = makeStyles((theme) => ({
   },
   team: {
     paddingTop: "50px",
-    display: "inline-flex",
+    width: "30%",
+    textAlign: "center"
+    // display: "inline-flex",
+  },
+  team_container: {
+    display: "flex",
+    flexWrap: "wrap",
+    flex: "0 0 30%",
+    justifyContent: "center",
   },
 }));
 
 const teamMembers = [
-  { name: "Tiangying Chen", email: "tianyinc@andrew.cmu.edu", image: imgTC },
   { name: "Laura Dabbish", email: "dabbish@andrew.cmu.edu", image: imgLD },
   { name: "Bob Kraut", email: "robert.kraut@cmu.edu", image: imgBK },
+  { name: "Tiangying Chen", email: "tianyinc@andrew.cmu.edu", image: imgTC },
   { name: "Emily Ding", email: "eding@andrew.cmu.edu", image: imgED },
   { name: "Mansi Agarwal", email: "mragarwa@andrew.cmu.edu ", image: imgMA },
   { name: "Yo-Lei Chen", email: "yoleic@andrew.cmu.edu", image: imgYC },
@@ -210,7 +218,7 @@ const Home = () => {
     {
       header: "",
       text: (
-        <div>
+        <div className={classes.team_container}>
           {teamMembers.map((i) => (
             <div className={classes.team}>
               <div style={{ alignItems: "center" }}>
@@ -219,7 +227,7 @@ const Home = () => {
                   style={{
                     width: "200px",
                     height: "200px",
-                    marginRight: "50px",
+                    // marginRight: "50px",
                     borderRadius: "50%",
                   }}
                 />
@@ -374,7 +382,7 @@ const Home = () => {
       </Grid>
     );
 
-    return (
+    return index != 3 ? (
       <Grid
         key={`tutorial-part-${index}`}
         container
@@ -385,6 +393,21 @@ const Home = () => {
         {leftTextGrid}
         {rightTextGrid}
       </Grid>
+    ) : (
+      <div
+        key={`tutorial-part-${index}`}
+        // container
+        className={
+          sectionCounter ? classes.tutorial_even : classes.tutorial_odd
+        }
+      >
+        <Typography
+          variant="body2"
+          className={classes.tutorial_text}
+        >
+          {text}
+        </Typography>
+      </div>
     );
   };
 
