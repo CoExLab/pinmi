@@ -9,16 +9,18 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, Button, LinearProgress, Box } from "@material-ui/core";
+import { Tooltip, Button, LinearProgress, Box, Typography } from "@material-ui/core";
 import { Fab } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { formatTime } from '../helper/index';
 
 import { ColorLibNextButton } from './layout/ColorLibComponents/ColorLibButton';
 import ColorLibButton from './layout/ColorLibComponents/ColorLibButton';
+import ColorLibPaper from './layout/ColorLibComponents/ColorLibPaper';
 
 import {
   toggleAudio,
@@ -56,8 +58,10 @@ const useStyles = makeStyles((theme) => ({
 function VideoChatComponent(props) {
   const { setCurActiveStep: setActiveStep } = useActiveStepValue();
 
-
   const [open, setOpen] = useState(true);
+  const [timeRemind, setTimeRemind] = useState(false);
+  const recommendedTime = 10 * 60;
+  const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
 
   const handleClose = () => {
     setOpen(false);
@@ -94,6 +98,7 @@ function VideoChatComponent(props) {
   //isArchviving is true when the achrive is actively recording
 
   // self-made timer
+  const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
   //vonage session data set by the server
@@ -124,6 +129,30 @@ function VideoChatComponent(props) {
       handleStartArchive();
     }
   }, [isSubscribed]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!open && countDown > 0 && videoCallTimer !== 0) {
+        const timePassed = (Date.now() - videoCallTimer) / 1000;
+        if (timePassed >= recommendedTime) {
+          console.log("Time passed: " + timePassed);
+          setCountDown(0);
+          setTimeRemind(true);
+        } else {
+          setCountDown(recommendedTime - timePassed);
+        }
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
+
+    //set the videoCallTimer after the archive event has occured 
+    useEffect(() => {
+      console.log("Hey look! They archive status changed from VCC!!");
+      if (isArchiving === true) {
+        setVideoCallTimer(Date.now());
+      }
+    }, [isArchiving])
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -182,6 +211,24 @@ function VideoChatComponent(props) {
   const renderToolbar = () => {
     return (
       <>
+         {open ? null : (
+          <ColorLibPaper
+            elevation={2}
+            style={{
+              width: 'fit-content',
+              position: 'absolute',
+              top: '23px',
+              left: '20px',
+              marginLeft: 0,
+              padding: '6px 10px',
+              zIndex: 2,
+            }}
+          >
+            <Typography variant="body2">
+              Recommended time left: {formatTime(countDown)}
+            </Typography>
+          </ColorLibPaper>
+        )}
         {isInterviewStarted && (
           <div className="video-toolbar">
             {isAudioEnabled ? (
@@ -325,16 +372,17 @@ How did today’s mock client session go?
     }
     
     //this fetches the archive url
-    // await saveArchiveURL()
-    //   .then(() => {
-    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    //   })
-    //   .catch((error) => { console.log(error) });
+    // await saveArchiveURL();
+      // .then(() => {
+      //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      // })
+      // .catch((error) => { console.log(error) });
   }
 
 
   const handleStartArchive = async () => {
     //create json to send as the body for post
+    console.log(vonageSessionID);
     const data = {
       sessionId: vonageSessionID,
       resolution: '640x480',
@@ -353,7 +401,7 @@ How did today’s mock client session go?
       //and turn it into json so you can access data from it
       .then(response => response.json())
       .then((archiveData) => {
-        console.log(archiveData);
+        console.log("Video Discussion Archive data: ", archiveData);
         setArchiveData(archiveData);
       })
       .catch((error) => { console.log(error) })
@@ -395,10 +443,11 @@ How did today’s mock client session go?
       await fetch(url)
         .then(res => res.json()) //return the res data as a json
         .then((res) => {
-          setMediaDuration(res.duration);
-          setMediaUrl(res.url);
-          console.log("Media Duration:", res.duration);
-          console.log("Media URL:", res.url);
+          console.log(res);
+          // setMediaDuration(res.duration);
+          // setMediaUrl(res.url);
+          console.log("Discussion Media Duration:", res.duration);
+          console.log("Discussion Media URL:", res.url);
 
           setDBMediaURL(res);
         })
@@ -593,7 +642,7 @@ How did today’s mock client session go?
         <div></div>}
         {props.isArchiveHost? 
         <Button 
-          onClick = {() => handleStopArchive()}
+          onClick = {() => handleFinishChat()}
           color='secondary'
           variant="contained"
         >Stop Recording

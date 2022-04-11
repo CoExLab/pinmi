@@ -689,7 +689,6 @@ function VideoChatComponent(props) {
   //   .then((res) => {
   //     setMediaUrl(res);
   //   }).catch((e) => { console.log(e) });
-
   // }
 
   const PreviewMicButton = () => (
