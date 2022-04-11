@@ -236,7 +236,7 @@ const Discussion = () => {
   }
   return (
     <div>
-      <div id="time_reminder" style={{
+      {/* <div id="time_reminder" style={{
         position: 'fixed',
         top: 0,
         right: 0,
@@ -251,7 +251,7 @@ const Discussion = () => {
         <Typography variant="h4" className={classes.tealText}>
           {formatTime(countDown)}
         </Typography>
-      </div>
+      </div> */}
       <ColorLibTimeReminder 
         open={timeRemind} 
         setOpen={setTimeRemind}
