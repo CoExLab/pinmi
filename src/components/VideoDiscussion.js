@@ -632,7 +632,7 @@ How did today’s mock client session go?
         </Button> :
         <div></div>}
       </div> */}
-      {props.isArchiveHost ? 
+      {/* {props.isArchiveHost ? 
         <Button 
           onClick = {() => handleStartArchive()}
           color='secondary'
@@ -647,7 +647,7 @@ How did today’s mock client session go?
           variant="contained"
         >Stop Recording
         </Button> :
-        <div></div>}
+        <div></div>} */}
     </>
   );
 }

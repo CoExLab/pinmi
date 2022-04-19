@@ -290,54 +290,6 @@ const Home = () => {
 
   const history = useHistory();
 
-  const setUser = async () => {
-    console.log(username);
-
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(username)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          console.log("data: " + doc.data().userID);
-          return doc.data();
-        } else {
-          console.log("User doesn't exist.");
-        }
-      })
-      .then((data) => {
-        setStates(data);
-      });
-  };
-
-  const setStates = async (data) => {
-    const tempUserId = data.userID;
-    const tempSessionID = data.curSession;
-    await firebase
-      .firestore()
-      .collection("sessions")
-      .doc(tempSessionID)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          if (doc.data().caller_id == tempUserId) {
-            dispatch(setUserMode("caller"));
-          } else {
-            dispatch(setUserMode("callee"));
-          }
-        } else {
-          console.log("session doesn't exist.");
-        }
-      });
-
-    //const tempUserMode = data.userMode;
-    dispatch(setUserID(tempUserId));
-    dispatch(setSessionID(tempSessionID));
-    //dispatch(setUserMode(tempUserMode));
-    history.push("/content");
-  };
-
   const tutorialSection = ({ header, image, text }, index) => {
     console.log(image);
     const sectionCounter = index % 2 === 0;
