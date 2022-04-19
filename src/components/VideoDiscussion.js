@@ -105,6 +105,12 @@ function VideoChatComponent(props) {
   const { vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey } = useSessionValue();
 
   useEffect(() => {
+    if(props.endVideoSession && props.isArchiveHost){
+      handleStopArchive();
+    }
+  }, [props.endVideoSession])
+
+  useEffect(() => {
     console.log("isInterviewStarted useEffect has been called: \n" + isInterviewStarted);
     if (isInterviewStarted) {
       initializeSession(apiKey, vonageSessionID, token)

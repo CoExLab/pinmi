@@ -57,6 +57,8 @@ const Discussion = () => {
 
   const [finishedUpdates, setFinishedUpdates] = useState(false);
 
+  const [endVideo, setEndVideo] = useState(false);
+
   //If there are no pins, the current index should be -1
   const [curPinIndex, setCurPinIndex] = useState(() => {
     //console.log(pins);
@@ -180,39 +182,48 @@ const Discussion = () => {
   };
 
   const updateDataCopy = async () => {
-    if (user.userMode === "caller") {
-      let docRef = await firebase
+    let docRef = await firebase
+      .firestore()
+      .collection("sessions")
+      .doc(session.sessionID);
+
+    docRef.get().then(async (doc) => {
+      let res = doc.data().datacopy_id;
+      let username =
+        user.userMode == "callee"
+          ? doc.data().callee_name
+          : doc.data().caller_name;
+
+      if (!res) {
+        console.log("data copy destination id does not exist");
+      } else {
+        console.log("data copy destination id: ", res);
+      }
+
+      let newDoc = await firebase
         .firestore()
+        .collection("sessions_by_usernames")
+        .doc(username)
         .collection("sessions")
-        .doc(session.sessionID);
+        .doc(res);
 
-      docRef.get().then(async (doc) => {
-        let res = doc.data().datacopy_id;
+      // let newDoc = await firebase
+      //   .firestore()
+      //   .collection("sessions_datacopy")
+      //   .doc(res);
 
-        if (!res) {
-          console.log("data copy destination id does not exist");
-        } else {
-          console.log("data copy destination id: ", res);
-        }
+      newDoc.set(doc.data());
 
-        let newDoc = await firebase
-          .firestore()
-          .collection("sessions_datacopy")
-          .doc(res);
-
-        newDoc.set(doc.data());
-
-        docRef
-          .collection("pins")
-          .get()
-          .then((queryPins) => {
-            queryPins.forEach((d) => {
-              console.log(d.data());
-              newDoc.collection("pins").doc(d.id).set(d.data());
-            });
+      docRef
+        .collection("pins")
+        .get()
+        .then((queryPins) => {
+          queryPins.forEach((d) => {
+            console.log(d.data());
+            newDoc.collection("pins").doc(d.id).set(d.data());
           });
-      });
-    }
+        });
+    });
   };
 
   const handleButton = (finished) => {
@@ -223,6 +234,7 @@ const Discussion = () => {
       setCurPinIndex(0);
       setFinishedUpdates(true);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setEndVideo(true);
     } else {
       if (page === 0) {
         //pull pin updates
@@ -348,6 +360,7 @@ const Discussion = () => {
       <VideoDiscussion
         mode={getConditionalVideoMode(page)}
         isArchiveHost={user.userMode === "callee"}
+        endVideoSession={endVideo}
       />
       {getConditionalContent(page)}
       {getConditionalButton(page, setPage, pins, session.sessionID)}

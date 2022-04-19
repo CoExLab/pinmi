@@ -99,6 +99,17 @@ const Landing = () => {
     console.log(username);
     let user_id = username.split("_").pop();
 
+    let newDoc = await firebase
+      .firestore()
+      .collection("sessions_by_username")
+      .doc(username);
+
+    newDoc.get().then((doc) => {
+      if (!doc.exists) {
+        newDoc.set({});
+      }
+    });
+
     await firebase
       .firestore()
       .collection("users")
@@ -131,10 +142,12 @@ const Landing = () => {
         if (doc.data().caller_id == tempUserId) {
           dispatch(setUserMode("caller"));
           let document_copy = firebase
-          .firestore()
-          .collection("sessions_datacopy")
-          .doc()
-          let new_id = document_copy.id
+            .firestore()
+            .collection("sessions_by_usernames")
+            .doc(username)
+            .collection("sessions")
+            .doc();
+          let new_id = document_copy.id;
           await document_copy.set(doc.data());
           await document.update({ caller_name: username, datacopy_id: new_id });
         } else {
