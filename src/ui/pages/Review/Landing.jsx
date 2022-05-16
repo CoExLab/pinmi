@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../Navbar";
+import Navbar from "../../components/Navbar";
 
-import { firebase } from "../../../hooks/firebase";
+import { firebase } from "../../../storage/firebase";
 
 import Review from "./Review";
-import Notes from "./DissResponse";
 import Collaboration from "./Collaboration";
-import { useSessionValue } from "../../../context";
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {

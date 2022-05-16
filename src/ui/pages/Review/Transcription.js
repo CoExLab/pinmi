@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Typography, Box, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import ColorLibPaper from "../ColorLibComponents/ColorLibPaper";
-import ColorLibTextField from "../ColorLibComponents/ColorLibTextField";
-import { firebase } from "../../../hooks/firebase";
+import ColorLibPaper from "../../components/colorLibComponents/ColorLibPaper";
+import ColorLibTextField from "../../components/colorLibComponents/ColorLibTextField";
+import { firebase } from "../../../storage/firebase";
 
 const useStyles = makeStyles((theme) => ({
   textField_font: theme.typography.body2,

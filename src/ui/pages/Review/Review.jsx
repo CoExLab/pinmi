@@ -3,15 +3,13 @@ import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { firebase } from "../../../hooks/firebase";
+import { firebase } from "../../../storage/firebase";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import Container from "@material-ui/core/Container";
-import ColorLibButton from "../ColorLibComponents/ColorLibButton";
-import ColorLibTextField from "../ColorLibComponents/ColorLibTextField";
-import { setSessionID } from "../../Store";
-import { SSL_OP_NETSCAPE_CHALLENGE_BUG } from "constants";
+import ColorLibButton from "../../components/colorLibComponents/ColorLibButton";
+import ColorLibTextField from "../../components/colorLibComponents/ColorLibTextField";
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
