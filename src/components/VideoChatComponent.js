@@ -557,7 +557,6 @@ function VideoChatComponent(props) {
       handleStopArchive();
     }
 
-
     //letting the server know that the user exited the room
     await exitRoom(user.userMode, vonageSessionID)
       .then(() => {
@@ -583,6 +582,7 @@ function VideoChatComponent(props) {
 
   const handleStartArchive = async () => {
     //create json to send as the body for post
+    console.log("HANDLE START ARCHIVE");
     const data = {
       sessionId: vonageSessionID,
       resolution: '640x480',
@@ -604,9 +604,6 @@ function VideoChatComponent(props) {
       .then((archiveData) => {
         setVideoCallTimer(Date.now());
         console.log(Date.now());
-
-
-
         setPopperOpen(true);
         setTimeout(() => {
           if (popperContentIndex === 0) {
@@ -623,7 +620,6 @@ function VideoChatComponent(props) {
           }
         }, recommendedTime / 2 * 1000 + 5000);
 
-        console.log(archiveData);
         setArchiveData(archiveData);
         setDBArchiveData(archiveData);
       })
@@ -640,7 +636,6 @@ function VideoChatComponent(props) {
       .then(res => res.json())
       .then((res) => {
         console.log(res);
-
       })
     setButtonDisStop(true);
   }
@@ -675,21 +670,15 @@ function VideoChatComponent(props) {
 
 
   const setDBArchiveData = async (archiveData) => {
+    // var archiveID = archiveData.id;
+    // var url = baseURL + 's3/' + archiveID;
+    console.log(archiveData);
     await firebase.firestore().collection("sessions").doc(session.sessionID).update({
       archiveData: archiveData
     })
       .then(() => console.log("archiveData Added to DB for :" + session.sessionID))
       .catch((e) => { console.log(e) });
   }
-
-  // const getS3ArchiveURL = async (archiveData) => {
-  //   var archiveID = archiveData.id;
-  //   url = baseURL + 's3/' + archiveData.id;
-  //   await fetch(url)
-  //   .then((res) => {
-  //     setMediaUrl(res);
-  //   }).catch((e) => { console.log(e) });
-  // }
 
   const PreviewMicButton = () => (
     isAudioEnabled ?

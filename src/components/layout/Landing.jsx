@@ -101,7 +101,7 @@ const Landing = () => {
 
     let newDoc = await firebase
       .firestore()
-      .collection("sessions_by_username")
+      .collection("sessions_by_usernames")
       .doc(username);
 
     newDoc.get().then((doc) => {
@@ -137,6 +137,11 @@ const Landing = () => {
       .collection("sessions")
       .doc(tempSessionID);
 
+    await document
+      .collection("pins")
+      .get()
+      .then((doc) => doc.forEach((pin) => pin.ref.delete()));
+
     await document.get().then(async (doc) => {
       if (doc.exists) {
         if (doc.data().caller_id == tempUserId) {
@@ -149,23 +154,17 @@ const Landing = () => {
             .doc();
           let new_id = document_copy.id;
           await document_copy.set(doc.data());
-          await document.update({ caller_name: username, datacopy_id: new_id });
+
+          let date = new Date();
+          await document.update({
+            caller_name: username,
+            datacopy_id: new_id,
+            date: date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString('en-US'),
+          });
         } else {
           dispatch(setUserMode("callee"));
           await document.update({ callee_name: username });
         }
-        // await document_copy
-        //   .collection("pins")
-        //   .get()
-        //   .then((querySnapshot) => {
-        //     querySnapshot.forEach((d) => {
-        //       document_copy
-        //         .doc(doc.id)
-        //         .collection("pins")
-        //         .doc(d.id)
-        //         .update(d.data());
-        //     });
-        // });
       } else {
         console.log("session doesn't exist.");
       }
