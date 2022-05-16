@@ -19,18 +19,18 @@ import { usePinsValue } from '../../../storage/context';
 
 //style
 const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        '& > *': {
-            width: '100%',
-            '&:first-child': {
-                marginRight: '8px',
-            },
-            '&:last-child': {
-                marginLeft: '8px',
-            }
-        },
+  root: {
+    display: "flex",
+    "& > *": {
+      width: "100%",
+      "&:first-child": {
+        marginRight: "8px",
+      },
+      "&:last-child": {
+        marginLeft: "8px",
+      },
     },
+  },
 }));
 
 //actual export
@@ -54,14 +54,14 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     // set up states for four different questions
     const [curNoteInfo, setCurNoteInfo] = useState('');
 
-    const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState('');
-    const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState('');
+  const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState("");
+  const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState("");
 
-    const [pinType1, setPinType1] = useState('');
-    const [pinType2, setPinType2] = useState('');
+  const [pinType1, setPinType1] = useState("");
+  const [pinType2, setPinType2] = useState("");
 
-    const [curSkillInfo1, setCurSkillInfo1] = useState('');
-    const [curSkillInfo2, setCurSkillInfo2] = useState('');
+  const [curSkillInfo1, setCurSkillInfo1] = useState("");
+  const [curSkillInfo2, setCurSkillInfo2] = useState("");
 
     //This function either returns the pin specified by curPinIndex, or returns an empty string to handle 
     //the empty pin array case
@@ -135,32 +135,28 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
         }
     }, [curPinIndex, prevPinIndex])//curPinIndex shouldn't change if there are not pins. 
 
+  // for updating and fetching current text field value
+  const fetchCurTextVal = async () => {
+    let curPin = pins[curPinIndex];
 
-    // for updating and fetching current text field value
-    const fetchCurTextVal = async () => {
-        let curPin = pins[curPinIndex];
+    if (user.userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
+    else setCurNoteInfo(curPin.calleePinNote);
 
-        if (user.userMode === "caller")
-            setCurNoteInfo(curPin.callerPinNote);
-        else
-            setCurNoteInfo(curPin.calleePinNote);
+    setCurPerspectiveInfo1(curPin.callerPinPerspective);
+    setCurPerspectiveInfo2(curPin.calleePinPerspective);
 
-        setCurPerspectiveInfo1(curPin.callerPinPerspective);
-        setCurPerspectiveInfo2(curPin.calleePinPerspective);
+    setPinType1(curPin.callerPinCategory);
+    setPinType2(curPin.calleePinCategory);
 
-        setPinType1(curPin.callerPinCategory);
-        setPinType2(curPin.calleePinCategory);
+    setCurSkillInfo1(curPin.callerPinSkill);
+    setCurSkillInfo2(curPin.calleePinSkill);
+  };
 
-        setCurSkillInfo1(curPin.callerPinSkill);
-        setCurSkillInfo2(curPin.calleePinSkill);
-
-    }
-
-    //called when the previous button is hit. This changes the pin index states to represent the new pin
-    const handlePrevPin = () => {
-        setPrevPinIndex(curPinIndex);
-        setCurPinIndex(curPinIndex - 1);
-    }
+  //called when the previous button is hit. This changes the pin index states to represent the new pin
+  const handlePrevPin = () => {
+    setPrevPinIndex(curPinIndex);
+    setCurPinIndex(curPinIndex - 1);
+  };
 
     //called when the next button is hit. This changes the pin index states to represent the new pin
     const handleNextPin = () => {
@@ -363,14 +359,13 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </Box>
             </ColorLibPaper>
             : 
-            <Box fontStyle="italic">
-                <Typography>
-                {"\n"}No pins to see. Try adding some!!!{"\n\n"}
-                </Typography>
-            </Box>
-            }
-        </Grid>
-    );
+        <Box fontStyle="italic">
+          <Typography>
+            {"\n"}No pins to see. Try adding some!!!{"\n\n"}
+          </Typography>
+        </Box>}
+    </Grid>
+  );
 };
 
 export default DissResponse;
