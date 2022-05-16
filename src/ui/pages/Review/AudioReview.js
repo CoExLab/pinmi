@@ -3,14 +3,7 @@ import { useSelector } from "react-redux";
 import { Typography, Grid } from "@material-ui/core";
 import ReactPlayer from "react-player";
 //import audio from '../other/audio.mp3';
-import ColorLibAudioPlayer from "../ColorLibComponents/ColorLibAudioPlayer";
-
-// context
-import {
-  useActiveStepValue,
-  useSessionValue,
-  usePinsValue,
-} from "../../../context";
+import ColorLibAudioPlayer from "../../components/colorLibComponents/ColorLibAudioPlayer";
 
 // firebase hook
 

@@ -2,19 +2,19 @@ import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useSelector } from "react-redux";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { formatTime } from "../../../helper/index";
+import { formatTime } from "../../../helper/helper";
 import { Box, Grid, Typography } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
-import { firebase } from "../../../hooks/firebase";
+import { firebase } from "../../../storage/firebase";
 
 import {
   ColorLibNextButton,
   ColorLibBackButton,
-} from "../ColorLibComponents/ColorLibButton";
-import ColorLibPaper from "../ColorLibComponents/ColorLibPaper";
-import ColorLibTextField from "../ColorLibComponents/ColorLibTextField";
-import MISkillsSheet from "../MISkillsSheet";
+} from "../../components/colorLibComponents/ColorLibButton";
+import ColorLibPaper from "../../components/colorLibComponents/ColorLibPaper";
+import ColorLibTextField from "../../components/colorLibComponents/ColorLibTextField";
+import MISkillsSheet from "../../components/MISkillsSheet";
 import ReactPlayer from "react-player";
 
 const useStyles = makeStyles((theme) => ({

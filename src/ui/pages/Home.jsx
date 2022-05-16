@@ -3,27 +3,19 @@ import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { firebase } from "../../hooks/firebase";
-
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import ColorLibButton from "./ColorLibComponents/ColorLibButton";
-import ColorLibTextField from "./ColorLibComponents/ColorLibTextField";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 
 import pinningPreview from "./../../other/tutorial/pinning-preview.gif";
 import modal from "./../../other/tutorial/modal.png";
-import discussionPrepPreview from "./../../other/tutorial/discussionPrepPreview.png";
-import discussionPreview from "./../../other/tutorial/discussionPreview.png";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AccessAlarmsIcon from "@material-ui/icons/AccessAlarms";
-
-import { setUserID, setUserMode, setSessionID } from "../Store";
 
 import imgBK from "../../other/team_BK.jpeg";
 import imgLD from "../../other/team_LD.jpeg";

@@ -67,6 +67,9 @@ const DisscussionPrep = () => {
 
   //active step states, used to keep track of progress through the pin-mi app
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
+
+  //local pins array
+  const { pins } = usePinsValue();
   
   //Pin index states, used to keep track of the current pin edited and the associated info
   const [prevPinIndex, setPrevPinIndex] = useState(0);
@@ -81,9 +84,6 @@ const DisscussionPrep = () => {
 
   //state used to determine if all information associated with pins has been updated to the db
   const [finishedUpdates, setFinishedUpdates] = useState(false);
-
-  //array of local pins
-  const { pins } = usePinsValue();
 
   //session and user information taken from Redux
   const session = useSelector(state => state.session);
