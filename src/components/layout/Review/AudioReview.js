@@ -3,10 +3,14 @@ import { useSelector } from "react-redux";
 import { Typography, Grid } from "@material-ui/core";
 import ReactPlayer from "react-player";
 //import audio from '../other/audio.mp3';
-import ColorLibAudioPlayer from './colorLibComponents/ColorLibAudioPlayer';
+import ColorLibAudioPlayer from "../ColorLibComponents/ColorLibAudioPlayer";
 
 // context
-import { useActiveStepValue, useSessionValue, usePinsValue } from "../../storage/context";
+import {
+  useActiveStepValue,
+  useSessionValue,
+  usePinsValue,
+} from "../../../context";
 
 // firebase hook
 
@@ -15,20 +19,12 @@ const AudioReview = ({
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
+  audio,
+  audioLen,
+  pins,
+  user
 }) => {
   const player = useRef(null);
-  const { curActiveStep } = useActiveStepValue();
-  //session data
-  const { mediaUrl: audio, mediaDuration: audioLen } = useSessionValue();
-  // fetch raw pin data here
-  const { pins } = usePinsValue();
-  console.log(pins)
-  //fetch user data
-  const user = useSelector((state) => state.user);
-
-  // get document ID
-
-  // hard-coded sessionID here
 
   //first pin (either -1 if there isn't one, or an actual value)
   const AudioProgressStartingValue = (pinsArray) => {
@@ -39,8 +35,6 @@ const AudioReview = ({
       return 0;
     }
   };
-
-  // const { mediaURL: audio, setMediaURL } = useMediaURL();
 
   const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
   const [pinBtnColor, setPinBtnColor] = useState("");
@@ -129,21 +123,14 @@ const AudioReview = ({
 
   return (
     <Grid item xs={12}>
-      {curActiveStep === 2 ? (
-        <Typography variant="h6">
-          Listen back to the session, add pins, and take notes to discuss with
-          your peer.
-        </Typography>
-      ) : (
-        <Typography variant="h6">Review all pins with your peer</Typography>
-      )}
+      <Typography variant="h6">Review all pins with your peer</Typography>
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}
         setPlayerStatus={setAudioPlaying}
         currentTime={audioProgress}
         setCurrentTime={handleAudioProgress}
         duration={audioLen}
-        marks={pins.map((pin) => { 
+        marks={pins.map((pin) => {
           return { markTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
         addPin={addPin}

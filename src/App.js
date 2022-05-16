@@ -9,6 +9,8 @@ import { ActiveStepProvider, PinsProvider, SessionProvider } from './storage/con
 import Landing from './ui/pages/Landing';
 import Content from './ui/pages/Content';
 import Completion from './ui/pages/Completion';
+import Review from './ui/pages/Review/Landing';
+import Home from './ui/pages/Home';
 //tbr import CORsTestButtons from './ui/layout/CORsTestButtons';
 import { store } from "./storage/store";
 
@@ -107,6 +109,7 @@ const App = () => {
             <Provider store={store}>
             <Route exact path='/Home' component={Home} />
               <Route exact path='/' component={Landing} />
+              <Route exact path='/Review' component={Review} />
               <SessionProvider>
                 <ActiveStepProvider>
                   <PinsProvider>

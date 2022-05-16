@@ -23,19 +23,19 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.teal.main,
   },
   videoButton: {
-    position: 'absolute',
-    right: '50px',
-    bottom: '-150px',
+    position: "absolute",
+    right: "50px",
+    bottom: "-150px",
     zIndex: 100,
   },
   description: {
-    margin: '30px 0px 30px 50px',
-    width: '200px',
-    '& > *': {
-      '&:not(:first-child)': {
-        marginTop: '10px',
-      }
-    }
+    margin: "30px 0px 30px 50px",
+    width: "200px",
+    "& > *": {
+      "&:not(:first-child)": {
+        marginTop: "10px",
+      },
+    },
   },
 }));
 
@@ -60,14 +60,15 @@ const Discussion = () => {
   //state variable used to switch on and off database information retrieval/pushes
   const [finishedUpdates, setFinishedUpdates] = useState(false);
 
+  const [endVideo, setEndVideo] = useState(false);
+
   //Pin index states, used to keep track of the current pin edited and the associated info
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [curPinIndex, setCurPinIndex] = useState(() => {
     //If there are no pins, the current index should be -1
     if (pins.length > 0){
       return 0;
-    }
-    else{
+    } else {
       return -1;
     }
   });
@@ -80,7 +81,7 @@ const Discussion = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [page])
+  }, [page]);
 
   //effect that activates when finishedUpdate is changed. if updates are "finished", depending on the current page,
   //pins information is saved to the database and the next page is rendered
@@ -88,7 +89,7 @@ const Discussion = () => {
     console.log("before");
     if (finishedUpdates) {
       console.log("after");
-      if(page === 1){
+      if (page === 1) {
         pins.forEach((elem, id) => savePin(id));
       }
       console.log(page + 1);
@@ -121,7 +122,14 @@ const Discussion = () => {
       case 2:
         return <div />;
       case 1:
-        return <Collaboration curPinIndex={curPinIndex} setCurPinIndex={setCurPinIndex} prevPinIndex={prevPinIndex} setPrevPinIndex={setPrevPinIndex} />;
+        return (
+          <Collaboration
+            curPinIndex={curPinIndex}
+            setCurPinIndex={setCurPinIndex}
+            prevPinIndex={prevPinIndex}
+            setPrevPinIndex={setPrevPinIndex}
+          />
+        );
       default:
         return <div>Unknown</div>;
     }
@@ -146,24 +154,89 @@ const Discussion = () => {
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
-    if(user.userMode === "callee") {
-      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
-        calleePinGoal: myPin.calleePinGoal,
-        calleePinStrength: myPin.calleePinStrength,
-        calleePinOpportunity: myPin.calleePinOpportunity,
-      })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    if (user.userMode === "callee") {
+      await firebase
+        .firestore()
+        .collection("sessions")
+        .doc(session.sessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          calleePinGoal: myPin.calleePinGoal,
+          calleePinStrength: myPin.calleePinStrength,
+          calleePinOpportunity: myPin.calleePinOpportunity,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
     } else {
-      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
-        callerPinGoal: myPin.callerPinGoal,
-        callerPinStrength: myPin.callerPinStrength,
-        callerPinOpportunity: myPin.callerPinOpportunity,
-      })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+      await firebase
+        .firestore()
+        .collection("sessions")
+        .doc(session.sessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          callerPinGoal: myPin.callerPinGoal,
+          callerPinStrength: myPin.callerPinStrength,
+          callerPinOpportunity: myPin.callerPinOpportunity,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
     }
-  }
+  };
+
+  const updateDataCopy = async () => {
+    let docRef = await firebase
+      .firestore()
+      .collection("sessions")
+      .doc(session.sessionID);
+
+    docRef.get().then(async (doc) => {
+      let res = doc.data().datacopy_id;
+      let username =
+        user.userMode == "callee"
+          ? doc.data().callee_name
+          : doc.data().caller_name;
+
+      if (!res) {
+        console.log("data copy destination id does not exist");
+      } else {
+        console.log("data copy destination id: ", res);
+      }
+
+      let newDoc = await firebase
+        .firestore()
+        .collection("sessions_by_usernames")
+        .doc(username)
+        .collection("sessions")
+        .doc(res);
+
+      // let newDoc = await firebase
+      //   .firestore()
+      //   .collection("sessions_datacopy")
+      //   .doc(res);
+
+      newDoc.set(doc.data());
+
+      docRef
+        .collection("pins")
+        .get()
+        .then((queryPins) => {
+          queryPins.forEach((d) => {
+            console.log(d.data());
+            newDoc.collection("pins").doc(d.id).set(d.data());
+          });
+        });
+    });
+  };
 
   //This function is used to define button functionality on this page
   //It takes in a variable "finished", that when true, indicates that the Discussion section has been copleted nad that
@@ -171,12 +244,15 @@ const Discussion = () => {
   const handleButton = (finished) => {
     if (finished) {
       //pin indices are reset to force the last pin to save
+      console.log("handlebutton");
+      updateDataCopy();
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(0);
       //finishedUpdates is set to true to force pin info to be sent to the db
       setFinishedUpdates(true);
       //next section is accessed
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setEndVideo(true);
     } else {
       if(page === 0) {
         //pull pin updates from previous section and from both users
@@ -185,7 +261,7 @@ const Discussion = () => {
       } else if(page === 1){
         //pin indices are reset to force the last pin to save
         setPrevPinIndex(curPinIndex);
-        if(curPinIndex === 0) {
+        if (curPinIndex === 0) {
           setCurPinIndex(1);
         } else {
           setCurPinIndex(0);
@@ -227,22 +303,30 @@ const Discussion = () => {
         return (
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant='body2'>
+              <Typography variant="body2">
                 Introduce yourself to your peer, who is also learning MI.
               </Typography>
-              <Typography variant='body2'>
+              <Typography variant="body2">
                 How did today’s mock client session go?
               </Typography>
             </ColorLibPaper>
-            <ColorLibGrayNextButton variant='contained' size='medium' onClick={() => handleButton(false)}>
+            <ColorLibGrayNextButton
+              variant="contained"
+              size="medium"
+              onClick={() => handleButton(false)}
+            >
               Let's talk about our pins
             </ColorLibGrayNextButton>
           </Box>
         );
       case 1:
         return (
-          <Box align='center' m={2} mb={20}>
-            <ColorLibButton variant='contained' size='medium' onClick={() => handleButton(false)}>
+          <Box align="center" m={2} mb={20}>
+            <ColorLibButton
+              variant="contained"
+              size="medium"
+              onClick={() => handleButton(false)}
+            >
               Finish Discussing Pins
             </ColorLibButton>
           </Box>
@@ -251,14 +335,18 @@ const Discussion = () => {
         return (
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant='body2'>
+              <Typography variant="body2">
                 What did you learn from today's discussion?
               </Typography>
-              <Typography variant='body2'>
+              <Typography variant="body2">
                 Be sure to thank your peer for their time!
               </Typography>
             </ColorLibPaper>
-            <ColorLibCallEndButton variant='contained' size='medium' onClick={() => handleButton(true)}>
+            <ColorLibCallEndButton
+              variant="contained"
+              size="medium"
+              onClick={() => handleButton(true)}
+            >
               Begin Self-Reflection
             </ColorLibCallEndButton>
           </Box>
@@ -271,7 +359,7 @@ const Discussion = () => {
   //actual rendering
   return (
     <div>
-      <div id="time_reminder" style={{
+      {/* <div id="time_reminder" style={{
         position: 'fixed',
         top: 0,
         right: 0,
@@ -286,19 +374,22 @@ const Discussion = () => {
         <Typography variant="h4" className={classes.tealText}>
           {formatTime(countDown)}
         </Typography>
-      </div>
-      <ColorLibTimeReminder 
-        open={timeRemind} 
+      </div> */}
+      <ColorLibTimeReminder
+        open={timeRemind}
         setOpen={setTimeRemind}
         recommendedMinutes={recommendedTime / 60}
         nextSection="Self Reflection"
       />
-      <VideoDiscussion mode = {getConditionalVideoMode(page)}/>
+      <VideoDiscussion
+        mode={getConditionalVideoMode(page)}
+        isArchiveHost={user.userMode === "callee"}
+        endVideoSession={endVideo}
+      />
       {getConditionalContent(page)}
       {getConditionalButton(page)}
     </div>
   );
-}
-
+};
 
 export default Discussion;

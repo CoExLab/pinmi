@@ -35,37 +35,43 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
-          <ColorLibButton 
-            variant="text" 
+          <ColorLibButton
+            variant="text"
             size="small"
-            className={classes.navbar_button} 
+            className={classes.navbar_button}
             href="/Home"
           >
             Home
           </ColorLibButton>
-          <ColorLibButton 
-            variant="text" 
+          <ColorLibButton
+            variant="text"
             size="small"
-            className={classes.navbar_button} 
+            className={classes.navbar_button}
             href="/"
           >
             Project
           </ColorLibButton>
-          {["Practice", "Review"].map((label) => (
-            <ColorLibButton 
-              variant="text" 
-              size="small" 
-              key={label} 
-              className={classes.navbar_button}
-            >
-              {label}
-            </ColorLibButton>
-          ))}
-          <ColorLibButton 
-            variant="outlined" 
-            size="small" 
-            key="message" 
-            className={classes.navbar_button} 
+          <ColorLibButton
+            variant="text"
+            size="small"
+            className={classes.navbar_button}
+            href="/Review"
+          >
+            Review
+          </ColorLibButton>
+          <ColorLibButton
+            variant="text"
+            size="small"
+            key="practice"
+            className={classes.navbar_button}
+          >
+            Practice
+          </ColorLibButton>
+          <ColorLibButton
+            variant="outlined"
+            size="small"
+            key="message"
+            className={classes.navbar_button}
             endIcon={<KeyboardArrowDownIcon />}
           >
             Message
