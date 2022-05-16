@@ -2,20 +2,20 @@ import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useSelector } from "react-redux";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { formatTime } from "../helper/index";
+import { formatTime } from "../../../helper/index";
 import { Box, Grid, Typography } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+
+import { firebase } from "../../../hooks/firebase";
 
 import {
   ColorLibNextButton,
   ColorLibBackButton,
-} from "./layout/ColorLibComponents/ColorLibButton";
-import ColorLibPaper from "./layout/ColorLibComponents/ColorLibPaper";
-import ColorLibTextField from "./layout/ColorLibComponents/ColorLibTextField";
-import MISkillsSheet from "./layout/MISkillsSheet";
-
-//context
-import { usePinsValue } from "../context";
+} from "../ColorLibComponents/ColorLibButton";
+import ColorLibPaper from "../ColorLibComponents/ColorLibPaper";
+import ColorLibTextField from "../ColorLibComponents/ColorLibTextField";
+import MISkillsSheet from "../MISkillsSheet";
+import ReactPlayer from "react-player";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,16 +33,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DissResponse = ({
+  reviewSessionID,
+  username,
+  user,
+  pins,
   curPinIndex,
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
+  reviewUrl,
 }) => {
-  // user mode switcher
-  const user = useSelector((state) => state.user);
-
   const classes = useStyles();
-
   //creating a refernce for TextField Components
   const goalValueRef = useRef("");
   const strengthValueRef = useRef("");
@@ -50,8 +51,6 @@ const DissResponse = ({
 
   //get sessionID
   //const { sessionID } = useSessionValue();
-
-  const { pins } = usePinsValue();
 
   // // fetch raw pin data here
   // const [pins, setPins] = useState([]);
@@ -69,7 +68,8 @@ const DissResponse = ({
   const [curSkillInfo2, setCurSkillInfo2] = useState("");
 
   //This function handles the empty pin array case
-  const getCurrentPinInfo = (pinInfo) => {
+  const getCurrentPinInfo = () => {
+    console.log(pins);
     if (pins.length > 0) {
       return pins[curPinIndex];
     } else {
@@ -78,46 +78,92 @@ const DissResponse = ({
     }
   };
 
-  const [curGoalInfo, setCurGoalInfo] = useState(getCurrentPinInfo("pinGoal"));
+  const [curGoalInfo, setCurGoalInfo] = useState(
+    user.userMode === "callee"
+      ? getCurrentPinInfo().calleePinGoal
+      : getCurrentPinInfo().callerPinGoal
+  );
   const [curStrengthInfo, setCurStrengthInfo] = useState(
-    getCurrentPinInfo("pinStrength")
+    user.userMode === "callee"
+      ? getCurrentPinInfo().calleePinStrength
+      : getCurrentPinInfo().callerPinStrength
   );
   const [curOpporunityInfo, setCurOpportunityInfo] = useState(
-    getCurrentPinInfo("pinOpportunity")
+    user.userMode === "callee"
+      ? getCurrentPinInfo().calleePinOpportunity
+      : getCurrentPinInfo().callerPinOpportunity
   );
 
-  const savePin = (index) => {
-    const lastPin = pins[index];
-    if (user.userMode === "caller") {
-      lastPin.callerPinGoal = curGoalInfo;
-      lastPin.callerPinStrength = curStrengthInfo;
-      lastPin.callerPinOpportunity = curOpporunityInfo;
+  const savePin = async (index) => {
+    const myPin = pins[index];
+    console.log(myPin);
+    if (user.userMode === "callee") {
+      myPin.calleePinGoal = curGoalInfo;
+      myPin.calleePinStrength = curStrengthInfo;
+      myPin.calleePinOpportunity = curOpporunityInfo;
+      await firebase
+        .firestore()
+        .collection("sessions_by_usernames")
+        .doc(username)
+        .collection("sessions")
+        .doc(reviewSessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          calleePinGoal: curGoalInfo,
+          calleePinStrength: curStrengthInfo,
+          calleePinOpportunity: curOpporunityInfo,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
     } else {
-      lastPin.calleePinGoal = curGoalInfo;
-      lastPin.calleePinStrength = curStrengthInfo;
-      lastPin.calleePinOpportunity = curOpporunityInfo;
+      myPin.callerPinGoal = curGoalInfo;
+      myPin.callerPinStrength = curStrengthInfo;
+      myPin.callerPinOpportunity = curOpporunityInfo;
+      await firebase
+        .firestore()
+        .collection("sessions_by_usernames")
+        .doc(username)
+        .collection("sessions")
+        .doc(reviewSessionID)
+        .collection("pins")
+        .doc(myPin.pinID)
+        .update({
+          callerPinGoal: curGoalInfo,
+          callerPinStrength: curStrengthInfo,
+          callerPinOpportunity: curOpporunityInfo,
+        })
+        .then(() => {
+          console.log("current pin successfully updated");
+        })
+        .catch((e) => {
+          console.log("pin update unsuccessful: " + e);
+        });
     }
-    pins[index] = lastPin;
+    pins[index] = myPin;
   };
 
   useEffect(() => {
     if (pins.length > 0) {
       fetchCurTextVal();
+      // setCurGoalInfo(goalValueRef.current.value);
+      // setCurStrengthInfo(strengthValueRef.current.value);
+      // setCurOpportunityInfo(opportunityValueRef.current.value);
 
-      setCurGoalInfo(goalValueRef.current.value);
-      setCurStrengthInfo(strengthValueRef.current.value);
-      setCurOpportunityInfo(opportunityValueRef.current.value);
-
-      console.log("prevPinIndex: " + prevPinIndex);
-      console.log("curPinIndex: " + curPinIndex);
-
+      //   console.log("prevPinIndex: " + prevPinIndex);
+      //   console.log("curPinIndex: " + curPinIndex);
       const lastPin = pins[prevPinIndex];
       if (lastPin) {
         savePin(prevPinIndex);
       }
+
       const nextPin = pins[curPinIndex];
-      console.log(lastPin);
       if (nextPin && user.userMode === "caller") {
+        console.log(nextPin);
         setCurGoalInfo(nextPin.callerPinGoal);
         setCurStrengthInfo(nextPin.callerPinStrength);
         setCurOpportunityInfo(nextPin.callerPinOpportunity);
@@ -143,6 +189,7 @@ const DissResponse = ({
   // for updating and fetching current text field value
   const fetchCurTextVal = async () => {
     let curPin = pins[curPinIndex];
+    console.log(curPin);
 
     if (user.userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
     else setCurNoteInfo(curPin.calleePinNote);
@@ -155,6 +202,39 @@ const DissResponse = ({
 
     setCurSkillInfo1(curPin.callerPinSkill);
     setCurSkillInfo2(curPin.calleePinSkill);
+    setCurGoalInfo(goalValueRef.current.value);
+    setCurStrengthInfo(strengthValueRef.current.value);
+    setCurOpportunityInfo(opportunityValueRef.current.value);
+
+    console.log("prevPinIndex: " + prevPinIndex);
+    console.log("curPinIndex: " + curPinIndex);
+    const lastPin = pins[prevPinIndex];
+    if (lastPin) {
+      savePin(prevPinIndex);
+    }
+
+    const nextPin = pins[curPinIndex];
+    if (nextPin && user.userMode === "caller") {
+      console.log(nextPin);
+      setCurGoalInfo(nextPin.callerPinGoal);
+      setCurStrengthInfo(nextPin.callerPinStrength);
+      setCurOpportunityInfo(nextPin.callerPinOpportunity);
+    } else if (nextPin) {
+      setCurGoalInfo(nextPin.calleePinGoal);
+      setCurStrengthInfo(nextPin.calleePinStrength);
+      setCurOpportunityInfo(nextPin.calleePinOpportunity);
+    } else {
+      console.log("???");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //reset all the refs
+    console.log("curGoalInfo: " + curGoalInfo);
+    console.log("curStrengthInfo: " + curStrengthInfo);
+    console.log("curOpportunityInfo: " + curOpporunityInfo);
+
+    goalValueRef.current.value = curGoalInfo;
+    strengthValueRef.current.value = curStrengthInfo;
+    opportunityValueRef.current.value = curOpporunityInfo;
   };
 
   const handlePrevPin = () => {
@@ -309,7 +389,16 @@ const DissResponse = ({
               value={curSkillInfo2}
             />
           </form>
-
+          <Box textAlign="left">
+            <Typography>Discussion Audio</Typography>
+          </Box>
+          <ReactPlayer
+            url={reviewUrl}
+            height="5%"
+            width="100%"
+            style={{ marginTop: "20px", marginBottom: "30px" }}
+            controls={true}
+          />
           <Box textAlign="left">
             <Typography>
               What was the therapist trying to achieve during this pin?

@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 
 import { ActiveStepProvider, PinsProvider, SessionProvider } from './context/index';
 import Landing from './components/layout/Landing';
+import Review from './components/layout/Review/Landing';
 import Home from './components/layout/Home';
 import Content from './components/layout/Content';
 import Completion from './components/layout/Completion';
@@ -108,6 +109,7 @@ const App = () => {
             <Provider store={store}>
             <Route exact path='/Home' component={Home} />
               <Route exact path='/' component={Landing} />
+              <Route exact path='/Review' component={Review} />
               <SessionProvider>
                 <ActiveStepProvider>
                   <PinsProvider>
