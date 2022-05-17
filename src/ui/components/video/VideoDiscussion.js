@@ -9,13 +9,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import {
-  Tooltip,
-  Button,
-  LinearProgress,
-  Box,
-  Typography,
-} from "@material-ui/core";
+import { Tooltip, LinearProgress, Box, Typography } from "@material-ui/core";
 import { Fab } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -38,9 +32,13 @@ import {
 } from "./VonageVideoAPIIntegration";
 import "./VideoChatComponent.scss";
 
-import { baseURL } from '../../pages/misc/constants';
+import { baseURL } from "../../pages/misc/constants";
 
-import { useSessionValue, useActiveStepValue, usePinsValue } from "../../../storage/context";
+import {
+  useSessionValue,
+  useActiveStepValue,
+  usePinsValue,
+} from "../../../storage/context";
 import { firebase } from "../../../storage/firebase";
 
 //styles used for icons in videocomponent
@@ -60,8 +58,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VideoChatComponent(props) {
-  const { setCurActiveStep: setActiveStep } = useActiveStepValue();
+function VideoComponent(props) {
+  //active step states, used to keep track of progress through the pin-mi app
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
+    useActiveStepValue();
 
   const [open, setOpen] = useState(true);
   const [timeRemind, setTimeRemind] = useState(false);
@@ -98,7 +98,6 @@ function VideoChatComponent(props) {
 
   //archvieData is the data that is returned in the server response when the archive starts
   const [archiveData, setArchiveData] = useState({});
-  //isArchviving is true when the achrive is actively recording
 
   // self-made timer
   const [videoCallTimer, setVideoCallTimer] = useState(0);
@@ -114,9 +113,15 @@ function VideoChatComponent(props) {
     setApiKey,
   } = useSessionValue();
 
+  let timeout2 = 10;
+
   useEffect(() => {
-    if (props.endVideoSession && props.isArchiveHost) {
-      handleStopArchive();
+    if (props.endVideoSession) {
+      if (props.isArchiveHost) {
+        handleStopArchive();
+      } else {
+        updateDataCopy();
+      }
     }
   }, [props.endVideoSession]);
 
@@ -471,17 +476,6 @@ How did today’s mock client session go?
       });
   };
 
-  const handleFinishChat = async () => {
-    setIsInterviewStarted(false);
-    if (props.isArchiveHost) {
-      console.log("stop recording");
-      handleStopArchive();
-    }
-
-    //this fetches the archive url
-    await saveArchiveURL();
-  };
-
   const handleStartArchive = async () => {
     //create json to send as the body for post
     console.log(vonageSessionID);
@@ -505,17 +499,118 @@ How did today’s mock client session go?
       .then(async (archiveData) => {
         console.log("Video Discussion Archive data: ", archiveData);
         setArchiveData(archiveData);
-        await firebase
-        .firestore()
-        .collection("sessions")
-        .doc(session.sessionID)
-        .update({
-          ["archiveData.reviewURL"]: `https://pin-mi-project.s3.amazonaws.com/47378571/${archiveData.id}/archive.mp4`,
-        });
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const pingServer = async () => {
+    let status;
+    let result = await fetch(baseURL + "s3/" + archiveData.id)
+      .then((res) => {
+        status = res.status;
+        return res.json();
+      })
+      .then(async (data) => {
+        if (status === 503) {
+          console.log("Status 503!");
+        }
+        if (data.arcStatus === "uploaded") {
+          setMediaUrl(data.url);
+          setMediaDuration(data.duration);
+
+          await firebase
+            .firestore()
+            .collection("sessions")
+            .doc(session.sessionID)
+            .update({
+              ["archiveData.reviewURL"]: data.url,
+            });
+
+          return data.url;
+        } else {
+          timeout2 = timeout2 * 2;
+          return new Promise((resolve, reject) => {
+            setTimeout(() => resolve(pingServer()), timeout2);
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Error in checking if archive is ready ", err);
+
+        //try calling the server again if there is a 503 error
+        timeout2 = 10; //reset the timeout
+        return new Promise((resolve, reject) => {
+          setTimeout(() => resolve(pingServer()), timeout2);
+        });
+      });
+    return result;
+  };
+
+  // copy all information from "sessions" to "sessions_by_usernames" in firebase
+  const updateDataCopy = async (url) => {
+    let docRef = await firebase
+      .firestore()
+      .collection("sessions")
+      .doc(session.sessionID);
+
+    docRef.get().then(async (doc) => {
+      let res = doc.data().datacopy_id;
+      let username = props.isArchiveHost
+        ? doc.data().callee_name
+        : doc.data().caller_name;
+
+      if (!res) {
+        console.log("data copy destination id does not exist");
+      } else {
+        console.log("data copy destination id: ", res);
+      }
+
+      let newDoc = await firebase
+        .firestore()
+        .collection("sessions_by_usernames")
+        .doc(username)
+        .collection("sessions")
+        .doc(res);
+
+      //copy discussion session url to respective caller's collection in "sessions_by_usernames"
+      //since only the callee has archive URL of the discussion session
+      let callerDoc = await firebase
+        .firestore()
+        .collection("sessions_by_usernames")
+        .doc(doc.data().caller_name)
+        .collection("sessions")
+        .doc(res);
+
+      newDoc
+        .get()
+        .then((res) => {
+          if (props.isArchiveHost) {
+            callerDoc.update({
+              ["archiveData.reviewURL"]: url,
+            });
+            newDoc.set(doc.data())
+            newDoc.update({
+              ["archiveData.reviewURL"]: url,
+            });
+          } else {
+            newDoc.update(doc.data())
+          }
+        })
+        .then((res) => {
+          docRef
+            .collection("pins")
+            .get()
+            .then((queryPins) => {
+              queryPins.forEach((d) => {
+                console.log(d.data());
+                newDoc.collection("pins").doc(d.id).set(d.data());
+              });
+            });
+        })
+        .then((res) => setActiveStep((prevActiveStep) => prevActiveStep + 1));
+    });
   };
 
   const handleStopArchive = async () => {
@@ -527,64 +622,9 @@ How did today’s mock client session go?
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-      });
-  };
-
-  const getLastestArchive = async () => {
-    let url = "https://pin-mi-node-server.herokuapp.com/" + "archive";
-    await fetch(url)
-      .then((res) => {
-        return res.json();
-        //return archives[archives.length - 1];
+        return pingServer();
       })
-      .then((arc) => {
-        let latestArc = arc[arc.length - 1];
-        console.log(latestArc.duration);
-        console.log(latestArc.url);
-        setMediaDuration(latestArc.duration);
-        setMediaUrl(latestArc.url);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  //if status is available and if timing checks out, and if session id is correct
-  const saveArchiveURL = async () => {
-    if (props.isArchiveHost) {
-      let url = baseURL + "archive/" + archiveData.id;
-      await fetch(url)
-        .then((res) => res.json()) //return the res data as a json
-        .then((res) => {
-          console.log(res);
-          // setMediaDuration(res.duration);
-          // setMediaUrl(res.url);
-          console.log("Discussion Media Duration:", res.duration);
-          console.log("Discussion Media URL:", res.url);
-
-          setDBMediaURL(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    } else {
-      //getLastestArchive()
-    }
-  };
-
-  const setDBMediaURL = async (res) => {
-    await firebase
-      .firestore()
-      .collection("MediaURLs")
-      .doc("test")
-      .set({
-        URL: res.url,
-        Duration: res.duration,
-      })
-      .then(() => console.log("MediaURL Added to DB"))
-      .catch((e) => {
-        console.log(e);
-      });
+      .then((url) => updateDataCopy(url));
   };
 
   //CSSMode are strings that have the CSS classnames
@@ -627,54 +667,6 @@ How did today’s mock client session go?
       </>
     );
   };
-  const dialogBox1 = () => {
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Are you sure you want to join the discussion?"}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          <p>You have added notes to 2 out of 3 pins.</p>
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Box m={2}>
-          <div direction="row" align="center">
-            <ColorLibButton
-              variant="contained"
-              size="medium"
-              onClick={() => setOpen(false)}
-              autoFocus
-            >
-              Add more notes to pins
-            </ColorLibButton>
-            <Box mt={2}>
-              <ColorLibNextButton
-                variant="outlined"
-                size="medium"
-                onClick={() =>
-                  handleStartChat(
-                    setApiKey,
-                    setVonageSessionID,
-                    setToken,
-                    baseURL
-                  )
-                }
-                autoFocus
-              >
-                Join Discussion
-              </ColorLibNextButton>
-            </Box>
-          </div>
-        </Box>
-      </DialogActions>
-    </Dialog>;
-  };
 
   return (
     <>
@@ -714,61 +706,8 @@ How did today’s mock client session go?
         </DialogActions>
       </Dialog>
       {videoBox(props.mode === "Discussion" ? "mini" : "full")}
-      {/* <div className="video-container"> 
-        <div
-          id="subscriber"
-          className={`${
-            isStreamSubscribed ? "main-video" : "additional-video"
-          }`}
-          >
-          {isStreamSubscribed && renderToolbar()}
-        </div>
-        <div
-          id="publisher"
-          className={`${
-            isStreamSubscribed ? "additional-video" : "main-video"
-          }`}
-          >
-          {!isStreamSubscribed && renderToolbar()}
-          </div> 
-          </div>
-          <div className='actions-btns'>
-        
-        {props.isArchiveHost ? 
-        <Button 
-          onClick = {() => handleStartArchive()}
-          color='secondary'
-          variant="contained"
-        >Start Recording
-        </Button> :
-        <div></div>}
-        {props.isArchiveHost? 
-        <Button 
-          onClick = {() => handleStopArchive()}
-          color='secondary'
-          variant="contained"
-        >Stop Recording
-        </Button> :
-        <div></div>}
-      </div> */}
-      {/* {props.isArchiveHost ? 
-        <Button 
-          onClick = {() => handleStartArchive()}
-          color='secondary'
-          variant="contained"
-        >Start Recording
-        </Button> :
-        <div></div>}
-        {props.isArchiveHost? 
-        <Button 
-          onClick = {() => handleFinishChat()}
-          color='secondary'
-          variant="contained"
-        >Stop Recording
-        </Button> :
-        <div></div>} */}
     </>
   );
 }
 
-export default VideoChatComponent;
+export default VideoComponent;
