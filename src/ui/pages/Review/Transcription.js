@@ -10,11 +10,14 @@ const useStyles = makeStyles((theme) => ({
   textField_font: theme.typography.body2,
 }));
 
+// transcript component for review page
+// the component takes in the session id and user name that 
+// the user wants to review
 const Transcription = ({ reviewSessionID, username }) => {
   const classes = useStyles();
 
   const [localTrans, setLocalTrans] = useState([]);
-  // fetch trans data here
+  // fetch transcript data here
   const fetchTranscript = async () => {
     console.log(username, reviewSessionID)
     const docRef = await firebase

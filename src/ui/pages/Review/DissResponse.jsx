@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// notes-comparison component for review page
 const DissResponse = ({
   reviewSessionID,
   username,
@@ -48,12 +49,6 @@ const DissResponse = ({
   const goalValueRef = useRef("");
   const strengthValueRef = useRef("");
   const opportunityValueRef = useRef("");
-
-  //get sessionID
-  //const { sessionID } = useSessionValue();
-
-  // // fetch raw pin data here
-  // const [pins, setPins] = useState([]);
 
   // set up states for four different questions
   const [curNoteInfo, setCurNoteInfo] = useState("");
@@ -94,6 +89,7 @@ const DissResponse = ({
       : getCurrentPinInfo().callerPinOpportunity
   );
 
+  //save pin to firebase
   const savePin = async (index) => {
     const myPin = pins[index];
     console.log(myPin);
@@ -150,12 +146,7 @@ const DissResponse = ({
   useEffect(() => {
     if (pins.length > 0) {
       fetchCurTextVal();
-      // setCurGoalInfo(goalValueRef.current.value);
-      // setCurStrengthInfo(strengthValueRef.current.value);
-      // setCurOpportunityInfo(opportunityValueRef.current.value);
 
-      //   console.log("prevPinIndex: " + prevPinIndex);
-      //   console.log("curPinIndex: " + curPinIndex);
       const lastPin = pins[prevPinIndex];
       if (lastPin) {
         savePin(prevPinIndex);
@@ -247,6 +238,7 @@ const DissResponse = ({
     setCurPinIndex(curPinIndex + 1);
   };
 
+  // next/prev pin button component
   const PinNavButtons = () => {
     if (curPinIndex === -1) return null;
     const prev = (

@@ -109,6 +109,7 @@ const teamMembers = [
   { name: "Yo-Lei Chen", email: "yoleic@andrew.cmu.edu", image: imgYC },
 ];
 
+// Home and Research page
 const Home = () => {
   const classes = useStyles();
 

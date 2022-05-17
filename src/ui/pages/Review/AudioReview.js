@@ -5,12 +5,10 @@ import ReactPlayer from "react-player";
 //import audio from '../other/audio.mp3';
 import ColorLibAudioPlayer from "../../components/colorLibComponents/ColorLibAudioPlayer";
 
-// firebase hook
-
+//audio review component for review
 const AudioReview = ({
   curPinIndex,
   setCurPinIndex,
-  prevPinIndex,
   setPrevPinIndex,
   audio,
   audioLen,
@@ -50,9 +48,6 @@ const AudioReview = ({
 
     console.log("Audio from AudioReview useEffect " + audio);
   }, [curPinIndex, audio, pins]);
-
-  //list of all pin times
-  //let playTimeArr = pins.map(pin => pin.pinTime);
 
   const addPin = async (curTime) => {
     // ui on
