@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-
-import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../../components/Navbar";
+import { useState, useEffect } from "react";
+import { useRef } from "react";
 
 import { firebase } from "../../../storage/firebase";
 
-import Review from "./Review";
-import Collaboration from "./Collaboration";
+import { makeStyles } from "@material-ui/core/styles";
+import { Box, Typography } from "@material-ui/core";
+import Container from "@material-ui/core/Container";
+import ColorLibButton from "../../components/colorLibComponents/ColorLibButton";
+import ColorLibTextField from "../../components/colorLibComponents/ColorLibTextField";
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
@@ -31,109 +32,88 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Landing = () => {
+// Review Page thats prompts user to enter user name and select session info
+const Landing = (props) => {
   const classes = useStyles();
 
-  const [page, setPage] = useState(0);
-  const [reviewSessionID, setReviewSessionID] = useState();
-  const [userName, setUserName] = useState();
-  const [userMode, setUserMode] = useState();
-  const [pins, setPins] = useState([]);
-  const [mediaUrl, setMediaUrl] = useState();
-  const [mediaDuration, setMediaDuration] = useState();
-  const [reviewUrl, setReviewUrl] = useState();
-
-  const loadMedia = async (s) => {
-    await firebase
-      .firestore()
-      .collection("sessions_by_usernames")
-      .doc(userName)
-      .collection("sessions")
-      .doc(s)
-      .get()
-      .then((doc) => {
-        setMediaDuration(doc.data().archiveData.duration);
-        setMediaUrl(doc.data().archiveData.url);
-        setReviewUrl(doc.data().archiveData.reviewURL);
-      });
-  };
-
-  const loadPins = async (s) => {
-    await firebase
-      .firestore()
-      .collection("sessions_by_usernames")
-      .doc(userName)
-      .collection("sessions")
-      .doc(s)
-      .collection("pins")
-      .get()
-      .then((doc) => {
-        var tmpPins = doc.docs.map((d) => d.data());
-        tmpPins.sort((a, b) => a.pinTime - b.pinTime);
-        setPins(tmpPins);
-        setPage(1);
-      });
-  };
-
-  const loadUserMode = async (s) => {
-    await firebase
-      .firestore()
-      .collection("sessions_by_usernames")
-      .doc(userName)
-      .collection("sessions")
-      .doc(s)
-      .get()
-      .then((doc) => {
-        setUserMode({
-          userMode: doc.data().caller_name == userName ? "caller" : "callee",
-        });
-      });
-  };
+  const [username, setUsername] = useState("");
+  const [sessionsList, setSessionsList] = useState([]);
+  const usernameRef = useRef("");
 
   useEffect(() => {
-    if (reviewSessionID) {
-      loadUserMode(reviewSessionID);
-      loadPins(reviewSessionID);
-      loadMedia(reviewSessionID);
+    if (username.length) {
+      updateSessionList();
     }
-  }, [reviewSessionID]);
+  }, [username]);
 
-  function getConditionalContent(page) {
-    switch (page) {
-      case 0:
-        return (
-          <Review
-            reviewSessionID={reviewSessionID}
-            setReviewSessionID={setReviewSessionID}
-            setPage={setPage}
-            setUserName={setUserName}
-            setUserMode={setUserMode}
-            setPins={setPins}
-            pins={pins}
-          />
-        );
-      case 1:
-        return (
-          <Collaboration
-            reviewSessionID={reviewSessionID}
-            username={userName}
-            user={userMode}
-            pins={pins}
-            mediaUrl={mediaUrl}
-            mediaDuration={mediaDuration}
-            reviewUrl={reviewUrl}
-          />
-        );
-      default:
-        return <div>Unknown</div>;
-    }
-  }
+  //call and save all past session information based on user name entered
+  const updateSessionList = async () => {
+    await firebase
+      .firestore()
+      .collection("sessions_by_usernames")
+      .doc(username)
+      .get()
+      .then(async (doc) => {
+        if (doc.exists) {
+          let document = await firebase
+            .firestore()
+            .collection("sessions_by_usernames")
+            .doc(username)
+            .collection("sessions");
+
+          document.get().then((e) => {
+            let L1 = e.docs.map((doc) => {
+              return { session: doc.id, date: doc.data().date };
+            });
+            setSessionsList(L1);
+          });
+        } else {
+          setSessionsList([]);
+        }
+      });
+  };
+
+  //save username entered and session clicked
+  const updateSessionInfo = async (session) => {
+    props.setReviewSessionID(session);
+    props.setUserName(username);
+  };
 
   return (
-    <section>
-      <Navbar />
-      {getConditionalContent(page)}
-    </section>
+    <>
+      <Container className={classes.welcome_container} maxWidth="md">
+        <Typography variant="h1" className={classes.welcome_intro}>
+          Review Past Pin-MI Sessions
+        </Typography>
+        <Typography variant="h3" className={classes.welcome_definition}>
+          enter your unique ID to review and edit your past sessions with peers
+        </Typography>
+        <br />
+      </Container>
+      <Container className={classes.welcome_container} maxWidth="md">
+        <Box m={1} display="inline">
+          <ColorLibTextField
+            id="outlined-basic"
+            label="Your Unique ID"
+            variant="outlined"
+            value={username}
+            inputRef={usernameRef}
+            onChange={() => setUsername(usernameRef.current.value)}
+          />
+        </Box>
+      </Container>
+      {sessionsList.map((s) => (
+        <div className={classes.button_wrapper}>
+          <ColorLibButton
+            variant="contained"
+            size="large"
+            onClick={() => updateSessionInfo(s.session)}
+          >
+            {s.date}
+          </ColorLibButton>
+        </div>
+      ))}
+    </>
   );
 };
 

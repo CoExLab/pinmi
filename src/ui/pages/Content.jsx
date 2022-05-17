@@ -2,8 +2,7 @@ import Steppers from '../components/Steppers';
 import Modules from './Modules';
 import Container from '@material-ui/core/Container';
 
-// main content component
-
+// main content component 
 const Content = () => {
     return (
         <section>    

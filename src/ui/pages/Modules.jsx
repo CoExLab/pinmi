@@ -8,8 +8,6 @@ import { useActiveStepValue, useSessionValue } from "../../storage/context";
 
 //tbr import { usePins } from '../../hooks/index';
 
-
-
 function getStepContent(step) {
   switch (step) {
     case 0:
@@ -25,9 +23,8 @@ function getStepContent(step) {
   }
 }
 
+// steps through Practice Session, Discussion Prep, Discussion, Self Reflection pages
 const Modules = () => {
-
-
   const { sessionID } = useSessionValue();
   const { curActiveStep } = useActiveStepValue();
   //tbr const { pins } = usePins();

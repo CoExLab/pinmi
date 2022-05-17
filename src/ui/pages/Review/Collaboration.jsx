@@ -45,11 +45,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// review notes page
 const Collaboration = (props) => {
   const classes = useStyles();
   //If there are no pins, the current index should be -1
   const [curPinIndex, setCurPinIndex] = useState(() => {
-    //console.log(pins);
     if (props.pins.length > 0) {
       return 0;
     } else {
@@ -65,7 +65,6 @@ const Collaboration = (props) => {
           <AudioReview
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}
-            prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
             audio={props.mediaUrl}
             audioLen={props.mediaDuration}

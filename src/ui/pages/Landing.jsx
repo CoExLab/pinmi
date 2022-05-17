@@ -84,6 +84,7 @@ const tutorialInfo = [
   },
 ];
 
+// Project Page
 const Landing = () => {
   const classes = useStyles();
 

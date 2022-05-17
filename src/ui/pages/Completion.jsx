@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+// completion page
 const Completion = () => {
     const classes = useStyles();
 	return (

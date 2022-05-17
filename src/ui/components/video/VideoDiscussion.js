@@ -87,12 +87,7 @@ function VideoComponent(props) {
   );
   const isArchiving = useSelector((state) => state.archive.isStreamArchiving);
 
-  // needed vonage info
   const [room] = useState("hello1");
-  //const [baseURL, setBaseURL] = useState("https://pinmi-test-1.herokuapp.com/");
-  // const [apiKey, setApiKey] = useState("YOUR_API_KEY");
-  // const [sessionId, setSessionId] = useState("YOUR_SESSION_ID");
-  // const [token, setToken] = useState("YOUR_TOKEN");
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -135,15 +130,6 @@ function VideoComponent(props) {
       console.log("stopStreaming called");
       stopStreaming();
     }
-
-    // return function cleanup() {
-    //   console.log("stopStreaming called")
-    //   stopStreaming();
-    // };
-
-    // isInterviewStarted
-    //   ? initializeSession(apiKey, vonageSessionID, token)
-    //   : stopStreaming();
   }, [isInterviewStarted]);
 
   useEffect(() => {
@@ -197,6 +183,7 @@ function VideoComponent(props) {
   const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
+
   const session = useSelector((state) => state.session);
   const user = useSelector((state) => state.user);
 
@@ -505,6 +492,7 @@ How did today’s mock client session go?
       });
   };
 
+  //save discussion archive url to firebase only when the archive is succesfully uploaded in server
   const pingServer = async () => {
     let status;
     let result = await fetch(baseURL + "s3/" + archiveData.id)
@@ -549,7 +537,10 @@ How did today’s mock client session go?
   };
 
   // copy all information from "sessions" to "sessions_by_usernames" in firebase
+  //the function takes in the discussion archive url
   const updateDataCopy = async (url) => {
+    
+    //source database
     let docRef = await firebase
       .firestore()
       .collection("sessions")
@@ -567,6 +558,7 @@ How did today’s mock client session go?
         console.log("data copy destination id: ", res);
       }
 
+      //destintion database
       let newDoc = await firebase
         .firestore()
         .collection("sessions_by_usernames")
@@ -574,7 +566,7 @@ How did today’s mock client session go?
         .collection("sessions")
         .doc(res);
 
-      //copy discussion session url to respective caller's collection in "sessions_by_usernames"
+      //copy discussion session url to respective caller's collection
       //since only the callee has archive URL of the discussion session
       let callerDoc = await firebase
         .firestore()
@@ -613,6 +605,7 @@ How did today’s mock client session go?
     });
   };
 
+  //pause archive, save archive url, copy data to "sessions_by_usernames" in firbase
   const handleStopArchive = async () => {
     var url = baseURL + "archive/" + archiveData.id + "/stop";
     console.log(baseURL + "archive/" + archiveData.id);
@@ -622,9 +615,9 @@ How did today’s mock client session go?
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        return pingServer();
+        return pingServer(); 
       })
-      .then((url) => updateDataCopy(url));
+      .then((url) => updateDataCopy(url)); 
   };
 
   //CSSMode are strings that have the CSS classnames
