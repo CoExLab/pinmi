@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ColorLibButton from './colorLibComponents/ColorLibButton';
 
+import { useUser } from '../../contexts/userContext';
+
 const useStyles = makeStyles(theme => ({
   icon: {
     color: theme.palette.teal.dark,
@@ -28,6 +30,8 @@ const useStyles = makeStyles(theme => ({
 export default function ButtonAppBar() {
   const classes = useStyles();
 
+  const { user } = useUser();
+
   return (
     <div>
       <AppBar className={classes.navbar} position="static">
@@ -47,6 +51,12 @@ export default function ButtonAppBar() {
           <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
             Practice
           </ColorLibButton>
+          {user !== undefined && (
+            <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/auth">
+              {user === null ? 'Sign up/Log in' : user.email}
+            </ColorLibButton>
+          )}
+
           <ColorLibButton
             variant="outlined"
             size="small"
