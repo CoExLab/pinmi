@@ -1,7 +1,7 @@
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-const CustomizedTextField = withStyles((theme) => ({
+const CustomizedTextField = withStyles(theme => ({
   root: {
     '& .MuiInputLabel-outlined': {
       color: theme.palette.gray.main,
@@ -43,18 +43,13 @@ const CustomizedTextField = withStyles((theme) => ({
       },
     },
     '&.MuiFormControl-marginNormal': {
-      margin: '8px 0px 24px 0px'
+      margin: '8px 0px 24px 0px',
     },
   },
 }))(TextField);
 
-const ColorLibTextField = (props) => {
-  return (
-    <CustomizedTextField
-      {...props}
-      label={props.label ?? "Type a response..."}
-    />
-  )
-}
+const ColorLibTextField = props => {
+  return <CustomizedTextField {...props} label={props.label ?? 'Type a response...'} />;
+};
 
 export default ColorLibTextField;

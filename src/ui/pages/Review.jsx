@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { makeStyles } from "@material-ui/core/styles";
-import Navbar from "../components/Navbar";
+import { makeStyles } from '@material-ui/core/styles';
+import Navbar from '../components/Navbar';
 
-import { firebase } from "../../storage/firebase";
+import { firebase } from '../../storage/firebase';
 
-import Landing from "./Review/Landing";
-import Collaboration from "./Review/Collaboration";
+import Landing from './Review/Landing';
+import Collaboration from './Review/Collaboration';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   welcome_container: {
-    padding: "50px 68px 50px 68px",
-    textAlign: "center",
+    padding: '50px 68px 50px 68px',
+    textAlign: 'center',
   },
   welcome_intro: {
     color: theme.palette.teal.dark,
   },
   welcome_definition: {
     color: theme.palette.gray.main,
-    fontStyle: "italic",
-    padding: "10px 20px 10px 20px",
+    fontStyle: 'italic',
+    padding: '10px 20px 10px 20px',
   },
   button_wrapper: {
-    marginBottom: "68px",
-    textAlign: "center",
+    marginBottom: '68px',
+    textAlign: 'center',
   },
   session_container: {
-    padding: "25px 34px 25px 34px",
-    textAlign: "center",
+    padding: '25px 34px 25px 34px',
+    textAlign: 'center',
   },
 }));
 
@@ -44,52 +44,52 @@ const Review = () => {
   const [mediaDuration, setMediaDuration] = useState();
   const [reviewUrl, setReviewUrl] = useState();
 
-  //load archive data based on username and session id 
-  const loadMedia = async (s) => {
+  //load archive data based on username and session id
+  const loadMedia = async s => {
     await firebase
       .firestore()
-      .collection("sessions_by_usernames")
+      .collection('sessions_by_usernames')
       .doc(userName)
-      .collection("sessions")
+      .collection('sessions')
       .doc(s)
       .get()
-      .then((doc) => {
+      .then(doc => {
         setMediaDuration(doc.data().archiveData.duration);
         setMediaUrl(doc.data().archiveData.url);
         setReviewUrl(doc.data().archiveData.reviewURL);
       });
   };
 
-  //load all pins based on username and session id 
-  const loadPins = async (s) => {
+  //load all pins based on username and session id
+  const loadPins = async s => {
     await firebase
       .firestore()
-      .collection("sessions_by_usernames")
+      .collection('sessions_by_usernames')
       .doc(userName)
-      .collection("sessions")
+      .collection('sessions')
       .doc(s)
-      .collection("pins")
+      .collection('pins')
       .get()
-      .then((doc) => {
-        var tmpPins = doc.docs.map((d) => d.data());
+      .then(doc => {
+        var tmpPins = doc.docs.map(d => d.data());
         tmpPins.sort((a, b) => a.pinTime - b.pinTime);
         setPins(tmpPins);
         setPage(1);
       });
   };
 
-  //load user mode based on username and session id 
-  const loadUserMode = async (s) => {
+  //load user mode based on username and session id
+  const loadUserMode = async s => {
     await firebase
       .firestore()
-      .collection("sessions_by_usernames")
+      .collection('sessions_by_usernames')
       .doc(userName)
-      .collection("sessions")
+      .collection('sessions')
       .doc(s)
       .get()
-      .then((doc) => {
+      .then(doc => {
         setUserMode({
-          userMode: doc.data().caller_name == userName ? "caller" : "callee",
+          userMode: doc.data().caller_name == userName ? 'caller' : 'callee',
         });
       });
   };

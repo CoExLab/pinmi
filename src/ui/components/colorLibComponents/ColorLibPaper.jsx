@@ -2,9 +2,8 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 import Paper from '@material-ui/core/Paper';
 
-const ColorLibPaper = withStyles((theme) => ({
-  root: {
-  },
+const ColorLibPaper = withStyles(theme => ({
+  root: {},
   elevation0: {
     // For Self Reflection Page
     backgroundColor: theme.palette.teal.lighter,

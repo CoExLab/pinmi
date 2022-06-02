@@ -19,45 +19,45 @@ import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTi
 import { formatTime } from '../../../helper/helper';
 
 //Style
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
   imageIcon: {
-    height: '100%'
+    height: '100%',
   },
   iconRoot: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   fab: {
     marginLeft: 450,
     marginRight: 200,
   },
   grid: {
-    "& .MuiGrid-item": {
+    '& .MuiGrid-item': {
       display: 'inline-grid',
     },
-    "& .MuiGrid-grid-sm-4": {
+    '& .MuiGrid-grid-sm-4': {
       position: 'relative',
       margin: '8px',
       maxWidth: 'calc(33.333333% - 8px)',
-      "& .MuiPaper-root": {
+      '& .MuiPaper-root': {
         position: 'absolute',
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
         overflowY: 'scroll',
-      }
+      },
     },
-    "& .MuiGrid-grid-sm-8": {
+    '& .MuiGrid-grid-sm-8': {
       maxWidth: 'calc(66.666667% - 8px)',
-    }
+    },
   },
   tealText: {
     color: theme.palette.teal.main,
-  }
+  },
 }));
 
 //Actual export
@@ -70,14 +70,13 @@ const DisscussionPrep = () => {
 
   //local pins array
   const { pins } = usePinsValue();
-  
+
   //Pin index states, used to keep track of the current pin edited and the associated info
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [curPinIndex, setCurPinIndex] = useState(() => {
-    if (pins.length > 0){
+    if (pins.length > 0) {
       return 0;
-    }
-    else{
+    } else {
       return -1;
     }
   });
@@ -94,16 +93,16 @@ const DisscussionPrep = () => {
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [])
+  }, []);
 
   //effect used to automatically save pin info to the db and move to next page
   useEffect(() => {
-    console.log("current pin index:", curPinIndex);
+    console.log('current pin index:', curPinIndex);
     console.log(pins);
-    if(finishedUpdates) {
+    if (finishedUpdates) {
       //save all pins to database and move to next module
       pins.forEach((elem, id) => savePin(id));
       //return Loading module
@@ -129,35 +128,55 @@ const DisscussionPrep = () => {
 
   //savePin takes in the array index of a pin and updates the db document associated with that pin with relevant edits
   //index must be a valid integer between 0 and the length of the array
-  const savePin = async (index) => {
+  const savePin = async index => {
     const myPin = pins[index];
-    if(user.userMode === "callee") {
-      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
-        calleePinNote: myPin.calleePinNote,
-        calleePinPerspective: myPin.calleePinPerspective,
-        calleePinCategory: myPin.calleePinCategory,
-        calleePinSkill: myPin.calleePinSkill,
-      })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+    if (user.userMode === 'callee') {
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(myPin.pinID)
+        .update({
+          calleePinNote: myPin.calleePinNote,
+          calleePinPerspective: myPin.calleePinPerspective,
+          calleePinCategory: myPin.calleePinCategory,
+          calleePinSkill: myPin.calleePinSkill,
+        })
+        .then(() => {
+          console.log('current pin successfully updated');
+        })
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
+        });
     } else {
-      await firebase.firestore().collection("sessions").doc(session.sessionID).collection("pins").doc(myPin.pinID).update({
-        callerPinNote: myPin.calleePinNote,
-        callerPinPerspective: myPin.calleePinPerspective,
-        callerPinCategory: myPin.calleePinCategory,
-        callerPinSkill: myPin.calleePinSkill,
-      })
-      .then(() => {console.log("current pin successfully updated") })
-      .catch((e) => { console.log("pin update unsuccessful: " + e) });
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(myPin.pinID)
+        .update({
+          callerPinNote: myPin.calleePinNote,
+          callerPinPerspective: myPin.calleePinPerspective,
+          callerPinCategory: myPin.calleePinCategory,
+          callerPinSkill: myPin.calleePinSkill,
+        })
+        .then(() => {
+          console.log('current pin successfully updated');
+        })
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
+        });
     }
-  }
+  };
 
   //handleNext is called when the user is ready to join the discussion
   const handleNext = async () => {
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
-    if(curPinIndex === 0) {
-      setCurPinIndex(curPinIndex + 1); 
+    if (curPinIndex === 0) {
+      setCurPinIndex(curPinIndex + 1);
     } else {
       setCurPinIndex(0);
     }
@@ -168,25 +187,26 @@ const DisscussionPrep = () => {
   //actual page rendering
   return (
     <div className={classes.root}>
-      <Container maxWidth='md'>
-        <div id="time_reminder" style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          marginTop: '10px',
-          marginRight: '10px',
-          zIndex: 100,
-          textAlign: 'center',
-        }}>
-          <Typography variant="body2">
-            Recommended time left
-          </Typography>
+      <Container maxWidth="md">
+        <div
+          id="time_reminder"
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            marginTop: '10px',
+            marginRight: '10px',
+            zIndex: 100,
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="body2">Recommended time left</Typography>
           <Typography variant="h4" className={classes.tealText}>
             {formatTime(countDown)}
           </Typography>
         </div>
-        <ColorLibTimeReminder 
-          open={timeRemind} 
+        <ColorLibTimeReminder
+          open={timeRemind}
           setOpen={setTimeRemind}
           recommendedMinutes={recommendedTime / 60}
           nextSection="Discussion"
@@ -199,19 +219,17 @@ const DisscussionPrep = () => {
             setPrevPinIndex={setPrevPinIndex}
           />
           <Transcription />
-          
+
           <Notetaking
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}
             prevPinIndex={prevPinIndex}
-            setPrevPinIndex={setPrevPinIndex} />
+            setPrevPinIndex={setPrevPinIndex}
+          />
         </Grid>
       </Container>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0' }}>
-        <ColorLibButton
-          variant="contained"
-          size="medium"
-          onClick={handleNext}>
+        <ColorLibButton variant="contained" size="medium" onClick={handleNext}>
           Join Discussion
         </ColorLibButton>
       </div>
