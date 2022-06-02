@@ -1,5 +1,5 @@
-import { store, handleSubscription, handleArchive, handleConnection } from "../../../storage/store";
-import OT from "@opentok/client";
+import { store, handleSubscription, handleArchive, handleConnection } from '../../../storage/store';
+import OT from '@opentok/client';
 
 function handleError(error) {
   if (error) {
@@ -13,50 +13,50 @@ export function initializeSession(apiKey, sessionId, token) {
   session = OT.initSession(apiKey, sessionId);
   // Create a publisher
   publisher = OT.initPublisher(
-    "publisher",
+    'publisher',
     {
-      insertMode: "append",
-      style: { buttonDisplayMode: "off" },
-      width: "100%",
-      height: "100%",
+      insertMode: 'append',
+      style: { buttonDisplayMode: 'off' },
+      width: '100%',
+      height: '100%',
     },
-    handleError
+    handleError,
   );
 
   // Subscribing to stream
-  session.on("streamCreated", function (event) {
+  session.on('streamCreated', function (event) {
     subscriber = session.subscribe(
       event.stream,
-      "subscriber",
+      'subscriber',
       {
-        insertMode: "append",
-        style: { buttonDisplayMode: "off" },
-        width: "100%",
-        height: "100%",
+        insertMode: 'append',
+        style: { buttonDisplayMode: 'off' },
+        width: '100%',
+        height: '100%',
       },
-      handleError
+      handleError,
     );
     store.dispatch(handleSubscription(true));
   });
 
-  session.on("archiveStarted", function (event) {
+  session.on('archiveStarted', function (event) {
     var archiveID = event.id;
-    console.log("The archive has started: " + archiveID);
-    store.dispatch(handleArchive({isStreamArchiving :true, archiveID: archiveID}));
+    console.log('The archive has started: ' + archiveID);
+    store.dispatch(handleArchive({ isStreamArchiving: true, archiveID: archiveID }));
   });
 
-  session.on("archiveStopped", function (event) {
+  session.on('archiveStopped', function (event) {
     //console.log("The archive has ended");
     var archiveID = event.id;
-    store.dispatch(handleArchive({isStreamArchiving :false, archiveID: archiveID}));
+    store.dispatch(handleArchive({ isStreamArchiving: false, archiveID: archiveID }));
   });
 
   // session.on("sessionDisconnected", function(event) {
   //   alert("The session disconnected. " + event.reason);
   // });
-  
+
   // Do some action on destroying the stream
-  session.on("streamDestroyed", function (event) {
+  session.on('streamDestroyed', function (event) {
     //console.log("The Video chat has ended");
     store.dispatch(handleSubscription(false));
   });
@@ -68,7 +68,7 @@ export function initializeSession(apiKey, sessionId, token) {
       handleError(error);
     } else {
       session.publish(publisher, handleError);
-      store.dispatch(handleConnection(true))
+      store.dispatch(handleConnection(true));
     }
   });
 }
@@ -86,7 +86,7 @@ export function stopStreaming() {
 
   // //if the client is subscribed to another stream, then end the subscription
   if (subscriber) {
-    console.log("unsubscribing to subscriber");
+    console.log('unsubscribing to subscriber');
     session.unsubscribe(subscriber);
     store.dispatch(handleSubscription(false));
   }

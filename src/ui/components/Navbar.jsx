@@ -6,22 +6,22 @@ import Typography from '@material-ui/core/Typography';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ColorLibButton from './colorLibComponents/ColorLibButton';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   icon: {
     color: theme.palette.teal.dark,
     flexGrow: 1,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   navbar: {
-    backgroundColor: "white",
-    border: "1px solid #C2DCE7",
-    boxShadow: "0px 0px 0px 0px",
+    backgroundColor: 'white',
+    border: '1px solid #C2DCE7',
+    boxShadow: '0px 0px 0px 0px',
   },
   navbar_button: {
     color: theme.palette.gray.dark,
-    fontSize: "16px",
-    margin: "0px 13px",
-    padding: "6px 17px",
+    fontSize: '16px',
+    margin: '0px 13px',
+    padding: '6px 17px',
   },
 }));
 
@@ -35,36 +35,16 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
-          <ColorLibButton
-            variant="text"
-            size="small"
-            className={classes.navbar_button}
-            href="/Home"
-          >
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
             Home
           </ColorLibButton>
-          <ColorLibButton
-            variant="text"
-            size="small"
-            className={classes.navbar_button}
-            href="/"
-          >
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
             Project
           </ColorLibButton>
-          <ColorLibButton
-            variant="text"
-            size="small"
-            className={classes.navbar_button}
-            href="/Review"
-          >
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">
             Review
           </ColorLibButton>
-          <ColorLibButton
-            variant="text"
-            size="small"
-            key="practice"
-            className={classes.navbar_button}
-          >
+          <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
             Practice
           </ColorLibButton>
           <ColorLibButton

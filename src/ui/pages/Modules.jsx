@@ -4,7 +4,7 @@ import Refresher from './misc/Refresher';
 import SelfReflection from './reflection/SelfReflection';
 import Discussion from './discussion/Discussion';
 // context
-import { useActiveStepValue, useSessionValue } from "../../storage/context";
+import { useActiveStepValue, useSessionValue } from '../../storage/context';
 
 //tbr import { usePins } from '../../hooks/index';
 
@@ -29,11 +29,7 @@ const Modules = () => {
   const { curActiveStep } = useActiveStepValue();
   //tbr const { pins } = usePins();
 
-  return (
-    <div>
-      {getStepContent(curActiveStep)}
-    </div>
-  );
-}
+  return <div>{getStepContent(curActiveStep)}</div>;
+};
 
 export default Modules;

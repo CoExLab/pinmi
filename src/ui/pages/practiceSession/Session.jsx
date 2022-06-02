@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import VideoChatComponent from "../../components/video/VideoChatComponent";
-import Loading from "./Loading";
+import VideoChatComponent from '../../components/video/VideoChatComponent';
+import Loading from './Loading';
 import { baseURL } from '../misc/constants';
 import { firebase } from '../../../storage/firebase';
- 
+
 //context
-import { useSessionValue, usePinsValue, useActiveStepValue } from "../../../storage/context";
+import { useSessionValue, usePinsValue, useActiveStepValue } from '../../../storage/context';
 
 const Session = () => {
   const [nextPage, setNextPage] = useState(false);
   const { pins } = usePinsValue();
-  const session = useSelector((state) => state.session);
+  const session = useSelector(state => state.session);
   const { setCurActiveStep } = useActiveStepValue();
 
   // const [baseURL, setBaseURL] = useState("https://pin-mi-node-server.herokuapp.com/" + room);
@@ -39,16 +39,16 @@ const Session = () => {
   //   });
   //   }
 
-  const user = useSelector((state) => state.user);
+  const user = useSelector(state => state.user);
 
   //hostName is a string that is the clients usermode that should host the archive.
-  const checkIsArchiveHost = (hostName) => {
-    console.log("check is recording ran");
+  const checkIsArchiveHost = hostName => {
+    console.log('check is recording ran');
     if (user.userMode === hostName) {
-      console.log("isArchiveHost from check is rec");
+      console.log('isArchiveHost from check is rec');
       return true;
     } else {
-      console.log("not Archive Host from check is rec");
+      console.log('not Archive Host from check is rec');
       return false;
     }
   };
@@ -73,34 +73,34 @@ const Session = () => {
     console.log(pins);
     await firebase
       .firestore()
-      .collection("sessions")
+      .collection('sessions')
       .doc(session.sessionID)
-      .collection("pins")
+      .collection('pins')
       .get()
-      .then((snapshot) => {
-        snapshot.docs.map((doc) => {
+      .then(snapshot => {
+        snapshot.docs.map(doc => {
           pins.push(doc.data());
         });
         pins.sort((a, b) => a.pinTime - b.pinTime);
       })
       .then(() => {
-        setCurActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setCurActiveStep(prevActiveStep => prevActiveStep + 1);
       })
-      .catch((err) => console.error("Error in loadPins functions: ", err));
+      .catch(err => console.error('Error in loadPins functions: ', err));
   };
 
   //archiveID redux variable
-  const archiveID = useSelector((state) => state.archive.archiveID);
+  const archiveID = useSelector(state => state.archive.archiveID);
   var timeout1 = 10; //1/100 second
   var timeout2 = 10;
 
   const pingServer1 = async () => {
-    console.log("pinging server with isRoomEmpty");
-    let result = await fetch(baseURL + "isRoomEmpty/" + vonageSessionID)
-      .then((res) => {
+    console.log('pinging server with isRoomEmpty');
+    let result = await fetch(baseURL + 'isRoomEmpty/' + vonageSessionID)
+      .then(res => {
         return res.json();
       })
-      .then((data) => {
+      .then(data => {
         if (data.roomExited) {
           return true;
         } else {
@@ -110,29 +110,29 @@ const Session = () => {
           });
         }
       });
-    console.log("pingServer result: ", result);
+    console.log('pingServer result: ', result);
     return result;
   };
 
   const pingServer2 = async () => {
-    console.log("pinging server with isArchiveReady");
+    console.log('pinging server with isArchiveReady');
     var status;
-    let result = await fetch(baseURL + "s3/" + archiveID)
-      .then((res) => {
+    let result = await fetch(baseURL + 's3/' + archiveID)
+      .then(res => {
         status = res.status;
         return res.json();
       })
-      .then(async (data) => {
+      .then(async data => {
         if (status === 503) {
-          console.log("Status 503!");
+          console.log('Status 503!');
         }
-        if (data.arcStatus === "uploaded") {
+        if (data.arcStatus === 'uploaded') {
           setMediaUrl(data.url);
           setMediaDuration(data.duration);
 
           await firebase
             .firestore()
-            .collection("sessions")
+            .collection('sessions')
             .doc(session.sessionID)
             .update({
               [`archiveData.url`]: data.url,
@@ -146,8 +146,8 @@ const Session = () => {
           });
         }
       })
-      .catch((err) => {
-        console.error("Error in checking if archive is ready ", err);
+      .catch(err => {
+        console.error('Error in checking if archive is ready ', err);
 
         //try calling the server again if there is a 503 error
         timeout2 = 10; //reset the timeout
@@ -155,7 +155,7 @@ const Session = () => {
           setTimeout(() => resolve(pingServer2()), timeout2);
         });
       });
-    console.log("pingServer result: ", result);
+    console.log('pingServer result: ', result);
     return result;
   };
 
@@ -163,16 +163,9 @@ const Session = () => {
   return (
     <div>
       {!nextPage ? (
-        <VideoChatComponent
-          setNextPage={setNextPage}
-          isArchiveHost={checkIsArchiveHost("callee")}
-        />
+        <VideoChatComponent setNextPage={setNextPage} isArchiveHost={checkIsArchiveHost('callee')} />
       ) : (
-        <Loading
-          isRoomEmpty={pingServer1}
-          isArchiveReady={pingServer2}
-          finishLoading={loadPins}
-        />
+        <Loading isRoomEmpty={pingServer1} isArchiveReady={pingServer2} finishLoading={loadPins} />
       )}
     </div>
   );

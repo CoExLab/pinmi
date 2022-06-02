@@ -1,32 +1,29 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useRef, useEffect, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 
-import { makeStyles } from "@material-ui/core/styles";
-import { formatTime } from "../../../helper/helper";
-import { Box, Grid, Typography } from "@material-ui/core";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { makeStyles } from '@material-ui/core/styles';
+import { formatTime } from '../../../helper/helper';
+import { Box, Grid, Typography } from '@material-ui/core';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 
-import { firebase } from "../../../storage/firebase";
+import { firebase } from '../../../storage/firebase';
 
-import {
-  ColorLibNextButton,
-  ColorLibBackButton,
-} from "../../components/colorLibComponents/ColorLibButton";
-import ColorLibPaper from "../../components/colorLibComponents/ColorLibPaper";
-import ColorLibTextField from "../../components/colorLibComponents/ColorLibTextField";
-import MISkillsSheet from "../../components/MISkillsSheet";
-import ReactPlayer from "react-player";
+import { ColorLibNextButton, ColorLibBackButton } from '../../components/colorLibComponents/ColorLibButton';
+import ColorLibPaper from '../../components/colorLibComponents/ColorLibPaper';
+import ColorLibTextField from '../../components/colorLibComponents/ColorLibTextField';
+import MISkillsSheet from '../../components/MISkillsSheet';
+import ReactPlayer from 'react-player';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
-    "& > *": {
-      width: "100%",
-      "&:first-child": {
-        marginRight: "8px",
+    display: 'flex',
+    '& > *': {
+      width: '100%',
+      '&:first-child': {
+        marginRight: '8px',
       },
-      "&:last-child": {
-        marginLeft: "8px",
+      '&:last-child': {
+        marginLeft: '8px',
       },
     },
   },
@@ -46,21 +43,21 @@ const DissResponse = ({
 }) => {
   const classes = useStyles();
   //creating a refernce for TextField Components
-  const goalValueRef = useRef("");
-  const strengthValueRef = useRef("");
-  const opportunityValueRef = useRef("");
+  const goalValueRef = useRef('');
+  const strengthValueRef = useRef('');
+  const opportunityValueRef = useRef('');
 
   // set up states for four different questions
-  const [curNoteInfo, setCurNoteInfo] = useState("");
+  const [curNoteInfo, setCurNoteInfo] = useState('');
 
-  const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState("");
-  const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState("");
+  const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState('');
+  const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState('');
 
-  const [pinType1, setPinType1] = useState("");
-  const [pinType2, setPinType2] = useState("");
+  const [pinType1, setPinType1] = useState('');
+  const [pinType2, setPinType2] = useState('');
 
-  const [curSkillInfo1, setCurSkillInfo1] = useState("");
-  const [curSkillInfo2, setCurSkillInfo2] = useState("");
+  const [curSkillInfo1, setCurSkillInfo1] = useState('');
+  const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
   //This function handles the empty pin array case
   const getCurrentPinInfo = () => {
@@ -69,41 +66,35 @@ const DissResponse = ({
       return pins[curPinIndex];
     } else {
       //if there are no pins the array, return an empty string.
-      return "";
+      return '';
     }
   };
 
   const [curGoalInfo, setCurGoalInfo] = useState(
-    user.userMode === "callee"
-      ? getCurrentPinInfo().calleePinGoal
-      : getCurrentPinInfo().callerPinGoal
+    user.userMode === 'callee' ? getCurrentPinInfo().calleePinGoal : getCurrentPinInfo().callerPinGoal,
   );
   const [curStrengthInfo, setCurStrengthInfo] = useState(
-    user.userMode === "callee"
-      ? getCurrentPinInfo().calleePinStrength
-      : getCurrentPinInfo().callerPinStrength
+    user.userMode === 'callee' ? getCurrentPinInfo().calleePinStrength : getCurrentPinInfo().callerPinStrength,
   );
   const [curOpporunityInfo, setCurOpportunityInfo] = useState(
-    user.userMode === "callee"
-      ? getCurrentPinInfo().calleePinOpportunity
-      : getCurrentPinInfo().callerPinOpportunity
+    user.userMode === 'callee' ? getCurrentPinInfo().calleePinOpportunity : getCurrentPinInfo().callerPinOpportunity,
   );
 
   //save pin to firebase
-  const savePin = async (index) => {
+  const savePin = async index => {
     const myPin = pins[index];
     console.log(myPin);
-    if (user.userMode === "callee") {
+    if (user.userMode === 'callee') {
       myPin.calleePinGoal = curGoalInfo;
       myPin.calleePinStrength = curStrengthInfo;
       myPin.calleePinOpportunity = curOpporunityInfo;
       await firebase
         .firestore()
-        .collection("sessions_by_usernames")
+        .collection('sessions_by_usernames')
         .doc(username)
-        .collection("sessions")
+        .collection('sessions')
         .doc(reviewSessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           calleePinGoal: curGoalInfo,
@@ -111,10 +102,10 @@ const DissResponse = ({
           calleePinOpportunity: curOpporunityInfo,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     } else {
       myPin.callerPinGoal = curGoalInfo;
@@ -122,11 +113,11 @@ const DissResponse = ({
       myPin.callerPinOpportunity = curOpporunityInfo;
       await firebase
         .firestore()
-        .collection("sessions_by_usernames")
+        .collection('sessions_by_usernames')
         .doc(username)
-        .collection("sessions")
+        .collection('sessions')
         .doc(reviewSessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           callerPinGoal: curGoalInfo,
@@ -134,10 +125,10 @@ const DissResponse = ({
           callerPinOpportunity: curOpporunityInfo,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     }
     pins[index] = myPin;
@@ -153,7 +144,7 @@ const DissResponse = ({
       }
 
       const nextPin = pins[curPinIndex];
-      if (nextPin && user.userMode === "caller") {
+      if (nextPin && user.userMode === 'caller') {
         console.log(nextPin);
         setCurGoalInfo(nextPin.callerPinGoal);
         setCurStrengthInfo(nextPin.callerPinStrength);
@@ -163,13 +154,13 @@ const DissResponse = ({
         setCurStrengthInfo(nextPin.calleePinStrength);
         setCurOpportunityInfo(nextPin.calleePinOpportunity);
       } else {
-        console.log("???");
+        console.log('???');
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
       //reset all the refs
-      console.log("curGoalInfo: " + curGoalInfo);
-      console.log("curStrengthInfo: " + curStrengthInfo);
-      console.log("curOpportunityInfo: " + curOpporunityInfo);
+      console.log('curGoalInfo: ' + curGoalInfo);
+      console.log('curStrengthInfo: ' + curStrengthInfo);
+      console.log('curOpportunityInfo: ' + curOpporunityInfo);
 
       goalValueRef.current.value = curGoalInfo;
       strengthValueRef.current.value = curStrengthInfo;
@@ -182,7 +173,7 @@ const DissResponse = ({
     let curPin = pins[curPinIndex];
     console.log(curPin);
 
-    if (user.userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
+    if (user.userMode === 'caller') setCurNoteInfo(curPin.callerPinNote);
     else setCurNoteInfo(curPin.calleePinNote);
 
     setCurPerspectiveInfo1(curPin.callerPinPerspective);
@@ -197,15 +188,15 @@ const DissResponse = ({
     setCurStrengthInfo(strengthValueRef.current.value);
     setCurOpportunityInfo(opportunityValueRef.current.value);
 
-    console.log("prevPinIndex: " + prevPinIndex);
-    console.log("curPinIndex: " + curPinIndex);
+    console.log('prevPinIndex: ' + prevPinIndex);
+    console.log('curPinIndex: ' + curPinIndex);
     const lastPin = pins[prevPinIndex];
     if (lastPin) {
       savePin(prevPinIndex);
     }
 
     const nextPin = pins[curPinIndex];
-    if (nextPin && user.userMode === "caller") {
+    if (nextPin && user.userMode === 'caller') {
       console.log(nextPin);
       setCurGoalInfo(nextPin.callerPinGoal);
       setCurStrengthInfo(nextPin.callerPinStrength);
@@ -215,13 +206,13 @@ const DissResponse = ({
       setCurStrengthInfo(nextPin.calleePinStrength);
       setCurOpportunityInfo(nextPin.calleePinOpportunity);
     } else {
-      console.log("???");
+      console.log('???');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     //reset all the refs
-    console.log("curGoalInfo: " + curGoalInfo);
-    console.log("curStrengthInfo: " + curStrengthInfo);
-    console.log("curOpportunityInfo: " + curOpporunityInfo);
+    console.log('curGoalInfo: ' + curGoalInfo);
+    console.log('curStrengthInfo: ' + curStrengthInfo);
+    console.log('curOpportunityInfo: ' + curOpporunityInfo);
 
     goalValueRef.current.value = curGoalInfo;
     strengthValueRef.current.value = curStrengthInfo;
@@ -242,22 +233,12 @@ const DissResponse = ({
   const PinNavButtons = () => {
     if (curPinIndex === -1) return null;
     const prev = (
-      <ColorLibBackButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
-        onClick={handlePrevPin}
-      >
+      <ColorLibBackButton style={{ margin: '0px 8px' }} variant="contained" size="small" onClick={handlePrevPin}>
         Prev Pin
       </ColorLibBackButton>
     );
     const next = (
-      <ColorLibNextButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
-        onClick={handleNextPin}
-      >
+      <ColorLibNextButton style={{ margin: '0px 8px' }} variant="contained" size="small" onClick={handleNextPin}>
         Next Pin
       </ColorLibNextButton>
     );
@@ -270,8 +251,8 @@ const DissResponse = ({
     }
     return (
       <Fragment>
-        {" "}
-        {prev} {next}{" "}
+        {' '}
+        {prev} {next}{' '}
       </Fragment>
     );
   };
@@ -286,11 +267,8 @@ const DissResponse = ({
           {curPinIndex !== -1 ? (
             <Box fontStyle="italic">
               <Typography>
-                The session was pinned at{" "}
-                {formatTime(pins.map((pin) => pin.pinTime)[curPinIndex])} by{" "}
-                {pins[curPinIndex].creatorMode === user.userMode
-                  ? "you"
-                  : "your peer"}
+                The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
+                {pins[curPinIndex].creatorMode === user.userMode ? 'you' : 'your peer'}
               </Typography>
             </Box>
           ) : null}
@@ -310,9 +288,7 @@ const DissResponse = ({
           </Box>
 
           <Box textAlign="left">
-            <Typography>
-              What is your perspective of what happened at this pin?
-            </Typography>
+            <Typography>What is your perspective of what happened at this pin?</Typography>
           </Box>
           <form className={classes.root} noValidate autoComplete="off">
             <ColorLibTextField
@@ -342,18 +318,9 @@ const DissResponse = ({
             <Typography>What would you categorize this pin as?</Typography>
           </Box>
           <Box align="left">
-            <ToggleButtonGroup
-              disabled
-              className={classes.toggleGroup}
-              exclusive
-              size="large"
-            >
-              <ToggleButton value={pinType1 ?? "pinType1"}>
-                {pinType1}
-              </ToggleButton>
-              <ToggleButton value={pinType2 ?? "pinType2"}>
-                {pinType2}
-              </ToggleButton>
+            <ToggleButtonGroup disabled className={classes.toggleGroup} exclusive size="large">
+              <ToggleButton value={pinType1 ?? 'pinType1'}>{pinType1}</ToggleButton>
+              <ToggleButton value={pinType2 ?? 'pinType2'}>{pinType2}</ToggleButton>
             </ToggleButtonGroup>
           </Box>
           <MISkillsSheet />
@@ -388,13 +355,11 @@ const DissResponse = ({
             url={reviewUrl}
             height="5%"
             width="100%"
-            style={{ marginTop: "20px", marginBottom: "30px" }}
+            style={{ marginTop: '20px', marginBottom: '30px' }}
             controls={true}
           />
           <Box textAlign="left">
-            <Typography>
-              What was the therapist trying to achieve during this pin?
-            </Typography>
+            <Typography>What was the therapist trying to achieve during this pin?</Typography>
           </Box>
           <ColorLibTextField
             id="outlined-secondary"
@@ -438,9 +403,7 @@ const DissResponse = ({
             margin="normal"
             value={curOpporunityInfo}
             inputRef={opportunityValueRef}
-            onChange={() =>
-              setCurOpportunityInfo(opportunityValueRef.current.value)
-            }
+            onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
           />
 
           <Box textAlign="center">
@@ -450,7 +413,7 @@ const DissResponse = ({
       ) : (
         <Box fontStyle="italic">
           <Typography>
-            {"\n"}No pins to see. Try adding some!!!{"\n\n"}
+            {'\n'}No pins to see. Try adding some!!!{'\n\n'}
           </Typography>
         </Box>
       )}

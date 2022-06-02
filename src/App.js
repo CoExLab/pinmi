@@ -1,9 +1,5 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom';
-import { Provider } from "react-redux";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 import { ActiveStepProvider, PinsProvider, SessionProvider } from './storage/context';
 import Landing from './ui/pages/Landing';
@@ -12,9 +8,9 @@ import Completion from './ui/pages/Completion';
 import Review from './ui/pages/Review';
 import Home from './ui/pages/Home';
 //tbr import CORsTestButtons from './ui/layout/CORsTestButtons';
-import { store } from "./storage/store";
+import { store } from './storage/store';
 
-import { createTheme, ThemeProvider } from "@material-ui/core";
+import { createTheme, ThemeProvider } from '@material-ui/core';
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */
@@ -39,11 +35,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: [
-      'Lato',
-      'Lato',
-      'sans-serif'
-    ].join(','),
+    fontFamily: ['Lato', 'Lato', 'sans-serif'].join(','),
     h1: {
       fontFamily: 'Lato',
       fontSize: '35px',
@@ -95,10 +87,9 @@ const theme = createTheme({
       fontWeight: 400,
       lineHeight: '18.7px',
       letterSpacing: '-0.02em',
-    }
-  }
+    },
+  },
 });
-
 
 const App = () => {
   return (
@@ -107,9 +98,9 @@ const App = () => {
         <main>
           <Switch>
             <Provider store={store}>
-            <Route exact path='/Home' component={Home} />
-              <Route exact path='/' component={Landing} />
-              <Route exact path='/Review' component={Review} />
+              <Route exact path="/Home" component={Home} />
+              <Route exact path="/" component={Landing} />
+              <Route exact path="/Review" component={Review} />
               <SessionProvider>
                 <ActiveStepProvider>
                   <PinsProvider>
@@ -123,7 +114,7 @@ const App = () => {
         </main>
       </Router>
     </ThemeProvider>
-  )
-}
+  );
+};
 
 export default App;

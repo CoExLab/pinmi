@@ -1,46 +1,42 @@
 //This code file defines the top-level rendering of the Discussion section of the pin-mi app
-import { Box, Typography } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../../../storage/firebase";
+import { Box, Typography } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useSelector, useDispatch } from 'react-redux';
+import { firebase } from '../../../storage/firebase';
 
-import Collaboration from "./Collaboration";
+import Collaboration from './Collaboration';
 import ColorLibButton, {
   ColorLibGrayNextButton,
   ColorLibCallEndButton,
-} from "../../components/colorLibComponents/ColorLibButton";
-import ColorLibPaper from "../../components/colorLibComponents/ColorLibPaper";
-import ColorLibTimeReminder from "../../components/colorLibComponents/ColorLibTimeReminder";
+} from '../../components/colorLibComponents/ColorLibButton';
+import ColorLibPaper from '../../components/colorLibComponents/ColorLibPaper';
+import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTimeReminder';
 
-import VideoDiscussion from "../../components/video/VideoDiscussion";
+import VideoDiscussion from '../../components/video/VideoDiscussion';
 
-import { formatTime } from "../../../helper/helper";
+import { formatTime } from '../../../helper/helper';
 
 //context
-import {
-  useSessionValue,
-  usePinsValue,
-  useActiveStepValue,
-} from "../../../storage/context";
+import { useSessionValue, usePinsValue, useActiveStepValue } from '../../../storage/context';
 
 //style
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   tealText: {
     color: theme.palette.teal.main,
   },
   videoButton: {
-    position: "absolute",
-    right: "50px",
-    bottom: "-150px",
+    position: 'absolute',
+    right: '50px',
+    bottom: '-150px',
     zIndex: 100,
   },
   description: {
-    margin: "30px 0px 30px 50px",
-    width: "200px",
-    "& > *": {
-      "&:not(:first-child)": {
-        marginTop: "10px",
+    margin: '30px 0px 30px 50px',
+    width: '200px',
+    '& > *': {
+      '&:not(:first-child)': {
+        marginTop: '10px',
       },
     },
   },
@@ -55,15 +51,14 @@ const Discussion = () => {
   const [page, setPage] = useState(0);
 
   //session and user information taken from Redux
-  const session = useSelector((state) => state.session);
-  const user = useSelector((state) => state.user);
+  const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
 
   //local pins array
   const { pins } = usePinsValue();
 
   //active step states, used to keep track of progress through the pin-mi app
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
-    useActiveStepValue();
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
   //state variable used to switch on and off database information retrieval/pushes
   const [finishedUpdates, setFinishedUpdates] = useState(false);
@@ -94,9 +89,9 @@ const Discussion = () => {
   //effect that activates when finishedUpdate is changed. if updates are "finished", depending on the current page,
   //pins information is saved to the database and the next page is rendered
   useEffect(() => {
-    console.log("before");
+    console.log('before');
     if (finishedUpdates) {
-      console.log("after");
+      console.log('after');
       if (page === 1) {
         pins.forEach((elem, id) => savePin(id));
       }
@@ -149,25 +144,25 @@ const Discussion = () => {
     switch (page) {
       case 0:
       case 2:
-        return "VideoDiscussion";
+        return 'VideoDiscussion';
       case 1:
-        return "Discussion";
+        return 'Discussion';
       default:
-        return "";
+        return '';
     }
   }
 
   //savePin takes in the array index of a pin in the pins array and sends updates to the database based on the
   // pin information that was edited
-  const savePin = async (index) => {
+  const savePin = async index => {
     const myPin = pins[index];
     console.log(myPin);
-    if (user.userMode === "callee") {
+    if (user.userMode === 'callee') {
       await firebase
         .firestore()
-        .collection("sessions")
+        .collection('sessions')
         .doc(session.sessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           calleePinGoal: myPin.calleePinGoal,
@@ -175,17 +170,17 @@ const Discussion = () => {
           calleePinOpportunity: myPin.calleePinOpportunity,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     } else {
       await firebase
         .firestore()
-        .collection("sessions")
+        .collection('sessions')
         .doc(session.sessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           callerPinGoal: myPin.callerPinGoal,
@@ -193,10 +188,10 @@ const Discussion = () => {
           callerPinOpportunity: myPin.callerPinOpportunity,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     }
   };
@@ -204,10 +199,10 @@ const Discussion = () => {
   //This function is used to define button functionality on this page
   //It takes in a variable "finished", that when true, indicates that the Discussion section has been copleted nad that
   //the next section should be loaded. If "finished" is false, then the next page in the Discussion section is loaded
-  const handleButton = (finished) => {
+  const handleButton = finished => {
     if (finished) {
       //pin indices are reset to force the last pin to save
-      console.log("handlebutton");
+      console.log('handlebutton');
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(0);
       //finishedUpdates is set to true to force pin info to be sent to the db
@@ -243,12 +238,12 @@ const Discussion = () => {
     //pull information from the database into pins
     await firebase
       .firestore()
-      .collection("sessions")
+      .collection('sessions')
       .doc(session.sessionID)
-      .collection("pins")
+      .collection('pins')
       .get()
-      .then((snapshot) => {
-        snapshot.docs.map((doc) => {
+      .then(snapshot => {
+        snapshot.docs.map(doc => {
           pins.push(doc.data());
         });
         //used to properly sort the pins by time
@@ -257,7 +252,7 @@ const Discussion = () => {
       .then(() => {
         setPage(page + 1);
       })
-      .catch((err) => console.error("Error in loadPins functions: ", err));
+      .catch(err => console.error('Error in loadPins functions: ', err));
   };
 
   //function used to conditionally render and determine button behavior in the discussion section
@@ -268,18 +263,10 @@ const Discussion = () => {
         return (
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant="body2">
-                Introduce yourself to your peer, who is also learning MI.
-              </Typography>
-              <Typography variant="body2">
-                How did today’s mock client session go?
-              </Typography>
+              <Typography variant="body2">Introduce yourself to your peer, who is also learning MI.</Typography>
+              <Typography variant="body2">How did today’s mock client session go?</Typography>
             </ColorLibPaper>
-            <ColorLibGrayNextButton
-              variant="contained"
-              size="medium"
-              onClick={() => handleButton(false)}
-            >
+            <ColorLibGrayNextButton variant="contained" size="medium" onClick={() => handleButton(false)}>
               Let's talk about our pins
             </ColorLibGrayNextButton>
           </Box>
@@ -287,11 +274,7 @@ const Discussion = () => {
       case 1:
         return (
           <Box align="center" m={2} mb={20}>
-            <ColorLibButton
-              variant="contained"
-              size="medium"
-              onClick={() => handleButton(false)}
-            >
+            <ColorLibButton variant="contained" size="medium" onClick={() => handleButton(false)}>
               Finish Discussing Pins
             </ColorLibButton>
           </Box>
@@ -300,18 +283,10 @@ const Discussion = () => {
         return (
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant="body2">
-                What did you learn from today's discussion?
-              </Typography>
-              <Typography variant="body2">
-                Be sure to thank your peer for their time!
-              </Typography>
+              <Typography variant="body2">What did you learn from today's discussion?</Typography>
+              <Typography variant="body2">Be sure to thank your peer for their time!</Typography>
             </ColorLibPaper>
-            <ColorLibCallEndButton
-              variant="contained"
-              size="medium"
-              onClick={() => handleButton(true)}
-            >
+            <ColorLibCallEndButton variant="contained" size="medium" onClick={() => handleButton(true)}>
               Begin Self-Reflection
             </ColorLibCallEndButton>
           </Box>
@@ -348,7 +323,7 @@ const Discussion = () => {
       />
       <VideoDiscussion
         mode={getConditionalVideoMode(page)}
-        isArchiveHost={user.userMode === "callee"}
+        isArchiveHost={user.userMode === 'callee'}
         endVideoSession={endVideo}
       />
       {getConditionalContent(page)}

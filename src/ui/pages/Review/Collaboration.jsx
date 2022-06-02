@@ -1,52 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // Components
-import DissResponse from "./DissResponse";
-import AudioReview from "./AudioReview";
-import Transcription from "./Transcription";
+import DissResponse from './DissResponse';
+import AudioReview from './AudioReview';
+import Transcription from './Transcription';
 // Others
-import { makeStyles } from "@material-ui/core/styles";
-import { Container, Grid } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import { Container, Grid } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
   imageIcon: {
-    height: "100%",
+    height: '100%',
   },
   iconRoot: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   fab: {
     marginLeft: 450,
     marginRight: 200,
   },
   grid: {
-    "& .MuiGrid-item": {
-      display: "inline-grid",
+    '& .MuiGrid-item': {
+      display: 'inline-grid',
     },
-    "& .MuiGrid-grid-sm-4": {
-      position: "relative",
-      margin: "8px",
-      maxWidth: "calc(33.333333% - 8px)",
-      "& .MuiPaper-root": {
-        position: "absolute",
+    '& .MuiGrid-grid-sm-4': {
+      position: 'relative',
+      margin: '8px',
+      maxWidth: 'calc(33.333333% - 8px)',
+      '& .MuiPaper-root': {
+        position: 'absolute',
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
-        overflowY: "scroll",
+        overflowY: 'scroll',
       },
     },
-    "& .MuiGrid-grid-sm-8": {
-      maxWidth: "calc(66.666667% - 8px)",
+    '& .MuiGrid-grid-sm-8': {
+      maxWidth: 'calc(66.666667% - 8px)',
     },
   },
 }));
 
 // review notes page
-const Collaboration = (props) => {
+const Collaboration = props => {
   const classes = useStyles();
   //If there are no pins, the current index should be -1
   const [curPinIndex, setCurPinIndex] = useState(() => {
@@ -71,10 +71,7 @@ const Collaboration = (props) => {
             pins={props.pins}
             user={props.user}
           />
-          <Transcription
-            reviewSessionID={props.reviewSessionID}
-            username={props.username}
-          />
+          <Transcription reviewSessionID={props.reviewSessionID} username={props.username} />
           <DissResponse
             curPinIndex={curPinIndex}
             setCurPinIndex={setCurPinIndex}

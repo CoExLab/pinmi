@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import MicIcon from "@material-ui/icons/MicNone";
-import MicOffIcon from "@material-ui/icons/MicOffOutlined";
-import VideocamIcon from "@material-ui/icons/VideocamOutlined";
-import VideocamOffIcon from "@material-ui/icons/VideocamOffOutlined";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
-import VolumeOffIcon from "@material-ui/icons/VolumeOff";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import { Tooltip, LinearProgress, Box, Typography } from "@material-ui/core";
-import { Fab } from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { formatTime } from "../../../helper/helper";
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import MicIcon from '@material-ui/icons/MicNone';
+import MicOffIcon from '@material-ui/icons/MicOffOutlined';
+import VideocamIcon from '@material-ui/icons/VideocamOutlined';
+import VideocamOffIcon from '@material-ui/icons/VideocamOffOutlined';
+import VolumeUpIcon from '@material-ui/icons/VolumeUp';
+import VolumeOffIcon from '@material-ui/icons/VolumeOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import { Tooltip, LinearProgress, Box, Typography } from '@material-ui/core';
+import { Fab } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { formatTime } from '../../../helper/helper';
 
-import { ColorLibNextButton } from "../colorLibComponents/ColorLibButton";
-import ColorLibButton from "../colorLibComponents/ColorLibButton";
-import ColorLibPaper from "../colorLibComponents/ColorLibPaper";
+import { ColorLibNextButton } from '../colorLibComponents/ColorLibButton';
+import ColorLibButton from '../colorLibComponents/ColorLibButton';
+import ColorLibPaper from '../colorLibComponents/ColorLibPaper';
 
 import {
   toggleAudio,
@@ -29,39 +29,34 @@ import {
   toggleVideoSubscription,
   initializeSession,
   stopStreaming,
-} from "./VonageVideoAPIIntegration";
-import "./VideoChatComponent.scss";
+} from './VonageVideoAPIIntegration';
+import './VideoChatComponent.scss';
 
-import { baseURL } from "../../pages/misc/constants";
+import { baseURL } from '../../pages/misc/constants';
 
-import {
-  useSessionValue,
-  useActiveStepValue,
-  usePinsValue,
-} from "../../../storage/context";
-import { firebase } from "../../../storage/firebase";
+import { useSessionValue, useActiveStepValue, usePinsValue } from '../../../storage/context';
+import { firebase } from '../../../storage/firebase';
 
 //styles used for icons in videocomponent
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   imageIcon: {
-    height: "120%",
+    height: '120%',
   },
   iconRoot: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   fab: {
     marginLeft: 550,
   },
-  display: "flex",
-  "& > * + *": {
+  display: 'flex',
+  '& > * + *': {
     marginLeft: theme.spacing(5),
   },
 }));
 
 function VideoComponent(props) {
   //active step states, used to keep track of progress through the pin-mi app
-  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
-    useActiveStepValue();
+  const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
   const [open, setOpen] = useState(true);
   const [timeRemind, setTimeRemind] = useState(false);
@@ -78,16 +73,12 @@ function VideoComponent(props) {
   const [isAudioSubscribed, setIsAudioSubscribed] = useState(true);
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
-  const isSubscribed = useSelector(
-    (state) => state.videoChat.isStreamSubscribed
-  );
+  const isSubscribed = useSelector(state => state.videoChat.isStreamSubscribed);
 
-  const isSessionConnected = useSelector(
-    (state) => state.connection.isSessionConnected
-  );
-  const isArchiving = useSelector((state) => state.archive.isStreamArchiving);
+  const isSessionConnected = useSelector(state => state.connection.isSessionConnected);
+  const isArchiving = useSelector(state => state.archive.isStreamArchiving);
 
-  const [room] = useState("hello1");
+  const [room] = useState('hello1');
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -99,14 +90,7 @@ function VideoComponent(props) {
   const classes = useStyles();
 
   //vonage session data set by the server
-  const {
-    vonageSessionID,
-    setVonageSessionID,
-    token,
-    setToken,
-    apiKey,
-    setApiKey,
-  } = useSessionValue();
+  const { vonageSessionID, setVonageSessionID, token, setToken, apiKey, setApiKey } = useSessionValue();
 
   let timeout2 = 10;
 
@@ -121,13 +105,11 @@ function VideoComponent(props) {
   }, [props.endVideoSession]);
 
   useEffect(() => {
-    console.log(
-      "isInterviewStarted useEffect has been called: \n" + isInterviewStarted
-    );
+    console.log('isInterviewStarted useEffect has been called: \n' + isInterviewStarted);
     if (isInterviewStarted) {
       initializeSession(apiKey, vonageSessionID, token);
     } else {
-      console.log("stopStreaming called");
+      console.log('stopStreaming called');
       stopStreaming();
     }
   }, [isInterviewStarted]);
@@ -144,7 +126,7 @@ function VideoComponent(props) {
       if (!open && countDown > 0 && videoCallTimer !== 0) {
         const timePassed = (Date.now() - videoCallTimer) / 1000;
         if (timePassed >= recommendedTime) {
-          console.log("Time passed: " + timePassed);
+          console.log('Time passed: ' + timePassed);
           setCountDown(0);
           setTimeRemind(true);
         } else {
@@ -157,25 +139,25 @@ function VideoComponent(props) {
 
   //set the videoCallTimer after the archive event has occured
   useEffect(() => {
-    console.log("Hey look! They archive status changed from VCC!!");
+    console.log('Hey look! They archive status changed from VCC!!');
     if (isArchiving === true) {
       setVideoCallTimer(Date.now());
     }
   }, [isArchiving]);
 
-  const onToggleAudio = (action) => {
+  const onToggleAudio = action => {
     setIsAudioEnabled(action);
     toggleAudio(action);
   };
-  const onToggleVideo = (action) => {
+  const onToggleVideo = action => {
     setIsVideoEnabled(action);
     toggleVideo(action);
   };
-  const onToggleAudioSubscription = (action) => {
+  const onToggleAudioSubscription = action => {
     setIsAudioSubscribed(action);
     toggleAudioSubscription(action);
   };
-  const onToggleVideoSubscription = (action) => {
+  const onToggleVideoSubscription = action => {
     setIsVideoSubscribed(action);
     toggleVideoSubscription(action);
   };
@@ -184,23 +166,23 @@ function VideoComponent(props) {
   // fetch raw pin data here
   const { pins } = usePinsValue();
 
-  const session = useSelector((state) => state.session);
-  const user = useSelector((state) => state.user);
+  const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
 
   const readyToJoin = () => {
     pins.forEach((elem, id) => savePin(id));
     handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL);
   };
 
-  const savePin = async (index) => {
+  const savePin = async index => {
     const myPin = pins[index];
     console.log(myPin);
-    if (user.userMode === "callee") {
+    if (user.userMode === 'callee') {
       await firebase
         .firestore()
-        .collection("sessions")
+        .collection('sessions')
         .doc(session.sessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           calleePinNote: myPin.calleePinNote,
@@ -209,17 +191,17 @@ function VideoComponent(props) {
           calleePinSkill: myPin.calleePinSkill,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     } else {
       await firebase
         .firestore()
-        .collection("sessions")
+        .collection('sessions')
         .doc(session.sessionID)
-        .collection("pins")
+        .collection('pins')
         .doc(myPin.pinID)
         .update({
           callerPinNote: myPin.callerPinNote,
@@ -228,10 +210,10 @@ function VideoComponent(props) {
           callerPinSkill: myPin.callerPinSkill,
         })
         .then(() => {
-          console.log("current pin successfully updated");
+          console.log('current pin successfully updated');
         })
-        .catch((e) => {
-          console.log("pin update unsuccessful: " + e);
+        .catch(e => {
+          console.log('pin update unsuccessful: ' + e);
         });
     }
   };
@@ -243,18 +225,16 @@ function VideoComponent(props) {
           <ColorLibPaper
             elevation={2}
             style={{
-              width: "fit-content",
-              position: "absolute",
-              top: "23px",
-              left: "20px",
+              width: 'fit-content',
+              position: 'absolute',
+              top: '23px',
+              left: '20px',
               marginLeft: 0,
-              padding: "6px 10px",
+              padding: '6px 10px',
               zIndex: 2,
             }}
           >
-            <Typography variant="body2">
-              Recommended time left: {formatTime(countDown)}
-            </Typography>
+            <Typography variant="body2">Recommended time left: {formatTime(countDown)}</Typography>
           </ColorLibPaper>
         )}
         {isInterviewStarted && (
@@ -266,7 +246,7 @@ function VideoComponent(props) {
                   style={{
                     marginBottom: 10,
                     marginRight: 10,
-                    backgroundColor: "#565656",
+                    backgroundColor: '#565656',
                   }}
                 >
                   <MicIcon
@@ -283,7 +263,7 @@ function VideoComponent(props) {
                   style={{
                     marginBottom: 10,
                     marginRight: 10,
-                    backgroundColor: "#565656",
+                    backgroundColor: '#565656',
                   }}
                 >
                   <MicOffIcon
@@ -301,7 +281,7 @@ function VideoComponent(props) {
                   style={{
                     marginBottom: 10,
                     marginRight: 10,
-                    backgroundColor: "#565656",
+                    backgroundColor: '#565656',
                   }}
                 >
                   <VideocamIcon
@@ -318,7 +298,7 @@ function VideoComponent(props) {
                   style={{
                     marginBottom: 10,
                     marginRight: 10,
-                    backgroundColor: "#565656",
+                    backgroundColor: '#565656',
                   }}
                 >
                   <VideocamOffIcon
@@ -339,7 +319,7 @@ function VideoComponent(props) {
                       style={{
                         marginBottom: 10,
                         marginRight: 10,
-                        backgroundColor: "#565656",
+                        backgroundColor: '#565656',
                       }}
                     >
                       <VolumeUpIcon
@@ -356,7 +336,7 @@ function VideoComponent(props) {
                       style={{
                         marginBottom: 10,
                         marginRight: 10,
-                        backgroundColor: "#565656",
+                        backgroundColor: '#565656',
                       }}
                     >
                       <VolumeOffIcon
@@ -374,7 +354,7 @@ function VideoComponent(props) {
                       style={{
                         marginBottom: 10,
                         marginRight: 10,
-                        backgroundColor: "#565656",
+                        backgroundColor: '#565656',
                       }}
                     >
                       <VisibilityIcon
@@ -391,7 +371,7 @@ function VideoComponent(props) {
                       style={{
                         marginBottom: 10,
                         marginRight: 10,
-                        backgroundColor: "#565656",
+                        backgroundColor: '#565656',
                       }}
                     >
                       <VisibilityOffIcon
@@ -423,42 +403,37 @@ How did today’s mock client session go?
     );
   };
 
-  const handleStartChat = async (
-    setApiKey,
-    setSessionId,
-    setToken,
-    baseURL
-  ) => {
+  const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
     setOpen(false);
-    console.log("loading info now...");
+    console.log('loading info now...');
     setLoadingStatus(true);
     //in order to make sure it connects to the correct room
-    if (props.mode === "Discussion" || props.mode === "VideoDiscussion") {
-      var roomAddOn = "Discussion";
-      console.log("Discussion Room Video component");
+    if (props.mode === 'Discussion' || props.mode === 'VideoDiscussion') {
+      var roomAddOn = 'Discussion';
+      console.log('Discussion Room Video component');
     } else {
-      var roomAddOn = "";
+      var roomAddOn = '';
     }
-    await fetch(baseURL + "room/" + room + roomAddOn)
+    await fetch(baseURL + 'room/' + room + roomAddOn)
       .then(function (res) {
         return res.json();
       })
       .then(function (res) {
-        console.log("got server info");
+        console.log('got server info');
         setApiKey(res.apiKey);
         setSessionId(res.sessionId);
         setToken(res.token);
       })
       .then(() => {
         setLoadingStatus(false);
-        console.log("start chat now");
+        console.log('start chat now');
         setIsInterviewStarted(true);
         if (props.isArchiveHost) {
           //props.startRec();
-          console.log("start recording");
+          console.log('start recording');
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -468,26 +443,26 @@ How did today’s mock client session go?
     console.log(vonageSessionID);
     const data = {
       sessionId: vonageSessionID,
-      resolution: "640x480",
-      outputMode: "composed",
-      hasVideo: "false",
+      resolution: '640x480',
+      outputMode: 'composed',
+      hasVideo: 'false',
     };
     //send post request to server
-    await fetch(baseURL + "archive/start", {
-      method: "POST",
+    await fetch(baseURL + 'archive/start', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
       //get response from the post request,
       //and turn it into json so you can access data from it
-      .then((response) => response.json())
-      .then(async (archiveData) => {
-        console.log("Video Discussion Archive data: ", archiveData);
+      .then(response => response.json())
+      .then(async archiveData => {
+        console.log('Video Discussion Archive data: ', archiveData);
         setArchiveData(archiveData);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -495,25 +470,25 @@ How did today’s mock client session go?
   //save discussion archive url to firebase only when the archive is succesfully uploaded in server
   const pingServer = async () => {
     let status;
-    let result = await fetch(baseURL + "s3/" + archiveData.id)
-      .then((res) => {
+    let result = await fetch(baseURL + 's3/' + archiveData.id)
+      .then(res => {
         status = res.status;
         return res.json();
       })
-      .then(async (data) => {
+      .then(async data => {
         if (status === 503) {
-          console.log("Status 503!");
+          console.log('Status 503!');
         }
-        if (data.arcStatus === "uploaded") {
+        if (data.arcStatus === 'uploaded') {
           setMediaUrl(data.url);
           setMediaDuration(data.duration);
 
           await firebase
             .firestore()
-            .collection("sessions")
+            .collection('sessions')
             .doc(session.sessionID)
             .update({
-              ["archiveData.reviewURL"]: data.url,
+              ['archiveData.reviewURL']: data.url,
             });
 
           return data.url;
@@ -524,8 +499,8 @@ How did today’s mock client session go?
           });
         }
       })
-      .catch((err) => {
-        console.error("Error in checking if archive is ready ", err);
+      .catch(err => {
+        console.error('Error in checking if archive is ready ', err);
 
         //try calling the server again if there is a 503 error
         timeout2 = 10; //reset the timeout
@@ -538,103 +513,97 @@ How did today’s mock client session go?
 
   // copy all information from "sessions" to "sessions_by_usernames" in firebase
   //the function takes in the discussion archive url
-  const updateDataCopy = async (url) => {
-    
+  const updateDataCopy = async url => {
     //source database
-    let docRef = await firebase
-      .firestore()
-      .collection("sessions")
-      .doc(session.sessionID);
+    let docRef = await firebase.firestore().collection('sessions').doc(session.sessionID);
 
-    docRef.get().then(async (doc) => {
+    docRef.get().then(async doc => {
       let res = doc.data().datacopy_id;
-      let username = props.isArchiveHost
-        ? doc.data().callee_name
-        : doc.data().caller_name;
+      let username = props.isArchiveHost ? doc.data().callee_name : doc.data().caller_name;
 
       if (!res) {
-        console.log("data copy destination id does not exist");
+        console.log('data copy destination id does not exist');
       } else {
-        console.log("data copy destination id: ", res);
+        console.log('data copy destination id: ', res);
       }
 
       //destintion database
       let newDoc = await firebase
         .firestore()
-        .collection("sessions_by_usernames")
+        .collection('sessions_by_usernames')
         .doc(username)
-        .collection("sessions")
+        .collection('sessions')
         .doc(res);
 
       //copy discussion session url to respective caller's collection
       //since only the callee has archive URL of the discussion session
       let callerDoc = await firebase
         .firestore()
-        .collection("sessions_by_usernames")
+        .collection('sessions_by_usernames')
         .doc(doc.data().caller_name)
-        .collection("sessions")
+        .collection('sessions')
         .doc(res);
 
       newDoc
         .get()
-        .then((res) => {
+        .then(res => {
           if (props.isArchiveHost) {
             callerDoc.update({
-              ["archiveData.reviewURL"]: url,
+              ['archiveData.reviewURL']: url,
             });
-            newDoc.set(doc.data())
+            newDoc.set(doc.data());
             newDoc.update({
-              ["archiveData.reviewURL"]: url,
+              ['archiveData.reviewURL']: url,
             });
           } else {
-            newDoc.update(doc.data())
+            newDoc.update(doc.data());
           }
         })
-        .then((res) => {
+        .then(res => {
           docRef
-            .collection("pins")
+            .collection('pins')
             .get()
-            .then((queryPins) => {
-              queryPins.forEach((d) => {
+            .then(queryPins => {
+              queryPins.forEach(d => {
                 console.log(d.data());
-                newDoc.collection("pins").doc(d.id).set(d.data());
+                newDoc.collection('pins').doc(d.id).set(d.data());
               });
             });
         })
-        .then((res) => setActiveStep((prevActiveStep) => prevActiveStep + 1));
+        .then(res => setActiveStep(prevActiveStep => prevActiveStep + 1));
     });
   };
 
   //pause archive, save archive url, copy data to "sessions_by_usernames" in firbase
   const handleStopArchive = async () => {
-    var url = baseURL + "archive/" + archiveData.id + "/stop";
-    console.log(baseURL + "archive/" + archiveData.id);
+    var url = baseURL + 'archive/' + archiveData.id + '/stop';
+    console.log(baseURL + 'archive/' + archiveData.id);
     await fetch(url, {
-      method: "POST",
+      method: 'POST',
     })
-      .then((res) => res.json())
-      .then((res) => {
+      .then(res => res.json())
+      .then(res => {
         console.log(res);
-        return pingServer(); 
+        return pingServer();
       })
-      .then((url) => updateDataCopy(url)); 
+      .then(url => updateDataCopy(url));
   };
 
   //CSSMode are strings that have the CSS classnames
   //for the respective publisher and subscriber video windows.
-  const videoBox = (CSSMode) => {
-    var mainVideoCSSClass = "";
-    var secondaryVideoCSSClass = "";
-    var class_name = "";
+  const videoBox = CSSMode => {
+    var mainVideoCSSClass = '';
+    var secondaryVideoCSSClass = '';
+    var class_name = '';
 
-    if (CSSMode == "full") {
-      mainVideoCSSClass = "main-video";
-      secondaryVideoCSSClass = "additional-video";
-      class_name = "video-container";
-    } else if (CSSMode == "mini") {
-      mainVideoCSSClass = "discussion-video-other";
-      secondaryVideoCSSClass = "discussion-video-other";
-      class_name = "mini-video-container";
+    if (CSSMode == 'full') {
+      mainVideoCSSClass = 'main-video';
+      secondaryVideoCSSClass = 'additional-video';
+      class_name = 'video-container';
+    } else if (CSSMode == 'mini') {
+      mainVideoCSSClass = 'discussion-video-other';
+      secondaryVideoCSSClass = 'discussion-video-other';
+      class_name = 'mini-video-container';
     }
     return (
       <>
@@ -642,18 +611,10 @@ How did today’s mock client session go?
       {loadingStatus ? <LinearProgress /> : null}
     </Box> */}
         <div className={class_name}>
-          <div
-            id="subscriber"
-            className={`${isStreamSubscribed ? mainVideoCSSClass : ""}`}
-          >
+          <div id="subscriber" className={`${isStreamSubscribed ? mainVideoCSSClass : ''}`}>
             {isStreamSubscribed && renderToolbar()}
           </div>
-          <div
-            id="publisher"
-            className={`${
-              isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass
-            }`}
-          >
+          <div id="publisher" className={`${isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass}`}>
             {!isStreamSubscribed && renderToolbar()}
           </div>
         </div>
@@ -670,27 +631,15 @@ How did today’s mock client session go?
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to join the discussion?"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Are you sure you want to join the discussion?'}</DialogTitle>
         <DialogActions>
           <Box m={2}>
             <div direction="row" align="center">
-              <ColorLibButton
-                variant="contained"
-                size="medium"
-                onClick={() => setOpen(false)}
-                autoFocus
-              >
+              <ColorLibButton variant="contained" size="medium" onClick={() => setOpen(false)} autoFocus>
                 Add more notes to pins
               </ColorLibButton>
               <Box mt={2}>
-                <ColorLibNextButton
-                  variant="outlined"
-                  size="medium"
-                  onClick={readyToJoin}
-                  autoFocus
-                >
+                <ColorLibNextButton variant="outlined" size="medium" onClick={readyToJoin} autoFocus>
                   Join Discussion
                 </ColorLibNextButton>
               </Box>
@@ -698,7 +647,7 @@ How did today’s mock client session go?
           </Box>
         </DialogActions>
       </Dialog>
-      {videoBox(props.mode === "Discussion" ? "mini" : "full")}
+      {videoBox(props.mode === 'Discussion' ? 'mini' : 'full')}
     </>
   );
 }

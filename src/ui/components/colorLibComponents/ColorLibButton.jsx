@@ -5,14 +5,14 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import CallEndIcon from '@material-ui/icons/CallEnd';
 
-const ColorLibButton = withStyles((theme) => ({
-  root: { /* sizeMedium */ 
-    borderRadius: '35px',
+const ColorLibButton = withStyles(theme => ({
+  root: {
+    /* sizeMedium */ borderRadius: '35px',
     fontSize: '20px',
     fontWeight: '600',
     lineHeight: '1.5',
     padding: '6px 39px',
-    textTransform: 'none'
+    textTransform: 'none',
   },
   sizeLarge: {
     fontSize: '25px',
@@ -27,7 +27,7 @@ const ColorLibButton = withStyles((theme) => ({
     backgroundColor: theme.palette.teal.main,
     boxShadow: '0px 6px 8px 0px rgb(51 126 146 / 25%)',
     color: 'white',
-  }, 
+  },
   outlined: {
     backgroundColor: theme.palette.teal.lighter,
     borderWidth: '0',
@@ -38,21 +38,11 @@ const ColorLibButton = withStyles((theme) => ({
 }))(Button);
 
 /* Commony Used Variations */
-export const ColorLibNextButton = (props) => (
-  <ColorLibButton 
-    endIcon={<ArrowForwardIosIcon />}
-    {...props}
-  />
-);
+export const ColorLibNextButton = props => <ColorLibButton endIcon={<ArrowForwardIosIcon />} {...props} />;
 
-export const ColorLibBackButton = (props) => (
-  <ColorLibButton 
-    startIcon={<ArrowBackIosIcon />}
-    {...props}
-  />
-);
+export const ColorLibBackButton = props => <ColorLibButton startIcon={<ArrowBackIosIcon />} {...props} />;
 
-export const ColorLibCallEndButton = (props) => {
+export const ColorLibCallEndButton = props => {
   const CallEndButton = withStyles({
     root: {
       backgroundColor: '#DB0000',
@@ -64,15 +54,10 @@ export const ColorLibCallEndButton = (props) => {
       },
     },
   })(ColorLibButton);
-  return (
-    <CallEndButton 
-      {...props}
-      startIcon={<CallEndIcon />}
-    />
-  );
+  return <CallEndButton {...props} startIcon={<CallEndIcon />} />;
 };
 
-export const ColorLibGrayNextButton = (props) => {
+export const ColorLibGrayNextButton = props => {
   const GrayNextButton = withStyles({
     root: {
       backgroundColor: 'black',
@@ -84,18 +69,16 @@ export const ColorLibGrayNextButton = (props) => {
       },
     },
   })(ColorLibNextButton);
-  return (
-    <GrayNextButton 
-      {...props}
-    />
-  );
+  return <GrayNextButton {...props} />;
 };
 
 /* Examples for commonly used buttons */
 export const ColorLibButtonDemo = () => (
   <div>
     <div>
-      <font size='+2'><b>Buttons</b></font>
+      <font size="+2">
+        <b>Buttons</b>
+      </font>
     </div>
 
     <br />
@@ -111,7 +94,7 @@ export const ColorLibButtonDemo = () => (
         Next
       </ColorLibNextButton>
     </div>
-    
+
     <br />
 
     <div>
@@ -119,7 +102,7 @@ export const ColorLibButtonDemo = () => (
         Big Optional Button
       </ColorLibButton>
     </div>
-    
+
     <br />
 
     <div>
@@ -133,7 +116,7 @@ export const ColorLibButtonDemo = () => (
         Next
       </ColorLibNextButton>
     </div>
-    
+
     <br />
 
     <div>
@@ -141,7 +124,7 @@ export const ColorLibButtonDemo = () => (
         Medium Optional Button
       </ColorLibButton>
     </div>
-    
+
     <br />
 
     <div>
@@ -155,7 +138,7 @@ export const ColorLibButtonDemo = () => (
         Next
       </ColorLibNextButton>
     </div>
-    
+
     <br />
 
     <div>
@@ -167,17 +150,13 @@ export const ColorLibButtonDemo = () => (
     <br />
 
     <div>
-      <ColorLibCallEndButton>
-        End Call
-      </ColorLibCallEndButton>
+      <ColorLibCallEndButton>End Call</ColorLibCallEndButton>
     </div>
 
     <br />
 
     <div>
-      <ColorLibGrayNextButton>
-        Gray Next
-      </ColorLibGrayNextButton>
+      <ColorLibGrayNextButton>Gray Next</ColorLibGrayNextButton>
     </div>
   </div>
 );

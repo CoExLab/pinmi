@@ -11,14 +11,12 @@ import { useSelector } from 'react-redux';
 
 import { user } from '../../../storage/store';
 
-
 const useStyles = makeStyles({
   table: {
     marginTop: '20px',
     width: 600,
   },
 });
-
 
 function createData(name, role, fat, carbs, protein) {
   return { name, role, fat, carbs, protein };
@@ -40,20 +38,19 @@ const Intro = () => {
   const classes = useStyles();
   const user = useSelector(state => state.user);
   var rows = TherapistRows;
-  if (user.userMode == "callee") {
+  if (user.userMode == 'callee') {
     rows = ClientRows;
   }
   return (
     <div>
       <Box align="center" m={6}>
-        <Typography variant="h4" style={{textAlign: "left", width: "50%"}}>
+        <Typography variant="h4" style={{ textAlign: 'left', width: '50%' }}>
           Now, it’s time to step into the practice session and practice using open-ended questions.
         </Typography>
         <TableContainer>
           <Table className={classes.table} aria-label="simple table">
-
             <TableBody>
-              {rows.map((row) => (
+              {rows.map(row => (
                 <TableRow key={row.name}>
                   <TableCell component="th" scope="row">
                     <Box fontWeight="fontWeightBold">{row.name}</Box>
@@ -69,7 +66,6 @@ const Intro = () => {
       </Box>
     </div>
   );
-}
-
+};
 
 export default Intro;

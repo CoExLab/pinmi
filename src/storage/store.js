@@ -1,25 +1,24 @@
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
 
 // Types
-const HANDLE_SUBSCRIPTION = "HANDLE_SUBSCRIPTION";
-const HANDLE_CONNECTION = "HANDLE_CONNECTION";
-const HANDLE_ARCHIVE = "HANDLE_ARCHIVE";
+const HANDLE_SUBSCRIPTION = 'HANDLE_SUBSCRIPTION';
+const HANDLE_CONNECTION = 'HANDLE_CONNECTION';
+const HANDLE_ARCHIVE = 'HANDLE_ARCHIVE';
 
 // Actions
-export const handleSubscription = (payload) => ({
+export const handleSubscription = payload => ({
   type: HANDLE_SUBSCRIPTION,
   payload,
 });
-export const handleConnection = (payload) => ({
+export const handleConnection = payload => ({
   type: HANDLE_CONNECTION,
   payload,
 });
-export const handleArchive = (payload) => ({
+export const handleArchive = payload => ({
   type: HANDLE_ARCHIVE,
   payload,
 });
-
 
 const defaultState = {
   isStreamSubscribed: false,
@@ -49,7 +48,7 @@ const connectionReducer = (state = defaultState, action) => {
 const archiveReducer = (state = defaultState, action) => {
   switch (action.type) {
     case HANDLE_ARCHIVE: //archiveReducer saves the archiveID and the active streaming status
-      return { ...state, isStreamArchiving: action.payload.isStreamArchiving, archiveID: action.payload.archiveID};
+      return { ...state, isStreamArchiving: action.payload.isStreamArchiving, archiveID: action.payload.archiveID };
     default:
       return state;
   }
@@ -68,12 +67,12 @@ const userSlice = createSlice({
     setUserMode: (state, action) => {
       state.userMode = action.payload;
     },
-    reset: (state) => {
+    reset: state => {
       state.userID = '';
       state.userMode = '';
-    }
-  }
-})
+    },
+  },
+});
 
 const sessionSlice = createSlice({
   name: 'session',
@@ -84,17 +83,17 @@ const sessionSlice = createSlice({
     setSessionID: (state, action) => {
       state.sessionID = action.payload;
     },
-    sReset: (state) => {
+    sReset: state => {
       state.sessonID = '';
-    }
-  }
-})
+    },
+  },
+});
 
 const userReducer = userSlice.reducer;
 const sessionReducer = sessionSlice.reducer;
 
 export const { setUserID, setUserMode, reset } = userSlice.actions;
-export const {setSessionID, sReset} = sessionSlice.actions;
+export const { setSessionID, sReset } = sessionSlice.actions;
 
 // Root Reducers
 const rootReducer = combineReducers({
@@ -102,11 +101,11 @@ const rootReducer = combineReducers({
   connection: connectionReducer,
   archive: archiveReducer,
   user: userReducer,
-  session: sessionReducer
+  session: sessionReducer,
 });
 
 // Store
 export const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
