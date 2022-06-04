@@ -4,6 +4,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Loader from 'react-spinners/BounceLoader';
+
 import ColorLibButton from './colorLibComponents/ColorLibButton';
 
 import { useUser } from '../../contexts/userContext';
@@ -39,25 +41,28 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.icon}>
             Pin-MI
           </Typography>
+
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
             Home
           </ColorLibButton>
+
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
             Project
           </ColorLibButton>
+
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">
             Review
           </ColorLibButton>
+
           <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
             Practice
           </ColorLibButton>
-          {user !== undefined && (
-            <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/auth">
-              {user === null ? 'Sign up/Log in' : user.email}
-            </ColorLibButton>
-          )}
 
-          <ColorLibButton
+          <ColorLibButton variant="outlined" size="small" className={classes.navbar_button} href="/auth">
+            {user !== null && user !== undefined ? user.email : 'Sign up / Log in'}
+          </ColorLibButton>
+
+          {/* <ColorLibButton
             variant="outlined"
             size="small"
             key="message"
@@ -65,7 +70,7 @@ export default function ButtonAppBar() {
             endIcon={<KeyboardArrowDownIcon />}
           >
             Message
-          </ColorLibButton>
+          </ColorLibButton> */}
         </Toolbar>
       </AppBar>
     </div>
