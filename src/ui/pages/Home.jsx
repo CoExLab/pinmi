@@ -1,8 +1,3 @@
-import { useState } from 'react';
-import { useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
@@ -152,13 +147,13 @@ const Home = () => {
           <h1 className={classes.text_header}>Problem Space</h1>
           <p>
             <span className={classes.text_highlight}>Minimally trained healthcare practitioners struggle</span> with:
-            <ul>
-              <li>building rapport</li>
-              <li>analyzing the problem</li>
-              <li>provoking commitment</li>
-              <li>instilling sel-efficacy</li>
-            </ul>
           </p>
+          <ul>
+            <li>building rapport</li>
+            <li>analyzing the problem</li>
+            <li>provoking commitment</li>
+            <li>instilling sel-efficacy</li>
+          </ul>
           <h1 className={classes.text_header}>Our Project Goal</h1>
           <p>
             Improve the <span className={classes.text_highlight}>quality and efficiency</span> of Motivational
@@ -193,11 +188,11 @@ const Home = () => {
       header: '',
       text: (
         <div className={classes.team_container}>
-          {teamMembers.map(i => (
-            <div key={i} className={classes.team}>
+          {teamMembers.map((member, idx) => (
+            <div key={idx} className={classes.team}>
               <div style={{ alignItems: 'center' }}>
                 <img
-                  src={i.image}
+                  src={member.image}
                   style={{
                     width: '200px',
                     height: '200px',
@@ -207,8 +202,8 @@ const Home = () => {
                 />
               </div>
               <div>
-                <h1>{i.name}</h1>
-                <p>{i.email}</p>
+                <h1>{member.name}</h1>
+                <p>{member.email}</p>
               </div>
             </div>
           ))}
@@ -250,16 +245,8 @@ const Home = () => {
     },
   ];
 
-  const [username, setUsername] = useState('');
-  const usernameRef = useRef('');
-
-  const user = useSelector(state => state.user);
-  const dispatch = useDispatch();
-
-  const history = useHistory();
-
   const tutorialSection = ({ header, image, text }, index) => {
-    console.log(image);
+    // console.log(image);
     const sectionCounter = index % 2 === 0;
     const leftTextGrid = (
       <Grid item xs={6} className={classes.tutorial_grid}>
@@ -291,6 +278,7 @@ const Home = () => {
       <Grid item xs={6} className={classes.tutorial_grid}>
         <Typography
           variant="body2"
+          component={'div'}
           className={classes.tutorial_text}
           style={{
             width: '95%',
@@ -317,7 +305,7 @@ const Home = () => {
         // container
         className={sectionCounter ? classes.tutorial_even : classes.tutorial_odd}
       >
-        <Typography variant="body2" className={classes.tutorial_text}>
+        <Typography variant="body2" component={'div'} className={classes.tutorial_text}>
           {text}
         </Typography>
       </div>

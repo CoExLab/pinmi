@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -89,7 +88,6 @@ const Landing = () => {
   const classes = useStyles();
 
   const [username, setUsername] = useState('');
-  const usernameRef = useRef('');
 
   const user = useSelector(state => state.user);
   const dispatch = useDispatch();
@@ -233,8 +231,9 @@ const Landing = () => {
             label="Your Unique ID"
             variant="outlined"
             value={username}
-            inputRef={usernameRef}
-            onChange={() => setUsername(usernameRef.current.value)}
+            onChange={e => {
+              setUsername(e.target.value);
+            }}
           />
         </Box>
       </Container>
