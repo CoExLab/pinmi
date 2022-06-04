@@ -17,12 +17,13 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
 
-import imgBK from '../../other/team_BK.jpeg';
-import imgLD from '../../other/team_LD.jpeg';
-import imgTC from '../../other/team_TC.jpeg';
-import imgED from '../../other/team_ED.JPG';
-import imgYC from '../../other/team_YC.jpeg';
-import imgMA from '../../other/team_MA.jpeg';
+import imgBK from '../../assets/images/team_BK.jpeg';
+import imgLD from '../../assets/images/team_LD.jpeg';
+import imgTC from '../../assets/images/team_TC.jpeg';
+import imgED from '../../assets/images/team_ED.jpeg';
+import imgYC from '../../assets/images/team_YC.jpeg';
+import imgML from '../../assets/images/team_ML.jpeg';
+import imgMA from '../../assets/images/team_MA.jpeg';
 
 const useStyles = makeStyles(theme => ({
   welcome_container: {
@@ -107,6 +108,7 @@ const teamMembers = [
   { name: 'Emily Ding', email: 'eding@andrew.cmu.edu', image: imgED },
   { name: 'Mansi Agarwal', email: 'mragarwa@andrew.cmu.edu ', image: imgMA },
   { name: 'Yo-Lei Chen', email: 'yoleic@andrew.cmu.edu', image: imgYC },
+  { name: 'Michael Xieyang Liu', email: 'xieyangl@cs.cmu.edu ', image: imgML },
 ];
 
 // Home and Research page
@@ -192,7 +194,7 @@ const Home = () => {
       text: (
         <div className={classes.team_container}>
           {teamMembers.map(i => (
-            <div className={classes.team}>
+            <div key={i} className={classes.team}>
               <div style={{ alignItems: 'center' }}>
                 <img
                   src={i.image}

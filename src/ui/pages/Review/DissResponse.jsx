@@ -156,7 +156,6 @@ const DissResponse = ({
       } else {
         console.log('???');
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       //reset all the refs
       console.log('curGoalInfo: ' + curGoalInfo);
       console.log('curStrengthInfo: ' + curStrengthInfo);
@@ -208,7 +207,6 @@ const DissResponse = ({
     } else {
       console.log('???');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     //reset all the refs
     console.log('curGoalInfo: ' + curGoalInfo);
     console.log('curStrengthInfo: ' + curStrengthInfo);

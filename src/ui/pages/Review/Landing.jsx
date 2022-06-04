@@ -102,8 +102,8 @@ const Landing = props => {
           />
         </Box>
       </Container>
-      {sessionsList.map(s => (
-        <div className={classes.button_wrapper}>
+      {sessionsList.map((s, idx) => (
+        <div key={idx} className={classes.button_wrapper}>
           <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session)}>
             {s.date}
           </ColorLibButton>

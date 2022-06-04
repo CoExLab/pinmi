@@ -175,7 +175,7 @@ const Landing = () => {
   const tutorialSection = ({ text, image, alt }, index) => {
     const isTextLeft = index % 2 === 0;
     const textGrid = (
-      <Grid item xs={6} className={classes.tutorial_grid}>
+      <Grid key={index} item xs={6} className={classes.tutorial_grid}>
         <Typography
           variant="h2"
           className={isTextLeft ? classes.tutorial_text_left : classes.tutorial_text}
