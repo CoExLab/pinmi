@@ -1,3 +1,7 @@
+# Project Pin-MI
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bb291b47-3968-44d6-8754-42a9d94390ef/deploy-status)](https://app.netlify.com/sites/pinmi-summer/deploys)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -16,7 +20,7 @@ You will also see any lint errors in the console.
 
 If you do not have node_modules installed, use:
 
-### `npm i && start`
+### `npm install && start`
 
 ### `npm test`
 
