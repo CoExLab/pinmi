@@ -34,6 +34,10 @@ export default function ButtonAppBar() {
 
   const { user } = useUser();
 
+  if (user === undefined) {
+    return null;
+  }
+
   return (
     <div>
       <AppBar className={classes.navbar} position="static">
@@ -54,9 +58,9 @@ export default function ButtonAppBar() {
             Review
           </ColorLibButton>
 
-          <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
+          {/* <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
             Practice
-          </ColorLibButton>
+          </ColorLibButton> */}
 
           <ColorLibButton variant="outlined" size="small" className={classes.navbar_button} href="/auth">
             {user !== null && user !== undefined ? user.email : 'Sign up / Log in'}

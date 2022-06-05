@@ -806,7 +806,7 @@ function VideoChatComponent(props) {
         >
           Begin Discussion Prep
         </ColorLibCallEndButton>
-        {props.isArchiveHost ? (
+        {/* {props.isArchiveHost ? (
           <Button onClick={() => handleStartArchive()} color="secondary" variant="contained" disabled={buttonDis}>
             Start Recording
           </Button>
@@ -819,7 +819,7 @@ function VideoChatComponent(props) {
           </Button>
         ) : (
           <div></div>
-        )}
+        )} */}
       </div>
     </>
   );
