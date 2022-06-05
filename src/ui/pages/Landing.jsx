@@ -93,9 +93,7 @@ const Landing = () => {
   const { user: firebaseUser } = useUser();
 
   const [username, setUsername] = useState('');
-  // const [sessionsList, setSessionsList] = useState([]);
   const [usersList, setUsersList] = useState([]);
-  // const [roomsList, setRoomsList] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   const user = useSelector(state => state.user);
@@ -104,39 +102,21 @@ const Landing = () => {
   const history = useHistory();
 
   useEffect(() => {
-    // firebase
-    //   .firestore()
-    //   .collection('sessions')
-    //   .onSnapshot(querySnapshot => {
-    //     let _sessionsList = [];
-    //     querySnapshot.forEach(snapshot => {
-    //       _sessionsList.push({ id: snapshot.id, ...snapshot.data() });
-    //     });
-    //     // console.log(_sessionsList);
-    //     setSessionsList(_sessionsList);
-    //   });
-
     firebase
       .firestore()
       .collection('users')
       .onSnapshot(querySnapshot => {
         let _usersList = [];
-        // let _roomsList = [];
         querySnapshot.forEach(snapshot => {
           const _id = snapshot.id;
           const _data = snapshot.data();
           if (_id.match(/^\d/) && _data.curSession.length > 0) {
             _usersList.push({ id: _id, ..._data });
             let _roomId = _id.match(/\d/g).join('');
-            // if (!_roomsList.map(item => item.roomId).includes(_roomId)) {
-            //   _roomsList.push({ sessionId: _data.curSession, roomId: _roomId });
-            // }
           }
         });
         // console.log(_usersList);
         setUsersList(_usersList);
-        // console.log(_roomsList);
-        // setRoomsList(_roomsList);
       });
   }, []);
 
@@ -278,6 +258,7 @@ const Landing = () => {
         {firebaseUser && (
           <>
             <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+              <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Choose an session:</div>
               <Select
                 value={selectedRoom}
                 onChange={e => {
@@ -304,7 +285,7 @@ const Landing = () => {
           </Box>
         )}
       </Container>
-      <div className={classes.button_wrapper}>
+      <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
         <ColorLibButton
           variant="contained"
           size="large"
