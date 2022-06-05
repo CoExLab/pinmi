@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useRef } from 'react';
+import Select from 'react-select';
+import { sortBy, reverse } from 'lodash';
 
 import { firebase } from '../../../storage/firebase';
 
@@ -33,12 +34,39 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // Review Page thats prompts user to enter user name and select session info
-const Landing = props => {
+const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
   const classes = useStyles();
 
   const [username, setUsername] = useState('');
   const [sessionsList, setSessionsList] = useState([]);
-  const usernameRef = useRef('');
+
+  const [sessionsByUsernamesList, setSessionsByUsernamesList] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  useEffect(() => {
+    if (firebaseUser) {
+      firebase
+        .firestore()
+        .collection('sessions_by_usernames')
+        .where('firebaseUser', '==', firebaseUser.uid)
+        .get()
+        .then(async querySnapshot => {
+          if (querySnapshot.empty) {
+            setSessionsByUsernamesList([]);
+          } else {
+            let _sessionsByUsernamesList = [];
+            querySnapshot.forEach(doc => {
+              _sessionsByUsernamesList.push({
+                id: doc.id,
+                roomId: doc.id.split('_').pop(),
+              });
+            });
+            // console.log(_sessionsByUsernamesList);
+            setSessionsByUsernamesList(_sessionsByUsernamesList);
+          }
+        });
+    }
+  }, [firebaseUser]);
 
   useEffect(() => {
     if (username.length) {
@@ -59,14 +87,20 @@ const Landing = props => {
             .firestore()
             .collection('sessions_by_usernames')
             .doc(username)
-            .collection('sessions');
+            .collection('sessions')
+            .get();
 
-          document.get().then(e => {
-            let L1 = e.docs.map(doc => {
-              return { session: doc.id, date: doc.data().date };
-            });
-            setSessionsList(L1);
+          let _sessions = document.docs.map(doc => {
+            return {
+              session: doc.id,
+              username: username,
+              date: doc.data().date,
+              dateNumber: new Date(doc.data().date).getTime(),
+            };
           });
+
+          _sessions = reverse(sortBy(_sessions, ['dateNumber']));
+          setSessionsList(_sessions);
         } else {
           setSessionsList([]);
         }
@@ -74,9 +108,9 @@ const Landing = props => {
   };
 
   //save username entered and session clicked
-  const updateSessionInfo = async session => {
-    props.setReviewSessionID(session);
-    props.setUserName(username);
+  const updateSessionInfo = async (session, user) => {
+    setReviewSessionID(session);
+    setUserName(user);
   };
 
   return (
@@ -88,23 +122,34 @@ const Landing = props => {
         <Typography variant="h3" className={classes.welcome_definition}>
           enter your unique ID to review and edit your past sessions with peers
         </Typography>
-        <br />
       </Container>
       <Container className={classes.welcome_container} maxWidth="md">
-        <Box m={1} display="inline">
-          <ColorLibTextField
-            id="outlined-basic"
-            label="Your Unique ID"
-            variant="outlined"
-            value={username}
-            inputRef={usernameRef}
-            onChange={() => setUsername(usernameRef.current.value)}
-          />
-        </Box>
+        {!firebaseUser && (
+          <Box m={1} display="inline">
+            <ColorLibTextField
+              label="Your Unique ID"
+              variant="outlined"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+          </Box>
+        )}
+        {firebaseUser && (
+          <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+            <Select
+              value={selectedRoom}
+              onChange={e => {
+                setSelectedRoom(e);
+                setUsername(e.value);
+              }}
+              options={sessionsByUsernamesList.map(room => ({ value: room.id, label: room.roomId }))}
+            />
+          </Box>
+        )}
       </Container>
       {sessionsList.map((s, idx) => (
         <div key={idx} className={classes.button_wrapper}>
-          <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session)}>
+          <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session, s.username)}>
             {s.date}
           </ColorLibButton>
         </div>
