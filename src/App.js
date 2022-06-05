@@ -1,20 +1,22 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom';
-import { Provider } from "react-redux";
+import React, { useState, useEffect } from 'react';
 
-import { ActiveStepProvider, PinsProvider, SessionProvider } from './context/index';
-import Landing from './components/layout/Landing';
-import Review from './components/layout/Review/Landing';
-import Home from './components/layout/Home';
-import Content from './components/layout/Content';
-import Completion from './components/layout/Completion';
-import CORsTestButtons from './components/layout/CORsTestButtons';
-import { store } from "./components/Store";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
-import { createTheme, ThemeProvider } from "@material-ui/core";
+import { ActiveStepProvider, PinsProvider, SessionProvider } from './storage/context';
+import Authentication from './ui/pages/Authentication';
+import Landing from './ui/pages/Landing';
+import Content from './ui/pages/Content';
+import Completion from './ui/pages/Completion';
+import Review from './ui/pages/Review';
+import Home from './ui/pages/Home';
+//tbr import CORsTestButtons from './ui/layout/CORsTestButtons';
+import { store } from './storage/store';
+
+import { createTheme, ThemeProvider } from '@material-ui/core';
+
+import { firebase } from './storage/firebase';
+import UserContext from './contexts/userContext';
 
 // import 'default-passive-events';
 /* "default-passive-events": "^2.0.0", */
@@ -39,11 +41,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: [
-      'Lato',
-      'Lato',
-      'sans-serif'
-    ].join(','),
+    fontFamily: ['Lato', 'Lato', 'sans-serif'].join(','),
     h1: {
       fontFamily: 'Lato',
       fontSize: '35px',
@@ -95,36 +93,51 @@ const theme = createTheme({
       fontWeight: 400,
       lineHeight: '18.7px',
       letterSpacing: '-0.02em',
-    }
-  }
+    },
+  },
 });
 
-
 const App = () => {
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log('Logged in as: ', user.email);
+        setUser(user);
+      } else {
+        console.log('Not logged in');
+        setUser(null);
+      }
+    });
+  }, []);
+
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <main>
-          <Switch>
-            <Provider store={store}>
-            <Route exact path='/Home' component={Home} />
-              <Route exact path='/' component={Landing} />
-              <Route exact path='/Review' component={Review} />
-              <SessionProvider>
-                <ActiveStepProvider>
-                  <PinsProvider>
-                    <Route exact path='/test' component={CORsTestButtons} />
-                    <Route exact path="/content" component={Content} />
-                  </PinsProvider>
-                </ActiveStepProvider>
-              </SessionProvider>
-              <Route exact path="/completion" component={Completion} />
-            </Provider>
-          </Switch>
-        </main>
-      </Router>
-    </ThemeProvider>
-  )
-}
+    <UserContext.Provider value={{ user }}>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <main>
+            <Switch>
+              <Provider store={store}>
+                <Route exact path="/auth" component={Authentication} />
+                <Route exact path="/Home" component={Home} />
+                <Route exact path="/" component={Landing} />
+                <Route exact path="/Review" component={Review} />
+                <SessionProvider>
+                  <ActiveStepProvider>
+                    <PinsProvider>
+                      <Route exact path="/content" component={Content} />
+                    </PinsProvider>
+                  </ActiveStepProvider>
+                </SessionProvider>
+                <Route exact path="/completion" component={Completion} />
+              </Provider>
+            </Switch>
+          </main>
+        </Router>
+      </ThemeProvider>
+    </UserContext.Provider>
+  );
+};
 
 export default App;
