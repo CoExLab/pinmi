@@ -97,13 +97,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const teamMembers = [
-  { name: 'Laura Dabbish', email: 'dabbish@andrew.cmu.edu', image: imgLD },
-  { name: 'Bob Kraut', email: 'robert.kraut@cmu.edu', image: imgBK },
-  { name: 'Tiangying Chen', email: 'tianyinc@andrew.cmu.edu', image: imgTC },
-  { name: 'Emily Ding', email: 'eding@andrew.cmu.edu', image: imgED },
-  { name: 'Mansi Agarwal', email: 'mragarwa@andrew.cmu.edu ', image: imgMA },
-  { name: 'Yo-Lei Chen', email: 'yoleic@andrew.cmu.edu', image: imgYC },
-  { name: 'Michael Xieyang Liu', email: 'xieyangl@cs.cmu.edu ', image: imgML },
+  { name: 'Laura Dabbish', email: 'dabbish@andrew.cmu.edu', image: imgLD, past: false },
+  { name: 'Bob Kraut', email: 'robert.kraut@cmu.edu', image: imgBK, past: false },
+  { name: 'Tiangying Chen', email: 'tianyinc@andrew.cmu.edu', image: imgTC, past: false },
+  { name: 'Michael Xieyang Liu', email: 'xieyangl@cs.cmu.edu ', image: imgML, past: false },
+  { name: 'Emily Ding', email: 'eding@andrew.cmu.edu', image: imgED, past: true },
+  { name: 'Mansi Agarwal', email: 'mragarwa@andrew.cmu.edu ', image: imgMA, past: true },
+  { name: 'Yo-Lei Chen', email: 'yoleic@andrew.cmu.edu', image: imgYC, past: true },
 ];
 
 // Home and Research page
@@ -187,27 +187,56 @@ const Home = () => {
     {
       header: '',
       text: (
-        <div className={classes.team_container}>
-          {teamMembers.map((member, idx) => (
-            <div key={idx} className={classes.team}>
-              <div style={{ alignItems: 'center' }}>
-                <img
-                  src={member.image}
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    // marginRight: "50px",
-                    borderRadius: '50%',
-                  }}
-                />
-              </div>
-              <div>
-                <h1>{member.name}</h1>
-                <p>{member.email}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className={classes.team_container}>
+            {teamMembers
+              .filter(member => !member.past)
+              .map((member, idx) => (
+                <div key={idx} className={classes.team}>
+                  <div style={{ alignItems: 'center' }}>
+                    <img
+                      src={member.image}
+                      style={{
+                        width: '150px',
+                        height: '150px',
+                        // marginRight: "50px",
+                        borderRadius: '50%',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <h1>{member.name}</h1>
+                    <p>{member.email}</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+          <br />
+          <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Past members</h1>
+          <div className={classes.team_container}>
+            {teamMembers
+              .filter(member => member.past)
+              .map((member, idx) => (
+                <div key={idx} className={classes.team}>
+                  <div style={{ alignItems: 'center' }}>
+                    <img
+                      src={member.image}
+                      style={{
+                        width: '120px',
+                        height: '120px',
+                        // marginRight: "50px",
+                        borderRadius: '50%',
+                      }}
+                    />
+                  </div>
+                  <div style={{ transform: 'scale(80%)' }}>
+                    <h1>{member.name}</h1>
+                    <p>{member.email}</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </>
       ),
     },
     {
@@ -290,7 +319,7 @@ const Home = () => {
       </Grid>
     );
 
-    return index != 3 ? (
+    return index !== 3 ? (
       <Grid
         key={`tutorial-part-${index}`}
         container
@@ -317,7 +346,7 @@ const Home = () => {
       <Navbar />
       <Container className={classes.welcome_container} maxWidth="md">
         <Typography variant="h1" className={classes.welcome_intro}>
-          Pin-Mi: A Platform for Training Nurses to Conduct Motivational Interviewing
+          Pin-Mi: A Platform for Training Motivational Interviewing
         </Typography>
         <Grid item xs={6} className={classes.tutorial_grid}>
           <img
