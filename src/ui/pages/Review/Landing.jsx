@@ -150,7 +150,7 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
       {sessionsList.map((s, idx) => (
         <div key={idx} className={classes.button_wrapper}>
           <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session, s.username)}>
-            {s.date}
+            {s.date} {s.session}
           </ColorLibButton>
         </div>
       ))}
