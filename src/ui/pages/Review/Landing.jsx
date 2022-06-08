@@ -55,14 +55,37 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
             setSessionsByUsernamesList([]);
           } else {
             let _sessionsByUsernamesList = [];
-            querySnapshot.forEach(doc => {
+            let _sessionsList = [];
+            querySnapshot.forEach(async doc => {
               _sessionsByUsernamesList.push({
                 id: doc.id,
                 roomId: doc.id.split('_').pop(),
               });
             });
-            // console.log(_sessionsByUsernamesList);
             setSessionsByUsernamesList(_sessionsByUsernamesList);
+
+            for (let { id, roomId } of _sessionsByUsernamesList) {
+              let document = await firebase
+                .firestore()
+                .collection('sessions_by_usernames')
+                .doc(id)
+                .collection('sessions')
+                .get();
+
+              let _sessions = document.docs.map(doc => {
+                return {
+                  session: doc.id,
+                  username: id,
+                  roomId,
+                  date: doc.data().date,
+                  dateNumber: new Date(doc.data().date).getTime(),
+                };
+              });
+
+              _sessionsList = _sessionsList.concat(_sessions);
+            }
+            _sessionsList = reverse(sortBy(_sessionsList, ['dateNumber']));
+            setSessionsList(_sessionsList);
           }
         });
     }
@@ -94,12 +117,14 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
             return {
               session: doc.id,
               username: username,
+              roomId: '',
               date: doc.data().date,
               dateNumber: new Date(doc.data().date).getTime(),
             };
           });
 
           _sessions = reverse(sortBy(_sessions, ['dateNumber']));
+          console.log(_sessions);
           setSessionsList(_sessions);
         } else {
           setSessionsList([]);
@@ -134,7 +159,7 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
             />
           </Box>
         )}
-        {firebaseUser && (
+        {/* {firebaseUser && (
           <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
             <Select
               value={selectedRoom}
@@ -145,12 +170,12 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
               options={sessionsByUsernamesList.map(room => ({ value: room.id, label: room.roomId }))}
             />
           </Box>
-        )}
+        )} */}
       </Container>
       {sessionsList.map((s, idx) => (
         <div key={idx} className={classes.button_wrapper}>
           <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session, s.username)}>
-            {s.date} {s.session}
+            {s.date} -- {s.roomId}
           </ColorLibButton>
         </div>
       ))}
