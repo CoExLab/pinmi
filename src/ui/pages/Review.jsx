@@ -8,6 +8,8 @@ import { firebase } from '../../storage/firebase';
 import Landing from './Review/Landing';
 import Collaboration from './Review/Collaboration';
 
+import { useUser } from '../../contexts/userContext';
+
 const useStyles = makeStyles(theme => ({
   welcome_container: {
     padding: '50px 68px 50px 68px',
@@ -34,6 +36,8 @@ const useStyles = makeStyles(theme => ({
 //component to switch between Review Username Page and Review Notes Page
 const Review = () => {
   const classes = useStyles();
+
+  const { user: firebaseUser } = useUser();
 
   const [page, setPage] = useState(0);
   const [reviewSessionID, setReviewSessionID] = useState();
@@ -106,15 +110,7 @@ const Review = () => {
     switch (page) {
       case 0:
         return (
-          <Landing
-            reviewSessionID={reviewSessionID}
-            setReviewSessionID={setReviewSessionID}
-            setPage={setPage}
-            setUserName={setUserName}
-            setUserMode={setUserMode}
-            setPins={setPins}
-            pins={pins}
-          />
+          <Landing setReviewSessionID={setReviewSessionID} setUserName={setUserName} firebaseUser={firebaseUser} />
         );
       case 1:
         return (
