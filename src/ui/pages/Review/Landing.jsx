@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { sortBy, reverse } from 'lodash';
 
-import { firebase } from '../../../storage/firebase';
+import { firebase, rootUserIds } from '../../../storage/firebase';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
@@ -43,51 +43,35 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
   const [sessionsByUsernamesList, setSessionsByUsernamesList] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
+  const [firebaseUsers, setFirebaseUsers] = useState([]);
+  const [selectedFirebaseUser, setSelectedFirebaseUser] = useState(null);
+
   useEffect(() => {
-    if (firebaseUser) {
+    if (firebaseUser && rootUserIds.includes(firebaseUser.uid)) {
       firebase
         .firestore()
-        .collection('sessions_by_usernames')
-        .where('firebaseUser', '==', firebaseUser.uid)
+        .collection('firebaseUsers')
         .get()
-        .then(async querySnapshot => {
+        .then(querySnapshot => {
           if (querySnapshot.empty) {
-            setSessionsByUsernamesList([]);
+            setFirebaseUsers([]);
           } else {
-            let _sessionsByUsernamesList = [];
-            let _sessionsList = [];
-            querySnapshot.forEach(async doc => {
-              _sessionsByUsernamesList.push({
-                id: doc.id,
-                roomId: doc.id.split('_').pop(),
+            let _firebaseUsers = [];
+            querySnapshot.forEach(doc => {
+              _firebaseUsers.push({
+                ...doc.data(),
               });
             });
-            setSessionsByUsernamesList(_sessionsByUsernamesList);
-
-            for (let { id, roomId } of _sessionsByUsernamesList) {
-              let document = await firebase
-                .firestore()
-                .collection('sessions_by_usernames')
-                .doc(id)
-                .collection('sessions')
-                .get();
-
-              let _sessions = document.docs.map(doc => {
-                return {
-                  session: doc.id,
-                  username: id,
-                  roomId,
-                  date: doc.data().date,
-                  dateNumber: new Date(doc.data().date).getTime(),
-                };
-              });
-
-              _sessionsList = _sessionsList.concat(_sessions);
-            }
-            _sessionsList = reverse(sortBy(_sessionsList, ['dateNumber']));
-            setSessionsList(_sessionsList);
+            setFirebaseUsers(_firebaseUsers);
+            console.log(_firebaseUsers);
           }
         });
+
+      setSelectedFirebaseUser({ value: firebaseUser.uid, label: firebaseUser.email });
+    }
+
+    if (firebaseUser) {
+      updateSessionsList(firebaseUser.uid);
     }
   }, [firebaseUser]);
 
@@ -96,6 +80,53 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
       updateSessionList();
     }
   }, [username]);
+
+  const updateSessionsList = async firebaseUserId => {
+    setSessionsList([]);
+    firebase
+      .firestore()
+      .collection('sessions_by_usernames')
+      .where('firebaseUser', '==', firebaseUserId)
+      .get()
+      .then(async querySnapshot => {
+        if (querySnapshot.empty) {
+          setSessionsByUsernamesList([]);
+        } else {
+          let _sessionsByUsernamesList = [];
+          let _sessionsList = [];
+          querySnapshot.forEach(async doc => {
+            _sessionsByUsernamesList.push({
+              id: doc.id,
+              roomId: doc.id.split('_').pop(),
+            });
+          });
+          setSessionsByUsernamesList(_sessionsByUsernamesList);
+
+          for (let { id, roomId } of _sessionsByUsernamesList) {
+            let document = await firebase
+              .firestore()
+              .collection('sessions_by_usernames')
+              .doc(id)
+              .collection('sessions')
+              .get();
+
+            let _sessions = document.docs.map(doc => {
+              return {
+                session: doc.id,
+                username: id,
+                roomId,
+                date: doc.data().date,
+                dateNumber: new Date(doc.data().date).getTime(),
+              };
+            });
+
+            _sessionsList = _sessionsList.concat(_sessions);
+          }
+          _sessionsList = reverse(sortBy(_sessionsList, ['dateNumber']));
+          setSessionsList(_sessionsList);
+        }
+      });
+  };
 
   //call and save all past session information based on user name entered
   const updateSessionList = async () => {
@@ -171,6 +202,19 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
             />
           </Box>
         )} */}
+
+        {firebaseUsers && firebaseUsers.length > 0 && (
+          <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+            <Select
+              value={selectedFirebaseUser}
+              onChange={e => {
+                setSelectedFirebaseUser(e);
+                updateSessionsList(e.value);
+              }}
+              options={firebaseUsers.map(user => ({ value: user.uid, label: user.email }))}
+            />
+          </Box>
+        )}
       </Container>
       {sessionsList.map((s, idx) => (
         <div key={idx} className={classes.button_wrapper}>
