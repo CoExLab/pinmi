@@ -14,4 +14,6 @@ const firebaseConfig = firebase.initializeApp({
   measurementId: 'G-GHJVP7CDF7',
 });
 
+export const rootUserIds = ['uUcxT50HqrPhZp9yMWDhASUwLSs2', 'm73y56Yc0gNCPVfwQDIlHqPgbHn1'];
+
 export { firebaseConfig as firebase };
