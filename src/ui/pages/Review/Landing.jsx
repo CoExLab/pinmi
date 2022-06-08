@@ -175,7 +175,8 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
       {sessionsList.map((s, idx) => (
         <div key={idx} className={classes.button_wrapper}>
           <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session, s.username)}>
-            {s.date} -- {s.roomId}
+            {s.date} -- Room {s.roomId.substr(0, s.roomId.length - 1)}:{' '}
+            {s.roomId[s.roomId.length - 1] === 'a' ? 'therapist' : 'client'}
           </ColorLibButton>
         </div>
       ))}

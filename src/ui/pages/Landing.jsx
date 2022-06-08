@@ -256,20 +256,23 @@ const Landing = () => {
       {tutorialInfo.map(tutorialSection)}
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (
-          <>
-            <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
-              <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Choose an session:</div>
-              <Select
-                value={selectedRoom}
-                onChange={e => {
-                  // console.log(e);
-                  setSelectedRoom(e);
-                  setUsername(`${firebaseUser.uid}_${e.value}`);
-                }}
-                options={usersList.map(user => ({ value: user.id, label: user.id }))}
-              />
-            </Box>
-          </>
+          <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+            <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Choose an session:</div>
+            <Select
+              value={selectedRoom}
+              onChange={e => {
+                console.log(e);
+                setSelectedRoom(e);
+                setUsername(`${firebaseUser.uid}_${e.value}`);
+              }}
+              options={usersList.map(user => {
+                const roomId = user.id;
+                const role = roomId[roomId.length - 1];
+                const roomNumber = roomId.substring(0, roomId.length - 1);
+                return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+              })}
+            />
+          </Box>
         )}
         {!firebaseUser && (
           <Box m={1} display="inline">
