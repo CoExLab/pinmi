@@ -69,6 +69,8 @@ const useStyles = makeStyles(theme => ({
 const Authentication = () => {
   const classes = useStyles();
 
+  const history = useHistory();
+
   const { user } = useUser();
 
   const [email, setEmail] = useState('');
@@ -92,6 +94,7 @@ const Authentication = () => {
       .then(_ => {
         setEmail('');
         setPassword('');
+        history.push('/');
       })
       .catch(error => {
         console.log(error);
@@ -107,6 +110,7 @@ const Authentication = () => {
       .then(_ => {
         setEmail('');
         setPassword('');
+        history.push('/');
       })
       .catch(error => {
         console.log(error);

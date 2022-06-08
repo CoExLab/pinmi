@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -6,6 +6,7 @@ import { firebase } from '../../storage/firebase';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid } from '@material-ui/core';
+import Select from 'react-select';
 
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -19,6 +20,8 @@ import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
 import { setUserID, setUserMode, setSessionID } from '../../storage/store';
+
+import { useUser } from '../../contexts/userContext';
 
 const useStyles = makeStyles(theme => ({
   welcome_container: {
@@ -87,22 +90,48 @@ const tutorialInfo = [
 const Landing = () => {
   const classes = useStyles();
 
+  const { user: firebaseUser } = useUser();
+
   const [username, setUsername] = useState('');
+  const [usersList, setUsersList] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const user = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   const history = useHistory();
 
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection('users')
+      .onSnapshot(querySnapshot => {
+        let _usersList = [];
+        querySnapshot.forEach(snapshot => {
+          const _id = snapshot.id;
+          const _data = snapshot.data();
+          if (_id.match(/^\d/) && _data.curSession.length > 0) {
+            _usersList.push({ id: _id, ..._data });
+            let _roomId = _id.match(/\d/g).join('');
+          }
+        });
+        // console.log(_usersList);
+        setUsersList(_usersList);
+      });
+  }, []);
+
   const setUser = async () => {
-    console.log(username);
+    // console.log(username);
     let user_id = username.split('_').pop();
+    // console.log(user_id);
 
     let newDoc = await firebase.firestore().collection('sessions_by_usernames').doc(username);
 
     newDoc.get().then(doc => {
       if (!doc.exists) {
-        newDoc.set({});
+        newDoc.set({
+          firebaseUser: firebaseUser !== null ? firebaseUser.uid : null,
+        });
       }
     });
 
@@ -125,6 +154,7 @@ const Landing = () => {
   };
 
   const setStates = async data => {
+    console.log(data);
     const tempUserId = data.userID;
     const tempSessionID = data.curSession;
 
@@ -225,20 +255,46 @@ const Landing = () => {
       </Container>
       {tutorialInfo.map(tutorialSection)}
       <Container className={classes.welcome_container} maxWidth="md">
-        <Box m={1} display="inline">
-          <ColorLibTextField
-            id="outlined-basic"
-            label="Your Unique ID"
-            variant="outlined"
-            value={username}
-            onChange={e => {
-              setUsername(e.target.value);
-            }}
-          />
-        </Box>
+        {firebaseUser && (
+          <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+            <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Choose an session:</div>
+            <Select
+              value={selectedRoom}
+              onChange={e => {
+                console.log(e);
+                setSelectedRoom(e);
+                setUsername(`${firebaseUser.uid}_${e.value}`);
+              }}
+              options={usersList.map(user => {
+                const roomId = user.id;
+                const role = roomId[roomId.length - 1];
+                const roomNumber = roomId.substring(0, roomId.length - 1);
+                return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+              })}
+            />
+          </Box>
+        )}
+        {!firebaseUser && (
+          <Box m={1} display="inline">
+            <ColorLibTextField
+              id="outlined-basic"
+              label="Your Unique ID"
+              variant="outlined"
+              value={username}
+              onChange={e => {
+                setUsername(e.target.value);
+              }}
+            />
+          </Box>
+        )}
       </Container>
-      <div className={classes.button_wrapper}>
-        <ColorLibButton variant="contained" size="large" onClick={setUser}>
+      <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
+        <ColorLibButton
+          variant="contained"
+          size="large"
+          onClick={setUser}
+          disabled={firebaseUser !== null && selectedRoom === null}
+        >
           Let's get started!
         </ColorLibButton>
       </div>

@@ -13,7 +13,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
   const AudioProgressStartingValue = pinsArray => {
     //if there are pins to load,
     if (pinsArray.length > 0) {
-      return Math.max(0, pinsArray[0].pinTime - 10);
+      return pinsArray[0].pinTime; // Math.max(0, pinsArray[0].pinTime - 10);
     } else {
       return 0;
     }
@@ -27,15 +27,14 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
   const [audioPlaying, setAudioPlaying] = useState(false);
 
   useEffect(() => {
+    let time = 0;
     if (AudioProgressStartingValue(pins) === 0) {
-      setAudioProgress(0);
-      console.log('Audio Progress set to: ' + 0);
     } else {
-      const time = pins[curPinIndex].pinTime;
-      setAudioProgress(Math.max(0, time));
-      console.log('Audio Progress set to: ' + Math.max(0, time));
+      time = Math.max(0, pins[curPinIndex].pinTime);
     }
 
+    setAudioProgress(time);
+    console.log('Audio Progress set to: ' + time + ' in useEffect');
     console.log('Audio from AudioReview useEffect ' + audio);
   }, [curPinIndex, audio, pins]);
 
@@ -78,10 +77,6 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
     setCurPinIndex(curPinIndex + 1);
   };
 
-  const handleProgress = state => {
-    setAudioProgress(Math.round(state.playedSeconds));
-  };
-
   const handleAudioProgress = currentTime => {
     setAudioProgress(currentTime);
     console.log('Current Time in AR: ' + currentTime);
@@ -95,6 +90,8 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
       setCurPinIndex(newIndex);
     }
   };
+
+  console.log('Audio Progress set to: ' + audioProgress);
 
   return (
     <Grid item xs={12}>
@@ -119,7 +116,9 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
         width="100%"
         height="55px"
         style={{ marginBottom: 8 }}
-        onProgress={handleProgress}
+        onSeek={sec => {
+          setAudioProgress(sec);
+        }}
       />
     </Grid>
   );
