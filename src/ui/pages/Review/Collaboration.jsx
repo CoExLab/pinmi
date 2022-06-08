@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 // review notes page
 const Collaboration = props => {
+  console.log(props);
   const classes = useStyles();
   //If there are no pins, the current index should be -1
   const [curPinIndex, setCurPinIndex] = useState(() => {
@@ -57,6 +58,8 @@ const Collaboration = props => {
     }
   });
   const [prevPinIndex, setPrevPinIndex] = useState(0);
+
+  console.log('CURRENT PIN INDEX: ', curPinIndex);
 
   return (
     <div className={classes.root}>
