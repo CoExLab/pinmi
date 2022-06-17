@@ -105,6 +105,13 @@ const App = () => {
       if (user) {
         console.log('Logged in as: ', user.email);
         setUser(user);
+        firebase.firestore().collection('firebaseUsers').doc(user.uid).set(
+          {
+            uid: user.uid,
+            email: user.email,
+          },
+          { merge: true },
+        );
       } else {
         console.log('Not logged in');
         setUser(null);
