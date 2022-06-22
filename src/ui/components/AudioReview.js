@@ -52,6 +52,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
     }
 
     setAudioProgress(time);
+    player.current.seekTo(time);
     console.log('Audio Progress set to: ' + time + ' in useEffect');
     console.log('Audio from AudioReview useEffect ' + audio);
   }, [curPinIndex, audio, pins]);
@@ -141,6 +142,9 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
         width="100%"
         height="55px"
         style={{ marginBottom: 8 }}
+        onProgress={state => {
+          if (state.playedSeconds) setAudioProgress(state.playedSeconds);
+        }}
         onSeek={sec => {
           setAudioProgress(sec);
         }}
