@@ -1,11 +1,14 @@
 .actions-btns {
   display: flex;
   justify-content: center;
+  margin-top: -15px;
+  z-index: 4;
   padding: 20px 0;
   .MuiButtonBase-root {
     margin: 0 20px;
   }
 }
+
 .mini-video-container {
   position: fixed;
   height: 25vh;
@@ -70,8 +73,11 @@
 
 .video-container {
   position: relative;
-  height: 100vh;
-  width: 100%;
+  height: 85vh;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 0;
   .main-video {
     position: relative;
     width: 100%;
