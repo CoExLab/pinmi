@@ -97,6 +97,7 @@ function VideoChatComponent(props) {
   const [openEnd, setOpenEnd] = useState(false);
   const [buttonDis, setButtonDis] = useState(false);
   const [buttonDisStop, setButtonDisStop] = useState(true);
+  const [startSession, setStartSession] = useState(false);
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
@@ -239,14 +240,17 @@ function VideoChatComponent(props) {
     setIsAudioEnabled(action);
     toggleAudio(action);
   };
+
   const onToggleVideo = action => {
     setIsVideoEnabled(action);
     toggleVideo(action);
   };
+
   const onToggleAudioSubscription = action => {
     setIsAudioSubscribed(action);
     toggleAudioSubscription(action);
   };
+
   const onToggleVideoSubscription = action => {
     setIsVideoSubscribed(action);
     toggleVideoSubscription(action);
@@ -445,6 +449,7 @@ function VideoChatComponent(props) {
                     </Fab>
                   </Tooltip>
                 )}
+
                 {isVideoSubscribed ? (
                   <Tooltip title="screen on">
                     <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
@@ -470,21 +475,27 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab
-          aria-describedby={'addPin'}
-          aria-label="addPin"
-          type="button"
-          color="default"
-          className="pin-Btn"
-          onClick={() => {
-            handlePinButtonClick();
-          }}
-          ref={pinBtn}
-        >
-          <Icon classes={{ root: classes.iconRoot }}>
-            <img className={classes.imageIcon} src={pin} alt="" />
-          </Icon>
-        </Fab>
+
+        {startSession ? (
+          <Fab
+            aria-describedby={'addPin'}
+            aria-label="addPin"
+            type="button"
+            color="default"
+            className="pin-Btn"
+            onClick={() => {
+              handlePinButtonClick();
+            }}
+            ref={pinBtn}
+          >
+            <Icon classes={{ root: classes.iconRoot }}>
+              <img className={classes.imageIcon} src={pin} alt="" />
+            </Icon>
+          </Fab>
+        ) : (
+          <div> </div>
+        )}
+
         <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
           <ColorLibPaper elevation={2}>
             <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
@@ -494,7 +505,12 @@ function VideoChatComponent(props) {
     );
   };
 
+  const scrollToWebcam = () => {
+    window.scrollTo(0, 175);
+  };
+
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
+    scrollToWebcam();
     setOpen(false);
     console.log('loading info now...');
     setLoadingStatus(true);
@@ -526,6 +542,9 @@ function VideoChatComponent(props) {
         }
         if (!isVideoEnabled) {
           onToggleVideo(false);
+        }
+        if (!startSession) {
+          setStartSession(true);
         }
         if (props.isArchiveHost) {
           //props.startRec();
@@ -798,6 +817,16 @@ function VideoChatComponent(props) {
       </div>
 
       <div className="actions-btns">
+        <Button
+          id="start-Btn"
+          onClick={() => handleStartArchive()}
+          color="secondary"
+          variant="contained"
+          disable={buttonDis}
+        >
+          Start Button
+        </Button>
+
         <ColorLibCallEndButton
           variant="contained"
           size="medium"
@@ -806,20 +835,16 @@ function VideoChatComponent(props) {
         >
           Begin Discussion Prep
         </ColorLibCallEndButton>
-        {/* {props.isArchiveHost ? (
-          <Button onClick={() => handleStartArchive()} color="secondary" variant="contained" disabled={buttonDis}>
-            Start Recording
-          </Button>
-        ) : (
-          <div></div>
-        )}
-        {props.isArchiveHost ? (
-          <Button onClick={() => handleStopArchive()} color="secondary" variant="contained" disabled={buttonDisStop}>
-            Stop Recording
-          </Button>
-        ) : (
-          <div></div>
-        )} */}
+
+        <Button
+          id="stop-Btn"
+          onClick={() => handleStopArchive()}
+          color="secondary"
+          variant="contained"
+          disabled={buttonDisStop}
+        >
+          Stop Button
+        </Button>
       </div>
     </>
   );
