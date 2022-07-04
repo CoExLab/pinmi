@@ -141,6 +141,7 @@ const Steppers = () => {
         alternativeLabel
         activeStep={activeStep}
         connector={<ColorlibConnector />}
+        style={{ userSelect: 'none', pointerEvents: 'none' }}
       >
         {steps.map((label, index) => (
           <Step key={label} onClick={handleStep(index)}>
