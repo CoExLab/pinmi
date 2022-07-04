@@ -58,6 +58,9 @@ function VideoComponent(props) {
   //active step states, used to keep track of progress through the pin-mi app
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } = useActiveStepValue();
 
+  const session = useSelector(state => state.session);
+  const user = useSelector(state => state.user);
+
   const [open, setOpen] = useState(true);
   const [timeRemind, setTimeRemind] = useState(false);
   const recommendedTime = 10 * 60;
@@ -78,7 +81,7 @@ function VideoComponent(props) {
   const isSessionConnected = useSelector(state => state.connection.isSessionConnected);
   const isArchiving = useSelector(state => state.archive.isStreamArchiving);
 
-  const [room] = useState('hello1');
+  const room = session.sessionID;
 
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -165,9 +168,6 @@ function VideoComponent(props) {
   const { setMediaDuration, setMediaUrl } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
-
-  const session = useSelector(state => state.session);
-  const user = useSelector(state => state.user);
 
   const readyToJoin = () => {
     pins.forEach((elem, id) => savePin(id));
