@@ -20,16 +20,17 @@ const Transcription = ({ reviewSessionID, username }) => {
   // fetch transcript data here
   const fetchTranscript = async () => {
     console.log(username, reviewSessionID);
-    const docRef = await firebase
+    const docRef = firebase
       .firestore()
       .collection('sessions_by_usernames')
       .doc(username)
       .collection('sessions')
       .doc(reviewSessionID);
 
-    await docRef
+    docRef
       .get()
       .then(doc => {
+        console.log(doc.data());
         if (doc.exists) {
           setLocalTrans(doc.data()['calleeTranscript']);
           console.log('transcript in transcription:', localTrans);
