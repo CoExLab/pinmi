@@ -256,7 +256,7 @@ const DissResponse = ({
   };
 
   return (
-    <Grid item xs={12} sm={8}>
+    <Grid item xs={12} sm={8} style={{ minHeight: '60vh' }}>
       {curPinIndex !== -1 ? (
         <ColorLibPaper elevation={1}>
           {/* <Typography variant="h4" style={{ textTransform: 'capitalize' }}>
