@@ -229,15 +229,17 @@ const DisscussionPrep = () => {
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
           />
-          <Transcription />
 
           {session.recordOnly !== true && (
-            <Notetaking
-              curPinIndex={curPinIndex}
-              setCurPinIndex={setCurPinIndex}
-              prevPinIndex={prevPinIndex}
-              setPrevPinIndex={setPrevPinIndex}
-            />
+            <>
+              <Transcription />
+              <Notetaking
+                curPinIndex={curPinIndex}
+                setCurPinIndex={setCurPinIndex}
+                prevPinIndex={prevPinIndex}
+                setPrevPinIndex={setPrevPinIndex}
+              />
+            </>
           )}
         </Grid>
       </Container>
