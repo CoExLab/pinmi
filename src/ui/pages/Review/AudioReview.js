@@ -98,7 +98,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
 
   return (
     <Grid item xs={12}>
-      {session.recordOnly !== true && <Typography variant="h6">Review all pins with your peer</Typography>}
+      {recordOnlyMode !== true && <Typography variant="h6">Review all pins with your peer</Typography>}
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}
         setPlayerStatus={setAudioPlaying}
