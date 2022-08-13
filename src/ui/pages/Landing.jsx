@@ -247,16 +247,21 @@ const Landing = ({ justchat }) => {
   return (
     <section>
       <Navbar />
-      <Container className={classes.welcome_container} maxWidth="md">
-        <Typography variant="h1" className={classes.welcome_intro}>
-          Welcome to Pin-MI
-        </Typography>
-        <Typography variant="h3" className={classes.welcome_definition}>
-          a platform for practicing MI with your peers and the help of pins
-        </Typography>
-        <br />
-      </Container>
-      {tutorialInfo.map(tutorialSection)}
+      {justchat !== true && (
+        <>
+          <Container className={classes.welcome_container} maxWidth="md">
+            <Typography variant="h1" className={classes.welcome_intro}>
+              Welcome to Pin-MI
+            </Typography>
+            <Typography variant="h3" className={classes.welcome_definition}>
+              a platform for practicing MI with your peers and the help of pins
+            </Typography>
+            <br />
+          </Container>
+          {tutorialInfo.map(tutorialSection)}
+        </>
+      )}
+
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (
           <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
