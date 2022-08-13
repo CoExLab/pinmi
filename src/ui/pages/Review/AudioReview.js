@@ -6,7 +6,7 @@ import ReactPlayer from 'react-player';
 import ColorLibAudioPlayer from '../../components/colorLibComponents/ColorLibAudioPlayer';
 
 //audio review component for review
-const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audioLen, pins, user }) => {
+const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audioLen, pins, user, recordOnlyMode }) => {
   const session = useSelector(state => state.session);
 
   const player = useRef(null);
@@ -109,6 +109,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
           return { markTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
         addPin={addPin}
+        recordOnlyMode={recordOnlyMode}
       />
       <ReactPlayer
         hidden
