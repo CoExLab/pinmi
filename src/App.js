@@ -129,6 +129,7 @@ const App = () => {
                 <Route exact path="/auth" component={Authentication} />
                 <Route exact path="/Home" component={Home} />
                 <Route exact path="/" component={Landing} />
+                <Route exact path="/justchat" render={() => <Landing justchat={true} />} />
                 <Route exact path="/Review" component={Review} />
                 <SessionProvider>
                   <ActiveStepProvider>

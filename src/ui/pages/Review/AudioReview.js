@@ -7,6 +7,8 @@ import ColorLibAudioPlayer from '../../components/colorLibComponents/ColorLibAud
 
 //audio review component for review
 const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audioLen, pins, user }) => {
+  const session = useSelector(state => state.session);
+
   const player = useRef(null);
 
   //first pin (either -1 if there isn't one, or an actual value)
@@ -96,7 +98,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
 
   return (
     <Grid item xs={12}>
-      <Typography variant="h6">Review all pins with your peer</Typography>
+      {session.recordOnly !== true && <Typography variant="h6">Review all pins with your peer</Typography>}
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}
         setPlayerStatus={setAudioPlaying}

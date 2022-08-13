@@ -17,7 +17,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
   const { mediaUrl: audio, mediaDuration: audioLen } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
-  console.log(pins);
+  // console.log(pins);
   //fetch user data
   const user = useSelector(state => state.user);
 
