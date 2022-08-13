@@ -6,7 +6,9 @@ import ReactPlayer from 'react-player';
 import ColorLibAudioPlayer from '../../components/colorLibComponents/ColorLibAudioPlayer';
 
 //audio review component for review
-const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audioLen, pins, user }) => {
+const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audioLen, pins, user, recordOnlyMode }) => {
+  const session = useSelector(state => state.session);
+
   const player = useRef(null);
 
   //first pin (either -1 if there isn't one, or an actual value)
@@ -96,7 +98,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
 
   return (
     <Grid item xs={12}>
-      <Typography variant="h6">Review all pins with your peer</Typography>
+      {recordOnlyMode !== true && <Typography variant="h6">Review all pins with your peer</Typography>}
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}
         setPlayerStatus={setAudioPlaying}
@@ -107,6 +109,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, setPrevPinIndex, audio, audi
           return { markTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
         addPin={addPin}
+        recordOnlyMode={recordOnlyMode}
       />
       <ReactPlayer
         hidden

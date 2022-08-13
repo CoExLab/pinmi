@@ -137,7 +137,39 @@ const Session = () => {
             .update({
               [`archiveData.url`]: data.url,
               [`archiveData.duration`]: data.duration,
+              [`archiveData.recordOnly`]: session.recordOnly === true,
             });
+
+          if (session.recordOnly === true) {
+            let isArchiveHost = user.userMode === 'callee';
+            let docRef = await firebase.firestore().collection('sessions').doc(session.sessionID);
+            let doc = await docRef.get();
+            let res = doc.data().datacopy_id;
+            let username = isArchiveHost ? doc.data().callee_name : doc.data().caller_name;
+
+            if (!res) {
+              console.log('data copy destination id does not exist');
+            } else {
+              console.log('data copy destination id: ', res);
+            }
+
+            //destintion database
+            let newDoc = await firebase
+              .firestore()
+              .collection('sessions_by_usernames')
+              .doc(username)
+              .collection('sessions')
+              .doc(res);
+
+            if (isArchiveHost) {
+              await newDoc.set(doc.data());
+              console.log('setting data', username);
+            } else {
+              await newDoc.update(doc.data());
+              console.log('updating data', username);
+            }
+          }
+
           return true;
         } else {
           timeout2 = timeout2 * 2;

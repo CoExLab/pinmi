@@ -287,7 +287,8 @@ const Discussion = () => {
               <Typography variant="body2">Be sure to thank your peer for their time!</Typography>
             </ColorLibPaper>
             <ColorLibCallEndButton variant="contained" size="medium" onClick={() => handleButton(true)}>
-              Begin Self-Reflection
+              {/* Begin Self-Reflection */}
+              End Call
             </ColorLibCallEndButton>
           </Box>
         );

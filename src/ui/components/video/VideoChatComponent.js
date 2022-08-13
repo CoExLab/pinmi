@@ -470,26 +470,30 @@ function VideoChatComponent(props) {
             )}
           </div>
         )}
-        <Fab
-          aria-describedby={'addPin'}
-          aria-label="addPin"
-          type="button"
-          color="default"
-          className="pin-Btn"
-          onClick={() => {
-            handlePinButtonClick();
-          }}
-          ref={pinBtn}
-        >
-          <Icon classes={{ root: classes.iconRoot }}>
-            <img className={classes.imageIcon} src={pin} alt="" />
-          </Icon>
-        </Fab>
-        <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
-          <ColorLibPaper elevation={2}>
-            <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
-          </ColorLibPaper>
-        </Popper>
+        {session.recordOnly !== true && (
+          <>
+            <Fab
+              aria-describedby={'addPin'}
+              aria-label="addPin"
+              type="button"
+              color="default"
+              className="pin-Btn"
+              onClick={() => {
+                handlePinButtonClick();
+              }}
+              ref={pinBtn}
+            >
+              <Icon classes={{ root: classes.iconRoot }}>
+                <img className={classes.imageIcon} src={pin} alt="" />
+              </Icon>
+            </Fab>
+            <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
+              <ColorLibPaper elevation={2}>
+                <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
+              </ColorLibPaper>
+            </Popper>
+          </>
+        )}
       </>
     );
   };
@@ -709,23 +713,30 @@ function VideoChatComponent(props) {
       >
         <DialogContent>
           <div style={{ marginRight: '20px', width: 'calc(45% - 20px)' }}>
-            <img
-              src={pinningClick}
-              alt={'Icon of clicking the pin'}
-              style={{
-                margin: '20px 0px 10px 0px',
-                height: '80px',
-              }}
-            />
-            <Typography variant="h4">What is pinning for?</Typography>
-            <Typography variant="body2" component="div">
-              <p>Click on the pin to create time marks of</p>
-              <ul style={{ fontWeight: 700 }}>
-                <li>{line1}</li>
-                <li>{line2}</li>
-              </ul>
-              <p>Your peer will also be pinning, and you will review and discuss all pins after the client session.</p>
-            </Typography>
+            {session.recordOnly !== true && (
+              <>
+                <img
+                  src={pinningClick}
+                  alt={'Icon of clicking the pin'}
+                  style={{
+                    margin: '20px 0px 10px 0px',
+                    height: '80px',
+                  }}
+                />
+                <Typography variant="h4">What is pinning for?</Typography>
+                <Typography variant="body2" component="div">
+                  <p>Click on the pin to create time marks of</p>
+                  <ul style={{ fontWeight: 700 }}>
+                    <li>{line1}</li>
+                    <li>{line2}</li>
+                  </ul>
+                  <p>
+                    Your peer will also be pinning, and you will review and discuss all pins after the client session.
+                  </p>
+                </Typography>
+              </>
+            )}
+
             <div style={{ marginTop: '20px' }}>
               <ColorLibNextButton
                 variant="contained"
@@ -764,18 +775,22 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Are you sure you want to end this session?'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Leave role-play and begin self-reflection?'}</DialogTitle>
         <DialogActions>
-          <Box m={2}>
-            <div direction="row" align="center">
-              <ColorLibButton variant="contained" size="medium" onClick={() => setOpenEnd(false)} autoFocus>
-                Continue Session
+          <Box m={4}>
+            <div
+              // direction="row" align="center"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <ColorLibButton variant="outlined" size="medium" onClick={() => setOpenEnd(false)} autoFocus>
+                {/* Stay in role-play */}
+                Cancel
               </ColorLibButton>
-              <Box mt={2}>
-                <ColorLibNextButton variant="outlined" size="medium" onClick={() => handleFinishChat()} autoFocus>
-                  End Session
-                </ColorLibNextButton>
-              </Box>
+              &nbsp; &nbsp; &nbsp; &nbsp;
+              <ColorLibNextButton variant="contained" size="medium" onClick={() => handleFinishChat()} autoFocus>
+                {/* Begin self-reflection */}
+                Confirm
+              </ColorLibNextButton>
             </div>
           </Box>
         </DialogActions>
@@ -804,7 +819,7 @@ function VideoChatComponent(props) {
           onClick={() => setOpenEnd(true)}
           disabled={!isInterviewStarted}
         >
-          Begin Discussion Prep
+          {session.recordOnly ? 'End Session' : 'Begin Self-reflection'}
         </ColorLibCallEndButton>
         {/* {props.isArchiveHost ? (
           <Button onClick={() => handleStartArchive()} color="secondary" variant="contained" disabled={buttonDis}>

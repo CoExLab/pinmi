@@ -125,7 +125,7 @@ const ColorlibConnector = withStyles(theme => ({
 }))(StepConnector);
 
 const Steppers = () => {
-  const steps = ['Practice Session', 'Discussion Prep', 'Discussion', 'Self-Reflection'];
+  const steps = ['Role-play', 'Self-reflection', 'Peer-feedback', 'Wrap-up'];
   const classes = useStepperStyles();
   const { setCurActiveStep: setActive, curActiveStep: activeStep } = useActiveStepValue();
 

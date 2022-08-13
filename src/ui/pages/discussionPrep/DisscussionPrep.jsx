@@ -12,7 +12,8 @@ import { Container, Grid, Typography } from '@material-ui/core';
 import ColorLibButton from '../../components/colorLibComponents/ColorLibButton';
 import { useActiveStepValue, usePinsValue } from '../../../storage/context';
 import { firebase } from '../../../storage/firebase';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { reset } from '../../../storage/store';
 
 import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTimeReminder';
 
@@ -87,6 +88,7 @@ const DisscussionPrep = () => {
   //session and user information taken from Redux
   const session = useSelector(state => state.session);
   const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   //timer information
   const [startTime, setStartTime] = useState(Date.now());
@@ -102,11 +104,18 @@ const DisscussionPrep = () => {
   useEffect(() => {
     console.log('current pin index:', curPinIndex);
     console.log(pins);
+
     if (finishedUpdates) {
-      //save all pins to database and move to next module
-      pins.forEach((elem, id) => savePin(id));
-      //return Loading module
-      setActiveStep(activeStep + 1);
+      if (session.recordOnly === true) {
+        dispatch(reset());
+        document.location.href = '/completion';
+      } else {
+        //save all pins to database and move to next module
+        pins.forEach((elem, id) => savePin(id));
+        //return Loading module
+
+        setActiveStep(activeStep + 1);
+      }
     }
   }, [finishedUpdates]);
 
@@ -187,7 +196,7 @@ const DisscussionPrep = () => {
   //actual page rendering
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      {session.recordOnly !== true && (
         <div
           id="time_reminder"
           style={{
@@ -205,6 +214,8 @@ const DisscussionPrep = () => {
             {formatTime(countDown)}
           </Typography>
         </div>
+      )}
+      <Container maxWidth="md">
         <ColorLibTimeReminder
           open={timeRemind}
           setOpen={setTimeRemind}
@@ -218,19 +229,23 @@ const DisscussionPrep = () => {
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
           />
-          <Transcription />
 
-          <Notetaking
-            curPinIndex={curPinIndex}
-            setCurPinIndex={setCurPinIndex}
-            prevPinIndex={prevPinIndex}
-            setPrevPinIndex={setPrevPinIndex}
-          />
+          {session.recordOnly !== true && (
+            <>
+              <Transcription />
+              <Notetaking
+                curPinIndex={curPinIndex}
+                setCurPinIndex={setCurPinIndex}
+                prevPinIndex={prevPinIndex}
+                setPrevPinIndex={setPrevPinIndex}
+              />
+            </>
+          )}
         </Grid>
       </Container>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0' }}>
         <ColorLibButton variant="contained" size="medium" onClick={handleNext}>
-          Join Discussion
+          {session.recordOnly ? 'End Session' : 'Join Discussion'}
         </ColorLibButton>
       </div>
     </div>
