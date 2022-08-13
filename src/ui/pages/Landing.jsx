@@ -69,21 +69,21 @@ const tutorialInfo = [
     image: pinningPreview,
     alt: 'Pinning',
   },
-  {
-    text: 'during a practitioner-client role-playing session with a peer',
-    image: modal,
-    alt: 'Role-playing session modal',
-  },
-  {
-    text: 'and after to reflect on the conversation and prepare for',
-    image: discussionPrepPreview,
-    alt: 'Discussion Prep Interface',
-  },
-  {
-    text: 'a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.',
-    image: discussionPreview,
-    alt: 'Discussion Interface',
-  },
+  // {
+  //   text: 'during a practitioner-client role-playing session with a peer',
+  //   image: modal,
+  //   alt: 'Role-playing session modal',
+  // },
+  // {
+  //   text: 'and after to reflect on the conversation and prepare for',
+  //   image: discussionPrepPreview,
+  //   alt: 'Discussion Prep Interface',
+  // },
+  // {
+  //   text: 'a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.',
+  //   image: discussionPreview,
+  //   alt: 'Discussion Interface',
+  // },
 ];
 
 // Project Page
@@ -247,20 +247,17 @@ const Landing = ({ justchat }) => {
   return (
     <section>
       <Navbar />
-      {justchat !== true && (
-        <>
-          <Container className={classes.welcome_container} maxWidth="md">
-            <Typography variant="h1" className={classes.welcome_intro}>
-              Welcome to Pin-MI
-            </Typography>
-            <Typography variant="h3" className={classes.welcome_definition}>
-              a platform for practicing MI with your peers and the help of pins
-            </Typography>
-            <br />
-          </Container>
-          {tutorialInfo.map(tutorialSection)}
-        </>
-      )}
+
+      {/* <Container className={classes.welcome_container} maxWidth="md">
+        <Typography variant="h1" className={classes.welcome_intro}>
+          Welcome to Pin-MI
+        </Typography>
+        <Typography variant="h3" className={classes.welcome_definition}>
+          a platform for practicing MI with your peers and the help of pins
+        </Typography>
+        <br />
+      </Container> */}
+      {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>}
 
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (
