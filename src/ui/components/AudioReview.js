@@ -17,9 +17,10 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
   const { mediaUrl: audio, mediaDuration: audioLen } = useSessionValue();
   // fetch raw pin data here
   const { pins } = usePinsValue();
-  console.log(pins);
+  // console.log(pins);
   //fetch user data
   const user = useSelector(state => state.user);
+  const session = useSelector(state => state.session);
 
   // get document ID
 
@@ -120,7 +121,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
           Listen back to the session, add pins, and take notes to discuss with your peer.
         </Typography>
       ) : (
-        <Typography variant="h6">Review all pins with your peer</Typography>
+        <>{session.recordOnly !== true && <Typography variant="h6">Review all pins with your peer</Typography>}</>
       )}
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}
@@ -132,6 +133,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
           return { markTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
         addPin={addPin}
+        recordOnlyMode={session.recordOnly === true}
       />
       <ReactPlayer
         hidden

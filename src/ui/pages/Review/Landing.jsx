@@ -114,6 +114,7 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
               return {
                 session: doc.id,
                 username: id,
+                recordOnly: doc.data().archiveData.recordOnly,
                 roomId,
                 date: doc.data().date,
                 dateNumber: new Date(doc.data().date).getTime(),
@@ -148,6 +149,7 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
             return {
               session: doc.id,
               username: username,
+              recordOnly: doc.data().archiveData.recordOnly,
               roomId: '',
               date: doc.data().date,
               dateNumber: new Date(doc.data().date).getTime(),
@@ -221,6 +223,7 @@ const Landing = ({ firebaseUser, setReviewSessionID, setUserName }) => {
           <ColorLibButton variant="contained" size="large" onClick={() => updateSessionInfo(s.session, s.username)}>
             {s.date} -- Room {s.roomId.substr(0, s.roomId.length - 1)}:{' '}
             {s.roomId[s.roomId.length - 1] === 'a' ? 'therapist' : 'client'}
+            {s.recordOnly ? ' [record only]' : ''}
           </ColorLibButton>
         </div>
       ))}

@@ -73,19 +73,25 @@ const Collaboration = props => {
             audioLen={props.mediaDuration}
             pins={props.pins}
             user={props.user}
+            recordOnlyMode={props.recordOnlyMode}
           />
-          <Transcription reviewSessionID={props.reviewSessionID} username={props.username} />
-          <DissResponse
-            curPinIndex={curPinIndex}
-            setCurPinIndex={setCurPinIndex}
-            prevPinIndex={prevPinIndex}
-            setPrevPinIndex={setPrevPinIndex}
-            reviewSessionID={props.reviewSessionID}
-            username={props.username}
-            user={props.user}
-            pins={props.pins}
-            reviewUrl={props.reviewUrl}
-          />
+
+          {props.recordOnlyMode !== true && (
+            <>
+              <Transcription reviewSessionID={props.reviewSessionID} username={props.username} />
+              <DissResponse
+                curPinIndex={curPinIndex}
+                setCurPinIndex={setCurPinIndex}
+                prevPinIndex={prevPinIndex}
+                setPrevPinIndex={setPrevPinIndex}
+                reviewSessionID={props.reviewSessionID}
+                username={props.username}
+                user={props.user}
+                pins={props.pins}
+                reviewUrl={props.reviewUrl}
+              />
+            </>
+          )}
         </Grid>
       </Container>
     </div>

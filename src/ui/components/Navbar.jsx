@@ -51,7 +51,11 @@ export default function ButtonAppBar() {
           </ColorLibButton>
 
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
-            Project
+            Practice
+          </ColorLibButton>
+
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/justchat">
+            Record
           </ColorLibButton>
 
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">

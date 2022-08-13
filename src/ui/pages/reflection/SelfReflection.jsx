@@ -243,7 +243,7 @@ const SelfReflection = () => {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h2">Reflect on how the session went and how you felt.</Typography>
+      {/* <Typography variant="h2">Reflect on how the session went and how you felt.</Typography>
       <ColorLibPaper elevation={0} style={{ margin: '24px 0px' }}>
         <Typography variant="h4">{getPageTitle(page)}</Typography>
         {getPageContent(page)}
@@ -257,7 +257,18 @@ const SelfReflection = () => {
         >
           {getPageButtons(page, setPage, makeReflectionDoc)}
         </div>
-      </ColorLibPaper>
+      </ColorLibPaper> */}
+
+      <div>
+        <ColorLibNextButton
+          style={{ margin: '0px 8px' }}
+          variant="contained"
+          size="medium"
+          onClick={() => makeReflectionDoc()}
+        >
+          Finish Session
+        </ColorLibNextButton>
+      </div>
     </Container>
   );
 };

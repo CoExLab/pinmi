@@ -104,6 +104,7 @@ const ColorLibAudioPlayer = ({
   duration,
   marks, // List of integers, each in seconds
   addPin = null,
+  recordOnlyMode,
 }) => {
   const jumpPercentage = (10 / duration) * 100;
 
@@ -220,11 +221,14 @@ const ColorLibAudioPlayer = ({
         <JumpIconButton onClick={() => setCurrentTime(Math.max(0, currentTime - 10))}>
           <Replay10Icon />
         </JumpIconButton>
-        <PinIconButton onClick={() => addPin(currentTime)}>
-          <Icon>
-            <img src={pin} alt="pin" style={{ height: '100%' }} />
-          </Icon>
-        </PinIconButton>
+        {recordOnlyMode !== true && (
+          <PinIconButton onClick={() => addPin(currentTime)}>
+            <Icon>
+              <img src={pin} alt="pin" style={{ height: '100%' }} />
+            </Icon>
+          </PinIconButton>
+        )}
+
         <JumpIconButton onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}>
           <Forward10Icon />
         </JumpIconButton>

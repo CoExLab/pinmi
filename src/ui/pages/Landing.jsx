@@ -19,7 +19,7 @@ import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
-import { setUserID, setUserMode, setSessionID } from '../../storage/store';
+import { setUserID, setUserMode, setSessionID, setRecordOnly } from '../../storage/store';
 
 import { useUser } from '../../contexts/userContext';
 
@@ -69,25 +69,27 @@ const tutorialInfo = [
     image: pinningPreview,
     alt: 'Pinning',
   },
-  {
-    text: 'during a practitioner-client role-playing session with a peer',
-    image: modal,
-    alt: 'Role-playing session modal',
-  },
-  {
-    text: 'and after to reflect on the conversation and prepare for',
-    image: discussionPrepPreview,
-    alt: 'Discussion Prep Interface',
-  },
-  {
-    text: 'a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.',
-    image: discussionPreview,
-    alt: 'Discussion Interface',
-  },
+  // {
+  //   text: 'during a practitioner-client role-playing session with a peer',
+  //   image: modal,
+  //   alt: 'Role-playing session modal',
+  // },
+  // {
+  //   text: 'and after to reflect on the conversation and prepare for',
+  //   image: discussionPrepPreview,
+  //   alt: 'Discussion Prep Interface',
+  // },
+  // {
+  //   text: 'a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.',
+  //   image: discussionPreview,
+  //   alt: 'Discussion Interface',
+  // },
 ];
 
 // Project Page
-const Landing = () => {
+const Landing = ({ justchat }) => {
+  console.log('Record only mode: ', justchat);
+
   const classes = useStyles();
 
   const { user: firebaseUser } = useUser();
@@ -196,6 +198,7 @@ const Landing = () => {
     //const tempUserMode = data.userMode;
     dispatch(setUserID(tempUserId));
     dispatch(setSessionID(tempSessionID));
+    dispatch(setRecordOnly(justchat === true));
     //dispatch(setUserMode(tempUserMode));
     history.push('/content');
   };
@@ -244,7 +247,8 @@ const Landing = () => {
   return (
     <section>
       <Navbar />
-      <Container className={classes.welcome_container} maxWidth="md">
+
+      {/* <Container className={classes.welcome_container} maxWidth="md">
         <Typography variant="h1" className={classes.welcome_intro}>
           Welcome to Pin-MI
         </Typography>
@@ -252,8 +256,9 @@ const Landing = () => {
           a platform for practicing MI with your peers and the help of pins
         </Typography>
         <br />
-      </Container>
-      {tutorialInfo.map(tutorialSection)}
+      </Container> */}
+      {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>}
+
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (
           <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>

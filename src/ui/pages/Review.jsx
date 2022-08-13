@@ -43,10 +43,24 @@ const Review = () => {
   const [reviewSessionID, setReviewSessionID] = useState();
   const [userName, setUserName] = useState();
   const [userMode, setUserMode] = useState();
+  const [recordOnlyMode, setRecordOnlyMode] = useState();
   const [pins, setPins] = useState([]);
   const [mediaUrl, setMediaUrl] = useState();
   const [mediaDuration, setMediaDuration] = useState();
   const [reviewUrl, setReviewUrl] = useState();
+
+  const loadRecordOnlyMode = async s => {
+    await firebase
+      .firestore()
+      .collection('sessions_by_usernames')
+      .doc(userName)
+      .collection('sessions')
+      .doc(s)
+      .get()
+      .then(doc => {
+        setRecordOnlyMode(doc.data().archiveData.recordOnly);
+      });
+  };
 
   //load archive data based on username and session id
   const loadMedia = async s => {
@@ -103,6 +117,7 @@ const Review = () => {
       loadUserMode(reviewSessionID);
       loadPins(reviewSessionID);
       loadMedia(reviewSessionID);
+      loadRecordOnlyMode(reviewSessionID);
     }
   }, [reviewSessionID]);
 
@@ -118,6 +133,7 @@ const Review = () => {
             reviewSessionID={reviewSessionID}
             username={userName}
             user={userMode}
+            recordOnlyMode={recordOnlyMode}
             pins={pins}
             mediaUrl={mediaUrl}
             mediaDuration={mediaDuration}
