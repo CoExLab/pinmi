@@ -19,7 +19,7 @@ import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
-import { setUserID, setUserMode, setSessionID } from '../../storage/store';
+import { setUserID, setUserMode, setSessionID, setRecordOnly } from '../../storage/store';
 
 import { useUser } from '../../contexts/userContext';
 
@@ -87,7 +87,9 @@ const tutorialInfo = [
 ];
 
 // Project Page
-const Landing = () => {
+const Landing = ({ justchat }) => {
+  console.log('Record only mode: ', justchat);
+
   const classes = useStyles();
 
   const { user: firebaseUser } = useUser();
@@ -196,6 +198,7 @@ const Landing = () => {
     //const tempUserMode = data.userMode;
     dispatch(setUserID(tempUserId));
     dispatch(setSessionID(tempSessionID));
+    dispatch(setRecordOnly(justchat === true));
     //dispatch(setUserMode(tempUserMode));
     history.push('/content');
   };

@@ -78,13 +78,18 @@ const sessionSlice = createSlice({
   name: 'session',
   initialState: {
     sessionID: '',
+    recordOnly: false,
   },
   reducers: {
     setSessionID: (state, action) => {
       state.sessionID = action.payload;
     },
+    setRecordOnly: (state, action) => {
+      state.recordOnly = action.payload;
+    },
     sReset: state => {
       state.sessonID = '';
+      state.recordOnly = false;
     },
   },
 });
@@ -93,7 +98,7 @@ const userReducer = userSlice.reducer;
 const sessionReducer = sessionSlice.reducer;
 
 export const { setUserID, setUserMode, reset } = userSlice.actions;
-export const { setSessionID, sReset } = sessionSlice.actions;
+export const { setSessionID, setRecordOnly, sReset } = sessionSlice.actions;
 
 // Root Reducers
 const rootReducer = combineReducers({

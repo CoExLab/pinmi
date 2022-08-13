@@ -1,5 +1,6 @@
 import { Box } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Intro from './Intro.jsx';
 import Narrative from './Narrative.jsx';
 import Session from './Session.jsx';
@@ -54,6 +55,8 @@ function getConditionalButton(page, setPage, setButton) {
 }
 
 const PracticeSession = () => {
+  const session = useSelector(state => state.session);
+  console.log(session);
   const { setButton } = useSessionValue();
   const [page, setPage] = useState(0);
 
