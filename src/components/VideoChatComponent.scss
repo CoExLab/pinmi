@@ -6,7 +6,7 @@
     margin: 0 20px;
   }
 }
-.mini-video-container{
+.mini-video-container {
   position: fixed;
   height: 25vh;
   width: 25%;
@@ -70,7 +70,8 @@
 
 .video-container {
   position: relative;
-  height: 100vh;
+  height: 60vh;
+  // min-height: 30vh;
   width: 100%;
   .main-video {
     position: relative;
@@ -83,7 +84,7 @@
     }
     .pin-Btn {
       background-color: white;
-      border: solid 1px #F2F6F8;
+      border: solid 1px #f2f6f8;
       display: flex;
       justify-content: center;
       align-items: center;

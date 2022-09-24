@@ -9,6 +9,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@opentok/client": "^2.21.2",
+    "@ramonak/react-progress-bar": "^5.0.2",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
