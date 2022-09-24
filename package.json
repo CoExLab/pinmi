@@ -25,7 +25,7 @@
     "hark": "^1.2.3",
     "inline-worker": "^1.1.0",
     "material-ui-popup-state": "^1.9.3",
-    "node-sass": "^4.14.1",
+    "node-sass": "^6.0.1",
     "opentok": "^2.12.1",
     "prettier": "^2.5.1",
     "prop-types": "^15.7.2",
@@ -36,7 +36,7 @@
     "react-player-controls": "^1.1.0",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
     "react-webcam": "^6.0.0",
     "redux": "^4.1.2",
     "rollup": "^2.61.0",
@@ -61,16 +61,9 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
