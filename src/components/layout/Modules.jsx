@@ -1,21 +1,21 @@
-import React from "react";
-import DisscussionPrep from "./DisscussionPrep";
-import PracticeSession from "./PracticeSession";
-import Collaboration from "./Collaboration";
-import Refresher from "./Refresher";
-import SelfReflection from "./SelfReflection";
-import SPDiscussion from "./SinglePlayerModules/SPDiscussion";
-import SPPracticeSession from "./SinglePlayerModules/SPPracticeSession";
-import Discussion from "./Discussion";
+import React from 'react';
+import DisscussionPrep from './DisscussionPrep';
+import PracticeSession from './PracticeSession';
+import Collaboration from './Collaboration';
+import Refresher from './Refresher';
+import SelfReflection from './SelfReflection';
+import SPDiscussion from './SinglePlayerModules/SPDiscussion';
+import SPPracticeSession from './SinglePlayerModules/SPPracticeSession';
+import Discussion from './Discussion';
 // context
 import {
   useActiveStepValue,
   useSessionValue,
   usePlayerModeValue,
-} from "../../context";
+} from '../../context';
 
-import { usePins } from "../../hooks/index";
-import SPDisscussionPrep from "./SinglePlayerModules/SPDiscussionPrep";
+import { usePins } from '../../hooks/index';
+import SPDisscussionPrep from './SinglePlayerModules/SPDiscussionPrep';
 
 function getStepContent(step) {
   switch (step) {
@@ -49,14 +49,15 @@ function getSPStepContent(step) {
 
 const Modules = () => {
   const { sessionID } = useSessionValue();
+  console.log(sessionID);
   const { curActiveStep } = useActiveStepValue();
   // const { playerMode } = usePlayerModeValue();
-  const playerMode = "singleplayer";
+  const playerMode = 'singleplayer';
   const { pins } = usePins();
 
   return (
     <div>
-      {playerMode == "multiplayer"
+      {playerMode == 'multiplayer'
         ? getStepContent(curActiveStep)
         : getSPStepContent(curActiveStep)}
     </div>

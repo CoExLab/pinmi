@@ -204,9 +204,31 @@ function SinglePlayerVideoChat(props) {
   // const { pins } = usePinsValue();
 
   const { singlePlayerPins } = useSinglePlayerPinsValue();
-  const { singlePlayerSessionID } = useSinglePlayerSessionValue();
+  const { singlePlayerUsername, singlePlayerSessionID } =
+    useSinglePlayerSessionValue();
   //what is going on with addPinDelayTime????
   const addPinDelayTime = 20;
+
+  const [sourceVideo, setSourceVideo] = useState(
+    'https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0'
+  );
+
+  useEffect(() => {
+    console.log(singlePlayerUsername, singlePlayerSessionID);
+    if (singlePlayerUsername && singlePlayerSessionID) {
+      firebase
+        .firestore()
+        .collection('sessions_by_usernames')
+        .doc(singlePlayerUsername)
+        .collection('sessions')
+        .doc(singlePlayerSessionID)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          setSourceVideo(data.archiveData.url);
+        });
+    }
+  }, [singlePlayerUsername, singlePlayerSessionID]);
 
   const binarySearch = (arr, l, r, x) => {
     console.log(arr, l, r, x);
@@ -317,7 +339,7 @@ function SinglePlayerVideoChat(props) {
             <ReactPlayer
               playing={isInterviewStarted}
               ref={player}
-              url='https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0'
+              url={sourceVideo}
               width='100%'
               height='100%'
               style={{ backgroundColor: '#666' }}

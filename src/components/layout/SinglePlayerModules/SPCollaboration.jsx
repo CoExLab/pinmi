@@ -1,67 +1,67 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from 'react';
 // Components
-import DissResponse from "../../DissResponse";
-import AudioReview from "../../AudioReview";
-import Transcription from "../../Transcription";
-import VideoDiscussion from "../../VideoDiscussion.js";
+import DissResponse from '../../DissResponse';
+import AudioReview from '../../AudioReview';
+import Transcription from '../../Transcription';
+import VideoDiscussion from '../../VideoDiscussion.js';
 // Others
-import { makeStyles } from "@material-ui/core/styles";
-import { Box, Container, Grid } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, Container, Grid } from '@material-ui/core';
 import ColorLibButton, {
   ColorLibBackButton,
   ColorLibNextButton,
-} from "../ColorLibComponents/ColorLibButton";
-import VideoChatComponent from "../../VideoChatComponent";
+} from '../ColorLibComponents/ColorLibButton';
+import VideoChatComponent from '../../VideoChatComponent';
 import {
   useSessionValue,
   useActiveStepValue,
   usePinsValue,
   useSinglePlayerSessionValue,
   useSinglePlayerPinsValue,
-} from "../../../context";
-import { baseURL } from "constants";
-import SinglePlayerNotesComparison from "../SinglePlayerComponents/SinglePlayerNotesComparison";
-import SinglePlayerComment from "../SinglePlayerComponents/SinglePlayerComment";
-import SinglePlayerTranscript from "../SinglePlayerComponents/SinglePlayerTranscript";
-import SinglePlayerAudioReview from "../SinglePlayerComponents/SinglePlayerAudioReview";
-import { firebase } from "../../../hooks/firebase";
+} from '../../../context';
+import { baseURL } from 'constants';
+import SinglePlayerNotesComparison from '../SinglePlayerComponents/SinglePlayerNotesComparison';
+import SinglePlayerComment from '../SinglePlayerComponents/SinglePlayerComment';
+import SinglePlayerTranscript from '../SinglePlayerComponents/SinglePlayerTranscript';
+import SinglePlayerAudioReview from '../SinglePlayerComponents/SinglePlayerAudioReview';
+import { firebase } from '../../../hooks/firebase';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    backgroundColor: "theme.palette.background.paper",
-    height: "50%",
+    backgroundColor: 'theme.palette.background.paper',
+    height: '50%',
   },
   imageIcon: {
-    height: "100%",
+    height: '100%',
   },
   iconRoot: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   fab: {
     marginLeft: 450,
     marginRight: 200,
   },
   grid: {
-    "& .MuiGrid-item": {
-      display: "inline-grid",
-      overflowY: "scroll",
+    '& .MuiGrid-item': {
+      display: 'inline-grid',
+      overflowY: 'scroll',
     },
-    "& .MuiGrid-grid-sm-4": {
-      position: "relative",
-      margin: "8px",
-      maxWidth: "calc(33.333333% - 8px)",
-      "& .MuiPaper-root": {
-        position: "absolute",
+    '& .MuiGrid-grid-sm-4': {
+      position: 'relative',
+      margin: '8px',
+      maxWidth: 'calc(33.333333% - 8px)',
+      '& .MuiPaper-root': {
+        position: 'absolute',
         top: 0,
         bottom: 0,
-        overflowY: "scroll",
+        overflowY: 'scroll',
       },
     },
-    "& .MuiGrid-grid-sm-8": {
-      maxWidth: "calc(66.666667% - 8px)",
+    '& .MuiGrid-grid-sm-8': {
+      maxWidth: 'calc(66.666667% - 8px)',
     },
-    "& .MuiGrid-root": {
+    '& .MuiGrid-root': {
       //   "& ::-webkit-scrollbar": {
       //     width: "12px",
       //   },
@@ -74,8 +74,8 @@ const useStyles = makeStyles((theme) => ({
       //     border: "3px solid orange",
       //   },
     },
-    "& .MuiGrid-container": {
-      height: "50%",
+    '& .MuiGrid-container': {
+      height: '50%',
     },
   },
 }));
@@ -89,7 +89,8 @@ const SPCollaboration = ({
   const classes = useStyles();
   const { curActiveStep: activeStep, setCurActiveStep: setActiveStep } =
     useActiveStepValue();
-  const { singlePlayerSessionID } = useSinglePlayerSessionValue();
+  const { singlePlayerUsername, singlePlayerSessionID } =
+    useSinglePlayerSessionValue();
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   const [peerPins, setPeerPins] = useState([]);
 
@@ -127,7 +128,7 @@ const SPCollaboration = ({
     return (
       transcriptArr &&
       transcriptArr.map((transcriptString) => {
-        var index = transcriptString.indexOf("-");
+        var index = transcriptString.indexOf('-');
         if (index) {
           var tempTimeSeconds = Math.floor(
             parseInt(transcriptString.slice(0, index), 10) / 1000
@@ -140,19 +141,25 @@ const SPCollaboration = ({
   };
 
   const addPeerPins = async () => {
+    // const docRef = await firebase
+    //   .firestore()
+    //   .collection("singleplayer_media")
+    //   .doc(singlePlayerSessionID);
     const docRef = await firebase
       .firestore()
-      .collection("singleplayer_media")
+      .collection('sessions_by_usernames')
+      .doc(singlePlayerUsername)
+      .collection('sessions')
       .doc(singlePlayerSessionID);
 
     let transcript = [];
     docRef.get().then((doc) => {
-      console.log(doc.data().transcript);
-      transcript = getTimeStamp(doc.data().transcript);
+      console.log(doc.data().calleeTranscript);
+      transcript = getTimeStamp(doc.data().calleeTranscript);
     });
 
     docRef
-      .collection("pins")
+      .collection('pins')
       .get()
       .then((doc) => {
         doc.forEach((d) => {
@@ -188,9 +195,9 @@ const SPCollaboration = ({
     if (curPinIndex === -1) return null;
     const prev = (
       <ColorLibBackButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
+        style={{ margin: '0px 8px' }}
+        variant='contained'
+        size='small'
         onClick={handlePrevPin}
       >
         Prev Pin
@@ -198,9 +205,9 @@ const SPCollaboration = ({
     );
     const next = (
       <ColorLibNextButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
+        style={{ margin: '0px 8px' }}
+        variant='contained'
+        size='small'
         onClick={handleNextPin}
       >
         Next Pin
@@ -223,7 +230,7 @@ const SPCollaboration = ({
 
   return (
     <div className={classes.root}>
-      <Container maxWidth="md">
+      <Container maxWidth='md'>
         <Grid container spacing={2} className={classes.grid}>
           <SinglePlayerAudioReview
             curPinIndex={curPinIndex}
@@ -233,13 +240,13 @@ const SPCollaboration = ({
             disableAddPin
           />
           <Grid item xs={12}>
-            <Box align="center" m={2} mb={5}>
+            <Box align='center' m={2} mb={5}>
               <PinNavButtons />
             </Box>
           </Grid>
         </Grid>
       </Container>
-      <Container maxWidth="lg" className={classes.container}>
+      <Container maxWidth='lg' className={classes.container}>
         <Grid container spacing={2} className={classes.grid}>
           <SinglePlayerTranscript
             selectedIndex={
@@ -251,7 +258,7 @@ const SPCollaboration = ({
             <Grid
               container
               spacing={2}
-              style={{ height: "80vh", overflow: "scroll" }}
+              style={{ height: '80vh', overflow: 'scroll' }}
             >
               <SinglePlayerNotesComparison
                 curPinIndex={curPinIndex}

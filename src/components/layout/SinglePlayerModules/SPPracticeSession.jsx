@@ -1,18 +1,18 @@
-import { Box } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
-import Intro from "./SPPracticeSession/Intro.jsx";
-import Narrative from "./SPPracticeSession/Narrative.jsx";
-import Session from "./SPPracticeSession/Session.jsx";
+import { Box } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import Intro from './SPPracticeSession/Intro.jsx';
+import Narrative from './SPPracticeSession/Narrative.jsx';
+import Session from './SPPracticeSession/Session.jsx';
 
 import {
   useActiveStepValue,
   useSessionValue,
   useSinglePlayerSessionValue,
-} from "../../../context";
+} from '../../../context';
 import ColorLibButton, {
   ColorLibNextButton,
-} from "../ColorLibComponents/ColorLibButton";
-import { firebase } from "../../../hooks/firebase";
+} from '../ColorLibComponents/ColorLibButton';
+import { firebase } from '../../../hooks/firebase';
 
 function getConditionalContent(page) {
   switch (page) {
@@ -36,10 +36,10 @@ function getConditionalButton(page, setPage, setButton) {
     case 0:
       return (
         <div>
-          <Box align="center" m={2} mb={20}>
+          <Box align='center' m={2} mb={20}>
             <ColorLibNextButton
-              variant="contained"
-              size="medium"
+              variant='contained'
+              size='medium'
               onClick={() => handleButton()}
             >
               Review Information on Client
@@ -50,10 +50,10 @@ function getConditionalButton(page, setPage, setButton) {
     case 1:
       return (
         <div>
-          <Box align="center" m={2} mb={20}>
+          <Box align='center' m={2} mb={20}>
             <ColorLibButton
-              variant="contained"
-              size="medium"
+              variant='contained'
+              size='medium'
               onClick={() => handleButton()}
             >
               Begin Live Session
@@ -75,37 +75,37 @@ const PracticeSession = () => {
   const { singlePlayerSessionID, setSinglePlayerSessionID } =
     useSinglePlayerSessionValue();
 
-  const addSessionID = async () => {
-    const SPSessionArr = [];
-    let counter = 0;
+  // const addSessionID = async () => {
+  //   const SPSessionArr = [];
+  //   let counter = 0;
 
-    await firebase
-      .firestore()
-      .collection("singleplayer_media")
-      .get()
-      .then((doc) => {
-        doc.forEach((d) => {
-          SPSessionArr.push([d.id, d.data()]);
-        });
-        SPSessionArr.sort(
-          (a, b) => (a[1].view_count > b[1].view_count && 1) || -1
-        );
-        setSinglePlayerSessionID(SPSessionArr[0][0]);
-        counter = SPSessionArr[0][1].view_count;
-      })
+  //   await firebase
+  //     .firestore()
+  //     .collection("singleplayer_media")
+  //     .get()
+  //     .then((doc) => {
+  //       doc.forEach((d) => {
+  //         SPSessionArr.push([d.id, d.data()]);
+  //       });
+  //       SPSessionArr.sort(
+  //         (a, b) => (a[1].view_count > b[1].view_count && 1) || -1
+  //       );
+  //       setSinglePlayerSessionID(SPSessionArr[0][0]);
+  //       counter = SPSessionArr[0][1].view_count;
+  //     })
 
-    const docRef = await firebase
-      .firestore()
-      .collection("singleplayer_media")
-      .doc(SPSessionArr[0][0]);
+  //   const docRef = await firebase
+  //     .firestore()
+  //     .collection("singleplayer_media")
+  //     .doc(SPSessionArr[0][0]);
 
-    docRef.update({ view_count: counter + 1 });
-  };
+  //   docRef.update({ view_count: counter + 1 });
+  // };
 
   useEffect(() => {
     // Scroll on render
     window.scrollTo(0, 0);
-    addSessionID();
+    // addSessionID();
     // ["4", "7", "11", "14", "19"].map((e) => savePin(e));
   }, []);
 

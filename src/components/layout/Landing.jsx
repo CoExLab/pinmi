@@ -1,94 +1,102 @@
-import { useState } from "react";
-import { useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useState } from 'react';
+import { useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
-import { firebase } from "../../hooks/firebase";
+import { firebase } from '../../hooks/firebase';
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Box, Grid } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, Grid } from '@material-ui/core';
 
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import ColorLibButton from "./ColorLibComponents/ColorLibButton";
-import ColorLibTextField from "./ColorLibComponents/ColorLibTextField";
-import Navbar from "./Navbar";
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import ColorLibButton from './ColorLibComponents/ColorLibButton';
+import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
+import Navbar from './Navbar';
 
-import pinningPreview from "./../../other/tutorial/pinning-preview.gif";
-import modal from "./../../other/tutorial/modal.png";
-import discussionPrepPreview from "./../../other/tutorial/discussionPrepPreview.png";
-import discussionPreview from "./../../other/tutorial/discussionPreview.png";
+import pinningPreview from './../../other/tutorial/pinning-preview.gif';
+import modal from './../../other/tutorial/modal.png';
+import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
+import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
-import { setUserID, setUserMode, setSessionID } from "../Store";
+import { setUserID, setUserMode, setSessionID } from '../Store';
+
+import { useUser } from '../../context/userContext';
+import { useSinglePlayerSessionValue } from '../../context';
 
 const useStyles = makeStyles((theme) => ({
   welcome_container: {
-    padding: "50px 68px 50px 68px",
-    textAlign: "center",
+    padding: '50px 68px 50px 68px',
+    textAlign: 'center',
   },
   welcome_intro: {
     color: theme.palette.teal.dark,
   },
   welcome_definition: {
     color: theme.palette.gray.main,
-    fontStyle: "italic",
-    padding: "10px 20px 10px 20px",
+    fontStyle: 'italic',
+    padding: '10px 20px 10px 20px',
   },
   button_wrapper: {
-    marginBottom: "68px",
-    textAlign: "center",
+    marginBottom: '68px',
+    textAlign: 'center',
   },
   tutorial_even: {
-    padding: "0 65px",
-    background: theme.palette.teal.lighter + " 50%",
-    height: "400px",
+    padding: '0 65px',
+    background: theme.palette.teal.lighter + ' 50%',
+    height: '400px',
   },
   tutorial_odd: {
-    padding: "0 65px",
-    background: "white",
-    height: "400px",
+    padding: '0 65px',
+    background: 'white',
+    height: '400px',
   },
   tutorial_grid: {
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   tutorial_text: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   tutorial_text_left: {
     marginRight: 0,
-    marginLeft: "auto",
-    textAlign: "center",
+    marginLeft: 'auto',
+    textAlign: 'center',
   },
 }));
 
 const tutorialInfo = [
   {
-    text: "Use pins to mark moments of MI strengths and opportunities in a conversation",
+    text: 'Use pins to mark moments of MI strengths and opportunities in a conversation',
     image: pinningPreview,
-    alt: "Pinning",
+    alt: 'Pinning',
   },
   {
-    text: "during a practitioner-client role-playing session with a peer",
+    text: 'during a practitioner-client role-playing session with a peer',
     image: modal,
-    alt: "Role-playing session modal",
+    alt: 'Role-playing session modal',
   },
   {
-    text: "and after to reflect on the conversation and prepare for",
+    text: 'and after to reflect on the conversation and prepare for',
     image: discussionPrepPreview,
-    alt: "Discussion Prep Interface",
+    alt: 'Discussion Prep Interface',
   },
   {
-    text: "a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.",
+    text: 'a collaborative discussion with your peer to share thoughts and specific feedback on those pinned moments.',
     image: discussionPreview,
-    alt: "Discussion Interface",
+    alt: 'Discussion Interface',
   },
 ];
 
 const Landing = () => {
   const classes = useStyles();
 
-  const [username, setUsername] = useState();
-  const usernameRef = useRef("");
+  const { user: firebaseUser, setUserSessionId } = useUser();
+  const { setSinglePlayerUsername, setSinglePlayerSessionID } =
+    useSinglePlayerSessionValue();
+
+  const [username, setUsername] = useState('');
+  // example: kLGingo64LdaWBNDzTDQgOmcwSH3_5b/sessions/pAxk6uzfEPaCpzBCAAmj
+  const usernameRef = useRef('');
 
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -100,12 +108,12 @@ const Landing = () => {
 
     await firebase
       .firestore()
-      .collection("users")
+      .collection('users')
       .doc(username)
       .get()
       .then((doc) => {
         if (doc.exists) {
-          console.log("data: " + doc.data().userID);
+          console.log('data: ' + doc.data().userID);
           return doc.data();
         } else {
           console.log("User doesn't exist.");
@@ -117,30 +125,68 @@ const Landing = () => {
   };
 
   const setStates = async (data) => {
-    const tempUserId = data.userID;
-    const tempSessionID = data.curSession;
+    let tempUsernameAndSessionession = username;
+    if (username.length === 0) {
+      tempUsernameAndSessionession =
+        'kLGingo64LdaWBNDzTDQgOmcwSH3_5b/sessions/pAxk6uzfEPaCpzBCAAmj';
+    }
+
+    const splits = tempUsernameAndSessionession.split('/');
+
+    const tempUserId = splits[0];
+    const tempSessionID = splits[splits.length - 1];
+    setSinglePlayerUsername(tempUserId);
+    setSinglePlayerSessionID(tempSessionID);
+
+    console.log(tempUserId, tempSessionID);
+
     await firebase
       .firestore()
-      .collection("sessions")
-      .doc(tempSessionID)
-      .get()
+      .collection('singleplayer')
+      .doc(firebaseUser.uid)
+      .set(
+        {
+          firebaseUserId: firebaseUser.uid,
+        },
+        { merge: true }
+      );
+
+    await firebase
+      .firestore()
+      .collection('singleplayer')
+      .doc(firebaseUser.uid)
+      .collection('sessions')
+      .add({
+        refUsername: tempUserId,
+        refSessionID: tempSessionID,
+      })
       .then((doc) => {
-        if (doc.exists) {
-          if (doc.data().caller_id == tempUserId) {
-            dispatch(setUserMode("caller"));
-          } else {
-            dispatch(setUserMode("callee"));
-          }
-        } else {
-          console.log("session doesn't exist.");
-        }
+        // console.log(doc);
+        setUserSessionId(doc.id);
       });
 
-    //const tempUserMode = data.userMode;
-    dispatch(setUserID(tempUserId));
-    dispatch(setSessionID(tempSessionID));
+    // await firebase
+    //   .firestore()
+    //   .collection('sessions')
+    //   .doc(tempSessionID)
+    //   .get()
+    //   .then((doc) => {
+    //     if (doc.exists) {
+    //       if (doc.data().caller_id == tempUserId) {
+    //         dispatch(setUserMode('caller'));
+    //       } else {
+    //         dispatch(setUserMode('callee'));
+    //       }
+    //     } else {
+    //       console.log("session doesn't exist.");
+    //     }
+    //   });
+
+    // //const tempUserMode = data.userMode;
+    // dispatch(setUserID(tempUserId));
+    // dispatch(setSessionID(tempSessionID));
     //dispatch(setUserMode(tempUserMode));
-    history.push("/content");
+    history.push('/content');
   };
 
   const tutorialSection = ({ text, image, alt }, index) => {
@@ -148,12 +194,12 @@ const Landing = () => {
     const textGrid = (
       <Grid item xs={6} className={classes.tutorial_grid}>
         <Typography
-          variant="h2"
+          variant='h2'
           className={
             isTextLeft ? classes.tutorial_text_left : classes.tutorial_text
           }
           style={{
-            width: index === 0 ? "95%" : "84%",
+            width: index === 0 ? '95%' : '84%',
           }}
         >
           {text}
@@ -167,8 +213,8 @@ const Landing = () => {
           src={image}
           alt={alt}
           style={{
-            width: index === 0 ? "30%" : "90%",
-            marginLeft: index === 0 ? "100px" : "0",
+            width: index === 0 ? '30%' : '90%',
+            marginLeft: index === 0 ? '100px' : '0',
           }}
         />
       </Grid>
@@ -189,22 +235,30 @@ const Landing = () => {
   return (
     <section>
       <Navbar />
-      <Container className={classes.welcome_container} maxWidth="md">
-        <Typography variant="h1" className={classes.welcome_intro}>
+      <Container className={classes.welcome_container} maxWidth='md'>
+        <Typography variant='h1' className={classes.welcome_intro}>
           Welcome to Pin-MI
         </Typography>
-        <Typography variant="h3" className={classes.welcome_definition}>
+        <Typography variant='h3' className={classes.welcome_definition}>
           a platform for practicing MI with your peers and the help of pins
         </Typography>
         <br />
       </Container>
       {tutorialInfo.map(tutorialSection)}
-      <Container className={classes.welcome_container} maxWidth="md">
-        <Box m={1} display="inline">
+      <Container className={classes.welcome_container} maxWidth='md'>
+        <Box m={1} display='inline'>
+          {/* <ColorLibTextField
+            id='outlined-basic'
+            label='Your Unique ID'
+            variant='outlined'
+            value={username}
+            inputRef={usernameRef}
+            onChange={() => setUsername(usernameRef.current.value)}
+          /> */}
           <ColorLibTextField
-            id="outlined-basic"
-            label="Your Unique ID"
-            variant="outlined"
+            id='outlined-basic'
+            label='Video ID'
+            variant='outlined'
             value={username}
             inputRef={usernameRef}
             onChange={() => setUsername(usernameRef.current.value)}
@@ -214,9 +268,10 @@ const Landing = () => {
       <div className={classes.button_wrapper}>
         {/* <ColorLibButton variant='contained' size='large' onClick={setUser}> */}
         <ColorLibButton
-          variant="contained"
-          size="large"
-          onClick={() => history.push("/content")}
+          variant='contained'
+          size='large'
+          // onClick={() => history.push('/content')}
+          onClick={setStates}
         >
           Let's get started!
         </ColorLibButton>

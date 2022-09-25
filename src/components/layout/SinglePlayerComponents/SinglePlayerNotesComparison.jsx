@@ -1,77 +1,77 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { formatTime } from "../../../helper/index";
-import { Box, Grid, Paper, Typography, Container } from "@material-ui/core";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import React, { useState, useRef, useEffect, Fragment } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { formatTime } from '../../../helper/index';
+import { Box, Grid, Paper, Typography, Container } from '@material-ui/core';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 
 import {
   ColorLibNextButton,
   ColorLibBackButton,
-} from "../../layout/ColorLibComponents/ColorLibButton";
-import ColorLibPaper from "../../layout/ColorLibComponents/ColorLibPaper";
-import ColorLibTextField from "../../layout/ColorLibComponents/ColorLibTextField";
-import MISkillsSheet from "../../layout/MISkillsSheet";
+} from '../../layout/ColorLibComponents/ColorLibButton';
+import ColorLibPaper from '../../layout/ColorLibComponents/ColorLibPaper';
+import ColorLibTextField from '../../layout/ColorLibComponents/ColorLibTextField';
+import MISkillsSheet from '../../layout/MISkillsSheet';
 
 // firebase hook
-import { usePins } from "../../../hooks/index";
-import { firebase } from "../../../hooks/firebase";
+import { usePins } from '../../../hooks/index';
+import { firebase } from '../../../hooks/firebase';
 
 //context
-import { useSessionValue, useSinglePlayerPinsValue } from "../../../context";
-import { useSelector } from "react-redux";
+import { useSessionValue, useSinglePlayerPinsValue } from '../../../context';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex",
-    "& > *": {
-      width: "100%",
-      "&:first-child": {
-        marginRight: "8px",
+    display: 'flex',
+    '& > *': {
+      width: '100%',
+      '&:first-child': {
+        marginRight: '8px',
       },
-      "&:last-child": {
-        marginLeft: "8px",
+      '&:last-child': {
+        marginLeft: '8px',
       },
     },
   },
   grid: {
-    "& .MuiGrid-item": {
-      display: "inline-grid",
+    '& .MuiGrid-item': {
+      display: 'inline-grid',
     },
-    "& .MuiGrid-grid-sm-4": {
-      position: "relative",
-      margin: "8px",
-      maxWidth: "calc(33.333333% - 8px)",
+    '& .MuiGrid-grid-sm-4': {
+      position: 'relative',
+      margin: '8px',
+      maxWidth: 'calc(33.333333% - 8px)',
     },
-    "& .MuiGrid-grid-sm-8": {
-      maxWidth: "calc(66.666667% - 8px)",
+    '& .MuiGrid-grid-sm-8': {
+      maxWidth: 'calc(66.666667% - 8px)',
     },
   },
   toggleGroup: {
-    marginTop: "8px",
-    marginBottom: "24px",
-    width: "100%",
-    height: "40px",
-    "& .MuiToggleButton-root": {
-      backgroundColor: "white",
+    marginTop: '8px',
+    marginBottom: '24px',
+    width: '100%',
+    height: '40px',
+    '& .MuiToggleButton-root': {
+      backgroundColor: 'white',
       borderColor: theme.palette.teal.main,
-      borderWidth: "2px",
+      borderWidth: '2px',
       color: theme.palette.teal.main,
-      textTransform: "none",
-      width: "100%",
-      "&.Mui-selected": {
+      textTransform: 'none',
+      width: '100%',
+      '&.Mui-selected': {
         backgroundColor: theme.palette.teal.light,
       },
     },
-    "& .MuiToggleButtonGroup-groupedHorizontal:first-child": {
-      borderTopLeftRadius: "35px",
-      borderBottomLeftRadius: "35px",
+    '& .MuiToggleButtonGroup-groupedHorizontal:first-child': {
+      borderTopLeftRadius: '35px',
+      borderBottomLeftRadius: '35px',
     },
-    "& .MuiToggleButtonGroup-groupedHorizontal:last-child": {
-      borderTopRightRadius: "35px",
-      borderBottomRightRadius: "35px",
+    '& .MuiToggleButtonGroup-groupedHorizontal:last-child': {
+      borderTopRightRadius: '35px',
+      borderBottomRightRadius: '35px',
     },
-    "& .MuiToggleButtonGroup-groupedHorizontal:not(:first-child)": {
-      marginLeft: "3px",
+    '& .MuiToggleButtonGroup-groupedHorizontal:not(:first-child)': {
+      marginLeft: '3px',
     },
   },
 }));
@@ -89,10 +89,10 @@ const SinglePlayerNotesComparison = ({
   const classes = useStyles();
 
   //creating a refernce for TextField Components
-  const efficacyValueRef = useRef("");
-  const goalValueRef = useRef("");
-  const strengthValueRef = useRef("");
-  const opportunityValueRef = useRef("");
+  const efficacyValueRef = useRef('');
+  const goalValueRef = useRef('');
+  const strengthValueRef = useRef('');
+  const opportunityValueRef = useRef('');
 
   //get sessionID
   const { sessionID } = useSessionValue();
@@ -117,17 +117,17 @@ const SinglePlayerNotesComparison = ({
   // ]);
 
   // set up states for four different questions
-  const [curNoteInfo, setCurNoteInfo] = useState("");
-  const [peerNoteInfo, setPeerNoteInfo] = useState("");
+  const [curNoteInfo, setCurNoteInfo] = useState('');
+  const [peerNoteInfo, setPeerNoteInfo] = useState('');
 
-  const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState("");
-  const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState("");
+  const [curPerspectiveInfo1, setCurPerspectiveInfo1] = useState('');
+  const [curPerspectiveInfo2, setCurPerspectiveInfo2] = useState('');
 
-  const [pinType1, setPinType1] = useState("Strength");
-  const [pinType2, setPinType2] = useState("");
+  const [pinType1, setPinType1] = useState('Strength');
+  const [pinType2, setPinType2] = useState('');
 
-  const [curSkillInfo1, setCurSkillInfo1] = useState("");
-  const [curSkillInfo2, setCurSkillInfo2] = useState("");
+  const [curSkillInfo1, setCurSkillInfo1] = useState('');
+  const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
   const [curGoalInfo, setCurGoalInfo] = useState(
     singlePlayerPins[curPinIndex].pinGoal
@@ -169,19 +169,19 @@ const SinglePlayerNotesComparison = ({
 
     let peerPin = peerPins.find((e) => e.transcriptindex == TSIndex);
     setPeerPin(peerPin);
-    console.log("CUR PINS TS: ", TSIndex);
+    console.log('CUR PINS TS: ', TSIndex);
 
     if (!peerPin) {
-      console.log("No peer pin matched");
+      console.log('No peer pin matched');
     } else {
-      setCurPerspectiveInfo2(peerPin["calleePinPerspective"]);
-      setPinType2(peerPin["calleePinCategory"]);
-      setCurSkillInfo2(peerPin["calleePinSkill"]);
-      setPeerNoteInfo(peerPin["calleePinNote"]);
-      setPeerGoalInfo(peerPin["pinGoal"]);
-      setPeerStrengthInfo(peerPin["pinStrength"]);
-      setPeerOpportunityInfo(peerPin["pinOpportunity"]);
-      console.log("Peer PINS TS: ", peerPin.transcriptindex);
+      setCurPerspectiveInfo2(peerPin['calleePinPerspective']);
+      setPinType2(peerPin['calleePinCategory']);
+      setCurSkillInfo2(peerPin['calleePinSkill']);
+      setPeerNoteInfo(peerPin['calleePinNote']);
+      setPeerGoalInfo(peerPin['pinGoal']);
+      setPeerStrengthInfo(peerPin['pinStrength']);
+      setPeerOpportunityInfo(peerPin['pinOpportunity']);
+      console.log('Peer PINS TS: ', peerPin.transcriptindex);
     }
   };
 
@@ -189,7 +189,7 @@ const SinglePlayerNotesComparison = ({
   const fetchCurTextVal = async (infoName) => {
     let curPin = singlePlayerPins[curPinIndex];
 
-    if (user.userMode === "caller") setCurNoteInfo(curPin.callerPinNote);
+    if (user.userMode === 'caller') setCurNoteInfo(curPin.callerPinNote);
     else setCurNoteInfo(curPin.calleePinNote);
 
     setCurPerspectiveInfo1(curPin.calleePinPerspective);
@@ -211,9 +211,9 @@ const SinglePlayerNotesComparison = ({
     if (curPinIndex === -1) return null;
     const prev = (
       <ColorLibBackButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
+        style={{ margin: '0px 8px' }}
+        variant='contained'
+        size='small'
         onClick={handlePrevPin}
       >
         Prev Pin
@@ -221,9 +221,9 @@ const SinglePlayerNotesComparison = ({
     );
     const next = (
       <ColorLibNextButton
-        style={{ margin: "0px 8px" }}
-        variant="contained"
-        size="small"
+        style={{ margin: '0px 8px' }}
+        variant='contained'
+        size='small'
         onClick={handleNextPin}
       >
         Next Pin
@@ -238,23 +238,23 @@ const SinglePlayerNotesComparison = ({
     }
     return (
       <Fragment>
-        {" "}
-        {prev} {next}{" "}
+        {' '}
+        {prev} {next}{' '}
       </Fragment>
     );
   };
 
   return (
     <>
-      <Grid item xs className={classes.grid} >
+      <Grid item xs className={classes.grid}>
         <ColorLibPaper elevation={2}>
-          <Typography variant="h4" style={{ textTransform: "capitalize" }}>
+          <Typography variant='h4' style={{ textTransform: 'capitalize' }}>
             Your Pin Notes
           </Typography>
           {curPinIndex !== -1 ? (
-            <Box fontStyle="italic">
+            <Box fontStyle='italic'>
               <Typography>
-                The session was pinned at{" "}
+                The session was pinned at{' '}
                 {formatTime(
                   singlePlayerPins.map((pin) => pin.pinTime)[curPinIndex]
                 )}
@@ -263,102 +263,101 @@ const SinglePlayerNotesComparison = ({
           ) : null}
           <ColorLibTextField
             disabled
-            label=""
-            id="outlined-secondary"
-            label="Personal Notes..."
+            id='outlined-secondary'
+            label='Personal Notes...'
             fullWidth
-            variant="outlined"
+            variant='outlined'
             multiline
             rows={3}
-            margin="normal"
+            margin='normal'
             value={curNoteInfo}
           />
-          <Box textAlign="left">
+          <Box textAlign='left'>
             <Typography>
               What is your perspective of what happened at this pin?
             </Typography>
           </Box>
           <ColorLibTextField
             disabled
-            label=""
-            id="outlined-secondary"
+            label=''
+            id='outlined-secondary'
             fullWidth
-            variant="outlined"
+            variant='outlined'
             multiline
             rows={2}
-            margin="normal"
+            margin='normal'
             value={curPerspectiveInfo1}
           />
-          <Box textAlign="left">
+          <Box textAlign='left'>
             <Typography>What would you categorize this pin as?</Typography>
           </Box>
 
-          <Box align="left">
+          <Box align='left'>
             <ToggleButtonGroup
               disabled
               className={classes.toggleGroup}
               value={pinType1}
               exclusive
-              size="large"
+              size='large'
             >
-              <ToggleButton value="strength" selected={pinType1 === "strength"}>
+              <ToggleButton value='strength' selected={pinType1 === 'strength'}>
                 Strength
               </ToggleButton>
               <ToggleButton
-                value="opportunity"
-                selected={pinType1 === "opportunity"}
+                value='opportunity'
+                selected={pinType1 === 'opportunity'}
               >
                 Opportunity
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
-          <Box textAlign="left">
+          <Box textAlign='left'>
             <Typography>
               What was the goal during the pinned situation?
             </Typography>
           </Box>
           <ColorLibTextField
             disabled
-            label=""
-            id="outlined-secondary"
+            label=''
+            id='outlined-secondary'
             fullWidth
-            variant="outlined"
+            variant='outlined'
             multiline
             rows={3}
-            margin="normal"
+            margin='normal'
             value={curGoalInfo}
             inputRef={goalValueRef}
             onChange={() => setCurGoalInfo(goalValueRef.current.value)}
           />
 
-          <Box textAlign="left">
+          <Box textAlign='left'>
             <Typography>What worked well to achieve the goal?</Typography>
           </Box>
           <ColorLibTextField
             disabled
-            label=""
-            id="outlined-secondary"
+            label=''
+            id='outlined-secondary'
             fullWidth
-            variant="outlined"
+            variant='outlined'
             multiline
             rows={3}
-            margin="normal"
+            margin='normal'
             value={curStrengthInfo}
             inputRef={strengthValueRef}
             onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
           />
-          <Box textAlign="left">
+          <Box textAlign='left'>
             <Typography>What could be improved to achieve the goal?</Typography>
           </Box>
           <ColorLibTextField
             disabled
-            label=""
-            id="outlined-secondary"
+            label=''
+            id='outlined-secondary'
             fullWidth
-            variant="outlined"
+            variant='outlined'
             multiline
             rows={3}
-            margin="normal"
+            margin='normal'
             value={curOpporunityInfo}
             inputRef={opportunityValueRef}
             onChange={() =>
@@ -369,63 +368,63 @@ const SinglePlayerNotesComparison = ({
       </Grid>
       <Grid item xs>
         <ColorLibPaper elevation={1}>
-          <Typography variant="h4" style={{ textTransform: "capitalize" }}>
+          <Typography variant='h4' style={{ textTransform: 'capitalize' }}>
             Peer's Pin Notes
           </Typography>
           {peerPin ? (
             <>
-              <Box fontStyle="italic">
+              <Box fontStyle='italic'>
                 <Typography>
                   The session was pinned at {formatTime(peerPin.pinTime)}
                 </Typography>
               </Box>
               <ColorLibTextField
                 disabled
-                id="outlined-secondary"
-                label="Personal Notes..."
+                id='outlined-secondary'
+                label='Personal Notes...'
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 multiline
                 rows={3}
-                margin="normal"
+                margin='normal'
                 value={peerNoteInfo}
               />
-              <Box textAlign="left">
+              <Box textAlign='left'>
                 <Typography>
                   What is your perspective of what happened at this pin?
                 </Typography>
               </Box>
               <ColorLibTextField
                 disabled
-                label=""
-                id="outlined-secondary"
+                label=''
+                id='outlined-secondary'
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 multiline
                 rows={2}
-                margin="normal"
+                margin='normal'
                 value={curPerspectiveInfo2}
               />
-              <Box textAlign="left">
+              <Box textAlign='left'>
                 <Typography>What would you categorize this pin as?</Typography>
               </Box>
-              <Box align="left">
+              <Box align='left'>
                 <ToggleButtonGroup
                   disabled
                   className={classes.toggleGroup}
                   value={pinType2}
                   exclusive
-                  size="large"
+                  size='large'
                 >
                   <ToggleButton
-                    value="strength"
-                    selected={pinType2 === "strength"}
+                    value='strength'
+                    selected={pinType2 === 'strength'}
                   >
                     Strength
                   </ToggleButton>
                   <ToggleButton
-                    value="opportunity"
-                    selected={pinType2 === "opportunity"}
+                    value='opportunity'
+                    selected={pinType2 === 'opportunity'}
                   >
                     Opportunity
                   </ToggleButton>
@@ -433,56 +432,56 @@ const SinglePlayerNotesComparison = ({
               </Box>
               <MISkillsSheet />
 
-              <Box textAlign="left">
+              <Box textAlign='left'>
                 <Typography>
                   What was the goal during the pinned situation?
                 </Typography>
               </Box>
               <ColorLibTextField
                 disabled
-                label=""
-                id="outlined-secondary"
+                label=''
+                id='outlined-secondary'
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 multiline
                 rows={3}
-                margin="normal"
+                margin='normal'
                 value={peerGoalInfo}
                 inputRef={goalValueRef}
                 onChange={() => setCurGoalInfo(goalValueRef.current.value)}
               />
-              <Box textAlign="left">
+              <Box textAlign='left'>
                 <Typography>What worked well to achieve the goal?</Typography>
               </Box>
               <ColorLibTextField
                 disabled
-                label=""
-                id="outlined-secondary"
+                label=''
+                id='outlined-secondary'
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 multiline
                 rows={3}
-                margin="normal"
+                margin='normal'
                 value={peerStrengthInfo}
                 inputRef={strengthValueRef}
                 onChange={() =>
                   setCurStrengthInfo(strengthValueRef.current.value)
                 }
               />
-              <Box textAlign="left">
+              <Box textAlign='left'>
                 <Typography>
                   What could be improved to achieve the goal?
                 </Typography>
               </Box>
               <ColorLibTextField
                 disabled
-                label=""
-                id="outlined-secondary"
+                label=''
+                id='outlined-secondary'
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 multiline
                 rows={3}
-                margin="normal"
+                margin='normal'
                 value={peerOpporunityInfo}
                 inputRef={opportunityValueRef}
                 onChange={() =>
@@ -491,8 +490,8 @@ const SinglePlayerNotesComparison = ({
               />
             </>
           ) : (
-            <Box fontStyle="italic">
-              <Typography style={{ color: "#FC6D78" }}>
+            <Box fontStyle='italic'>
+              <Typography style={{ color: '#FC6D78' }}>
                 Your peer did not pin here.
               </Typography>
             </Box>

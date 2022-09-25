@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Grid } from "@material-ui/core";
-import ReactPlayer from "react-player";
-import ColorLibAudioPlayer from "../../layout/ColorLibComponents/ColorLibAudioPlayer";
-import { formatTime, generatePushId } from "../../../helper/index";
-import { useSelector } from "react-redux";
+import React, { useRef, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Grid } from '@material-ui/core';
+import ReactPlayer from 'react-player';
+import ColorLibAudioPlayer from '../../layout/ColorLibComponents/ColorLibAudioPlayer';
+import { formatTime, generatePushId } from '../../../helper/index';
+import { useSelector } from 'react-redux';
 
 // context
 import {
@@ -12,20 +12,21 @@ import {
   useSessionValue,
   usePinsValue,
   useSinglePlayerPinsValue,
-} from "../../../context";
-import { useEffect } from "react";
+  useSinglePlayerSessionValue,
+} from '../../../context';
+import { useEffect } from 'react';
 
 // firebase hook
-import { usePins, useMediaURL } from "../../../hooks/index";
-import { firebase } from "../../../hooks/firebase";
-import { transcriptArr } from "../SinglePlayerModules/config";
+import { usePins, useMediaURL } from '../../../hooks/index';
+import { firebase } from '../../../hooks/firebase';
+import { transcriptArr } from '../SinglePlayerModules/config';
 
 const SinglePlayerAudioReview = ({
   curPinIndex,
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
-  disableAddPin = false,
+  disableAddPin = true,
 }) => {
   const player = useRef(null);
   const { curActiveStep } = useActiveStepValue();
@@ -37,14 +38,37 @@ const SinglePlayerAudioReview = ({
     // mediaUrl: audio,
     // mediaDuration: audioLen,
   } = useSessionValue();
-  const audio = "https://www.dropbox.com/s/vbxfztsjkcxlssd/pin_vid.m4a?dl=0";
-  const audioLen = 25;
+  const audio = 'https://www.dropbox.com/s/vbxfztsjkcxlssd/pin_vid.m4a?dl=0';
+  const [audioLen, setAudioLen] = useState(0);
   // fetch raw pin data here
   const { pins } = usePinsValue();
   //fetch user data
   const user = useSelector((state) => state.user);
   const { singlePlayerPins } = useSinglePlayerPinsValue();
-  console.log("SinglePlayerPins: ", singlePlayerPins);
+  const { singlePlayerUsername, singlePlayerSessionID } =
+    useSinglePlayerSessionValue();
+  console.log('SinglePlayerPins: ', singlePlayerPins);
+
+  const [sourceVideo, setSourceVideo] = useState(
+    'https://www.dropbox.com/s/jhlf09qloi62k6h/pin_vid.mov?dl=0'
+  );
+
+  useEffect(() => {
+    console.log(singlePlayerUsername, singlePlayerSessionID);
+    if (singlePlayerUsername && singlePlayerSessionID) {
+      firebase
+        .firestore()
+        .collection('sessions_by_usernames')
+        .doc(singlePlayerUsername)
+        .collection('sessions')
+        .doc(singlePlayerSessionID)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          setSourceVideo(data.archiveData.url);
+        });
+    }
+  }, [singlePlayerUsername, singlePlayerSessionID]);
 
   const [localTrans, setLocalTrans] = useState([]);
 
@@ -52,13 +76,13 @@ const SinglePlayerAudioReview = ({
   const fetchTranscript = async () => {
     const docRef = await firebase
       .firestore()
-      .collection("sessions")
+      .collection('sessions')
       .doc(sessionID);
     await docRef
       .get()
       .then((doc) => {
         if (doc.exists) {
-          const ts = getTimeStamp(doc.data()["transcript"]);
+          const ts = getTimeStamp(doc.data()['transcript']);
 
           for (let i = 0; i < pins.length; i++) {
             const TSIndex = binarySearch(ts, 0, ts.length, pins[i].pinTime);
@@ -71,11 +95,11 @@ const SinglePlayerAudioReview = ({
           setLocalTrans(ts);
         } else {
           // doc.data() will be undefined in this case
-          console.log("No such document!");
+          console.log('No such document!');
         }
       })
       .catch((error) => {
-        console.log("Error getting document:", error);
+        console.log('Error getting document:', error);
       });
   };
 
@@ -89,7 +113,7 @@ const SinglePlayerAudioReview = ({
     return (
       transcriptArr &&
       transcriptArr.map((transcriptString) => {
-        var index = transcriptString.indexOf("-");
+        var index = transcriptString.indexOf('-');
         if (index) {
           var tempTimeSeconds = Math.floor(
             parseInt(transcriptString.slice(0, index), 10) / 1000
@@ -104,18 +128,18 @@ const SinglePlayerAudioReview = ({
   // get document ID
   const pinID = generatePushId();
   // hard-coded sessionID here
-  const MiTrainingSessionID = "123";
+  const MiTrainingSessionID = '123';
 
   // const { mediaURL: audio, setMediaURL } = useMediaURL();
 
   const [pinBtnDisabled, setPinBtnDisabled] = useState(false);
-  const [pinBtnColor, setPinBtnColor] = useState("");
+  const [pinBtnColor, setPinBtnColor] = useState('');
   const [audioProgress, setAudioProgress] = useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
 
   const [loadURL, setLoadURL] = useState(false);
   useEffect(() => {
-    console.log("Audio from AudioReview useEffect" + audio);
+    console.log('Audio from AudioReview useEffect' + audio);
   }, []);
 
   let playTimeArr = singlePlayerPins.map((pin) => pin.pinTime);
@@ -123,23 +147,23 @@ const SinglePlayerAudioReview = ({
   const getDBMediaURL = async () => {
     const docRef = await firebase
       .firestore()
-      .collection("sessions")
+      .collection('sessions')
       .doc(sessionID);
     docRef.get().then((doc) => {
       if (doc.exists) {
-        if (doc.data().media_url != "default") {
-          console.log("caller db mediaURL getter:" + doc.data().media_url);
+        if (doc.data().media_url != 'default') {
+          console.log('caller db mediaURL getter:' + doc.data().media_url);
           setMediaDuration(doc.data().duration);
           setMediaUrl(doc.data().media_url);
           return doc.data().media_url;
         } else {
           //MAYBE DO SOMETHING HERE TO INDICATE THAT URL IS NOT LOADED YET
-          console.log("URL is not set yet");
-          return "default";
+          console.log('URL is not set yet');
+          return 'default';
         }
       } else {
         // doc.data() will be undefined in this case
-        console.log("No such document!");
+        console.log('No such document!');
       }
     });
   };
@@ -159,9 +183,9 @@ const SinglePlayerAudioReview = ({
 
   // go to next pin
   const handleNextPin = (index, remove = false) => {
-    console.log("interesting: " + curPinIndex + " length: " + pins.length);
+    console.log('interesting: ' + curPinIndex + ' length: ' + pins.length);
     if (curPinIndex < pins.length - 1) {
-      console.log("Index: " + index);
+      console.log('Index: ' + index);
       if (!remove) {
         player.current.seekTo(
           parseFloat(pins.map((pin) => pin.pinTime)[index])
@@ -179,7 +203,7 @@ const SinglePlayerAudioReview = ({
   const addPin = async (curTime) => {
     // ui on
     setPinBtnDisabled(true);
-    setPinBtnColor("primary");
+    setPinBtnColor('primary');
     // ui off
     setTimeout(() => {
       setPinBtnDisabled(false);
@@ -189,22 +213,22 @@ const SinglePlayerAudioReview = ({
 
     //create a newPin object to house pin details
     const newSinglePlayerPin = {
-      pinID: "",
+      pinID: '',
       creatorID: user.userID,
       creatorMode: user.userMode,
       pinTime: curTime,
-      callerPinNote: "",
-      callerPinPerspective: "",
-      callerPinCategory: "",
-      callerPinSkill: "",
-      calleePinNote: "",
-      calleePinPerspective: "",
-      calleePinCategory: "",
-      calleePinSkill: "",
-      pinEfficacy: "",
-      pinGoal: "",
-      pinStrength: "",
-      pinOpportunity: "",
+      callerPinNote: '',
+      callerPinPerspective: '',
+      callerPinCategory: '',
+      callerPinSkill: '',
+      calleePinNote: '',
+      calleePinPerspective: '',
+      calleePinCategory: '',
+      calleePinSkill: '',
+      pinEfficacy: '',
+      pinGoal: '',
+      pinStrength: '',
+      pinOpportunity: '',
       transcriptindex: TSIndex,
     };
 
@@ -218,11 +242,11 @@ const SinglePlayerAudioReview = ({
 
   const deletePin = async (index) => {
     singlePlayerPins.splice(index, 1);
-    console.log("Document successfully deleted!");
+    console.log('Document successfully deleted!');
 
     // ui on
     setPinBtnDisabled(true);
-    setPinBtnColor("secondary");
+    setPinBtnColor('secondary');
     // ui off
     setTimeout(() => {
       setPinBtnDisabled(false);
@@ -264,7 +288,7 @@ const SinglePlayerAudioReview = ({
 
   const handleAudioProgress = (currentTime) => {
     setAudioProgress(currentTime);
-    console.log("Current Time in AR: " + currentTime);
+    console.log('Current Time in AR: ' + currentTime);
     if (player.current != null) {
       player.current.seekTo(currentTime);
     }
@@ -272,7 +296,7 @@ const SinglePlayerAudioReview = ({
     const newIndex = singlePlayerPins.findIndex(
       (elem) => elem.pinTime > currentTime
     );
-    console.log("New Index: " + newIndex);
+    console.log('New Index: ' + newIndex);
     if (newIndex == -1) {
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(singlePlayerPins.length - 1);
@@ -316,12 +340,12 @@ const SinglePlayerAudioReview = ({
   return (
     <Grid item xs={12}>
       {curActiveStep === 2 ? (
-        <Typography variant="h6">
+        <Typography variant='h6'>
           Listen back to the session, add pins, and take notes to discuss with
           your peer.
         </Typography>
       ) : (
-        <Typography variant="h6">
+        <Typography variant='h6'>
           Review Your Peer’s Pins and Give Comments
         </Typography>
       )}
@@ -341,12 +365,15 @@ const SinglePlayerAudioReview = ({
         hidden
         playing={audioPlaying}
         ref={player}
-        url={audio}
+        url={sourceVideo}
         controls={true}
-        width="100%"
-        height="55px"
+        width='100%'
+        height='55px'
         style={{ marginBottom: 8 }}
         onProgress={handleProgress}
+        onDuration={(duration) => {
+          setAudioLen(Math.round(duration));
+        }}
       />
     </Grid>
   );
