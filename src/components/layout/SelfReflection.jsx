@@ -11,7 +11,6 @@ import ColorLibTextField from './ColorLibComponents/ColorLibTextField';
 import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 
 import firebase from 'firebase';
-//import { useSessionValue } from '../../context';
 import { reset } from '../Store';
 
 const getPageTitle = (page) => {
