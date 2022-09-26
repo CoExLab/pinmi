@@ -12,6 +12,7 @@ import {
   SinglePlayerSessionProvider,
 } from './context/index';
 import Authentication from './components/layout/Authentication';
+import Review from './components/layout/Review';
 import Landing from './components/layout/Landing';
 import Home from './components/layout/Home';
 import Content from './components/layout/Content';
@@ -148,6 +149,7 @@ const App = () => {
                               component={CORsTestButtons}
                             />
                             <Route exact path='/content' component={Content} />
+                            <Route exact path='/review' component={Review} />
                           </PinsProvider>
                         </SinglePlayerSessionProvider>
                       </SinglePlayerPinsProvider>

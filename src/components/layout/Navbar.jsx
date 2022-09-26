@@ -59,7 +59,7 @@ export default function ButtonAppBar() {
           >
             Project
           </ColorLibButton>
-          {['Practice', 'Review'].map((label) => (
+          {/* {['Practice'].map((label) => (
             <ColorLibButton
               variant='text'
               size='small'
@@ -68,7 +68,7 @@ export default function ButtonAppBar() {
             >
               {label}
             </ColorLibButton>
-          ))}
+          ))} */}
           {/* <ColorLibButton 
             variant="outlined" 
             size="small" 
@@ -78,6 +78,17 @@ export default function ButtonAppBar() {
           >
             Message
           </ColorLibButton> */}
+
+          {user !== null && user !== undefined && (
+            <ColorLibButton
+              variant='text'
+              size='small'
+              className={classes.navbar_button}
+              href='/review'
+            >
+              Review
+            </ColorLibButton>
+          )}
 
           <ColorLibButton
             variant='outlined'

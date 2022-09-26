@@ -201,6 +201,8 @@ const SinglePlayerAudioReview = ({
   };
 
   const addPin = async (curTime) => {
+    if (disableAddPin) return;
+
     // ui on
     setPinBtnDisabled(true);
     setPinBtnColor('primary');
@@ -358,7 +360,8 @@ const SinglePlayerAudioReview = ({
         marks={singlePlayerPins.map((pin) => {
           return { pinTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
-        addPin={!disableAddPin && addPin}
+        addPin={addPin}
+        hideAddPin={true}
         curPinIndex={curPinIndex}
       />
       <ReactPlayer

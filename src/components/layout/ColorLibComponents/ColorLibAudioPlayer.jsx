@@ -1,4 +1,4 @@
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles';
 import {
   Grid,
   Icon,
@@ -6,14 +6,14 @@ import {
   Paper,
   Slider,
   Typography,
-} from "@material-ui/core";
+} from '@material-ui/core';
 
-import Forward10Icon from "@material-ui/icons/Forward10";
-import Replay10Icon from "@material-ui/icons/Replay10";
-import PauseRoundedIcon from "@material-ui/icons/PauseRounded";
-import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
+import Forward10Icon from '@material-ui/icons/Forward10';
+import Replay10Icon from '@material-ui/icons/Replay10';
+import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 
-import pin from "../../../other/pin.svg";
+import pin from '../../../other/pin.svg';
 
 const displayTime = (secs) => {
   let minutes = Math.floor(secs / 60);
@@ -29,12 +29,12 @@ const getIconByPlayerStatus = (playerStatus, setPlayerStatus) => {
   const PlayerIconButton = withStyles((theme) => ({
     root: {
       color: theme.palette.teal.main,
-      padding: "0px",
+      padding: '0px',
     },
     label: {
-      "& .MuiSvgIcon-root": {
-        width: "80px",
-        height: "80px",
+      '& .MuiSvgIcon-root': {
+        width: '80px',
+        height: '80px',
       },
     },
   }))(IconButton);
@@ -48,43 +48,43 @@ const getIconByPlayerStatus = (playerStatus, setPlayerStatus) => {
 
 const AudioSlider = withStyles((theme, index) => ({
   marked: {
-    marginBottom: "0px",
+    marginBottom: '0px',
   },
   thumb: {
-    borderRadius: "0",
-    color: "black",
-    height: "48px",
-    marginTop: "-23px",
-    marginLeft: "-2px",
-    width: "4px",
-    boxShadow: "none !important",
-    "&::after": {
-      top: "0px",
-      left: "0px",
-      right: "0px",
-      bottom: "0px",
+    borderRadius: '0',
+    color: 'black',
+    height: '48px',
+    marginTop: '-23px',
+    marginLeft: '-2px',
+    width: '4px',
+    boxShadow: 'none !important',
+    '&::after': {
+      top: '0px',
+      left: '0px',
+      right: '0px',
+      bottom: '0px',
     },
   },
   root: {
-    height: "6px",
+    height: '6px',
   },
   rail: {
-    height: "6px",
+    height: '6px',
     color: theme.palette.teal.light,
-    opacity: "100%",
+    opacity: '100%',
   },
   track: {
-    height: "6px",
+    height: '6px',
     color: theme.palette.teal.main,
-    borderRadius: "6px",
+    borderRadius: '6px',
   },
   mark: {
-    height: "14px",
-    width: "14px",
-    borderRadius: "14px",
+    height: '14px',
+    width: '14px',
+    borderRadius: '14px',
     backgroundColor: theme.palette.pink.main,
-    marginTop: "-4px",
-    marginLeft: "-4px",
+    marginTop: '-4px',
+    marginLeft: '-4px',
     zIndex: 1,
   },
   markActive: {
@@ -92,14 +92,14 @@ const AudioSlider = withStyles((theme, index) => ({
     backgroundColor: theme.palette.pink.dark,
   },
   markLabel: {
-    top: "inherit",
-    transform: "none",
-    height: "6px",
-    width: "100%",
-    borderRadius: "6px",
+    top: 'inherit',
+    transform: 'none',
+    height: '6px',
+    width: '100%',
+    borderRadius: '6px',
     // left: "0 !important",
     opacity: 0.6,
-    lineHeight: "30px",
+    lineHeight: '30px',
   },
 }))(Slider);
 
@@ -110,6 +110,7 @@ const ColorLibAudioPlayer = ({
   setCurrentTime,
   duration,
   marks, // List of integers, each in seconds
+  hideAddPin = false,
   addPin = null,
   curPinIndex = null,
 }) => {
@@ -118,27 +119,27 @@ const ColorLibAudioPlayer = ({
   const JumpIconButton = withStyles((theme) => ({
     root: {
       color: theme.palette.teal.main,
-      padding: "10px",
+      padding: '10px',
     },
     label: {
-      "& .MuiSvgIcon-root": {
-        width: "40px",
-        height: "40px",
+      '& .MuiSvgIcon-root': {
+        width: '40px',
+        height: '40px',
       },
     },
   }))(IconButton);
 
   const PinIconButton = withStyles((theme) => ({
     root: {
-      padding: "15px",
-      boxShadow: "0px 6px 8px rgba(51, 126, 146, 0.25)",
-      border: "1.5px solid",
+      padding: '15px',
+      boxShadow: '0px 6px 8px rgba(51, 126, 146, 0.25)',
+      border: '1.5px solid',
       borderColor: theme.palette.teal.lighter,
     },
     label: {
-      "& .MuiIcon-root": {
-        width: "27px",
-        height: "27px",
+      '& .MuiIcon-root': {
+        width: '27px',
+        height: '27px',
       },
     },
   }))(IconButton);
@@ -146,8 +147,8 @@ const ColorLibAudioPlayer = ({
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
   const pinMarks = marks.map((m, index) => {
-    const markTime = m.pinTime
-    const markCreatorMode = m.creatorMode
+    const markTime = m.pinTime;
+    const markCreatorMode = m.creatorMode;
     console.log(m);
 
     const centerPercentage = (markTime / duration) * 100;
@@ -169,19 +170,19 @@ const ColorLibAudioPlayer = ({
         <>
           <div
             style={{
-              height: "6px",
-              position: "relative",
+              height: '6px',
+              position: 'relative',
               left: `calc(${left}%)`,
               width: `${rightNewWidth}%`,
-              borderRadius: "6px",
-              backgroundColor: "#FDA2A9",
+              borderRadius: '6px',
+              backgroundColor: '#FDA2A9',
             }}
           />
           <div
             style={{
               marginRight: `calc(${leftPercentage}% + 3px)`,
               width: `calc(${widthPercentage}%)`,
-              color: markCreatorMode == "callee" ? "#FDA2A9" : "black"
+              color: markCreatorMode == 'callee' ? '#FDA2A9' : 'black',
             }}
           >
             {index + 1}
@@ -193,14 +194,14 @@ const ColorLibAudioPlayer = ({
 
   return (
     <Paper
-      variant="outlined"
-      style={{ padding: "10px 10px 20px 10px", marginTop: 10 }}
+      variant='outlined'
+      style={{ padding: '10px 10px 20px 10px', marginTop: 10 }}
     >
       <Grid container>
         <Grid
           item
           xs={1}
-          style={{ alignItems: "center", justifyContent: "center" }}
+          style={{ alignItems: 'center', justifyContent: 'center' }}
         >
           {getIconByPlayerStatus(playerStatus, setPlayerStatus)}
         </Grid>
@@ -208,12 +209,12 @@ const ColorLibAudioPlayer = ({
         <Grid
           item
           xs={1}
-          style={{ alignItems: "center", justifyContent: "center" }}
+          style={{ alignItems: 'center', justifyContent: 'center' }}
         >
-          <Typography variant="body2">{displayTime(currentTime)}</Typography>
+          <Typography variant='body2'>{displayTime(currentTime)}</Typography>
         </Grid>
 
-        <Grid item xs={9} style={{ alignItems: "center" }}>
+        <Grid item xs={9} style={{ alignItems: 'center' }}>
           <AudioSlider
             value={currentTime}
             onChange={(event, newValue) => {
@@ -228,18 +229,18 @@ const ColorLibAudioPlayer = ({
         <Grid
           item
           xs={1}
-          style={{ alignItems: "center", justifyContent: "center" }}
+          style={{ alignItems: 'center', justifyContent: 'center' }}
         >
-          <Typography variant="body2">{displayTime(duration)}</Typography>
+          <Typography variant='body2'>{displayTime(duration)}</Typography>
         </Grid>
       </Grid>
 
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: "-15px",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: '-15px',
         }}
       >
         <JumpIconButton
@@ -247,11 +248,13 @@ const ColorLibAudioPlayer = ({
         >
           <Replay10Icon />
         </JumpIconButton>
-        <PinIconButton onClick={() => addPin(currentTime)}>
-          <Icon>
-            <img src={pin} alt="pin" style={{ height: "100%" }} />
-          </Icon>
-        </PinIconButton>
+        {hideAddPin !== true && (
+          <PinIconButton onClick={() => addPin(currentTime)}>
+            <Icon>
+              <img src={pin} alt='pin' style={{ height: '100%' }} />
+            </Icon>
+          </PinIconButton>
+        )}
         <JumpIconButton
           onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}
         >

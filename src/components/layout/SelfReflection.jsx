@@ -13,6 +13,8 @@ import ColorLibPaper from './ColorLibComponents/ColorLibPaper';
 import firebase from 'firebase';
 import { reset } from '../Store';
 
+import { useUser } from '../../context/userContext';
+
 const getPageTitle = (page) => {
   switch (page) {
     case 0:
@@ -96,6 +98,8 @@ const SelfReflection = () => {
   const session = useSelector((state) => state.session);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const { user: firebaseUser, userSessionId } = useUser();
 
   const [page, setPage] = useState(0);
 
@@ -258,6 +262,20 @@ const SelfReflection = () => {
     //     practice: practice,
     //     additional: addReflect,
     //   });
+
+    await firebase
+      .firestore()
+      .collection('singleplayer')
+      .doc(firebaseUser.uid)
+      .collection('sessions')
+      .doc(userSessionId)
+      .set(
+        {
+          completed: true,
+        },
+        { merge: true }
+      );
+
     dispatch(reset());
     document.location.href = '/completion';
   };

@@ -49,7 +49,6 @@ function getSPStepContent(step) {
 
 const Modules = () => {
   const { sessionID } = useSessionValue();
-  console.log(sessionID);
   const { curActiveStep } = useActiveStepValue();
   // const { playerMode } = usePlayerModeValue();
   const playerMode = 'singleplayer';

@@ -147,10 +147,12 @@ const Landing = () => {
       .set(
         {
           firebaseUserId: firebaseUser.uid,
+          firebaseUserEmail: firebaseUser.email,
         },
         { merge: true }
       );
 
+    let date = new Date();
     await firebase
       .firestore()
       .collection('singleplayer')
@@ -159,6 +161,11 @@ const Landing = () => {
       .add({
         refUsername: tempUserId,
         refSessionID: tempSessionID,
+        date:
+          date.toLocaleDateString('en-US') +
+          ' ' +
+          date.toLocaleTimeString('en-US'),
+        completed: false,
       })
       .then((doc) => {
         // console.log(doc);
