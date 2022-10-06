@@ -26,6 +26,7 @@ const SinglePlayerAudioReview = ({
   setCurPinIndex,
   prevPinIndex,
   setPrevPinIndex,
+  allPins = [],
   disableAddPin = true,
 }) => {
   const player = useRef(null);
@@ -339,6 +340,10 @@ const SinglePlayerAudioReview = ({
     return -1;
   };
 
+  if (allPins.length === 0) {
+    allPins = singlePlayerPins;
+  }
+
   return (
     <Grid item xs={12}>
       {curActiveStep === 2 ? (
@@ -357,7 +362,7 @@ const SinglePlayerAudioReview = ({
         currentTime={audioProgress}
         setCurrentTime={handleAudioProgress}
         duration={audioLen}
-        marks={singlePlayerPins.map((pin) => {
+        marks={allPins.map((pin) => {
           return { pinTime: pin.pinTime, creatorMode: pin.creatorMode };
         })}
         addPin={addPin}

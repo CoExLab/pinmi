@@ -82,6 +82,7 @@ const SinglePlayerNotesComparison = ({
   prevPinIndex,
   setPrevPinIndex,
   peerPins,
+  singlePlayerPins,
 }) => {
   // user mode switcher
   const user = useSelector((state) => state.user);
@@ -97,7 +98,7 @@ const SinglePlayerNotesComparison = ({
   //get sessionID
   const { sessionID } = useSessionValue();
 
-  const { singlePlayerPins } = useSinglePlayerPinsValue();
+  // const { singlePlayerPins } = useSinglePlayerPinsValue();
   const [peerPin, setPeerPin] = useState();
 
   // // fetch raw pin data here
@@ -165,23 +166,30 @@ const SinglePlayerNotesComparison = ({
   const fetchPeerPins = async () => {
     let curPin = singlePlayerPins[curPinIndex];
     console.log(curPin);
-    let TSIndex = curPin.transcriptindex;
 
-    let peerPin = peerPins.find((e) => e.transcriptindex == TSIndex);
-    setPeerPin(peerPin);
-    console.log('CUR PINS TS: ', TSIndex);
+    let _peerPin = null;
+    if (curPin.peer === false) {
+      let TSIndex = curPin.transcriptindex;
 
-    if (!peerPin) {
+      _peerPin = peerPins.find((e) => e.transcriptindex == TSIndex);
+      setPeerPin(_peerPin);
+      console.log('CUR PINS TS: ', TSIndex);
+    } else {
+      _peerPin = curPin;
+      setPeerPin(_peerPin);
+    }
+
+    if (!_peerPin) {
       console.log('No peer pin matched');
     } else {
-      setCurPerspectiveInfo2(peerPin['calleePinPerspective']);
-      setPinType2(peerPin['calleePinCategory']);
-      setCurSkillInfo2(peerPin['calleePinSkill']);
-      setPeerNoteInfo(peerPin['calleePinNote']);
-      setPeerGoalInfo(peerPin['pinGoal']);
-      setPeerStrengthInfo(peerPin['pinStrength']);
-      setPeerOpportunityInfo(peerPin['pinOpportunity']);
-      console.log('Peer PINS TS: ', peerPin.transcriptindex);
+      setCurPerspectiveInfo2(_peerPin['calleePinPerspective']);
+      setPinType2(_peerPin['calleePinCategory']);
+      setCurSkillInfo2(_peerPin['calleePinSkill']);
+      setPeerNoteInfo(_peerPin['calleePinNote']);
+      setPeerGoalInfo(_peerPin['pinGoal']);
+      setPeerStrengthInfo(_peerPin['pinStrength']);
+      setPeerOpportunityInfo(_peerPin['pinOpportunity']);
+      console.log('Peer PINS TS: ', _peerPin.transcriptindex);
     }
   };
 
@@ -197,53 +205,6 @@ const SinglePlayerNotesComparison = ({
     setCurSkillInfo1(curPin.calleePinSkill);
   };
 
-  const handlePrevPin = () => {
-    setPrevPinIndex(curPinIndex);
-    setCurPinIndex(curPinIndex - 1);
-  };
-
-  const handleNextPin = () => {
-    setPrevPinIndex(curPinIndex);
-    setCurPinIndex(curPinIndex + 1);
-  };
-
-  const PinNavButtons = () => {
-    if (curPinIndex === -1) return null;
-    const prev = (
-      <ColorLibBackButton
-        style={{ margin: '0px 8px' }}
-        variant='contained'
-        size='small'
-        onClick={handlePrevPin}
-      >
-        Prev Pin
-      </ColorLibBackButton>
-    );
-    const next = (
-      <ColorLibNextButton
-        style={{ margin: '0px 8px' }}
-        variant='contained'
-        size='small'
-        onClick={handleNextPin}
-      >
-        Next Pin
-      </ColorLibNextButton>
-    );
-
-    if (curPinIndex === 0) {
-      return next;
-    }
-    if (curPinIndex === singlePlayerPins.length - 1) {
-      return prev;
-    }
-    return (
-      <Fragment>
-        {' '}
-        {prev} {next}{' '}
-      </Fragment>
-    );
-  };
-
   return (
     <>
       <Grid item xs className={classes.grid}>
@@ -251,119 +212,137 @@ const SinglePlayerNotesComparison = ({
           <Typography variant='h4' style={{ textTransform: 'capitalize' }}>
             Your Pin Notes
           </Typography>
-          {curPinIndex !== -1 ? (
+
+          {singlePlayerPins[curPinIndex].peer !== true ? (
+            <>
+              {curPinIndex !== -1 ? (
+                <Box fontStyle='italic'>
+                  <Typography>
+                    The session was pinned at{' '}
+                    {formatTime(
+                      singlePlayerPins.map((pin) => pin.pinTime)[curPinIndex]
+                    )}
+                  </Typography>
+                </Box>
+              ) : null}
+              <ColorLibTextField
+                disabled
+                id='outlined-secondary'
+                label='Personal Notes...'
+                fullWidth
+                variant='outlined'
+                multiline
+                rows={3}
+                margin='normal'
+                value={curNoteInfo}
+              />
+              <Box textAlign='left'>
+                <Typography>
+                  What is your perspective of what happened at this pin?
+                </Typography>
+              </Box>
+              <ColorLibTextField
+                disabled
+                label=''
+                id='outlined-secondary'
+                fullWidth
+                variant='outlined'
+                multiline
+                rows={2}
+                margin='normal'
+                value={curPerspectiveInfo1}
+              />
+              <Box textAlign='left'>
+                <Typography>What would you categorize this pin as?</Typography>
+              </Box>
+
+              <Box align='left'>
+                <ToggleButtonGroup
+                  disabled
+                  className={classes.toggleGroup}
+                  value={pinType1}
+                  exclusive
+                  size='large'
+                >
+                  <ToggleButton
+                    value='strength'
+                    selected={pinType1 === 'strength'}
+                  >
+                    Strength
+                  </ToggleButton>
+                  <ToggleButton
+                    value='opportunity'
+                    selected={pinType1 === 'opportunity'}
+                  >
+                    Opportunity
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <Box textAlign='left'>
+                <Typography>
+                  What was the goal during the pinned situation?
+                </Typography>
+              </Box>
+              <ColorLibTextField
+                disabled
+                label=''
+                id='outlined-secondary'
+                fullWidth
+                variant='outlined'
+                multiline
+                rows={3}
+                margin='normal'
+                value={curGoalInfo}
+                inputRef={goalValueRef}
+                onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+              />
+
+              <Box textAlign='left'>
+                <Typography>What worked well to achieve the goal?</Typography>
+              </Box>
+              <ColorLibTextField
+                disabled
+                label=''
+                id='outlined-secondary'
+                fullWidth
+                variant='outlined'
+                multiline
+                rows={3}
+                margin='normal'
+                value={curStrengthInfo}
+                inputRef={strengthValueRef}
+                onChange={() =>
+                  setCurStrengthInfo(strengthValueRef.current.value)
+                }
+              />
+              <Box textAlign='left'>
+                <Typography>
+                  What could be improved to achieve the goal?
+                </Typography>
+              </Box>
+              <ColorLibTextField
+                disabled
+                label=''
+                id='outlined-secondary'
+                fullWidth
+                variant='outlined'
+                multiline
+                rows={3}
+                margin='normal'
+                value={curOpporunityInfo}
+                inputRef={opportunityValueRef}
+                onChange={() =>
+                  setCurOpportunityInfo(opportunityValueRef.current.value)
+                }
+              />
+            </>
+          ) : (
             <Box fontStyle='italic'>
-              <Typography>
-                The session was pinned at{' '}
-                {formatTime(
-                  singlePlayerPins.map((pin) => pin.pinTime)[curPinIndex]
-                )}
+              <Typography style={{ color: '#FC6D78' }}>
+                You did not pin here.
               </Typography>
             </Box>
-          ) : null}
-          <ColorLibTextField
-            disabled
-            id='outlined-secondary'
-            label='Personal Notes...'
-            fullWidth
-            variant='outlined'
-            multiline
-            rows={3}
-            margin='normal'
-            value={curNoteInfo}
-          />
-          <Box textAlign='left'>
-            <Typography>
-              What is your perspective of what happened at this pin?
-            </Typography>
-          </Box>
-          <ColorLibTextField
-            disabled
-            label=''
-            id='outlined-secondary'
-            fullWidth
-            variant='outlined'
-            multiline
-            rows={2}
-            margin='normal'
-            value={curPerspectiveInfo1}
-          />
-          <Box textAlign='left'>
-            <Typography>What would you categorize this pin as?</Typography>
-          </Box>
-
-          <Box align='left'>
-            <ToggleButtonGroup
-              disabled
-              className={classes.toggleGroup}
-              value={pinType1}
-              exclusive
-              size='large'
-            >
-              <ToggleButton value='strength' selected={pinType1 === 'strength'}>
-                Strength
-              </ToggleButton>
-              <ToggleButton
-                value='opportunity'
-                selected={pinType1 === 'opportunity'}
-              >
-                Opportunity
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box textAlign='left'>
-            <Typography>
-              What was the goal during the pinned situation?
-            </Typography>
-          </Box>
-          <ColorLibTextField
-            disabled
-            label=''
-            id='outlined-secondary'
-            fullWidth
-            variant='outlined'
-            multiline
-            rows={3}
-            margin='normal'
-            value={curGoalInfo}
-            inputRef={goalValueRef}
-            onChange={() => setCurGoalInfo(goalValueRef.current.value)}
-          />
-
-          <Box textAlign='left'>
-            <Typography>What worked well to achieve the goal?</Typography>
-          </Box>
-          <ColorLibTextField
-            disabled
-            label=''
-            id='outlined-secondary'
-            fullWidth
-            variant='outlined'
-            multiline
-            rows={3}
-            margin='normal'
-            value={curStrengthInfo}
-            inputRef={strengthValueRef}
-            onChange={() => setCurStrengthInfo(strengthValueRef.current.value)}
-          />
-          <Box textAlign='left'>
-            <Typography>What could be improved to achieve the goal?</Typography>
-          </Box>
-          <ColorLibTextField
-            disabled
-            label=''
-            id='outlined-secondary'
-            fullWidth
-            variant='outlined'
-            multiline
-            rows={3}
-            margin='normal'
-            value={curOpporunityInfo}
-            inputRef={opportunityValueRef}
-            onChange={() =>
-              setCurOpportunityInfo(opportunityValueRef.current.value)
-            }
-          />
+          )}
         </ColorLibPaper>
       </Grid>
       <Grid item xs>

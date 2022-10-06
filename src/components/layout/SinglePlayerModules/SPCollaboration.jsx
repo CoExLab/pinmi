@@ -26,6 +26,8 @@ import SinglePlayerTranscript from '../SinglePlayerComponents/SinglePlayerTransc
 import SinglePlayerAudioReview from '../SinglePlayerComponents/SinglePlayerAudioReview';
 import { firebase } from '../../../hooks/firebase';
 
+import { sortBy } from 'lodash';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -93,6 +95,8 @@ const SPCollaboration = ({
     useSinglePlayerSessionValue();
   const { singlePlayerPins } = useSinglePlayerPinsValue();
   const [peerPins, setPeerPins] = useState([]);
+
+  const [allPins, setAllPins] = useState([]);
 
   useEffect(() => {
     addPeerPins();
@@ -169,8 +173,22 @@ const SPCollaboration = ({
             transcript.length,
             d.data().pinTime
           );
-          peerPins.push({ ...d.data(), transcriptindex: TSIndex });
+          peerPins.push({ ...d.data(), transcriptindex: TSIndex, peer: true });
         });
+
+        let _allPins = sortBy(
+          [
+            ...singlePlayerPins.map((p) => ({
+              ...p,
+              // pinTime: p.pinTime + 60,
+              peer: false,
+            })),
+            ...peerPins,
+          ],
+          'pinTime'
+        );
+        setAllPins(_allPins);
+        console.log(_allPins);
       });
   };
   // const [room, setRoom] = useState("hello");
@@ -217,7 +235,7 @@ const SPCollaboration = ({
     if (curPinIndex === 0) {
       return next;
     }
-    if (curPinIndex === singlePlayerPins.length - 1) {
+    if (curPinIndex === allPins.length - 1) {
       return prev;
     }
     return (
@@ -227,6 +245,8 @@ const SPCollaboration = ({
       </Fragment>
     );
   };
+
+  if (allPins.length === 0) return null;
 
   return (
     <div className={classes.root}>
@@ -238,6 +258,7 @@ const SPCollaboration = ({
             prevPinIndex={prevPinIndex}
             setPrevPinIndex={setPrevPinIndex}
             disableAddPin
+            allPins={allPins}
           />
           <Grid item xs={12}>
             <Box align='center' m={2} mb={5}>
@@ -250,8 +271,7 @@ const SPCollaboration = ({
         <Grid container spacing={2} className={classes.grid}>
           <SinglePlayerTranscript
             selectedIndex={
-              singlePlayerPins[curPinIndex] &&
-              singlePlayerPins[curPinIndex].transcriptindex
+              allPins[curPinIndex] && allPins[curPinIndex].transcriptindex
             }
           />
           <Grid item xs={8} className={classes.grid}>
@@ -266,6 +286,7 @@ const SPCollaboration = ({
                 prevPinIndex={prevPinIndex}
                 setPrevPinIndex={setPrevPinIndex}
                 peerPins={peerPins}
+                singlePlayerPins={allPins}
               />
             </Grid>
           </Grid>
