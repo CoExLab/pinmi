@@ -182,7 +182,7 @@ const Home = () => {
           <br />
         </>
       ),
-      alt: 'Discussion Prep Interface',
+      alt: 'Self-Reflection Prep Interface',
     },
     {
       header: '',

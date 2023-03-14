@@ -515,8 +515,11 @@ function VideoChatComponent(props) {
       .then(function (res) {
         console.log('got server info');
         setApiKey(res.apiKey);
+        // console.log('set api key');
         setSessionId(res.sessionId);
+        // console.log('set sessionId');
         setToken(res.token);
+        // console.log('set token');
         //tells the server that the user entered the room.
         enterRoom(user.userMode, res.sessionId);
       })
@@ -670,6 +673,7 @@ function VideoChatComponent(props) {
       .doc(session.sessionID)
       .update({
         archiveData: archiveData,
+        step: 1,
       })
       .then(() => console.log('archiveData Added to DB for :' + session.sessionID))
       .catch(e => {

@@ -96,6 +96,7 @@ const Landing = ({ justchat }) => {
 
   const [username, setUsername] = useState('');
   const [usersList, setUsersList] = useState([]);
+  const [usersResumeList, setUsersResumeList] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   const user = useSelector(state => state.user);
@@ -112,12 +113,14 @@ const Landing = ({ justchat }) => {
         querySnapshot.forEach(snapshot => {
           const _id = snapshot.id;
           const _data = snapshot.data();
+          console.log('snapshot data: ', _data);
           if (_id.match(/^\d/) && _data.curSession.length > 0) {
             _usersList.push({ id: _id, ..._data });
             let _roomId = _id.match(/\d/g).join('');
           }
+          // if(_data.userId == user)
         });
-        // console.log(_usersList);
+        console.log(_usersList);
         setUsersList(_usersList);
       });
   }, []);
@@ -261,23 +264,42 @@ const Landing = ({ justchat }) => {
 
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (
-          <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
-            <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Choose an session:</div>
-            <Select
-              value={selectedRoom}
-              onChange={e => {
-                console.log(e);
-                setSelectedRoom(e);
-                setUsername(`${firebaseUser.uid}_${e.value}`);
-              }}
-              options={usersList.map(user => {
-                const roomId = user.id;
-                const role = roomId[roomId.length - 1];
-                const roomNumber = roomId.substring(0, roomId.length - 1);
-                return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
-              })}
-            />
-          </Box>
+          <div>
+            <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+              <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Start a new session:</div>
+              <Select
+                value={selectedRoom}
+                onChange={e => {
+                  console.log(e);
+                  setSelectedRoom(e);
+                  setUsername(`${firebaseUser.uid}_${e.value}`);
+                }}
+                options={usersList.map(user => {
+                  const roomId = user.id;
+                  const role = roomId[roomId.length - 1];
+                  const roomNumber = roomId.substring(0, roomId.length - 1);
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                })}
+              />
+            </Box>
+            <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
+              <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Resume a session:</div>
+              <Select
+                value={selectedRoom}
+                onChange={e => {
+                  console.log(e);
+                  setSelectedRoom(e);
+                  setUsername(`${firebaseUser.uid}_${e.value}`);
+                }}
+                options={usersResumeList.map(user => {
+                  const roomId = user.id;
+                  const role = roomId[roomId.length - 1];
+                  const roomNumber = roomId.substring(0, roomId.length - 1);
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                })}
+              />
+            </Box>
+          </div>
         )}
         {!firebaseUser && (
           <Box m={1} display="inline">

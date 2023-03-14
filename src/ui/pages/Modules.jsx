@@ -23,10 +23,11 @@ function getStepContent(step) {
   }
 }
 
-// steps through Practice Session, Discussion Prep, Discussion, Self Reflection pages
+// steps through Practice Session, Self-Reflection Prep, Discussion, Self Reflection pages
 const Modules = () => {
   const { sessionID } = useSessionValue();
   const { curActiveStep } = useActiveStepValue();
+  // const curActiveStep = 1;
   //tbr const { pins } = usePins();
 
   return <div>{getStepContent(curActiveStep)}</div>;

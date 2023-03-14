@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography, Box, Grid } from '@material-ui/core';
+import Switch from '@mui/material/Switch';
 import { makeStyles } from '@material-ui/core/styles';
 import ColorLibPaper from '../colorLibComponents/ColorLibPaper';
 import ColorLibTextField from '../colorLibComponents/ColorLibTextField';
@@ -13,6 +14,7 @@ const useStyles = makeStyles(theme => ({
 const Transcription = () => {
   const classes = useStyles();
   const session = useSelector(state => state.session);
+  const [transVis, setTransVis] = useState(true);
 
   const [localTrans, setLocalTrans] = useState([]);
   // fetch trans data here
@@ -92,13 +94,20 @@ const Transcription = () => {
     ));
   };
 
+  const handleChange = event => {
+    setTransVis(event.target.checked);
+  };
+
   return (
     <Grid item xs={12} sm={4}>
       <ColorLibPaper>
         <Box fontStyle="italic">
           <Typography>Transcript</Typography>
+          <Switch checked={transVis} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
         </Box>
-        <Typography component="div">{renderTranscript()}</Typography>
+        <Typography component="div" style={{ visibility: transVis ? 'visible' : 'hidden' }}>
+          {renderTranscript()}
+        </Typography>
       </ColorLibPaper>
     </Grid>
   );
