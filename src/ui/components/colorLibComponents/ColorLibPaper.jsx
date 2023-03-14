@@ -18,6 +18,20 @@ const ColorLibPaper = withStyles(theme => ({
     boxShadow: 'none',
     padding: '30px',
   },
+  elevation4: {
+    // For Transcript, Notetaking, and .. by you
+    backgroundColor: '#92BFB120',
+    borderRadius: '4px',
+    boxShadow: 'none',
+    padding: '30px',
+  },
+  elevation3: {
+    // For Transcript, Notetaking, and .. by peer
+    backgroundColor: '#F4AC4520',
+    borderRadius: '4px',
+    boxShadow: 'none',
+    padding: '30px',
+  },
   elevation2: {
     // For Poppers.
     backgroundColor: 'white',
