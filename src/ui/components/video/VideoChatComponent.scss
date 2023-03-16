@@ -28,7 +28,9 @@
       position: absolute;
       bottom: 0;
       z-index: 4;
-      margin: 100px 100px;
+      left: 50%;
+      bottom: 90%;
+      // margin: 100px 100px;
     }
     .card {
       display: flex;
@@ -88,9 +90,10 @@
       justify-content: center;
       align-items: center;
       position: absolute;
-      bottom: 0;
       z-index: 4;
-      margin: 100px 100px;
+      left: 50%;
+      bottom: 90%;
+      // margin: 100px 100px;
     }
     .card {
       display: flex;

@@ -371,6 +371,35 @@ const Landing = ({ justchat }) => {
                 })}
               />
             </Box>
+          </div>
+        )}
+        {!firebaseUser && (
+          <Box m={1} display="inline">
+            <ColorLibTextField
+              id="outlined-basic"
+              label="Your Unique ID"
+              variant="outlined"
+              value={username}
+              onChange={e => {
+                setUsername(e.target.value);
+              }}
+            />
+          </Box>
+        )}
+
+        <div className={classes.button_wrapper} style={{ paddingBottom: '0px' }}>
+          <ColorLibButton
+            variant="contained"
+            size="large"
+            onClick={setUser}
+            disabled={firebaseUser !== null && selectedRoom === null}
+          >
+            Let's get started!
+          </ColorLibButton>
+        </div>
+
+        {firebaseUser && (
+          <div>
             <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
               <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Resume a session:</div>
               <Select
@@ -390,40 +419,17 @@ const Landing = ({ justchat }) => {
             </Box>
           </div>
         )}
-        {!firebaseUser && (
-          <Box m={1} display="inline">
-            <ColorLibTextField
-              id="outlined-basic"
-              label="Your Unique ID"
-              variant="outlined"
-              value={username}
-              onChange={e => {
-                setUsername(e.target.value);
-              }}
-            />
-          </Box>
-        )}
+        <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
+          <ColorLibButton
+            variant="contained"
+            size="large"
+            onClick={setResume}
+            disabled={firebaseUser !== null && resumedRoom === null}
+          >
+            Resume session
+          </ColorLibButton>
+        </div>
       </Container>
-      <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
-        <ColorLibButton
-          variant="contained"
-          size="large"
-          onClick={setUser}
-          disabled={firebaseUser !== null && selectedRoom === null}
-        >
-          Let's get started!
-        </ColorLibButton>
-      </div>
-      <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
-        <ColorLibButton
-          variant="contained"
-          size="large"
-          onClick={setResume}
-          disabled={firebaseUser !== null && resumedRoom === null}
-        >
-          Resume session
-        </ColorLibButton>
-      </div>
     </section>
   );
 };
