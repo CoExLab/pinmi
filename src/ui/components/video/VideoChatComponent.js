@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import 'firebase/firestore';
 
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from '@material-ui/icons/MicNone';
@@ -554,11 +555,29 @@ function VideoChatComponent(props) {
 
     //letting the server know that the user exited the room
     await exitRoom(user.userMode, vonageSessionID)
-      .then(() => {
+      .then(async () => {
         //     //const results = stopSpeechToTextTest();
         //     //addTranscript(results);
         //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
         //     //call to the parent to move to Loading Page
+
+        // update lastActiveTime and step
+        let date = new Date();
+        await firebase
+          .firestore()
+          .collection('users')
+          .doc(user.userRoom)
+          .update({
+            lastActiveTime: date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US'),
+            step: 1,
+          })
+          .then(() => {
+            console.log('Timestamp and step field updated successfully!');
+          })
+          .catch(error => {
+            console.error('Error updating timestamp and step field:', error);
+          });
+
         props.setNextPage(true);
       })
       .catch(error => {

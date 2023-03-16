@@ -19,7 +19,7 @@ import modal from './../../other/tutorial/modal.png';
 import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
-import { setUserID, setUserMode, setSessionID, setRecordOnly } from '../../storage/store';
+import { setUserID, setUserMode, setUserRoom, setSessionID, setRecordOnly } from '../../storage/store';
 
 import { useUser } from '../../contexts/userContext';
 import { useActiveStepValue, usePinsValue, useSessionValue } from '../../storage/context';
@@ -126,8 +126,8 @@ const Landing = ({ justchat }) => {
             let timeDiffMinutes = 100;
             if (_data.lastActiveTime) {
               const date = new Date();
-              const lastActiveTime = _data.lastActiveTime.toDate();
-              timeDiffMinutes = (date.getTime() - lastActiveTime.getTime()) / (1000 * 60);
+              const lastActiveTime = new Date(_data.lastActiveTime).getTime();
+              timeDiffMinutes = (date.getTime() - lastActiveTime) / (1000 * 60);
             }
             if (timeDiffMinutes <= 60 && _data.step > 0) {
               _resumeList.push({ id: _id, ..._data });
@@ -149,6 +149,7 @@ const Landing = ({ justchat }) => {
     console.log('username', username); // firebase user id _ 10a
     let user_id = username.split('_').pop();
     console.log('user_id', user_id); // '10a'
+    dispatch(setUserRoom(user_id));
 
     let newDoc = await firebase.firestore().collection('sessions_by_usernames').doc(username);
 
@@ -231,8 +232,7 @@ const Landing = ({ justchat }) => {
     console.log('username', username); // firebase user id _ 10a
     let user_id = username.split('_').pop();
     console.log('user_id', user_id); // '10a'
-
-    let newDoc = await firebase.firestore().collection('sessions_by_usernames').doc(username);
+    dispatch(setUserRoom(user_id));
 
     await firebase
       .firestore()
