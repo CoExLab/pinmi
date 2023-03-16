@@ -28,7 +28,6 @@
     "@testing-library/user-event": "^12.8.3",
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
-    "caniuse-lite": "^1.0.30001346",
     "firebase": "^8.10.0",
     "hark": "^1.2.3",
     "inline-worker": "^1.1.0",

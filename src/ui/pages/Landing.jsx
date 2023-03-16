@@ -22,6 +22,7 @@ import discussionPreview from './../../other/tutorial/discussionPreview.png';
 import { setUserID, setUserMode, setSessionID, setRecordOnly } from '../../storage/store';
 
 import { useUser } from '../../contexts/userContext';
+import { useActiveStepValue, usePinsValue, useSessionValue } from '../../storage/context';
 
 const useStyles = makeStyles(theme => ({
   welcome_container: {
@@ -96,11 +97,16 @@ const Landing = ({ justchat }) => {
 
   const [username, setUsername] = useState('');
   const [usersList, setUsersList] = useState([]);
-  const [usersResumeList, setUsersResumeList] = useState([]);
+  const [resumeList, setResumeList] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [resumedRoom, setResumedRoom] = useState(null);
+  const [isResumed, setIsResumed] = useState(false);
 
   const user = useSelector(state => state.user);
   const dispatch = useDispatch();
+  const { setCurActiveStep } = useActiveStepValue();
+  const { pins } = usePinsValue();
+  const { setMediaDuration, setMediaUrl } = useSessionValue();
 
   const history = useHistory();
 
@@ -110,25 +116,39 @@ const Landing = ({ justchat }) => {
       .collection('users')
       .onSnapshot(querySnapshot => {
         let _usersList = [];
+        let _resumeList = [];
         querySnapshot.forEach(snapshot => {
-          const _id = snapshot.id;
-          const _data = snapshot.data();
+          const _id = snapshot.id; // 10a
+          const _data = snapshot.data(); // {curSession, lastActiveTime, step, userID}
           console.log('snapshot data: ', _data);
           if (_id.match(/^\d/) && _data.curSession.length > 0) {
-            _usersList.push({ id: _id, ..._data });
-            let _roomId = _id.match(/\d/g).join('');
+            // check if finished
+            let timeDiffMinutes = 100;
+            if (_data.lastActiveTime) {
+              const date = new Date();
+              const lastActiveTime = _data.lastActiveTime.toDate();
+              timeDiffMinutes = (date.getTime() - lastActiveTime.getTime()) / (1000 * 60);
+            }
+            if (timeDiffMinutes <= 60 && _data.step > 0) {
+              _resumeList.push({ id: _id, ..._data });
+            } else {
+              _usersList.push({ id: _id, ..._data });
+            }
+
+            // let _roomId = _id.match(/\d/g).join('');
           }
-          // if(_data.userId == user)
         });
         console.log(_usersList);
+        console.log(_resumeList);
         setUsersList(_usersList);
+        setResumeList(_resumeList);
       });
   }, []);
 
   const setUser = async () => {
-    // console.log(username);
+    console.log('username', username); // firebase user id _ 10a
     let user_id = username.split('_').pop();
-    // console.log(user_id);
+    console.log('user_id', user_id); // '10a'
 
     let newDoc = await firebase.firestore().collection('sessions_by_usernames').doc(username);
 
@@ -147,7 +167,7 @@ const Landing = ({ justchat }) => {
       .get()
       .then(doc => {
         if (doc.exists) {
-          console.log('data: ' + doc.data().userID);
+          console.log('data: ' + doc.data());
           return doc.data();
         } else {
           console.log("User doesn't exist.");
@@ -165,6 +185,7 @@ const Landing = ({ justchat }) => {
 
     const document = firebase.firestore().collection('sessions').doc(tempSessionID);
 
+    // to clean up data from last session
     await document
       .collection('pins')
       .get()
@@ -204,6 +225,74 @@ const Landing = ({ justchat }) => {
     dispatch(setRecordOnly(justchat === true));
     //dispatch(setUserMode(tempUserMode));
     history.push('/content');
+  };
+
+  const setResume = async () => {
+    console.log('username', username); // firebase user id _ 10a
+    let user_id = username.split('_').pop();
+    console.log('user_id', user_id); // '10a'
+
+    let newDoc = await firebase.firestore().collection('sessions_by_usernames').doc(username);
+
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(user_id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          console.log('data: ' + doc.data());
+          return doc.data();
+        } else {
+          console.log("User doesn't exist.");
+        }
+      })
+      .then(async data => {
+        console.log(data.step);
+
+        const tempUserId = data.userID;
+        const tempSessionID = data.curSession;
+
+        pins.splice(0, pins.length);
+        console.log(pins);
+
+        const doc = firebase.firestore().collection('sessions').doc(tempSessionID);
+        const [pinsSnapshot, docSnapshot] = await Promise.all([doc.collection('pins').get(), doc.get()]);
+
+        pinsSnapshot.docs.map(doc => {
+          pins.push(doc.data());
+        });
+        pins.sort((a, b) => a.pinTime - b.pinTime);
+
+        setMediaUrl(docSnapshot.data().archiveData.url);
+        setMediaDuration(docSnapshot.data().archiveData.duration);
+        if (docSnapshot.data().caller_id == tempUserId) dispatch(setUserMode('caller'));
+        else dispatch(setUserMode('callee '));
+
+        // await firebase
+        //   .firestore()
+        //   .collection('sessions')
+        //   .doc(tempSessionID)
+        //   .collection('pins')
+        //   .get()
+        //   .then(snapshot => {
+        //     snapshot.docs.map(doc => {
+        //       pins.push(doc.data());
+        //     });
+        //     pins.sort((a, b) => a.pinTime - b.pinTime);
+        //   })
+        //   .then(() => {
+        //     setCurActiveStep(data.step);
+        //   })
+        //   .catch(err => console.error('Error in loadPins functions: ', err));
+
+        dispatch(setUserID(tempUserId));
+        dispatch(setSessionID(tempSessionID));
+        dispatch(setRecordOnly(justchat === true));
+
+        setCurActiveStep(data.step);
+        history.push('/content');
+      });
   };
 
   const tutorialSection = ({ text, image, alt }, index) => {
@@ -285,13 +374,13 @@ const Landing = ({ justchat }) => {
             <Box m={1} display="inline" style={{ fontFamily: 'Lato' }}>
               <div style={{ fontSize: '1.3rem', marginBottom: '12px' }}>Resume a session:</div>
               <Select
-                value={selectedRoom}
+                value={resumedRoom}
                 onChange={e => {
                   console.log(e);
-                  setSelectedRoom(e);
+                  setResumedRoom(e);
                   setUsername(`${firebaseUser.uid}_${e.value}`);
                 }}
-                options={usersResumeList.map(user => {
+                options={resumeList.map(user => {
                   const roomId = user.id;
                   const role = roomId[roomId.length - 1];
                   const roomNumber = roomId.substring(0, roomId.length - 1);
@@ -323,6 +412,16 @@ const Landing = ({ justchat }) => {
           disabled={firebaseUser !== null && selectedRoom === null}
         >
           Let's get started!
+        </ColorLibButton>
+      </div>
+      <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
+        <ColorLibButton
+          variant="contained"
+          size="large"
+          onClick={setResume}
+          disabled={firebaseUser !== null && resumedRoom === null}
+        >
+          Resume session
         </ColorLibButton>
       </div>
     </section>

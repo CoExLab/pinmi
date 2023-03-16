@@ -98,6 +98,7 @@ const DisscussionPrep = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log('pins', pins);
   }, []);
 
   //effect used to automatically save pin info to the db and move to next page
