@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import pin from '../../../other/images/pin.svg';
 
 const color = {
+  default: '#80cbc4',
   you: '#92BFB1',
   peer: '#F4AC45',
 };
@@ -106,7 +107,7 @@ const ColorLibAudioPlayer = ({
   playerStatus,
   setPlayerStatus,
   currentTime,
-  setCurrentTime,
+  setCurrentTime, // set current pin index
   duration,
   marks, // List of integers, each in seconds
   addPin = null,
@@ -146,7 +147,8 @@ const ColorLibAudioPlayer = ({
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
   const pinMarks = marks.map((m, index) => {
-    console.log(m);
+    if (index === 0) return {};
+    // console.log(m);
     const markTime = m.markTime;
     const creatorMode = m.creatorMode;
 
@@ -171,11 +173,13 @@ const ColorLibAudioPlayer = ({
               width: '20px',
               borderRadius: '20px',
               // backgroundColor: creatorMode == 'callee' ? '#FC6D78' : '#337193',
-              backgroundColor: color[creatorMode == user.userMode ? 'you' : 'peer'],
+              backgroundColor:
+                color[creatorMode == 'default' ? 'default' : creatorMode == user.userMode ? 'you' : 'peer'],
               marginTop: '-8px',
               marginLeft: '-2px',
               position: 'relative',
               zIndex: 10,
+              display: creatorMode == 'default' ? 'none' : 'flex',
             }}
           />
           {/* <div
@@ -196,11 +200,12 @@ const ColorLibAudioPlayer = ({
               marginRight: `calc(${leftPercentage}% + 3px)`,
               width: `calc(${widthPercentage}%)`,
               // color: creatorMode == 'callee' ? '#FC6D78' : '#337193',
-              color: color[creatorMode == user.userMode ? 'you' : 'peer'],
+              color: color[creatorMode == 'default' ? 'default' : creatorMode == user.userMode ? 'you' : 'peer'],
               fontSize: '22px',
+              display: creatorMode == 'default' ? 'none' : 'flex',
             }}
           >
-            {index + 1}
+            {index}
           </div>
         </>
       ),
