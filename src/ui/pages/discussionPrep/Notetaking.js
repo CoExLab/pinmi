@@ -157,8 +157,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     setCurPerspectiveInfo(perspectiveValueRef.current.value);
     // setCurSkillInfo(skillValueRef.current.value);
 
-    console.log('Current note: ' + curNoteInfo); // "" if no pin
-    console.log('Perspective info: ' + curPerspectiveInfo); // "" if no pin
+    // console.log('Current note: ' + curNoteInfo); // "" if no pin
+    // console.log('Perspective info: ' + curPerspectiveInfo); // "" if no pin
     // console.log('Skill Info: ' + curSkillInfo);
 
     //save pin info in the local pins array
