@@ -181,8 +181,8 @@ const DisscussionPrep = () => {
     }
   };
 
-  //handleNext is called when the user is ready to join the discussion
-  const handleNext = async () => {
+  //handleJoinDiscussion is called when the user is ready to join the discussion
+  const handleJoinDiscussion = async () => {
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
     if (curPinIndex === 0) {
@@ -245,7 +245,7 @@ const DisscussionPrep = () => {
         </Grid>
       </Container>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0' }}>
-        <ColorLibButton variant="contained" size="medium" onClick={handleNext}>
+        <ColorLibButton variant="contained" size="medium" onClick={handleJoinDiscussion}>
           {session.recordOnly ? 'End Session' : 'Join Discussion'}
         </ColorLibButton>
       </div>

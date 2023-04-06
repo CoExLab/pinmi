@@ -404,9 +404,9 @@ const DissResponse = ({
             onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
           />
 
-          <Box textAlign="center">
+          {/* <Box textAlign="center">
             <PinNavButtons />
-          </Box>
+          </Box> */}
         </ColorLibPaper>
       ) : (
         <Box fontStyle="italic">

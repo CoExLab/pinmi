@@ -120,7 +120,7 @@ const Landing = ({ justchat }) => {
         querySnapshot.forEach(snapshot => {
           const _id = snapshot.id; // 10a
           const _data = snapshot.data(); // {curSession, lastActiveTime, step, userID}
-          console.log('snapshot data: ', _data);
+          // console.log('snapshot data: ', _data);
           if (_id.match(/^\d/) && _data.curSession.length > 0) {
             // check if finished
             let timeDiffMinutes = 100;
@@ -138,8 +138,8 @@ const Landing = ({ justchat }) => {
             // let _roomId = _id.match(/\d/g).join('');
           }
         });
-        console.log(_usersList);
-        console.log(_resumeList);
+        // console.log(_usersList);
+        // console.log(_resumeList);
         setUsersList(_usersList);
         setResumeList(_resumeList);
       });

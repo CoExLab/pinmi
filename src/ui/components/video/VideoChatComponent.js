@@ -134,7 +134,7 @@ function VideoChatComponent(props) {
     }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
     console.log('calling addPin from HandlePinButton');
-    await addPin(pinTime).then(() => {
+    await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
       setPopperOpen(true);
       setTimeout(() => {
@@ -192,6 +192,21 @@ function VideoChatComponent(props) {
     isInterviewStarted ? initializeSession(apiKey, vonageSessionID, token) : stopStreaming();
   }, [isInterviewStarted, apiKey, token, vonageSessionID]);
 
+  // useEffect(async () => {
+  //   // add a placeholder pin at the end
+  //   if (!isInterviewStarted) {
+  //     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+  //     await addPin(pinTime).then(() => {
+  //       setPopperContentIndex(1);
+  //       setPopperOpen(true);
+  //       setTimeout(() => {
+  //         setPopperOpen(false);
+  //       }, 3000);
+  //       console.log('added a pin at the end');
+  //     });
+  //   }
+  // }, [isInterviewStarted]);
+
   //this useEffect occurs when the session.connect() method succeeds in
   //VonageVideoAPIIntegration
   useEffect(() => {
@@ -211,12 +226,24 @@ function VideoChatComponent(props) {
   }, [isSubscribed]);
 
   //set the videoCallTimer after the archive event has occured
-  useEffect(() => {
+  useEffect(async () => {
     console.log('Hey look! They archive status changed from VCC!!');
     if (isArchiving === true) {
-      setVideoCallTimer(Date.now());
+      const startTime = Date.now();
+      setVideoCallTimer(startTime);
       // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
-      startSpeechToTextTest(Date.now());
+      startSpeechToTextTest(startTime);
+      // add a placeholder pin if this is caller
+      // if (user.userMode == 'caller') {
+      //   await addPin(0).then(() => {
+      //     setPopperContentIndex(1);
+      //     setPopperOpen(true);
+      //     setTimeout(() => {
+      //       setPopperOpen(false);
+      //     }, 3000);
+      //     console.log('added a pin');
+      //   });
+      // }
     }
   }, [isArchiving]);
 
@@ -259,7 +286,7 @@ function VideoChatComponent(props) {
 
   //what is going on with addPinDelayTime????
 
-  const addPin = async curTime => {
+  const addPin = async (curTime, isDefault) => {
     console.log('Calling addPin for ' + curTime);
     // ui on
     setPinBtnDisabled(true);
@@ -277,7 +304,7 @@ function VideoChatComponent(props) {
     const myPin = {
       pinID: '',
       creatorID: user.userID,
-      creatorMode: user.userMode,
+      creatorMode: isDefault ? 'default' : user.userMode,
       pinTime: curTime,
       callerPinNote: '',
       callerPinPerspective: '',
@@ -548,6 +575,18 @@ function VideoChatComponent(props) {
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
+    // add a placeholder pin at the end
+    // var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+    if (user.userMode === 'callee') {
+      await addPin(0, true).then(() => {
+        setPopperContentIndex(1);
+        setPopperOpen(true);
+        setTimeout(() => {
+          setPopperOpen(false);
+        }, 3000);
+        console.log('added a pin at the end');
+      });
+    }
     addTranscript(results, user.userMode);
     if (props.isArchiveHost) {
       handleStopArchive();

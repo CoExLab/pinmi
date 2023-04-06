@@ -21,8 +21,8 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
   //fetch user data
   const user = useSelector(state => state.user);
   const session = useSelector(state => state.session);
-  console.log(user);
-  console.log(session);
+  // console.log(user);
+  // console.log(session);
 
   // get document ID
 
@@ -47,18 +47,19 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
   useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
 
-  useEffect(() => {
-    let time = 0;
-    if (AudioProgressStartingValue(pins) === 0) {
-    } else {
-      time = Math.max(0, pins[curPinIndex].pinTime);
-    }
+  // useEffect(() => {
+  //   console.log('useEffect, ', curPinIndex, audio, pins);
+  //   let time = 0;
+  //   if (AudioProgressStartingValue(pins) === 0) {
+  //   } else {
+  //     time = Math.max(0, pins[curPinIndex].pinTime);
+  //   }
 
-    setAudioProgress(time);
-    player.current.seekTo(time);
-    console.log('Audio Progress set to: ' + time + ' in useEffect');
-    console.log('Audio from AudioReview useEffect ' + audio);
-  }, [curPinIndex, audio, pins]);
+  //   setAudioProgress(time);
+  //   player.current.seekTo(time);
+  //   console.log('Audio Progress set to: ' + time + ' in useEffect');
+  //   console.log('Audio from AudioReview useEffect ' + audio);
+  // }, [curPinIndex, audio, pins]);
 
   //list of all pin times
   //let playTimeArr = pins.map(pin => pin.pinTime);
@@ -110,7 +111,7 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
     }
     // If the audio progress is near a pin, set the pin index to it.
     const newIndex = pins.findIndex(elem => Math.abs(elem.pinTime - currentTime) <= Math.max(1, audioLen / 50));
-    if (newIndex !== -1) {
+    if (newIndex > -1) {
       setPrevPinIndex(curPinIndex);
       setCurPinIndex(newIndex);
     }
