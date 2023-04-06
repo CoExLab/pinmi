@@ -150,43 +150,42 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     console.log('previous index: ' + prevPinIndex); // 0 if no pin
     console.log('current index: ' + curPinIndex); // -1 if no pin
 
-    // console.log(noteValueRef); // default set to ''
-    // console.log(perspectiveValueRef);
-    //update pin values with the ones just edited by the user
-    setCurNoteInfo(noteValueRef.current.value);
-    setCurPerspectiveInfo(perspectiveValueRef.current.value);
-    // setCurSkillInfo(skillValueRef.current.value);
+    // avoid pin index out of bounds
+    if (curPinIndex < pins.length) {
+      // console.log(noteValueRef); // default set to ''
+      // console.log(perspectiveValueRef);
+      //update pin values with the ones just edited by the user
+      setCurNoteInfo(noteValueRef.current.value);
+      setCurPerspectiveInfo(perspectiveValueRef.current.value);
+      // setCurSkillInfo(skillValueRef.current.value);
 
-    // console.log('Current note: ' + curNoteInfo); // "" if no pin
-    // console.log('Perspective info: ' + curPerspectiveInfo); // "" if no pin
-    // console.log('Skill Info: ' + curSkillInfo);
+      //save pin info in the local pins array
+      savePin(prevPinIndex); // didn't save if no pin
 
-    //save pin info in the local pins array
-    savePin(prevPinIndex); // didn't save if no pin
+      //updates pin information states to render either the next or previous pin
+      const nextPin = pins[curPinIndex];
+      // console.log('nextPin', nextPin);
+      if (nextPin && user.userMode === 'caller') {
+        setPinType(nextPin.callerPinCategory);
+        setCurNoteInfo(nextPin.callerPinNote);
+        setCurPerspectiveInfo(nextPin.callerPinPerspective);
+        // setCurSkillInfo(nextPin.callerPinSkill);
+      } else if (nextPin) {
+        setPinType(nextPin.calleePinCategory);
+        setCurNoteInfo(nextPin.calleePinNote);
+        setCurPerspectiveInfo(nextPin.calleePinPerspective);
+        // setCurSkillInfo(nextPin.calleePinSkill);
+      }
 
-    //updates pin information states to render either the next or previous pin
-    const nextPin = pins[curPinIndex];
-    // console.log('nextPin', nextPin);
-    if (nextPin && user.userMode === 'caller') {
-      setPinType(nextPin.callerPinCategory);
-      setCurNoteInfo(nextPin.callerPinNote);
-      setCurPerspectiveInfo(nextPin.callerPinPerspective);
-      // setCurSkillInfo(nextPin.callerPinSkill);
-    } else if (nextPin) {
-      setPinType(nextPin.calleePinCategory);
-      setCurNoteInfo(nextPin.calleePinNote);
-      setCurPerspectiveInfo(nextPin.calleePinPerspective);
-      // setCurSkillInfo(nextPin.calleePinSkill);
+      // console.log(noteValueRef); // default set to ''
+      // console.log(perspectiveValueRef);
+      //reset all the refs
+      noteValueRef.current.value = curNoteInfo;
+      perspectiveValueRef.current.value = curPerspectiveInfo;
+      // console.log(noteValueRef);
+      // console.log(perspectiveValueRef);
+      // skillValueRef.current.value = curSkillInfo;
     }
-
-    // console.log(noteValueRef); // default set to ''
-    // console.log(perspectiveValueRef);
-    //reset all the refs
-    noteValueRef.current.value = curNoteInfo;
-    perspectiveValueRef.current.value = curPerspectiveInfo;
-    // console.log(noteValueRef);
-    // console.log(perspectiveValueRef);
-    // skillValueRef.current.value = curSkillInfo;
   }, [prevPinIndex, curPinIndex]);
 
   // for handling pin type switching
@@ -197,7 +196,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   //Actual component rendering
   return (
     <Grid item xs={12} sm={8}>
-      {pins.length > 0 && (
+      {console.log('curPinIndex: ', curPinIndex)}
+      {console.log('pins[curPinIndex]: ', pins[curPinIndex])}
+      {pins.length > 0 && curPinIndex < pins.length && (
         <>
           {curPinIndex !== -1 ? (
             <Box
