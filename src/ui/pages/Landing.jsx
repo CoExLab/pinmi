@@ -267,7 +267,7 @@ const Landing = ({ justchat }) => {
         setMediaUrl(docSnapshot.data().archiveData.url);
         setMediaDuration(docSnapshot.data().archiveData.duration);
         if (docSnapshot.data().caller_id == tempUserId) dispatch(setUserMode('caller'));
-        else dispatch(setUserMode('callee '));
+        else dispatch(setUserMode('callee'));
 
         // await firebase
         //   .firestore()
