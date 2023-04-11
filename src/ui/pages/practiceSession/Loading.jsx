@@ -22,32 +22,36 @@ export default function Loading(props) {
   const [archiveReady, setArchiveReady] = useState(false);
 
   useEffect(async () => {
-    await props
-      .isRoomEmpty()
-      .then(res => {
+    const checkRoom = async () => {
+      try {
+        const res = await props.isRoomEmpty();
         console.log('RES: ', res);
         if (res) {
           setRoomEmpty(res);
         }
-      })
-      .catch(e => {
+      } catch (e) {
         console.log(e);
-      });
+      }
+    };
+
+    checkRoom();
   }, []);
 
   useEffect(async () => {
+    const checkArchive = async () => {
+      try {
+        const res = await props.isArchiveReady();
+        console.log('RES: ', res);
+        if (res) {
+          setArchiveReady(res);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
     if (roomEmpty) {
-      await props
-        .isArchiveReady()
-        .then(res => {
-          console.log('RES: ', res);
-          if (res) {
-            setArchiveReady(res);
-          }
-        })
-        .catch(e => {
-          console.log(e);
-        });
+      checkArchive();
     }
   }, [roomEmpty]);
 
