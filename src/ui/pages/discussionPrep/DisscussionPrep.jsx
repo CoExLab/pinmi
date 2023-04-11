@@ -1,6 +1,7 @@
 //This file is the code related to the dicussion prep page in the pin-mi app
 
 import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
 // Components
 import Notetaking from './Notetaking';
 import AudioReview from '../../components/AudioReview';
@@ -18,6 +19,10 @@ import { reset } from '../../../storage/store';
 import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTimeReminder';
 
 import { formatTime } from '../../../helper/helper';
+import { baseURL } from '../../pages/misc/constants';
+
+// socket.io
+const socket = io.connect(baseURL);
 
 //Style
 const useStyles = makeStyles(theme => ({
@@ -99,6 +104,7 @@ const DisscussionPrep = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     console.log('pins', pins);
+    socket.emit('join_reflection', { sessionID: session.sessionID });
   }, []);
 
   //effect used to automatically save pin info to the db and move to next page
@@ -183,6 +189,7 @@ const DisscussionPrep = () => {
 
   //handleJoinDiscussion is called when the user is ready to join the discussion
   const handleJoinDiscussion = async () => {
+    console.log('handleJoinDiscussion called');
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
     if (curPinIndex === 0) {
@@ -190,8 +197,34 @@ const DisscussionPrep = () => {
     } else {
       setCurPinIndex(0);
     }
+
+    socket.emit('joinDiscussion', { sessionID: session.sessionID });
+
+    // await joinDiscussion(user.userMode, session.sessionID)
+    //   .then(res => {
+    //     console.log('send joinDiscussion to server, ', res.json());
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //   });
+
     //allow next step in logic to occur
     setFinishedUpdates(true);
+  };
+
+  socket.on('joinDiscussion', data => {
+    console.log(data.message);
+  });
+
+  const joinDiscussion = async (userMode, sessionID) => {
+    console.log('joinDiscussion', userMode, sessionID);
+    let url = baseURL + 'joinDiscussion/' + userMode + '/' + sessionID;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   };
 
   //actual page rendering

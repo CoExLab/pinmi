@@ -233,17 +233,6 @@ function VideoChatComponent(props) {
       setVideoCallTimer(startTime);
       // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
       startSpeechToTextTest(startTime);
-      // add a placeholder pin if this is caller
-      // if (user.userMode == 'caller') {
-      //   await addPin(0).then(() => {
-      //     setPopperContentIndex(1);
-      //     setPopperOpen(true);
-      //     setTimeout(() => {
-      //       setPopperOpen(false);
-      //     }, 3000);
-      //     console.log('added a pin');
-      //   });
-      // }
     }
   }, [isArchiving]);
 

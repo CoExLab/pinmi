@@ -196,8 +196,6 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   //Actual component rendering
   return (
     <Grid item xs={12} sm={8}>
-      {console.log('curPinIndex: ', curPinIndex)}
-      {console.log('pins[curPinIndex]: ', pins[curPinIndex])}
       {pins.length > 0 && curPinIndex < pins.length && (
         <>
           {curPinIndex !== -1 ? (
