@@ -16,7 +16,7 @@ import Navbar from '../components/Navbar';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
 import modal from './../../other/tutorial/modal.png';
-import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
+// import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
 
 import { setUserID, setUserMode, setUserRoom, setSessionID, setRecordOnly } from '../../storage/store';

@@ -22,7 +22,7 @@ import { formatTime } from '../../../helper/helper';
 import { baseURL } from '../../pages/misc/constants';
 
 // socket.io
-const socket = io.connect(baseURL);
+// const socket = io.connect(baseURL);
 
 //Style
 const useStyles = makeStyles(theme => ({
@@ -104,7 +104,7 @@ const DisscussionPrep = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     console.log('pins', pins);
-    socket.emit('join_reflection', { sessionID: session.sessionID });
+    // socket.emit('join_reflection', { sessionID: session.sessionID });
   }, []);
 
   //effect used to automatically save pin info to the db and move to next page
@@ -198,7 +198,7 @@ const DisscussionPrep = () => {
       setCurPinIndex(0);
     }
 
-    socket.emit('joinDiscussion', { sessionID: session.sessionID });
+    // socket.emit('joinDiscussion', { sessionID: session.sessionID });
 
     // await joinDiscussion(user.userMode, session.sessionID)
     //   .then(res => {
@@ -212,9 +212,9 @@ const DisscussionPrep = () => {
     setFinishedUpdates(true);
   };
 
-  socket.on('joinDiscussion', data => {
-    console.log(data.message);
-  });
+  // socket.on('joinDiscussion', data => {
+  //   console.log(data.message);
+  // });
 
   const joinDiscussion = async (userMode, sessionID) => {
     console.log('joinDiscussion', userMode, sessionID);
