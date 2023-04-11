@@ -2,8 +2,8 @@ import { Box } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Intro from './Intro.jsx';
-import Narrative from './Narrative.jsx';
-import Session from './Session.jsx';
+import Narrative from './Narrative';
+import Session from './Session';
 
 import { useSessionValue } from '../../../storage/context';
 import ColorLibButton, { ColorLibNextButton } from '../../components/colorLibComponents/ColorLibButton';
