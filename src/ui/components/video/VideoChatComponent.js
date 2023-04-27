@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import 'firebase/firestore';
 
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from '@material-ui/icons/MicNone';
@@ -133,7 +134,7 @@ function VideoChatComponent(props) {
     }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
     console.log('calling addPin from HandlePinButton');
-    await addPin(pinTime).then(() => {
+    await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
       setPopperOpen(true);
       setTimeout(() => {
@@ -191,6 +192,21 @@ function VideoChatComponent(props) {
     isInterviewStarted ? initializeSession(apiKey, vonageSessionID, token) : stopStreaming();
   }, [isInterviewStarted, apiKey, token, vonageSessionID]);
 
+  // useEffect(async () => {
+  //   // add a placeholder pin at the end
+  //   if (!isInterviewStarted) {
+  //     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+  //     await addPin(pinTime).then(() => {
+  //       setPopperContentIndex(1);
+  //       setPopperOpen(true);
+  //       setTimeout(() => {
+  //         setPopperOpen(false);
+  //       }, 3000);
+  //       console.log('added a pin at the end');
+  //     });
+  //   }
+  // }, [isInterviewStarted]);
+
   //this useEffect occurs when the session.connect() method succeeds in
   //VonageVideoAPIIntegration
   useEffect(() => {
@@ -210,12 +226,13 @@ function VideoChatComponent(props) {
   }, [isSubscribed]);
 
   //set the videoCallTimer after the archive event has occured
-  useEffect(() => {
+  useEffect(async () => {
     console.log('Hey look! They archive status changed from VCC!!');
     if (isArchiving === true) {
-      setVideoCallTimer(Date.now());
+      const startTime = Date.now();
+      setVideoCallTimer(startTime);
       // Start Symbl AI transcription. Pass in videoCallTimer so we can create time stamps.
-      startSpeechToTextTest(Date.now());
+      startSpeechToTextTest(startTime);
     }
   }, [isArchiving]);
 
@@ -258,7 +275,7 @@ function VideoChatComponent(props) {
 
   //what is going on with addPinDelayTime????
 
-  const addPin = async curTime => {
+  const addPin = async (curTime, isDefault) => {
     console.log('Calling addPin for ' + curTime);
     // ui on
     setPinBtnDisabled(true);
@@ -276,7 +293,7 @@ function VideoChatComponent(props) {
     const myPin = {
       pinID: '',
       creatorID: user.userID,
-      creatorMode: user.userMode,
+      creatorMode: isDefault ? 'default' : user.userMode,
       pinTime: curTime,
       callerPinNote: '',
       callerPinPerspective: '',
@@ -515,8 +532,11 @@ function VideoChatComponent(props) {
       .then(function (res) {
         console.log('got server info');
         setApiKey(res.apiKey);
+        // console.log('set api key');
         setSessionId(res.sessionId);
+        // console.log('set sessionId');
         setToken(res.token);
+        // console.log('set token');
         //tells the server that the user entered the room.
         enterRoom(user.userMode, res.sessionId);
       })
@@ -544,6 +564,18 @@ function VideoChatComponent(props) {
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
+    // add a placeholder pin at the end
+    // var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
+    if (user.userMode === 'callee') {
+      await addPin(0, true).then(() => {
+        setPopperContentIndex(1);
+        setPopperOpen(true);
+        setTimeout(() => {
+          setPopperOpen(false);
+        }, 3000);
+        console.log('added a pin at the end');
+      });
+    }
     addTranscript(results, user.userMode);
     if (props.isArchiveHost) {
       handleStopArchive();
@@ -551,11 +583,29 @@ function VideoChatComponent(props) {
 
     //letting the server know that the user exited the room
     await exitRoom(user.userMode, vonageSessionID)
-      .then(() => {
+      .then(async () => {
         //     //const results = stopSpeechToTextTest();
         //     //addTranscript(results);
         //     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
         //     //call to the parent to move to Loading Page
+
+        // update lastActiveTime and step
+        let date = new Date();
+        await firebase
+          .firestore()
+          .collection('users')
+          .doc(user.userRoom)
+          .update({
+            lastActiveTime: date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US'),
+            step: 1,
+          })
+          .then(() => {
+            console.log('Timestamp and step field updated successfully!');
+          })
+          .catch(error => {
+            console.error('Error updating timestamp and step field:', error);
+          });
+
         props.setNextPage(true);
       })
       .catch(error => {
@@ -670,6 +720,7 @@ function VideoChatComponent(props) {
       .doc(session.sessionID)
       .update({
         archiveData: archiveData,
+        step: 1,
       })
       .then(() => console.log('archiveData Added to DB for :' + session.sessionID))
       .catch(e => {

@@ -5,9 +5,15 @@ import Forward10Icon from '@material-ui/icons/Forward10';
 import Replay10Icon from '@material-ui/icons/Replay10';
 import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import { useSelector } from 'react-redux';
 
 import pin from '../../../other/images/pin.svg';
 
+const color = {
+  default: '#80cbc4',
+  you: '#92BFB1',
+  peer: '#F4AC45',
+};
 const displayTime = secs => {
   let minutes = Math.floor(secs / 60);
   let seconds = Math.floor(secs % 60);
@@ -22,6 +28,7 @@ const getIconByPlayerStatus = (playerStatus, setPlayerStatus) => {
   const PlayerIconButton = withStyles(theme => ({
     root: {
       color: theme.palette.teal.main,
+      // color: 'black',
       padding: '0px',
     },
     label: {
@@ -71,19 +78,19 @@ const AudioSlider = withStyles(theme => ({
     color: theme.palette.teal.main,
     borderRadius: '6px',
   },
-  mark: {
-    height: '14px',
-    width: '14px',
-    borderRadius: '14px',
-    backgroundColor: theme.palette.pink.main,
-    marginTop: '-4px',
-    marginLeft: '-4px',
-    zIndex: 1,
-  },
-  markActive: {
-    opacity: 1,
-    backgroundColor: theme.palette.pink.dark,
-  },
+  // mark: {
+  //   height: '14px',
+  //   width: '14px',
+  //   borderRadius: '14px',
+  //   // backgroundColor: theme.palette.pink.main,
+  //   marginTop: '-4px',
+  //   marginLeft: '-4px',
+  //   // zIndex: 1,
+  // },
+  // markActive: {
+  //   opacity: 1,
+  //   // backgroundColor: theme.palette.pink.dark,
+  // },
   markLabel: {
     top: 'inherit',
     transform: 'none',
@@ -91,7 +98,7 @@ const AudioSlider = withStyles(theme => ({
     width: '100%',
     borderRadius: '6px',
     // left: '0 !important',
-    opacity: 0.6,
+    opacity: 1,
     lineHeight: '30px',
   },
 }))(Slider);
@@ -100,12 +107,13 @@ const ColorLibAudioPlayer = ({
   playerStatus,
   setPlayerStatus,
   currentTime,
-  setCurrentTime,
+  setCurrentTime, // set current pin index
   duration,
   marks, // List of integers, each in seconds
   addPin = null,
   recordOnlyMode,
 }) => {
+  const user = useSelector(state => state.user);
   const jumpPercentage = (10 / duration) * 100;
 
   const JumpIconButton = withStyles(theme => ({
@@ -139,7 +147,8 @@ const ColorLibAudioPlayer = ({
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
   const pinMarks = marks.map((m, index) => {
-    console.log(m);
+    if (index === 0) return {};
+    // console.log(m);
     const markTime = m.markTime;
     const creatorMode = m.creatorMode;
 
@@ -160,22 +169,43 @@ const ColorLibAudioPlayer = ({
         <>
           <div
             style={{
+              height: '20px',
+              width: '20px',
+              borderRadius: '20px',
+              // backgroundColor: creatorMode == 'callee' ? '#FC6D78' : '#337193',
+              backgroundColor:
+                color[creatorMode == 'default' ? 'default' : creatorMode == user.userMode ? 'you' : 'peer'],
+              marginTop: '-8px',
+              marginLeft: '-2px',
+              position: 'relative',
+              zIndex: 10,
+              display: creatorMode == 'default' ? 'none' : 'flex',
+            }}
+          />
+          {/* <div
+            style={{
               height: '6px',
               position: 'relative',
               left: `calc(${left}%)`,
               width: `${rightNewWidth}%`,
               borderRadius: '6px',
               backgroundColor: '#FDA2A9',
+              marginTop: '-10px',
+              zIndex: 1,
             }}
-          />
+          /> */}
+
           <div
             style={{
               marginRight: `calc(${leftPercentage}% + 3px)`,
               width: `calc(${widthPercentage}%)`,
-              color: creatorMode == 'callee' ? '#FC6D78' : '#337193',
+              // color: creatorMode == 'callee' ? '#FC6D78' : '#337193',
+              color: color[creatorMode == 'default' ? 'default' : creatorMode == user.userMode ? 'you' : 'peer'],
+              fontSize: '22px',
+              display: creatorMode == 'default' ? 'none' : 'flex',
             }}
           >
-            {index + 1}
+            {index}
           </div>
         </>
       ),
@@ -210,7 +240,7 @@ const ColorLibAudioPlayer = ({
         </Grid>
       </Grid>
 
-      <div
+      {/* <div
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -232,7 +262,7 @@ const ColorLibAudioPlayer = ({
         <JumpIconButton onClick={() => setCurrentTime(Math.min(duration, currentTime + 10))}>
           <Forward10Icon />
         </JumpIconButton>
-      </div>
+      </div> */}
     </Paper>
   );
 };

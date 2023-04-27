@@ -128,13 +128,14 @@ const App = () => {
               <Provider store={store}>
                 <Route exact path="/auth" component={Authentication} />
                 <Route exact path="/Home" component={Home} />
-                <Route exact path="/" component={Landing} />
-                <Route exact path="/justchat" render={() => <Landing justchat={true} />} />
+
                 <Route exact path="/Review" component={Review} />
                 <SessionProvider>
                   <ActiveStepProvider>
                     <PinsProvider>
                       <Route exact path="/content" component={Content} />
+                      <Route exact path="/justchat" render={() => <Landing justchat={true} />} />
+                      <Route exact path="/" component={Landing} />
                     </PinsProvider>
                   </ActiveStepProvider>
                 </SessionProvider>

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { GroupIcon } from '@mui/icons-material';
 
 import { ColorLibNextButton, ColorLibBackButton } from '../../components/colorLibComponents/ColorLibButton';
 import ColorLibPaper from '../../components/colorLibComponents/ColorLibPaper';
@@ -16,6 +17,10 @@ import MISkillsSheet from '../../components/MISkillsSheet';
 //context
 import { usePinsValue } from '../../../storage/context';
 
+const color = {
+  you: '#92BFB130',
+  peer: '#F4AC4530',
+};
 //style
 const useStyles = makeStyles(theme => ({
   toggleGroup: {
@@ -112,8 +117,10 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     );
   };
 
-  //savePin takes in the array index of a pin in the pins array and updates the object at that index with
-  // information edited by the user
+  /**
+   * savePin is called when user navigates to another pin. It takes in the array index of a pin in the pins array and updates the object at that index with information edited by the user
+   * @param {*} index
+   */
   const savePin = index => {
     if (index >= 0 && index < pins.length) {
       const myPin = pins[index];
@@ -121,57 +128,64 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
         myPin.callerPinNote = curNoteInfo;
         myPin.callerPinPerspective = curPerspectiveInfo;
         myPin.callerPinCategory = pinType;
-        myPin.callerPinSkill = curSkillInfo;
+        // myPin.callerPinSkill = curSkillInfo;
 
         pins[index] = myPin;
       } else if (myPin) {
         myPin.calleePinNote = curNoteInfo;
         myPin.calleePinPerspective = curPerspectiveInfo;
         myPin.calleePinCategory = pinType;
-        myPin.calleePinSkill = curSkillInfo;
+        // myPin.calleePinSkill = curSkillInfo;
 
         pins[index] = myPin;
       }
-      console.log('Pin Edited: ');
-      console.log(pins[index]);
+      // console.log('Pin Edited: ');
+      // console.log(pins[index]);
     }
   };
 
   //this effect activates when the user navigates to a different pin
   useEffect(() => {
-    console.log('previous index: ' + prevPinIndex);
-    console.log('current index: ' + curPinIndex);
+    console.log('pins: ', pins);
+    console.log('previous index: ' + prevPinIndex); // 0 if no pin
+    console.log('current index: ' + curPinIndex); // -1 if no pin
 
-    //update pin values with the ones just edited by the user
-    setCurNoteInfo(noteValueRef.current.value);
-    setCurPerspectiveInfo(perspectiveValueRef.current.value);
-    setCurSkillInfo(skillValueRef.current.value);
+    // avoid pin index out of bounds
+    if (curPinIndex < pins.length) {
+      // console.log(noteValueRef); // default set to ''
+      // console.log(perspectiveValueRef);
+      //update pin values with the ones just edited by the user
+      setCurNoteInfo(noteValueRef.current.value);
+      setCurPerspectiveInfo(perspectiveValueRef.current.value);
+      // setCurSkillInfo(skillValueRef.current.value);
 
-    console.log('Current note: ' + curNoteInfo);
-    console.log('Perspective info: ' + curPerspectiveInfo);
-    console.log('Skill Info: ' + curSkillInfo);
+      //save pin info in the local pins array
+      savePin(prevPinIndex); // didn't save if no pin
 
-    //save pin info in the local pins array
-    savePin(prevPinIndex);
+      //updates pin information states to render either the next or previous pin
+      const nextPin = pins[curPinIndex];
+      // console.log('nextPin', nextPin);
+      if (nextPin && user.userMode === 'caller') {
+        setPinType(nextPin.callerPinCategory);
+        setCurNoteInfo(nextPin.callerPinNote);
+        setCurPerspectiveInfo(nextPin.callerPinPerspective);
+        // setCurSkillInfo(nextPin.callerPinSkill);
+      } else if (nextPin) {
+        setPinType(nextPin.calleePinCategory);
+        setCurNoteInfo(nextPin.calleePinNote);
+        setCurPerspectiveInfo(nextPin.calleePinPerspective);
+        // setCurSkillInfo(nextPin.calleePinSkill);
+      }
 
-    //updates pin information states to render either the next or previous pin
-    const nextPin = pins[curPinIndex];
-    if (nextPin && user.userMode === 'caller') {
-      setPinType(nextPin.callerPinCategory);
-      setCurNoteInfo(nextPin.callerPinNote);
-      setCurPerspectiveInfo(nextPin.callerPinPerspective);
-      setCurSkillInfo(nextPin.callerPinSkill);
-    } else if (nextPin) {
-      setPinType(nextPin.calleePinCategory);
-      setCurNoteInfo(nextPin.calleePinNote);
-      setCurPerspectiveInfo(nextPin.calleePinPerspective);
-      setCurSkillInfo(nextPin.calleePinSkill);
+      // console.log(noteValueRef); // default set to ''
+      // console.log(perspectiveValueRef);
+      //reset all the refs
+      noteValueRef.current.value = curNoteInfo;
+      perspectiveValueRef.current.value = curPerspectiveInfo;
+      // console.log(noteValueRef);
+      // console.log(perspectiveValueRef);
+      // skillValueRef.current.value = curSkillInfo;
     }
-
-    //reset all the refs
-    noteValueRef.current.value = curNoteInfo;
-    perspectiveValueRef.current.value = curPerspectiveInfo;
-    skillValueRef.current.value = curSkillInfo;
   }, [prevPinIndex, curPinIndex]);
 
   // for handling pin type switching
@@ -182,67 +196,106 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   //Actual component rendering
   return (
     <Grid item xs={12} sm={8}>
-      <ColorLibPaper elevation={1}>
-        {curPinIndex !== -1 ? (
-          <Box fontStyle="italic">
-            <Typography>
-              The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
-              {pins[curPinIndex].creatorMode === user.userMode ? 'you' : 'your peer'}
-            </Typography>
-          </Box>
-        ) : null}
-        <ColorLibTextField
-          id="outlined-secondary"
-          fullWidth
-          variant="outlined"
-          multiline
-          rows={3}
-          margin="normal"
-          label="Personal notes..."
-          value={curNoteInfo}
-          inputRef={noteValueRef}
-          onChange={() => {
-            setCurNoteInfo(noteValueRef.current.value);
-          }}
-        />
-        <Box fontStyle="italic" marginTop="16px">
-          <Typography variant="h3">To share with your peer:</Typography>
-        </Box>
-        <Box textAlign="left">
-          <Typography>What is your perspective of what happened at this pin?</Typography>
-        </Box>
-        <ColorLibTextField
-          id="outlined-secondary"
-          fullWidth
-          variant="outlined"
-          multiline
-          rows={2}
-          margin="normal"
-          value={curPerspectiveInfo}
-          inputRef={perspectiveValueRef}
-          onChange={() => setCurPerspectiveInfo(perspectiveValueRef.current.value)}
-        />
-        <Box textAlign="left">
-          <Typography>What would you categorize this pin as?</Typography>
-        </Box>
-        <Box align="left">
-          <ToggleButtonGroup
-            className={classes.toggleGroup}
-            value={pinType}
-            exclusive
-            onChange={handlePinType}
-            size="large"
+      {pins.length > 0 && curPinIndex < pins.length && (
+        <>
+          {curPinIndex !== -1 ? (
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor:
+                  color[
+                    pins[curPinIndex].creatorMode === 'default'
+                      ? 'default'
+                      : pins[curPinIndex].creatorMode === user.userMode
+                      ? 'you'
+                      : 'peer'
+                  ],
+              }}
+            >
+              <Typography>
+                Pin {curPinIndex} @ {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} | by{' '}
+                {pins[curPinIndex].creatorMode === 'default'
+                  ? 'default'
+                  : pins[curPinIndex].creatorMode === user.userMode
+                  ? 'you'
+                  : 'peer'}
+              </Typography>
+            </Box>
+          ) : null}
+          {/* </ColorLibPaper> */}
+          <br />
+          <ColorLibPaper
+            elevation={
+              pins[curPinIndex].creatorMode === 'default' ? 1 : pins[curPinIndex].creatorMode === user.userMode ? 4 : 3
+            }
           >
-            <ToggleButton value="strength" selected={pinType === 'strength'}>
-              Strength
-            </ToggleButton>
-            <ToggleButton value="opportunity" selected={pinType === 'opportunity'}>
-              Opportunity
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-        <MISkillsSheet pinType={pinType} />
-        <ColorLibTextField
+            {/* <GroupIcon></GroupIcon> */}
+            <Box marginBottome={10}>
+              <Typography variant="h3">Personal Notes:</Typography>
+              <Typography>(only visible to you):</Typography>
+            </Box>
+            <ColorLibTextField
+              id="outlined-secondary"
+              fullWidth
+              variant="outlined"
+              multiline
+              rows={3}
+              margin="normal"
+              label="Personal notes..."
+              value={curNoteInfo}
+              inputRef={noteValueRef}
+              onChange={() => {
+                setCurNoteInfo(noteValueRef.current.value);
+              }}
+            />
+          </ColorLibPaper>
+          <br />
+          <ColorLibPaper
+            elevation={
+              pins[curPinIndex].creatorMode === 'default' ? 1 : pins[curPinIndex].creatorMode === user.userMode ? 4 : 3
+            }
+          >
+            <Box marginBottom={5}>
+              <Typography variant="h3">Shared Notes:</Typography>
+              <Typography>(visible to both you and your peer)</Typography>
+            </Box>
+            <Box textAlign="left">
+              <Typography>Is this strength or areas to improve?</Typography>
+            </Box>
+            <Box align="left">
+              <ToggleButtonGroup
+                className={classes.toggleGroup}
+                value={pinType}
+                exclusive
+                onChange={handlePinType}
+                size="large"
+              >
+                <ToggleButton value="strength" selected={pinType === 'strength'}>
+                  Strength
+                </ToggleButton>
+                <ToggleButton value="opportunity" selected={pinType === 'opportunity'}>
+                  Area to Improve
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+
+            <Box textAlign="left">
+              <Typography>Please explain your reason</Typography>
+            </Box>
+            <ColorLibTextField
+              id="outlined-secondary"
+              fullWidth
+              variant="outlined"
+              multiline
+              rows={2}
+              margin="normal"
+              value={curPerspectiveInfo}
+              inputRef={perspectiveValueRef}
+              onChange={() => setCurPerspectiveInfo(perspectiveValueRef.current.value)}
+            />
+
+            {/* <MISkillsSheet pinType={pinType} /> */}
+            {/* <ColorLibTextField
           id="outlined-secondary"
           fullWidth
           variant="outlined"
@@ -252,12 +305,14 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
           value={curSkillInfo}
           inputRef={skillValueRef}
           onChange={() => setCurSkillInfo(skillValueRef.current.value)}
-        />
+        /> */}
 
-        <Box textAlign="center">
-          <PinNavButtons />
-        </Box>
-      </ColorLibPaper>
+            {/* <Box textAlign="center">
+              <PinNavButtons />
+            </Box> */}
+          </ColorLibPaper>
+        </>
+      )}
     </Grid>
   );
 };

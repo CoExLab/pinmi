@@ -84,6 +84,7 @@ const Session = () => {
         pins.sort((a, b) => a.pinTime - b.pinTime);
       })
       .then(() => {
+        // move to next step (discussion prep)
         setCurActiveStep(prevActiveStep => prevActiveStep + 1);
       })
       .catch(err => console.error('Error in loadPins functions: ', err));

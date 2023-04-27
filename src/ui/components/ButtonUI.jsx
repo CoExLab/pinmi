@@ -25,7 +25,7 @@ const ButtonUI = () => {
   const steps = [
     'MI Refresher',
     'Practice Session',
-    'Discussion Prep',
+    'Self-Reflection Prep',
     'Collaborative Discussion',
     'Self-Reflection',
     'Complete',
