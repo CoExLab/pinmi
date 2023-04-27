@@ -74,9 +74,9 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
   };
 
   //states defined for each of the text input areas
-  const [curGoalInfo, setCurGoalInfo] = useState(getCurrentPinInfo());
-  const [curStrengthInfo, setCurStrengthInfo] = useState(getCurrentPinInfo());
-  const [curOpporunityInfo, setCurOpportunityInfo] = useState(getCurrentPinInfo());
+  const [curGoalInfo, setCurGoalInfo] = useState('');
+  const [curStrengthInfo, setCurStrengthInfo] = useState('');
+  const [curOpporunityInfo, setCurOpportunityInfo] = useState('');
 
   //savePin takes in the array index of a pin in the pins array and updates the object at that index with
   // information edited by the user
@@ -200,7 +200,11 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             <Box fontStyle="italic">
               <Typography>
                 The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
-                {pins[curPinIndex].creatorMode === user.userMode ? 'you' : 'your peer'}
+                {pins[curPinIndex].creatorMode === 'default'
+                  ? 'default'
+                  : pins[curPinIndex].creatorMode === user.userMode
+                  ? 'you'
+                  : 'your peer'}
               </Typography>
             </Box>
           ) : null}
@@ -329,9 +333,9 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
           />
 
-          <Box textAlign="center">
+          {/* <Box textAlign="center">
             <PinNavButtons />
-          </Box>
+          </Box> */}
         </ColorLibPaper>
       ) : (
         <Box fontStyle="italic">

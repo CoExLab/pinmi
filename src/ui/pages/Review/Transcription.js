@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography, Box, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Switch from '@mui/material/Switch';
 import ColorLibPaper from '../../components/colorLibComponents/ColorLibPaper';
 import ColorLibTextField from '../../components/colorLibComponents/ColorLibTextField';
 import { firebase } from '../../../storage/firebase';
@@ -15,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 // the user wants to review
 const Transcription = ({ reviewSessionID, username }) => {
   const classes = useStyles();
+  const [transVis, setTransVis] = useState(true);
 
   const [localTrans, setLocalTrans] = useState([]);
   // fetch transcript data here
@@ -102,13 +104,20 @@ const Transcription = ({ reviewSessionID, username }) => {
     ));
   };
 
+  const handleChange = event => {
+    setTransVis(event.target.checked);
+  };
+
   return (
     <Grid item xs={12} sm={4}>
       <ColorLibPaper>
         <Box fontStyle="italic">
           <Typography>Transcript</Typography>
+          <Switch checked={transVis} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
         </Box>
-        <Typography component="div">{renderTranscript()}</Typography>
+        <Typography component="div" style={{ visibility: transVis ? 'visible' : 'hidden' }}>
+          {renderTranscript()}
+        </Typography>
       </ColorLibPaper>
     </Grid>
   );

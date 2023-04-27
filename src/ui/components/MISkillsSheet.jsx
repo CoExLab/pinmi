@@ -70,6 +70,7 @@ const MISkillsSheet = ({ pinType }) => {
                 onClick={() => {
                   handleClickOpen();
                 }}
+                underline="always"
               >
                 {' MI skills '}
               </Link>

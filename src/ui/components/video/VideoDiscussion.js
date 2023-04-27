@@ -635,14 +635,14 @@ How did today’s mock client session go?
         <DialogActions>
           <Box m={2}>
             <div direction="row" align="center">
-              <ColorLibButton variant="contained" size="medium" onClick={() => setOpen(false)} autoFocus>
+              {/* <ColorLibButton variant="contained" size="medium" onClick={() => setOpen(false)} autoFocus>
                 Add more notes to pins
+              </ColorLibButton> */}
+              {/* <Box mt={2}> */}
+              <ColorLibButton variant="contained" size="medium" onClick={readyToJoin} autoFocus>
+                Join Discussion
               </ColorLibButton>
-              <Box mt={2}>
-                <ColorLibNextButton variant="outlined" size="medium" onClick={readyToJoin} autoFocus>
-                  Join Discussion
-                </ColorLibNextButton>
-              </Box>
+              {/* </Box> */}
             </div>
           </Box>
         </DialogActions>
