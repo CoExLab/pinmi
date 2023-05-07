@@ -44,8 +44,8 @@ const DissResponse = ({
   const classes = useStyles();
   //creating a refernce for TextField Components
   const goalValueRef = useRef('');
-  const strengthValueRef = useRef('');
-  const opportunityValueRef = useRef('');
+  // const strengthValueRef = useRef('');
+  // const opportunityValueRef = useRef('');
 
   // set up states for four different questions
   const [curNoteInfo, setCurNoteInfo] = useState('');
@@ -73,12 +73,12 @@ const DissResponse = ({
   const [curGoalInfo, setCurGoalInfo] = useState(
     user.userMode === 'callee' ? getCurrentPinInfo().calleePinGoal : getCurrentPinInfo().callerPinGoal,
   );
-  const [curStrengthInfo, setCurStrengthInfo] = useState(
-    user.userMode === 'callee' ? getCurrentPinInfo().calleePinStrength : getCurrentPinInfo().callerPinStrength,
-  );
-  const [curOpporunityInfo, setCurOpportunityInfo] = useState(
-    user.userMode === 'callee' ? getCurrentPinInfo().calleePinOpportunity : getCurrentPinInfo().callerPinOpportunity,
-  );
+  // const [curStrengthInfo, setCurStrengthInfo] = useState(
+  //   user.userMode === 'callee' ? getCurrentPinInfo().calleePinStrength : getCurrentPinInfo().callerPinStrength,
+  // );
+  // const [curOpporunityInfo, setCurOpportunityInfo] = useState(
+  //   user.userMode === 'callee' ? getCurrentPinInfo().calleePinOpportunity : getCurrentPinInfo().callerPinOpportunity,
+  // );
 
   //save pin to firebase
   const savePin = async index => {
@@ -86,8 +86,8 @@ const DissResponse = ({
     console.log(myPin);
     if (user.userMode === 'callee') {
       myPin.calleePinGoal = curGoalInfo;
-      myPin.calleePinStrength = curStrengthInfo;
-      myPin.calleePinOpportunity = curOpporunityInfo;
+      // myPin.calleePinStrength = curStrengthInfo;
+      // myPin.calleePinOpportunity = curOpporunityInfo;
       await firebase
         .firestore()
         .collection('sessions_by_usernames')
@@ -98,8 +98,8 @@ const DissResponse = ({
         .doc(myPin.pinID)
         .update({
           calleePinGoal: curGoalInfo,
-          calleePinStrength: curStrengthInfo,
-          calleePinOpportunity: curOpporunityInfo,
+          // calleePinStrength: curStrengthInfo,
+          // calleePinOpportunity: curOpporunityInfo,
         })
         .then(() => {
           console.log('current pin successfully updated');
@@ -109,8 +109,8 @@ const DissResponse = ({
         });
     } else {
       myPin.callerPinGoal = curGoalInfo;
-      myPin.callerPinStrength = curStrengthInfo;
-      myPin.callerPinOpportunity = curOpporunityInfo;
+      // myPin.callerPinStrength = curStrengthInfo;
+      // myPin.callerPinOpportunity = curOpporunityInfo;
       await firebase
         .firestore()
         .collection('sessions_by_usernames')
@@ -121,8 +121,8 @@ const DissResponse = ({
         .doc(myPin.pinID)
         .update({
           callerPinGoal: curGoalInfo,
-          callerPinStrength: curStrengthInfo,
-          callerPinOpportunity: curOpporunityInfo,
+          // callerPinStrength: curStrengthInfo,
+          // callerPinOpportunity: curOpporunityInfo,
         })
         .then(() => {
           console.log('current pin successfully updated');
@@ -147,23 +147,23 @@ const DissResponse = ({
       if (nextPin && user.userMode === 'caller') {
         console.log(nextPin);
         setCurGoalInfo(nextPin.callerPinGoal);
-        setCurStrengthInfo(nextPin.callerPinStrength);
-        setCurOpportunityInfo(nextPin.callerPinOpportunity);
+        // setCurStrengthInfo(nextPin.callerPinStrength);
+        // setCurOpportunityInfo(nextPin.callerPinOpportunity);
       } else if (nextPin) {
         setCurGoalInfo(nextPin.calleePinGoal);
-        setCurStrengthInfo(nextPin.calleePinStrength);
-        setCurOpportunityInfo(nextPin.calleePinOpportunity);
+        // setCurStrengthInfo(nextPin.calleePinStrength);
+        // setCurOpportunityInfo(nextPin.calleePinOpportunity);
       } else {
         console.log('???');
       }
       //reset all the refs
       console.log('curGoalInfo: ' + curGoalInfo);
-      console.log('curStrengthInfo: ' + curStrengthInfo);
-      console.log('curOpportunityInfo: ' + curOpporunityInfo);
+      // console.log('curStrengthInfo: ' + curStrengthInfo);
+      // console.log('curOpportunityInfo: ' + curOpporunityInfo);
 
       goalValueRef.current.value = curGoalInfo;
-      strengthValueRef.current.value = curStrengthInfo;
-      opportunityValueRef.current.value = curOpporunityInfo;
+      // strengthValueRef.current.value = curStrengthInfo;
+      // opportunityValueRef.current.value = curOpporunityInfo;
     }
   }, [curPinIndex, prevPinIndex]); //curPinIndex shouldn't change if there are not pins.
 
@@ -184,8 +184,8 @@ const DissResponse = ({
     setCurSkillInfo1(curPin.callerPinSkill);
     setCurSkillInfo2(curPin.calleePinSkill);
     setCurGoalInfo(goalValueRef.current.value);
-    setCurStrengthInfo(strengthValueRef.current.value);
-    setCurOpportunityInfo(opportunityValueRef.current.value);
+    // setCurStrengthInfo(strengthValueRef.current.value);
+    // setCurOpportunityInfo(opportunityValueRef.current.value);
 
     console.log('prevPinIndex: ' + prevPinIndex);
     console.log('curPinIndex: ' + curPinIndex);
@@ -198,23 +198,23 @@ const DissResponse = ({
     if (nextPin && user.userMode === 'caller') {
       console.log(nextPin);
       setCurGoalInfo(nextPin.callerPinGoal);
-      setCurStrengthInfo(nextPin.callerPinStrength);
-      setCurOpportunityInfo(nextPin.callerPinOpportunity);
+      // setCurStrengthInfo(nextPin.callerPinStrength);
+      // setCurOpportunityInfo(nextPin.callerPinOpportunity);
     } else if (nextPin) {
       setCurGoalInfo(nextPin.calleePinGoal);
-      setCurStrengthInfo(nextPin.calleePinStrength);
-      setCurOpportunityInfo(nextPin.calleePinOpportunity);
+      // setCurStrengthInfo(nextPin.calleePinStrength);
+      // setCurOpportunityInfo(nextPin.calleePinOpportunity);
     } else {
       console.log('???');
     }
     //reset all the refs
     console.log('curGoalInfo: ' + curGoalInfo);
-    console.log('curStrengthInfo: ' + curStrengthInfo);
-    console.log('curOpportunityInfo: ' + curOpporunityInfo);
+    // console.log('curStrengthInfo: ' + curStrengthInfo);
+    // console.log('curOpportunityInfo: ' + curOpporunityInfo);
 
     goalValueRef.current.value = curGoalInfo;
-    strengthValueRef.current.value = curStrengthInfo;
-    opportunityValueRef.current.value = curOpporunityInfo;
+    // strengthValueRef.current.value = curStrengthInfo;
+    // opportunityValueRef.current.value = curOpporunityInfo;
   };
 
   const handlePrevPin = () => {
@@ -356,7 +356,24 @@ const DissResponse = ({
             style={{ marginTop: '20px', marginBottom: '30px' }}
             controls={true}
           />
+
           <Box textAlign="left">
+            <Typography>Discussion Notes</Typography>
+          </Box>
+          <ColorLibTextField
+            id="outlined-secondary"
+            label="Type a response..."
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={3}
+            margin="normal"
+            value={curGoalInfo}
+            inputRef={goalValueRef}
+            onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+          />
+
+          {/* <Box textAlign="left">
             <Typography>What was the therapist trying to achieve during this pin?</Typography>
           </Box>
           <ColorLibTextField
@@ -402,7 +419,7 @@ const DissResponse = ({
             value={curOpporunityInfo}
             inputRef={opportunityValueRef}
             onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
-          />
+          /> */}
 
           {/* <Box textAlign="center">
             <PinNavButtons />
