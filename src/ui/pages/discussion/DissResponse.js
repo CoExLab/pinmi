@@ -44,8 +44,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
   //creating a refernce for TextField Components
   const goalValueRef = useRef('');
-  const strengthValueRef = useRef('');
-  const opportunityValueRef = useRef('');
+  // const strengthValueRef = useRef('');
+  // const opportunityValueRef = useRef('');
 
   //local pins array
   const { pins } = usePinsValue();
@@ -75,8 +75,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
   //states defined for each of the text input areas
   const [curGoalInfo, setCurGoalInfo] = useState('');
-  const [curStrengthInfo, setCurStrengthInfo] = useState('');
-  const [curOpporunityInfo, setCurOpportunityInfo] = useState('');
+  // const [curStrengthInfo, setCurStrengthInfo] = useState('');
+  // const [curOpporunityInfo, setCurOpportunityInfo] = useState('');
 
   //savePin takes in the array index of a pin in the pins array and updates the object at that index with
   // information edited by the user
@@ -84,12 +84,12 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     const lastPin = pins[index];
     if (user.userMode === 'caller') {
       lastPin.callerPinGoal = curGoalInfo;
-      lastPin.callerPinStrength = curStrengthInfo;
-      lastPin.callerPinOpportunity = curOpporunityInfo;
+      // lastPin.callerPinStrength = curStrengthInfo;
+      // lastPin.callerPinOpportunity = curOpporunityInfo;
     } else {
       lastPin.calleePinGoal = curGoalInfo;
-      lastPin.calleePinStrength = curStrengthInfo;
-      lastPin.calleePinOpportunity = curOpporunityInfo;
+      // lastPin.calleePinStrength = curStrengthInfo;
+      // lastPin.calleePinOpportunity = curOpporunityInfo;
     }
     pins[index] = lastPin;
   };
@@ -103,8 +103,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
 
       //update state values with the most recent information from the user
       setCurGoalInfo(goalValueRef.current.value);
-      setCurStrengthInfo(strengthValueRef.current.value);
-      setCurOpportunityInfo(opportunityValueRef.current.value);
+      // setCurStrengthInfo(strengthValueRef.current.value);
+      // setCurOpportunityInfo(opportunityValueRef.current.value);
 
       //find the pin just edited
       const lastPin = pins[prevPinIndex];
@@ -117,20 +117,20 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
       console.log(lastPin);
       if (nextPin && user.userMode === 'caller') {
         setCurGoalInfo(nextPin.callerPinGoal);
-        setCurStrengthInfo(nextPin.callerPinStrength);
-        setCurOpportunityInfo(nextPin.callerPinOpportunity);
+        // setCurStrengthInfo(nextPin.callerPinStrength);
+        // setCurOpportunityInfo(nextPin.callerPinOpportunity);
       } else if (nextPin) {
         setCurGoalInfo(nextPin.calleePinGoal);
-        setCurStrengthInfo(nextPin.calleePinStrength);
-        setCurOpportunityInfo(nextPin.calleePinOpportunity);
+        // setCurStrengthInfo(nextPin.calleePinStrength);
+        // setCurOpportunityInfo(nextPin.calleePinOpportunity);
       } else {
         console.log('???');
       }
 
       //reset all the refs
       goalValueRef.current.value = curGoalInfo;
-      strengthValueRef.current.value = curStrengthInfo;
-      opportunityValueRef.current.value = curOpporunityInfo;
+      // strengthValueRef.current.value = curStrengthInfo;
+      // opportunityValueRef.current.value = curOpporunityInfo;
     }
   }, [curPinIndex, prevPinIndex]); //curPinIndex shouldn't change if there are not pins.
 
@@ -286,6 +286,22 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
           </form>
 
           <Box textAlign="left">
+            <Typography>Discussion Notes</Typography>
+          </Box>
+          <ColorLibTextField
+            id="outlined-secondary"
+            label="Type a response..."
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={3}
+            margin="normal"
+            value={curGoalInfo}
+            inputRef={goalValueRef}
+            onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+          />
+
+          {/* <Box textAlign="left">
             <Typography>What was the therapist trying to achieve during this pin?</Typography>
           </Box>
           <ColorLibTextField
@@ -331,7 +347,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             value={curOpporunityInfo}
             inputRef={opportunityValueRef}
             onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
-          />
+          /> */}
 
           {/* <Box textAlign="center">
             <PinNavButtons />
