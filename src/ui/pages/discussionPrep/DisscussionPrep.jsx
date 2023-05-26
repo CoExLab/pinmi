@@ -298,7 +298,7 @@ const DisscussionPrep = () => {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {'Are you sure you want to'}
+            {'Are you sure you want to '}
             {session.recordOnly ? 'end the session?' : 'join the discussion?'}
           </DialogTitle>
           <DialogActions>
