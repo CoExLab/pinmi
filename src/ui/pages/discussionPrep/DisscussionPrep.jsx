@@ -10,7 +10,7 @@ import Transcription from '../../components/transcript/Transcription';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Grid, Typography } from '@material-ui/core';
 
-import ColorLibButton from '../../components/colorLibComponents/ColorLibButton';
+import ColorLibButton, { ColorLibNextButton } from '../../components/colorLibComponents/ColorLibButton';
 import { useActiveStepValue, usePinsValue } from '../../../storage/context';
 import { firebase } from '../../../storage/firebase';
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,6 +20,8 @@ import ColorLibTimeReminder from '../../components/colorLibComponents/ColorLibTi
 
 import { formatTime } from '../../../helper/helper';
 import { baseURL } from '../../pages/misc/constants';
+
+import { Dialog, Box, DialogTitle, DialogActions } from '@material-ui/core';
 
 // socket.io
 // const socket = io.connect(baseURL);
@@ -100,6 +102,12 @@ const DisscussionPrep = () => {
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime);
   const [timeRemind, setTimeRemind] = useState(false);
+
+  // Join Discussion dialog
+  const [openJoin, setOpenJoin] = useState(false);
+  const handleClose = () => {
+    setOpenJoin(false);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -278,9 +286,40 @@ const DisscussionPrep = () => {
         </Grid>
       </Container>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px 0 50px 0' }}>
-        <ColorLibButton variant="contained" size="medium" onClick={handleJoinDiscussion}>
+        <ColorLibButton variant="contained" size="medium" onClick={() => setOpenJoin(true)}>
           {session.recordOnly ? 'End Session' : 'Join Discussion'}
         </ColorLibButton>
+      </div>
+      <div>
+        <Dialog
+          open={openJoin}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Are you sure you want to'}
+            {session.recordOnly ? 'end the session?' : 'join the discussion?'}
+          </DialogTitle>
+          <DialogActions>
+            <Box m={4}>
+              <div
+                // direction="row" align="center"
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <ColorLibButton variant="outlined" size="medium" onClick={() => setOpenJoin(false)} autoFocus>
+                  {/* Stay in Discussion Prep */}
+                  Cancel
+                </ColorLibButton>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <ColorLibNextButton variant="contained" size="medium" onClick={() => handleJoinDiscussion()} autoFocus>
+                  {/* Begin peer-feedback discussion */}
+                  Join Discussion
+                </ColorLibNextButton>
+              </div>
+            </Box>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );
