@@ -48,7 +48,9 @@ const Discussion = () => {
   const classes = useStyles();
 
   //current page in the Discussion section
-  const [page, setPage] = useState(0);
+  // this was changed from 0 to 1, because there's no need to display
+  // the 0 and 2 page
+  const [page, setPage] = useState(1);
 
   //session and user information taken from Redux
   const session = useSelector(state => state.session);
@@ -210,11 +212,13 @@ const Discussion = () => {
       //next section is accessed
       setEndVideo(true);
     } else {
-      if (page === 0) {
-        //pull pin updates from previous section and from both users
-        //loadPins automatically moves to the next page after completion
-        loadPins();
-      } else if (page === 1) {
+      // if (page === 0) {
+      //   //pull pin updates from previous section and from both users
+      //   //loadPins automatically moves to the next page after completion
+      //   loadPins();
+      // } else
+      // The above case is removed because there will no longer be page 0
+      if (page === 1) {
         //pin indices are reset to force the last pin to save
         setPrevPinIndex(curPinIndex);
         if (curPinIndex === 0) {
@@ -250,7 +254,10 @@ const Discussion = () => {
         pins.sort((a, b) => a.pinTime - b.pinTime);
       })
       .then(() => {
-        setPage(page + 1);
+        // setPage(page + 1);
+        // no longer needs to increment the page number, as the page will start
+        // from 1
+        // when calling loadPins, the page is already at 1
       })
       .catch(err => console.error('Error in loadPins functions: ', err));
   };
@@ -259,18 +266,18 @@ const Discussion = () => {
   //page must be a valid integer between 0 and 2
   function getConditionalButton(page) {
     switch (page) {
-      case 0:
-        return (
-          <Box className={classes.videoButton}>
-            <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant="body2">Introduce yourself to your peer, who is also learning MI.</Typography>
-              <Typography variant="body2">How did today’s mock client session go?</Typography>
-            </ColorLibPaper>
-            <ColorLibGrayNextButton variant="contained" size="medium" onClick={() => handleButton(false)}>
-              Let's talk about our pins
-            </ColorLibGrayNextButton>
-          </Box>
-        );
+      // case 0:
+      //   return (
+      //     <Box className={classes.videoButton}>
+      //       <ColorLibPaper elevation={2} className={classes.description}>
+      //         <Typography variant="body2">Introduce yourself to your peer, who is also learning MI.</Typography>
+      //         <Typography variant="body2">How did today’s mock client session go?</Typography>
+      //       </ColorLibPaper>
+      //       <ColorLibGrayNextButton variant="contained" size="medium" onClick={() => handleButton(false)}>
+      //         Let's talk about our pins
+      //       </ColorLibGrayNextButton>
+      //     </Box>
+      //   );
       case 1:
         return (
           <Box align="center" m={2} mb={20}>
@@ -296,6 +303,12 @@ const Discussion = () => {
         return <div>Unknown</div>;
     }
   }
+
+  useEffect(() => {
+    // Function to be called once
+    // directly load the pins to skip page 0
+    loadPins();
+  }, []); // Empty dependency array ensures the effect is executed only once
 
   //actual rendering
   return (
