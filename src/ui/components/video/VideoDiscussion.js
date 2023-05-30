@@ -169,6 +169,9 @@ function VideoComponent(props) {
   // fetch raw pin data here
   const { pins } = usePinsValue();
 
+  // Originally "readyToJoin"
+  // Now skipping the dialog box, directly begin the discussion
+  // useEffect below will call this function directly as the entry point
   const readyToJoin = () => {
     pins.forEach((elem, id) => savePin(id));
     handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL);
@@ -622,31 +625,16 @@ How did today’s mock client session go?
     );
   };
 
+  // Will directly render the video call page
+  // Dialog box in the return has been removed
+  useEffect(() => {
+    // Function to be called once
+    readyToJoin();
+  }, []); // Empty dependency array ensures the effect is executed only once
+
   return (
     <>
       <Box pt={10}>{loadingStatus ? <LinearProgress /> : null}</Box>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{'Are you sure you want to join the discussion?'}</DialogTitle>
-        <DialogActions>
-          <Box m={2}>
-            <div direction="row" align="center">
-              {/* <ColorLibButton variant="contained" size="medium" onClick={() => setOpen(false)} autoFocus>
-                Add more notes to pins
-              </ColorLibButton> */}
-              {/* <Box mt={2}> */}
-              <ColorLibButton variant="contained" size="medium" onClick={readyToJoin} autoFocus>
-                Join Discussion
-              </ColorLibButton>
-              {/* </Box> */}
-            </div>
-          </Box>
-        </DialogActions>
-      </Dialog>
       {videoBox(props.mode === 'Discussion' ? 'mini' : 'full')}
     </>
   );
