@@ -148,7 +148,8 @@ function VideoChatComponent(props) {
   const [timeRemind, setTimeRemind] = useState(false);
 
   const handleClose = () => {
-    setOpen(false);
+    // Disabled the following line, or the page may be accidentally closed
+    // setOpen(false);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
