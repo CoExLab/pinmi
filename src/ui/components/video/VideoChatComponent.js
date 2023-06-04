@@ -731,22 +731,22 @@ function VideoChatComponent(props) {
 
   const PreviewMicButton = () =>
     isAudioEnabled ? (
-      <Fab>
+      <Fab onClick={() => setIsAudioEnabled(false)}>
         <MicIcon onClick={() => setIsAudioEnabled(false)} />
       </Fab>
     ) : (
-      <Fab>
+      <Fab onClick={() => setIsAudioEnabled(true)}>
         <MicOffIcon onClick={() => setIsAudioEnabled(true)} />
       </Fab>
     );
 
   const PreviewVideoButton = () =>
     isVideoEnabled ? (
-      <Fab>
+      <Fab onClick={() => setIsVideoEnabled(false)}>
         <VideocamIcon onClick={() => setIsVideoEnabled(false)} />
       </Fab>
     ) : (
-      <Fab>
+      <Fab onClick={() => setIsVideoEnabled(true)}>
         <VideocamOffIcon onClick={() => setIsVideoEnabled(true)} />
       </Fab>
     );
