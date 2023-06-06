@@ -399,7 +399,11 @@ function VideoChatComponent(props) {
           <div className="video-toolbar">
             {isAudioEnabled ? (
               <Tooltip title="mic on">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleAudio(false)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <MicIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleAudio(false)}
@@ -409,7 +413,11 @@ function VideoChatComponent(props) {
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleAudio(true)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <MicOffIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleAudio(true)}
@@ -420,7 +428,11 @@ function VideoChatComponent(props) {
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleVideo(false)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <VideocamIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleVideo(false)}
@@ -430,7 +442,11 @@ function VideoChatComponent(props) {
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleVideo(true)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <VideocamOffIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleVideo(true)}
