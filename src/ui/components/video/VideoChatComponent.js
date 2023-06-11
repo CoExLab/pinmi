@@ -559,6 +559,11 @@ function VideoChatComponent(props) {
       .catch(error => {
         console.log(error);
       });
+
+    // Set a new field in the firebase to signal that the call is ongoing
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserEnded: false,
+    });
   };
 
   const handleFinishChat = async () => {
@@ -621,6 +626,10 @@ function VideoChatComponent(props) {
     if (pins[0]) {
       console.log(pins[0]);
     }
+    // Call has ended, update in the firebase
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserEnded: true,
+    });
   };
 
   const handleStartArchive = async () => {
