@@ -148,7 +148,8 @@ function VideoChatComponent(props) {
   const [timeRemind, setTimeRemind] = useState(false);
 
   const handleClose = () => {
-    setOpen(false);
+    // Disabled the following line, or the page may be accidentally closed
+    // setOpen(false);
   };
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
@@ -398,7 +399,11 @@ function VideoChatComponent(props) {
           <div className="video-toolbar">
             {isAudioEnabled ? (
               <Tooltip title="mic on">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleAudio(false)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <MicIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleAudio(false)}
@@ -408,7 +413,11 @@ function VideoChatComponent(props) {
               </Tooltip>
             ) : (
               <Tooltip title="mic off">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleAudio(true)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <MicOffIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleAudio(true)}
@@ -419,7 +428,11 @@ function VideoChatComponent(props) {
             )}
             {isVideoEnabled ? (
               <Tooltip title="camera on">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleVideo(false)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <VideocamIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleVideo(false)}
@@ -429,7 +442,11 @@ function VideoChatComponent(props) {
               </Tooltip>
             ) : (
               <Tooltip title="camera off">
-                <Fab size="medium" style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}>
+                <Fab
+                  size="medium"
+                  onClick={() => onToggleVideo(true)}
+                  style={{ marginBottom: 10, marginRight: 10, backgroundColor: '#565656' }}
+                >
                   <VideocamOffIcon
                     classes={{ root: classes.iconRoot }}
                     onClick={() => onToggleVideo(true)}
@@ -730,22 +747,22 @@ function VideoChatComponent(props) {
 
   const PreviewMicButton = () =>
     isAudioEnabled ? (
-      <Fab>
+      <Fab onClick={() => setIsAudioEnabled(false)}>
         <MicIcon onClick={() => setIsAudioEnabled(false)} />
       </Fab>
     ) : (
-      <Fab>
+      <Fab onClick={() => setIsAudioEnabled(true)}>
         <MicOffIcon onClick={() => setIsAudioEnabled(true)} />
       </Fab>
     );
 
   const PreviewVideoButton = () =>
     isVideoEnabled ? (
-      <Fab>
+      <Fab onClick={() => setIsVideoEnabled(false)}>
         <VideocamIcon onClick={() => setIsVideoEnabled(false)} />
       </Fab>
     ) : (
-      <Fab>
+      <Fab onClick={() => setIsVideoEnabled(true)}>
         <VideocamOffIcon onClick={() => setIsVideoEnabled(true)} />
       </Fab>
     );
