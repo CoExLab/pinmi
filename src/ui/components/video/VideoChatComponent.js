@@ -83,6 +83,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// This global variable records the firebase listener
+// to detect if one user has ended the call.
+// it must be declared here, not inside VideoChatComponnet
+// or it would be reset to undefined upon re-rendering.
+// This is a function that will detach the listener
+let unsub;
+
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
@@ -525,6 +532,24 @@ function VideoChatComponent(props) {
     } else {
       var roomAddOn = '';
     }
+    // Make oneUserEnded to false when entering the call room
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserEnded: false,
+    });
+    // Set up the listener to the database
+    unsub = firebase
+      .firestore()
+      .collection('sessions')
+      .doc(session.sessionID)
+      .onSnapshot(snapshot => {
+        // Code here will be performed once the database has an update
+        // Perform notice only when other has ended the call and user is calling
+        if (snapshot.data().oneUserEnded) {
+          console.log(
+            'THE OTHER USER HAS ENDED THE CALL THE OTHER USER HAS ENDED THE CALL THE OTHER USER HAS ENDED THE CALL',
+          );
+        }
+      });
     await fetch(baseURL + 'room/' + room + roomAddOn)
       .then(function (res) {
         return res.json();
@@ -559,14 +584,11 @@ function VideoChatComponent(props) {
       .catch(error => {
         console.log(error);
       });
-
-    // Set a new field in the firebase to signal that the call is ongoing
-    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
-      oneUserEnded: false,
-    });
   };
 
   const handleFinishChat = async () => {
+    // detach the listener once the call is ended
+    unsub();
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
     // add a placeholder pin at the end
