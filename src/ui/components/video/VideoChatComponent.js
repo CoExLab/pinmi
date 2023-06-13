@@ -887,7 +887,7 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Your partner has ended the call.'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Your partner has ended the call'}</DialogTitle>
         <DialogActions>
           <Box m={4}>
             <div
