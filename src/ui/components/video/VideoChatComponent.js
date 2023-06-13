@@ -106,6 +106,10 @@ function VideoChatComponent(props) {
   const [buttonDis, setButtonDis] = useState(false);
   const [buttonDisStop, setButtonDisStop] = useState(true);
 
+  // true if the user has been notified that the other user ended the call
+  const [notifiedEnding, setNotifiedEnding] = useState(false);
+  const [notifyBox, setNotifyBox] = useState(false);
+
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
 
@@ -544,10 +548,9 @@ function VideoChatComponent(props) {
       .onSnapshot(snapshot => {
         // Code here will be performed once the database has an update
         // Perform notice only when other has ended the call and user is calling
-        if (snapshot.data().oneUserEnded) {
-          console.log(
-            'THE OTHER USER HAS ENDED THE CALL THE OTHER USER HAS ENDED THE CALL THE OTHER USER HAS ENDED THE CALL',
-          );
+        if (snapshot.data().oneUserEnded && !notifiedEnding) {
+          setNotifiedEnding(true);
+          setNotifyBox(true);
         }
       });
     await fetch(baseURL + 'room/' + room + roomAddOn)
@@ -873,6 +876,37 @@ function VideoChatComponent(props) {
                 {/* Begin self-reflection */}
                 Confirm
               </ColorLibNextButton>
+            </div>
+          </Box>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={notifyBox}
+        onClose={() => setNotifyBox(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Your partner has ended the call.'}</DialogTitle>
+        <DialogActions>
+          <Box m={4}>
+            <div
+              // direction="row" align="center"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <ColorLibButton variant="outlined" size="medium" onClick={() => setNotifyBox(false)} autoFocus>
+                {/* Stay in role-play */}
+                OK
+              </ColorLibButton>
+              &nbsp; &nbsp; &nbsp; &nbsp;
+              <ColorLibCallEndButton
+                variant="contained"
+                size="medium"
+                onClick={() => handleFinishChat()}
+                disabled={!isInterviewStarted}
+              >
+                {session.recordOnly ? 'End Session' : 'Begin Self-reflection'}
+              </ColorLibCallEndButton>
             </div>
           </Box>
         </DialogActions>
