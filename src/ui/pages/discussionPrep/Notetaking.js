@@ -213,7 +213,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
               }}
             >
               <Typography>
-                Pin {curPinIndex} @ {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} | by{' '}
+                Pin {curPinIndex + 1} @ {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} | by{' '}
                 {pins[curPinIndex].creatorMode === 'default'
                   ? 'default'
                   : pins[curPinIndex].creatorMode === user.userMode
