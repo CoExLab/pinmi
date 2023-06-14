@@ -575,9 +575,8 @@ function VideoChatComponent(props) {
   const handleFinishChat = async () => {
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
-    // add a placeholder pin at the end
-    // var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
-    if (user.userMode === 'callee') {
+    // add a placeholder pin at time 0 in the end if there is no pin
+    if (user.userMode === 'callee' && pins.length == 0) {
       await addPin(0, true).then(() => {
         setPopperContentIndex(1);
         setPopperOpen(true);

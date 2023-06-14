@@ -194,114 +194,116 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
   //Actual rendering
   return (
     <Grid item xs={12} sm={8}>
-      {curPinIndex !== -1 ? (
-        <ColorLibPaper elevation={1}>
+      {pins.length > 0 && curPinIndex < pins.length && (
+        <>
           {curPinIndex !== -1 ? (
-            <Box fontStyle="italic">
-              <Typography>
-                The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
-                {pins[curPinIndex].creatorMode === 'default'
-                  ? 'default'
-                  : pins[curPinIndex].creatorMode === user.userMode
-                  ? 'you'
-                  : 'your peer'}
-              </Typography>
-            </Box>
-          ) : null}
-          <ColorLibTextField
-            disabled
-            id="outlined-secondary"
-            label="Personal Notes..."
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={3}
-            margin="normal"
-            value={curNoteInfo}
-          />
-          <Box fontStyle="italic" marginTop="16px">
-            <Typography variant="h3">Talk with your peer about:</Typography>
-          </Box>
+            <ColorLibPaper elevation={1}>
+              {curPinIndex !== -1 ? (
+                <Box fontStyle="italic">
+                  <Typography>
+                    The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
+                    {pins[curPinIndex].creatorMode === 'default'
+                      ? 'default'
+                      : pins[curPinIndex].creatorMode === user.userMode
+                      ? 'you'
+                      : 'your peer'}
+                  </Typography>
+                </Box>
+              ) : null}
+              <ColorLibTextField
+                disabled
+                id="outlined-secondary"
+                label="Personal Notes..."
+                fullWidth
+                variant="outlined"
+                multiline
+                rows={3}
+                margin="normal"
+                value={curNoteInfo}
+              />
+              <Box fontStyle="italic" marginTop="16px">
+                <Typography variant="h3">Talk with your peer about:</Typography>
+              </Box>
 
-          <Box textAlign="left">
-            <Typography>What is your perspective of what happened at this pin?</Typography>
-          </Box>
-          <form className={classes.root} noValidate autoComplete="off">
-            <ColorLibTextField
-              disabled
-              id="outlined-secondary"
-              label="Therapist's perspective"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={2}
-              margin="normal"
-              value={curPerspectiveInfo1}
-            />
-            <ColorLibTextField
-              disabled
-              id="outlined-secondary"
-              label="Client's perspective"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={2}
-              margin="normal"
-              value={curPerspectiveInfo2}
-            />
-          </form>
-          <Box textAlign="left">
-            <Typography>What would you categorize this pin as?</Typography>
-          </Box>
-          <Box align="left">
-            <ToggleButtonGroup disabled className={classes.toggleGroup} exclusive size="large">
-              <ToggleButton value={pinType1 ?? 'pinType1'}>{pinType1}</ToggleButton>
-              <ToggleButton value={pinType2 ?? 'pinType2'}>{pinType2}</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <MISkillsSheet />
-          <form className={classes.root} noValidate autoComplete="off">
-            <ColorLibTextField
-              disabled
-              label="Therapist's MI skill"
-              id="outlined-secondary"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={2}
-              margin="normal"
-              value={curSkillInfo1}
-            />
-            <ColorLibTextField
-              disabled
-              label="Client's MI skill"
-              id="outlined-secondary"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={2}
-              margin="normal"
-              value={curSkillInfo2}
-            />
-          </form>
+              <Box textAlign="left">
+                <Typography>What is your perspective of what happened at this pin?</Typography>
+              </Box>
+              <form className={classes.root} noValidate autoComplete="off">
+                <ColorLibTextField
+                  disabled
+                  id="outlined-secondary"
+                  label="Therapist's perspective"
+                  fullWidth
+                  variant="outlined"
+                  multiline
+                  rows={2}
+                  margin="normal"
+                  value={curPerspectiveInfo1}
+                />
+                <ColorLibTextField
+                  disabled
+                  id="outlined-secondary"
+                  label="Client's perspective"
+                  fullWidth
+                  variant="outlined"
+                  multiline
+                  rows={2}
+                  margin="normal"
+                  value={curPerspectiveInfo2}
+                />
+              </form>
+              <Box textAlign="left">
+                <Typography>What would you categorize this pin as?</Typography>
+              </Box>
+              <Box align="left">
+                <ToggleButtonGroup disabled className={classes.toggleGroup} exclusive size="large">
+                  <ToggleButton value={pinType1 ?? 'pinType1'}>{pinType1}</ToggleButton>
+                  <ToggleButton value={pinType2 ?? 'pinType2'}>{pinType2}</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <MISkillsSheet />
+              <form className={classes.root} noValidate autoComplete="off">
+                <ColorLibTextField
+                  disabled
+                  label="Therapist's MI skill"
+                  id="outlined-secondary"
+                  fullWidth
+                  variant="outlined"
+                  multiline
+                  rows={2}
+                  margin="normal"
+                  value={curSkillInfo1}
+                />
+                <ColorLibTextField
+                  disabled
+                  label="Client's MI skill"
+                  id="outlined-secondary"
+                  fullWidth
+                  variant="outlined"
+                  multiline
+                  rows={2}
+                  margin="normal"
+                  value={curSkillInfo2}
+                />
+              </form>
 
-          <Box textAlign="left">
-            <Typography>Discussion Notes</Typography>
-          </Box>
-          <ColorLibTextField
-            id="outlined-secondary"
-            label="Type a response..."
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={3}
-            margin="normal"
-            value={curGoalInfo}
-            inputRef={goalValueRef}
-            onChange={() => setCurGoalInfo(goalValueRef.current.value)}
-          />
+              <Box textAlign="left">
+                <Typography>Discussion Notes</Typography>
+              </Box>
+              <ColorLibTextField
+                id="outlined-secondary"
+                label="Type a response..."
+                fullWidth
+                variant="outlined"
+                multiline
+                rows={3}
+                margin="normal"
+                value={curGoalInfo}
+                inputRef={goalValueRef}
+                onChange={() => setCurGoalInfo(goalValueRef.current.value)}
+              />
 
-          {/* <Box textAlign="left">
+              {/* <Box textAlign="left">
             <Typography>What was the therapist trying to achieve during this pin?</Typography>
           </Box>
           <ColorLibTextField
@@ -349,16 +351,18 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
             onChange={() => setCurOpportunityInfo(opportunityValueRef.current.value)}
           /> */}
 
-          {/* <Box textAlign="center">
+              {/* <Box textAlign="center">
             <PinNavButtons />
           </Box> */}
-        </ColorLibPaper>
-      ) : (
-        <Box fontStyle="italic">
-          <Typography>
-            {'\n'}No pins to see. Try adding some!!!{'\n\n'}
-          </Typography>
-        </Box>
+            </ColorLibPaper>
+          ) : (
+            <Box fontStyle="italic">
+              <Typography>
+                {'\n'}No pins to see. Try adding some!!!{'\n\n'}
+              </Typography>
+            </Box>
+          )}
+        </>
       )}
     </Grid>
   );
