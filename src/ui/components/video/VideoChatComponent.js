@@ -11,9 +11,11 @@ import VolumeUpIcon from '@material-ui/icons/VolumeUp';
 import VolumeOffIcon from '@material-ui/icons/VolumeOff';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-import { Tooltip, Button, LinearProgress, Box, Typography } from '@material-ui/core';
+import { Tooltip, Button, LinearProgress, Box, Typography, TextField } from '@material-ui/core';
 import { Icon, Fab, Popper } from '@material-ui/core';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import pin from '../../../other/images/pin.svg';
 
 import Webcam from 'react-webcam';
@@ -137,11 +139,16 @@ function VideoChatComponent(props) {
     await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
       setPopperOpen(true);
-      setTimeout(() => {
-        setPopperOpen(false);
-      }, 3000);
+      // setTimeout(() => {
+      //   setPopperOpen(false);
+      // }, 3000);
       console.log('added a pin');
     });
+  };
+
+  const handleClosePopper = async () => {
+    await addPinNotes(pinTime);
+    setPopperOpen(false);
   };
 
   const [open, setOpen] = useState(true);
@@ -507,6 +514,10 @@ function VideoChatComponent(props) {
             <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
               <ColorLibPaper elevation={2}>
                 <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
+                <TextField variant="outlined"></TextField>
+                <IconButton aria-label="close" onClick={handleClosePopper}>
+                  <CloseIcon />
+                </IconButton>
               </ColorLibPaper>
             </Popper>
           </>
