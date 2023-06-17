@@ -83,6 +83,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// This global variable records the firebase listener
+// to detect if one user has ended the call.
+// it must be declared here, not inside VideoChatComponnet
+// or it would be reset to undefined upon re-rendering.
+// This is a function that will detach the listener
+let unsub;
+
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
@@ -98,6 +105,10 @@ function VideoChatComponent(props) {
   const [openEnd, setOpenEnd] = useState(false);
   const [buttonDis, setButtonDis] = useState(false);
   const [buttonDisStop, setButtonDisStop] = useState(true);
+
+  // true if the user has been notified that the other user ended the call
+  const [notifiedEnding, setNotifiedEnding] = useState(false);
+  const [notifyBox, setNotifyBox] = useState(false);
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
@@ -542,6 +553,23 @@ function VideoChatComponent(props) {
     } else {
       var roomAddOn = '';
     }
+    // Make oneUserEnded to false when entering the call room
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserEnded: false,
+    });
+    // Set up the listener to the database
+    unsub = firebase
+      .firestore()
+      .collection('sessions')
+      .doc(session.sessionID)
+      .onSnapshot(snapshot => {
+        // Code here will be performed once the database has an update
+        // Perform notice only when other has ended the call and user is calling
+        if (snapshot.data().oneUserEnded && !notifiedEnding) {
+          setNotifiedEnding(true);
+          setNotifyBox(true);
+        }
+      });
     await fetch(baseURL + 'room/' + room + roomAddOn)
       .then(function (res) {
         return res.json();
@@ -579,6 +607,8 @@ function VideoChatComponent(props) {
   };
 
   const handleFinishChat = async () => {
+    // detach the listener once the call is ended
+    unsub();
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
     // add a placeholder pin at the end
@@ -638,6 +668,16 @@ function VideoChatComponent(props) {
     if (pins[0]) {
       console.log(pins[0]);
     }
+    // Call has ended, update in the firebase
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserEnded: true,
+    });
+
+    // Indicate that the reflection has started before leaving the call
+    // the following is to be used in DisscussionPrep file
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserReflectEnded: false,
+    });
   };
 
   const handleStartArchive = async () => {
@@ -859,6 +899,37 @@ function VideoChatComponent(props) {
                 {/* Begin self-reflection */}
                 Confirm
               </ColorLibNextButton>
+            </div>
+          </Box>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={notifyBox}
+        onClose={() => setNotifyBox(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Your partner has ended the call'}</DialogTitle>
+        <DialogActions>
+          <Box m={4}>
+            <div
+              // direction="row" align="center"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <ColorLibButton variant="outlined" size="medium" onClick={() => setNotifyBox(false)} autoFocus>
+                {/* Stay in role-play */}
+                OK
+              </ColorLibButton>
+              &nbsp; &nbsp; &nbsp; &nbsp;
+              <ColorLibCallEndButton
+                variant="contained"
+                size="medium"
+                onClick={() => handleFinishChat()}
+                disabled={!isInterviewStarted}
+              >
+                {session.recordOnly ? 'End Session' : 'Begin Self-reflection'}
+              </ColorLibCallEndButton>
             </div>
           </Box>
         </DialogActions>
