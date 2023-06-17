@@ -655,6 +655,12 @@ function VideoChatComponent(props) {
     await firebase.firestore().collection('sessions').doc(session.sessionID).update({
       oneUserEnded: true,
     });
+
+    // Indicate that the reflection has started before leaving the call
+    // the following is to be used in DisscussionPrep file
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserReflectEnded: false,
+    });
   };
 
   const handleStartArchive = async () => {
