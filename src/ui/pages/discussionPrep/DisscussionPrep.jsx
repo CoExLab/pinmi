@@ -68,6 +68,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+let unsub;
+
 //Actual export
 const DisscussionPrep = () => {
   //style
@@ -108,6 +110,27 @@ const DisscussionPrep = () => {
   const handleClose = () => {
     setOpenJoin(false);
   };
+
+  // true if the user has been notified that the other user ended the reflection
+  const [notifiedEnding, setNotifiedEnding] = useState(false);
+  const [notifyBox, setNotifyBox] = useState(false);
+
+  // effect to start the listener to the database, make sure the effect only happens once
+  // note that the field is pre-set in VideoDiscussion file already. It should be false already
+  useEffect(() => {
+    unsub = firebase
+      .firestore()
+      .collection('sessions')
+      .doc(session.sessionID)
+      .onSnapshot(snapshot => {
+        // Code here will be performed once the database has an update
+        // Perform notice only when other has ended the call and user is calling
+        if (snapshot.data().oneUserReflectEnded && !notifiedEnding) {
+          setNotifiedEnding(true);
+          setNotifyBox(true);
+        }
+      });
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -197,6 +220,12 @@ const DisscussionPrep = () => {
 
   //handleJoinDiscussion is called when the user is ready to join the discussion
   const handleJoinDiscussion = async () => {
+    // detach listener to db
+    unsub();
+    // Call has ended, update in the firebase
+    await firebase.firestore().collection('sessions').doc(session.sessionID).update({
+      oneUserReflectEnded: true,
+    });
     console.log('handleJoinDiscussion called');
     //reset curPinIndex to force the Notetaking.js file to remember the last pin info
     setPrevPinIndex(curPinIndex);
@@ -309,6 +338,38 @@ const DisscussionPrep = () => {
               >
                 <ColorLibButton variant="outlined" size="medium" onClick={() => setOpenJoin(false)} autoFocus>
                   {/* Stay in Discussion Prep */}
+                  Cancel
+                </ColorLibButton>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <ColorLibNextButton variant="contained" size="medium" onClick={() => handleJoinDiscussion()} autoFocus>
+                  {/* Begin peer-feedback discussion */}
+                  Join Discussion
+                </ColorLibNextButton>
+              </div>
+            </Box>
+          </DialogActions>
+        </Dialog>
+      </div>
+      <div>
+        <Dialog
+          open={notifyBox}
+          onClose={() => setNotifyBox(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {
+              'Your partner has finished self reflection and is ready to discuss. Click the Join Discussion button below  to begin the discussion. It’s ok if you didn’t finish your notes on all the pins.'
+            }
+          </DialogTitle>
+          <DialogActions>
+            <Box m={4}>
+              <div
+                // direction="row" align="center"
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <ColorLibButton variant="outlined" size="medium" onClick={() => setNotifyBox(false)} autoFocus>
+                  {/* Stay in role-play */}
                   Cancel
                 </ColorLibButton>
                 &nbsp; &nbsp; &nbsp; &nbsp;
