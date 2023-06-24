@@ -394,6 +394,21 @@ function VideoChatComponent(props) {
     }
   };
 
+  const instantNote = index => {
+    if (index === 1) {
+      return (
+        <>
+          <TextField variant="outlined"></TextField>
+          <IconButton aria-label="close" onClick={handleClosePopper}>
+            <CloseIcon />
+          </IconButton>
+          {/* Discard Button */}
+          {/* Save Button */}
+        </>
+      );
+    }
+  };
+
   const renderToolbar = () => {
     return (
       <>
@@ -542,10 +557,7 @@ function VideoChatComponent(props) {
             <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
               <ColorLibPaper elevation={2}>
                 <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
-                <TextField variant="outlined"></TextField>
-                <IconButton aria-label="close" onClick={handleClosePopper}>
-                  <CloseIcon />
-                </IconButton>
+                {instantNote(popperContentIndex)}
               </ColorLibPaper>
             </Popper>
           </>
