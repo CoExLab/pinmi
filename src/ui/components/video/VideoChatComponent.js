@@ -92,6 +92,10 @@ const useStyles = makeStyles(theme => ({
 // This is a function that will detach the listener
 let unsub;
 
+// This id record the most recent Pin that was put into the database
+// it will be used when instant notes are inserted to the database
+// let newestPinID;
+
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
@@ -142,6 +146,9 @@ function VideoChatComponent(props) {
       return;
     }
     if (popperOpen) {
+      // Now, if popper is open, the user hasn't finish the instant note
+      // so we don't want to add a pin
+      // Todo: When the popper is open, change the icon from pin to close
       setPopperOpen(false);
       return;
     }
@@ -149,6 +156,7 @@ function VideoChatComponent(props) {
     console.log('calling addPin from HandlePinButton');
     await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
+      // For a weird reason the above line cannot be executed
       setPopperOpen(true);
       // setTimeout(() => {
       //   setPopperOpen(false);
@@ -158,7 +166,42 @@ function VideoChatComponent(props) {
   };
 
   const handleClosePopper = async () => {
-    await addPinNotes(pinTime);
+    event.preventDefault();
+    // await addPinNotes(pinTime);
+    console.log(pins[pins.length - 1]);
+    console.log('is the most recent pin');
+    console.log('will add to the database');
+
+    console.log('the following is the current instant notes');
+    console.log(noteContent.current.value);
+
+    // Add the content to the firebase
+    if (user.userMode === 'callee') {
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(pins[pins.length - 1].pinID)
+        .update({
+          calleePinNote: noteContent.current.value,
+        });
+      // Modify the local array
+      pins[pins.length - 1].calleePinNote = noteContent.current.value;
+    } else {
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(pins[pins.length - 1].pinID)
+        .update({
+          callerPinNote: noteContent.current.value,
+        });
+      // modify the local array as well
+      pins[pins.length - 1].callerPinNote = noteContent.current.value;
+    }
+
     setPopperOpen(false);
   };
 
@@ -205,6 +248,9 @@ function VideoChatComponent(props) {
 
   // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
   // const
+
+  // Save the latest note content
+  const noteContent = useRef('');
 
   useEffect(() => {
     console.log('isInterviewStarted changed to', isInterviewStarted);
@@ -357,6 +403,7 @@ function VideoChatComponent(props) {
       pinID: myPin.pinID,
     });
     pins.push(myPin);
+    // The newest pin is pins[pins.length - 1]
     console.log('Finished pin creation');
   };
 
@@ -398,12 +445,14 @@ function VideoChatComponent(props) {
     if (index === 1) {
       return (
         <>
-          <TextField variant="outlined"></TextField>
-          <IconButton aria-label="close" onClick={handleClosePopper}>
-            <CloseIcon />
-          </IconButton>
-          {/* Discard Button */}
-          {/* Save Button */}
+          <form onSubmit={handleClosePopper}>
+            <TextField variant="outlined" placeholder="Some Quick Notes" inputRef={noteContent}></TextField>
+            <IconButton aria-label="close" onClick={handleClosePopper}>
+              <CloseIcon />
+            </IconButton>
+            {/* Discard Button */}
+            {/* Save Button */}
+          </form>
         </>
       );
     }
@@ -686,6 +735,7 @@ function VideoChatComponent(props) {
       return a.pinTime - b.pinTime;
     });
 
+    console.log('WILL STOP THE VIDEO CALL, OUTPUT OF THE PINS');
     console.log(pins);
     if (pins[0]) {
       console.log(pins[0]);
@@ -728,7 +778,9 @@ function VideoChatComponent(props) {
         console.log(Date.now());
         setPopperOpen(true);
         setTimeout(() => {
-          if (popperContentIndex === 0) {
+          console.log(popperContentIndex);
+          // To make sure only close the popper when no pin is added yet
+          if (popperContentIndex === 0 && pins.length === 0) {
             setPopperOpen(false);
           }
         }, 5000);
