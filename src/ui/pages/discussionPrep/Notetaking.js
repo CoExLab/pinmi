@@ -64,14 +64,34 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
   //style
   const classes = useStyles();
 
+  // Because the notes may be carried from previous pages, this variable
+  // fetch the first pin's note before the page gets rendered.
+  // In the past, noteValueRef and curNoteInfo are both empty string,
+  // this causes the first pin is displayed to be empty, and that
+  // a useEffect below sets the note to empty string, so the first pin mysteriously
+  // lost the first note. This is a fix to set the first pin note to be non-empty
+  // so that even when it is saved, the value will not be cleared.
+  // For future reference, make sure this page render the correct thing
+  // and prevent unwanted clearing. If default pin, no value provided.
+  // This fix is the least change to the code.
+  // It is safe to assume that the 0th pin will be showed first.
+  // Because this is a const, it will not be updated when the pin is changed.
+  // i.e, this variable only works for one time.
+  // The below code would only be executed once, so the 0th pin value will not
+  // be corrupting the other pins.
+  const initialNote =
+    pins.length > 0 ? (user.userMode === 'caller' ? pins[0].callerPinNote : pins[0].calleePinNote) : '';
+
   //creating a reference for TextField Component
-  const noteValueRef = useRef('');
+  const noteValueRef = useRef(initialNote);
   const perspectiveValueRef = useRef('');
   const skillValueRef = useRef('');
 
   // set up states for four different questions
   const [pinType, setPinType] = useState('');
-  const [curNoteInfo, setCurNoteInfo] = useState('');
+  // Fixed: because the first pin is no longer default, this must not be
+  // empty, but have to fetch the first pin note. See comments for initialNote
+  const [curNoteInfo, setCurNoteInfo] = useState(initialNote);
   const [curPerspectiveInfo, setCurPerspectiveInfo] = useState('');
   const [curSkillInfo, setCurSkillInfo] = useState('');
 
