@@ -735,8 +735,6 @@ function VideoChatComponent(props) {
       return a.pinTime - b.pinTime;
     });
 
-    console.log('WILL STOP THE VIDEO CALL, OUTPUT OF THE PINS');
-    console.log(pins);
     if (pins[0]) {
       console.log(pins[0]);
     }
