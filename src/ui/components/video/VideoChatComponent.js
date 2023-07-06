@@ -149,6 +149,13 @@ function VideoChatComponent(props) {
       // Now, if popper is open, the user hasn't finish the instant note
       // so we don't want to add a pin
       // Todo: When the popper is open, change the icon from pin to close
+
+      if (pins.length > 0) {
+        await handleClosePopper().then(() => {
+          setPopperOpen(false);
+        });
+      }
+      // Save the notes when there are pins
       setPopperOpen(false);
       return;
     }
@@ -168,12 +175,6 @@ function VideoChatComponent(props) {
   const handleClosePopper = async () => {
     event.preventDefault();
     // await addPinNotes(pinTime);
-    console.log(pins[pins.length - 1]);
-    console.log('is the most recent pin');
-    console.log('will add to the database');
-
-    console.log('the following is the current instant notes');
-    console.log(noteContent.current.value);
 
     // Add the content to the firebase
     if (user.userMode === 'callee') {
@@ -447,11 +448,20 @@ function VideoChatComponent(props) {
         <>
           <form onSubmit={handleClosePopper}>
             <TextField variant="outlined" placeholder="Some Quick Notes" inputRef={noteContent}></TextField>
-            <IconButton aria-label="close" onClick={handleClosePopper}>
-              <CloseIcon />
-            </IconButton>
+            {/* <IconButton aria-label="close" onClick={handleClosePopper}> */}
+            {/* <CloseIcon /> */}
+            {/* </IconButton> */}
             {/* Discard Button */}
             {/* Save Button */}
+
+            <ColorLibButton
+              onClick={handleClosePopper}
+              variant="contained"
+              color="primary"
+              style={{ marginTop: '10px' }}
+            >
+              Save
+            </ColorLibButton>
           </form>
         </>
       );
