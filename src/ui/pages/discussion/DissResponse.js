@@ -59,8 +59,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
   const [pinType1, setPinType1] = useState('');
   const [pinType2, setPinType2] = useState('');
 
-  const [curSkillInfo1, setCurSkillInfo1] = useState('');
-  const [curSkillInfo2, setCurSkillInfo2] = useState('');
+  // const [curSkillInfo1, setCurSkillInfo1] = useState('');
+  // const [curSkillInfo2, setCurSkillInfo2] = useState('');
 
   //This function either returns the pin specified by curPinIndex, or returns an empty string to handle
   //the empty pin array case
@@ -147,8 +147,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
     setPinType1(curPin.callerPinCategory);
     setPinType2(curPin.calleePinCategory);
 
-    setCurSkillInfo1(curPin.callerPinSkill);
-    setCurSkillInfo2(curPin.calleePinSkill);
+    // setCurSkillInfo1(curPin.callerPinSkill);
+    // setCurSkillInfo2(curPin.calleePinSkill);
   };
 
   //called when the previous button is hit. This changes the pin index states to represent the new pin
@@ -262,7 +262,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 </ToggleButtonGroup>
               </Box>
               <MISkillsSheet />
-              <form className={classes.root} noValidate autoComplete="off">
+              {/* <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
                   disabled
                   label="Therapist's MI skill"
@@ -285,7 +285,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                   margin="normal"
                   value={curSkillInfo2}
                 />
-              </form>
+              </form> */}
 
               <Box textAlign="left">
                 <Typography>Discussion Notes</Typography>
