@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } 
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import pin from '../../../other/images/pin.svg';
+import Snackbar from '@mui/material/Snackbar';
 
 import Webcam from 'react-webcam';
 
@@ -119,6 +120,8 @@ function VideoChatComponent(props) {
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
 
+  const [openSaveSuccess, setOpenSaveSuccess] = React.useState(false);
+
   var line1 = 'situations where you struggled to use MI';
   var line2 = 'instances of effective MI use ';
   if (user.userMode === 'callee') {
@@ -148,8 +151,6 @@ function VideoChatComponent(props) {
     if (popperOpen) {
       // Now, if popper is open, the user hasn't finish the instant note
       // so we don't want to add a pin
-      // Todo: When the popper is open, change the icon from pin to close
-
       if (pins.length > 0) {
         await handleClosePopper().then(() => {
           setPopperOpen(false);
@@ -202,7 +203,7 @@ function VideoChatComponent(props) {
       // modify the local array as well
       pins[pins.length - 1].callerPinNote = noteContent.current.value;
     }
-
+    setOpenSaveSuccess(true);
     setPopperOpen(false);
   };
 
@@ -619,6 +620,13 @@ function VideoChatComponent(props) {
                 {instantNote(popperContentIndex)}
               </ColorLibPaper>
             </Popper>
+            <Snackbar
+              open={openSaveSuccess}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={2000}
+              onClose={() => setOpenSaveSuccess(false)}
+              message="The pin is saved."
+            />
           </>
         )}
       </>
