@@ -122,6 +122,8 @@ function VideoChatComponent(props) {
 
   const [openSaveSuccess, setOpenSaveSuccess] = React.useState(false);
 
+  const [addingPin, setAddingPin] = useState(false);
+
   var line1 = 'situations where you struggled to use MI';
   var line2 = 'instances of effective MI use ';
   if (user.userMode === 'callee') {
@@ -148,9 +150,10 @@ function VideoChatComponent(props) {
     if (videoCallTimer === 0) {
       return;
     }
-    if (popperOpen) {
+    if (popperOpen || addingPin) {
       // Now, if popper is open, the user hasn't finish the instant note
       // so we don't want to add a pin
+      // addingPin == true means the pin is being added. should not proceed.
       if (pins.length > 0) {
         await handleClosePopper().then(() => {
           setPopperOpen(false);
@@ -162,6 +165,7 @@ function VideoChatComponent(props) {
     }
     var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
     console.log('calling addPin from HandlePinButton');
+    setAddingPin(true);
     await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
       // For a weird reason the above line cannot be executed
@@ -171,6 +175,7 @@ function VideoChatComponent(props) {
       // }, 3000);
       console.log('added a pin');
     });
+    setAddingPin(false);
   };
 
   const handleClosePopper = async () => {
