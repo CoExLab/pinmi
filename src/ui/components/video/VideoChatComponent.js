@@ -11,10 +11,13 @@ import VolumeUpIcon from '@material-ui/icons/VolumeUp';
 import VolumeOffIcon from '@material-ui/icons/VolumeOff';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-import { Tooltip, Button, LinearProgress, Box, Typography } from '@material-ui/core';
+import { Tooltip, Button, LinearProgress, Box, Typography, TextField } from '@material-ui/core';
 import { Icon, Fab, Popper } from '@material-ui/core';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import pin from '../../../other/images/pin.svg';
+import Snackbar from '@mui/material/Snackbar';
 
 import Webcam from 'react-webcam';
 
@@ -90,6 +93,10 @@ const useStyles = makeStyles(theme => ({
 // This is a function that will detach the listener
 let unsub;
 
+// This id record the most recent Pin that was put into the database
+// it will be used when instant notes are inserted to the database
+// let newestPinID;
+
 function VideoChatComponent(props) {
   const pinBtn = useRef(null);
 
@@ -112,6 +119,8 @@ function VideoChatComponent(props) {
 
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
+
+  const [openSaveSuccess, setOpenSaveSuccess] = React.useState(false);
 
   var line1 = 'situations where you struggled to use MI';
   var line2 = 'instances of effective MI use ';
@@ -140,6 +149,14 @@ function VideoChatComponent(props) {
       return;
     }
     if (popperOpen) {
+      // Now, if popper is open, the user hasn't finish the instant note
+      // so we don't want to add a pin
+      if (pins.length > 0) {
+        await handleClosePopper().then(() => {
+          setPopperOpen(false);
+        });
+      }
+      // Save the notes when there are pins
       setPopperOpen(false);
       return;
     }
@@ -147,12 +164,47 @@ function VideoChatComponent(props) {
     console.log('calling addPin from HandlePinButton');
     await addPin(pinTime, false).then(() => {
       setPopperContentIndex(1);
+      // For a weird reason the above line cannot be executed
       setPopperOpen(true);
-      setTimeout(() => {
-        setPopperOpen(false);
-      }, 3000);
+      // setTimeout(() => {
+      //   setPopperOpen(false);
+      // }, 3000);
       console.log('added a pin');
     });
+  };
+
+  const handleClosePopper = async () => {
+    event.preventDefault();
+    // await addPinNotes(pinTime);
+
+    // Add the content to the firebase
+    if (user.userMode === 'callee') {
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(pins[pins.length - 1].pinID)
+        .update({
+          calleePinNote: noteContent.current.value,
+        });
+      // Modify the local array
+      pins[pins.length - 1].calleePinNote = noteContent.current.value;
+    } else {
+      await firebase
+        .firestore()
+        .collection('sessions')
+        .doc(session.sessionID)
+        .collection('pins')
+        .doc(pins[pins.length - 1].pinID)
+        .update({
+          callerPinNote: noteContent.current.value,
+        });
+      // modify the local array as well
+      pins[pins.length - 1].callerPinNote = noteContent.current.value;
+    }
+    setOpenSaveSuccess(true);
+    setPopperOpen(false);
   };
 
   const [open, setOpen] = useState(true);
@@ -198,6 +250,9 @@ function VideoChatComponent(props) {
 
   // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
   // const
+
+  // Save the latest note content
+  const noteContent = useRef('');
 
   useEffect(() => {
     console.log('isInterviewStarted changed to', isInterviewStarted);
@@ -350,6 +405,7 @@ function VideoChatComponent(props) {
       pinID: myPin.pinID,
     });
     pins.push(myPin);
+    // The newest pin is pins[pins.length - 1]
     console.log('Finished pin creation');
   };
 
@@ -384,6 +440,32 @@ function VideoChatComponent(props) {
         .catch(error => {
           console.error('Error writing document: ', error);
         });
+    }
+  };
+
+  const instantNote = index => {
+    if (index === 1) {
+      return (
+        <>
+          <form onSubmit={handleClosePopper}>
+            <TextField variant="outlined" placeholder="Some Quick Notes" inputRef={noteContent}></TextField>
+            {/* <IconButton aria-label="close" onClick={handleClosePopper}> */}
+            {/* <CloseIcon /> */}
+            {/* </IconButton> */}
+            {/* Discard Button */}
+            {/* Save Button */}
+
+            <ColorLibButton
+              onClick={handleClosePopper}
+              variant="contained"
+              color="primary"
+              style={{ marginTop: '10px' }}
+            >
+              Save
+            </ColorLibButton>
+          </form>
+        </>
+      );
     }
   };
 
@@ -535,8 +617,16 @@ function VideoChatComponent(props) {
             <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
               <ColorLibPaper elevation={2}>
                 <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
+                {instantNote(popperContentIndex)}
               </ColorLibPaper>
             </Popper>
+            <Snackbar
+              open={openSaveSuccess}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={2000}
+              onClose={() => setOpenSaveSuccess(false)}
+              message="The pin is saved."
+            />
           </>
         )}
       </>
@@ -611,9 +701,8 @@ function VideoChatComponent(props) {
     unsub();
     setIsInterviewStarted(false);
     const results = stopSpeechToTextTest();
-    // add a placeholder pin at the end
-    // var pinTime = Math.floor((Date.now() - videoCallTimer) / 1000);
-    if (user.userMode === 'callee') {
+    // add a placeholder pin at time 0 in the end if there is no pin
+    if (user.userMode === 'callee' && pins.length == 0) {
       await addPin(0, true).then(() => {
         setPopperContentIndex(1);
         setPopperOpen(true);
@@ -664,7 +753,6 @@ function VideoChatComponent(props) {
       return a.pinTime - b.pinTime;
     });
 
-    console.log(pins);
     if (pins[0]) {
       console.log(pins[0]);
     }
@@ -706,7 +794,9 @@ function VideoChatComponent(props) {
         console.log(Date.now());
         setPopperOpen(true);
         setTimeout(() => {
-          if (popperContentIndex === 0) {
+          console.log(popperContentIndex);
+          // To make sure only close the popper when no pin is added yet
+          if (popperContentIndex === 0 && pins.length === 0) {
             setPopperOpen(false);
           }
         }, 5000);

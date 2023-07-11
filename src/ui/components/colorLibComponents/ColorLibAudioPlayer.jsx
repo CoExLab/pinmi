@@ -147,7 +147,7 @@ const ColorLibAudioPlayer = ({
   // Before creating mark information for pins, check there are no duplicates.
   marks = [...new Set(marks)];
   const pinMarks = marks.map((m, index) => {
-    if (index === 0) return {};
+    // if (index === 0) return {};
     // console.log(m);
     const markTime = m.markTime;
     const creatorMode = m.creatorMode;
@@ -205,7 +205,7 @@ const ColorLibAudioPlayer = ({
               display: creatorMode == 'default' ? 'none' : 'flex',
             }}
           >
-            {index}
+            {index + 1}
           </div>
         </>
       ),
