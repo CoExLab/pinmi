@@ -191,10 +191,10 @@ function VideoChatComponent(props) {
         .collection('pins')
         .doc(pins[pins.length - 1].pinID)
         .update({
-          calleePinNote: noteContent.current.value,
+          calleePinNote: noteContent?.current?.value,
         });
       // Modify the local array
-      pins[pins.length - 1].calleePinNote = noteContent.current.value;
+      pins[pins.length - 1].calleePinNote = noteContent?.current?.value;
     } else {
       await firebase
         .firestore()
@@ -203,10 +203,10 @@ function VideoChatComponent(props) {
         .collection('pins')
         .doc(pins[pins.length - 1].pinID)
         .update({
-          callerPinNote: noteContent.current.value,
+          callerPinNote: noteContent?.current?.value,
         });
       // modify the local array as well
-      pins[pins.length - 1].callerPinNote = noteContent.current.value;
+      pins[pins.length - 1].callerPinNote = noteContent?.current?.value;
     }
     setOpenSaveSuccess(true);
     setPopperOpen(false);
