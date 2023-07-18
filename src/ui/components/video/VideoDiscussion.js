@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import MicIcon from '@material-ui/icons/MicNone';
 import MicOffIcon from '@material-ui/icons/MicOffOutlined';
@@ -22,6 +22,7 @@ import { formatTime } from '../../../helper/helper';
 import { ColorLibNextButton } from '../colorLibComponents/ColorLibButton';
 import ColorLibButton from '../colorLibComponents/ColorLibButton';
 import ColorLibPaper from '../colorLibComponents/ColorLibPaper';
+import { reset } from '../../../storage/store';
 
 import {
   toggleAudio,
@@ -87,6 +88,7 @@ function VideoComponent(props) {
   const handleClose = () => {
     setOpen(false);
   };
+  const dispatch = useDispatch();
 
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -116,14 +118,22 @@ function VideoComponent(props) {
   let timeout2 = 10;
 
   useEffect(async () => {
+    // Note that this function is modified
+    // to directly end the video call
+    // it will be redirected to the completion page and disable
+    // all camera and audio
     if (props.endVideoSession) {
       setLoading(true);
       if (props.isArchiveHost) {
         await handleStopArchive();
         setLoading(false);
+        dispatch(reset());
+        document.location.href = '/completion';
       } else {
         await updateDataCopy();
         setLoading(false);
+        dispatch(reset());
+        document.location.href = '/completion';
       }
     }
   }, [props.endVideoSession]);
@@ -594,7 +604,11 @@ How did today’s mock client session go?
               });
             });
         })
-        .then(res => setActiveStep(prevActiveStep => prevActiveStep + 1));
+        .then(res => {
+          // the following line is disabled
+          // it originally leads to the next page, which is a survey
+          // setActiveStep(prevActiveStep => prevActiveStep + 1);
+        });
     });
   };
 
