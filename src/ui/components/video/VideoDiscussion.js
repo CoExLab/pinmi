@@ -11,6 +11,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { Tooltip, LinearProgress, Box, Typography } from '@material-ui/core';
 import { Fab } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -52,6 +53,21 @@ const useStyles = makeStyles(theme => ({
   '& > * + *': {
     marginLeft: theme.spacing(5),
   },
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9999,
+  },
+  welcome_intro: {
+    color: theme.palette.teal.dark,
+  },
 }));
 
 function VideoComponent(props) {
@@ -65,6 +81,8 @@ function VideoComponent(props) {
   const [timeRemind, setTimeRemind] = useState(false);
   const recommendedTime = 10 * 60;
   const [countDown, setCountDown] = useState(recommendedTime); // 10 minutes
+
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -97,12 +115,15 @@ function VideoComponent(props) {
 
   let timeout2 = 10;
 
-  useEffect(() => {
+  useEffect(async () => {
     if (props.endVideoSession) {
+      setLoading(true);
       if (props.isArchiveHost) {
-        handleStopArchive();
+        await handleStopArchive();
+        setLoading(false);
       } else {
-        updateDataCopy();
+        await updateDataCopy();
+        setLoading(false);
       }
     }
   }, [props.endVideoSession]);
@@ -634,6 +655,18 @@ How did today’s mock client session go?
 
   return (
     <>
+      {loading ? (
+        <Dialog open={loading} onClose={() => {}}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>
+            <Typography variant="h1" className={classes.welcome_intro}>
+              Saving Pin Information
+            </Typography>
+            <Box sx={{ p: 2 }}>
+              <CircularProgress />
+            </Box>
+          </Box>
+        </Dialog>
+      ) : null}
       <Box pt={10}>{loadingStatus ? <LinearProgress /> : null}</Box>
       {videoBox(props.mode === 'Discussion' ? 'mini' : 'full')}
     </>

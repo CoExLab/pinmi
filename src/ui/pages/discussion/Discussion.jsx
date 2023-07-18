@@ -1,5 +1,5 @@
 //This code file defines the top-level rendering of the Discussion section of the pin-mi app
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -65,6 +65,8 @@ const Discussion = () => {
 
   const [endVideo, setEndVideo] = useState(false);
 
+  const [endDialog, setEndDialog] = useState(false);
+
   //Pin index states, used to keep track of the current pin edited and the associated info
   const [prevPinIndex, setPrevPinIndex] = useState(0);
   const [curPinIndex, setCurPinIndex] = useState(() => {
@@ -96,7 +98,11 @@ const Discussion = () => {
         pins.forEach((elem, id) => savePin(id));
       }
       console.log(page + 1);
-      setPage(page + 1);
+
+      if (page !== 1) {
+        setPage(page + 1);
+      }
+
       setFinishedUpdates(false);
     }
   }, [finishedUpdates]);
@@ -122,7 +128,7 @@ const Discussion = () => {
   function getConditionalContent(page) {
     switch (page) {
       case 0:
-      case 2:
+        // case 2:
         return <div />;
       case 1:
         return (
@@ -143,7 +149,7 @@ const Discussion = () => {
   function getConditionalVideoMode(page) {
     switch (page) {
       case 0:
-      case 2:
+        // case 2:
         return 'VideoDiscussion';
       case 1:
         return 'Discussion';
@@ -201,6 +207,18 @@ const Discussion = () => {
   //the next section should be loaded. If "finished" is false, then the next page in the Discussion section is loaded
   const handleButton = finished => {
     if (finished) {
+      if (page === 1) {
+        //pin indices are reset to force the last pin to save
+        setPrevPinIndex(curPinIndex);
+        if (curPinIndex === 0) {
+          setCurPinIndex(1);
+        } else {
+          setCurPinIndex(0);
+        }
+        //finishedUpdates is set to true to force pin info to be sent to the db
+        setFinishedUpdates(true);
+      }
+
       //pin indices are reset to force the last pin to save
       console.log('handlebutton');
       setPrevPinIndex(curPinIndex);
@@ -273,25 +291,54 @@ const Discussion = () => {
         );
       case 1:
         return (
-          <Box align="center" m={2} mb={20}>
-            <ColorLibButton variant="contained" size="medium" onClick={() => handleButton(false)}>
-              Finish Discussing Pins
-            </ColorLibButton>
-          </Box>
+          <>
+            <Dialog open={endDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+              <DialogTitle id="alert-dialog-title">{'Are you sure you want to end the call?'}</DialogTitle>
+              <DialogActions>
+                <Box m={4}>
+                  <div
+                    // direction="row" align="center"
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <ColorLibButton variant="outlined" size="medium" onClick={() => setEndDialog(false)} autoFocus>
+                      {/* Stay in Discussion Prep */}
+                      Cancel
+                    </ColorLibButton>
+                    &nbsp; &nbsp; &nbsp; &nbsp;
+                    <ColorLibCallEndButton
+                      variant="contained"
+                      size="medium"
+                      onClick={() => handleButton(true)}
+                      autoFocus
+                    >
+                      {/* Begin peer-feedback discussion */}
+                      End Call
+                    </ColorLibCallEndButton>
+                  </div>
+                </Box>
+              </DialogActions>
+            </Dialog>
+
+            <Box align="center" m={2} mb={20}>
+              <ColorLibCallEndButton variant="contained" size="medium" onClick={() => setEndDialog(true)}>
+                End Call
+              </ColorLibCallEndButton>
+            </Box>
+          </>
         );
-      case 2:
-        return (
-          <Box className={classes.videoButton}>
-            <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant="body2">What did you learn from today's discussion?</Typography>
-              <Typography variant="body2">Be sure to thank your peer for their time!</Typography>
-            </ColorLibPaper>
-            <ColorLibCallEndButton variant="contained" size="medium" onClick={() => handleButton(true)}>
-              {/* Begin Self-Reflection */}
-              End Call
-            </ColorLibCallEndButton>
-          </Box>
-        );
+      // case 2:
+      //   return (
+      //     <Box className={classes.videoButton}>
+      //       <ColorLibPaper elevation={2} className={classes.description}>
+      //         <Typography variant="body2">What did you learn from today's discussion?</Typography>
+      //         <Typography variant="body2">Be sure to thank your peer for their time!</Typography>
+      //       </ColorLibPaper>
+      //       <ColorLibCallEndButton variant="contained" size="medium" onClick={() => handleButton(true)}>
+      //         {/* Begin Self-Reflection */}
+      //         End Call
+      //       </ColorLibCallEndButton>
+      //     </Box>
+      //   );
       default:
         return <div>Unknown</div>;
     }
