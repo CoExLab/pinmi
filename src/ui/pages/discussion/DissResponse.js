@@ -30,6 +30,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  title: {
+    marginBottom: '10px',
+  },
 }));
 
 //actual export
@@ -224,9 +227,12 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
               <Box fontStyle="italic" marginTop="16px">
                 <Typography variant="h3">Talk with your peer about:</Typography>
               </Box>
-
-              <Box textAlign="left">
-                <Typography>What is your perspective of what happened at this pin?</Typography>
+              <Box textAlign="left" className={classes.title}>
+                <Typography>What would you categorize this pin as, and why?</Typography>
+              </Box>
+              <Box textAlign="left" className={classes.root}>
+                <ToggleButton value={pinType1 ?? 'pinType1'}>Therapist: {pinType1}</ToggleButton>
+                <ToggleButton value={pinType2 ?? 'pinType2'}>Client: {pinType2}</ToggleButton>
               </Box>
               <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
@@ -252,15 +258,15 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                   value={curPerspectiveInfo2}
                 />
               </form>
-              <Box textAlign="left">
+              {/* <Box textAlign="left">
                 <Typography>What would you categorize this pin as?</Typography>
-              </Box>
-              <Box align="left">
+              </Box> */}
+              {/* <Box align="left">
                 <ToggleButtonGroup disabled className={classes.toggleGroup} exclusive size="large">
                   <ToggleButton value={pinType1 ?? 'pinType1'}>{pinType1}</ToggleButton>
                   <ToggleButton value={pinType2 ?? 'pinType2'}>{pinType2}</ToggleButton>
                 </ToggleButtonGroup>
-              </Box>
+              </Box> */}
               <MISkillsSheet />
               {/* <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
