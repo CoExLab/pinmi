@@ -20,6 +20,7 @@ import { usePinsValue } from '../../../storage/context';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    fontFamily: 'Lato',
     '& > *': {
       width: '100%',
       '&:first-child': {
@@ -231,8 +232,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 <Typography>What would you categorize this pin as, and why?</Typography>
               </Box>
               <Box textAlign="left" className={classes.root}>
-                <ToggleButton value={pinType1 ?? 'pinType1'}>Therapist: {pinType1}</ToggleButton>
-                <ToggleButton value={pinType2 ?? 'pinType2'}>Client: {pinType2}</ToggleButton>
+                <div>Therapist: {pinType1}</div>
+                <div>Client: {pinType2}</div>
               </Box>
               <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
