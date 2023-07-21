@@ -1053,7 +1053,7 @@ function VideoChatComponent(props) {
           onClick={() => setOpenEnd(true)}
           disabled={!isInterviewStarted}
         >
-          {session.recordOnly ? 'End Session' : 'Begin Self-reflection'}
+          {session.recordOnly ? 'End Session' : 'Leave Role-Play'}
         </ColorLibCallEndButton>
         {/* {props.isArchiveHost ? (
           <Button onClick={() => handleStartArchive()} color="secondary" variant="contained" disabled={buttonDis}>
