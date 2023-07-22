@@ -20,6 +20,7 @@ import { usePinsValue } from '../../../storage/context';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    fontFamily: 'Lato',
     '& > *': {
       width: '100%',
       '&:first-child': {
@@ -29,6 +30,9 @@ const useStyles = makeStyles(theme => ({
         marginLeft: '8px',
       },
     },
+  },
+  title: {
+    marginBottom: '10px',
   },
 }));
 
@@ -224,9 +228,12 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
               <Box fontStyle="italic" marginTop="16px">
                 <Typography variant="h3">Talk with your peer about:</Typography>
               </Box>
-
-              <Box textAlign="left">
-                <Typography>What is your perspective of what happened at this pin?</Typography>
+              <Box textAlign="left" className={classes.title}>
+                <Typography>What would you categorize this pin as, and why?</Typography>
+              </Box>
+              <Box textAlign="left" className={classes.root}>
+                <div>Therapist: {pinType1}</div>
+                <div>Client: {pinType2}</div>
               </Box>
               <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
@@ -252,15 +259,15 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                   value={curPerspectiveInfo2}
                 />
               </form>
-              <Box textAlign="left">
+              {/* <Box textAlign="left">
                 <Typography>What would you categorize this pin as?</Typography>
-              </Box>
-              <Box align="left">
+              </Box> */}
+              {/* <Box align="left">
                 <ToggleButtonGroup disabled className={classes.toggleGroup} exclusive size="large">
                   <ToggleButton value={pinType1 ?? 'pinType1'}>{pinType1}</ToggleButton>
                   <ToggleButton value={pinType2 ?? 'pinType2'}>{pinType2}</ToggleButton>
                 </ToggleButtonGroup>
-              </Box>
+              </Box> */}
               <MISkillsSheet />
               {/* <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField

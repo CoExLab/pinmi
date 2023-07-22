@@ -83,7 +83,7 @@ const ColorLibLabel = withStyles(theme => ({
   root: {
     '& .MuiStepLabel-active': {
       color: theme.palette.pink.dark,
-      fontSize: '20px',
+      fontSize: '25px',
       fontWeight: 'bold',
       marginTop: '-84px !important',
       opacity: '100%',
