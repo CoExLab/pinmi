@@ -292,7 +292,7 @@ const DissResponse = ({
             <ColorLibTextField
               disabled
               id="outlined-secondary"
-              label="Therapist's perspective"
+              label="Host's perspective"
               fullWidth
               variant="outlined"
               multiline
@@ -303,7 +303,7 @@ const DissResponse = ({
             <ColorLibTextField
               disabled
               id="outlined-secondary"
-              label="Client's perspective"
+              label="Participant's perspective"
               fullWidth
               variant="outlined"
               multiline
@@ -325,7 +325,7 @@ const DissResponse = ({
           <form className={classes.root} noValidate autoComplete="off">
             <ColorLibTextField
               disabled
-              label="Therapist's MI skill"
+              label="Host's MI skill"
               id="outlined-secondary"
               fullWidth
               variant="outlined"
@@ -336,7 +336,7 @@ const DissResponse = ({
             />
             <ColorLibTextField
               disabled
-              label="Client's MI skill"
+              label="Participant's MI skill"
               id="outlined-secondary"
               fullWidth
               variant="outlined"

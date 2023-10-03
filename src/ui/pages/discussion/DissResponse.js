@@ -232,14 +232,14 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 <Typography>What would you categorize this pin as, and why?</Typography>
               </Box>
               <Box textAlign="left" className={classes.root}>
-                <div>Therapist: {pinType1}</div>
-                <div>Client: {pinType2}</div>
+                <div>Host: {pinType1}</div>
+                <div>Participant: {pinType2}</div>
               </Box>
               <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
                   disabled
                   id="outlined-secondary"
-                  label="Therapist's perspective"
+                  label="Host's perspective"
                   fullWidth
                   variant="outlined"
                   multiline
@@ -250,7 +250,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 <ColorLibTextField
                   disabled
                   id="outlined-secondary"
-                  label="Client's perspective"
+                  label="Participant's perspective"
                   fullWidth
                   variant="outlined"
                   multiline

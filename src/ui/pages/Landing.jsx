@@ -367,7 +367,7 @@ const Landing = ({ justchat }) => {
                   const roomId = user.id;
                   const role = roomId[roomId.length - 1];
                   const roomNumber = roomId.substring(0, roomId.length - 1);
-                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'host' : 'participant'}` };
                 })}
               />
             </Box>
@@ -413,7 +413,7 @@ const Landing = ({ justchat }) => {
                   const roomId = user.id;
                   const role = roomId[roomId.length - 1];
                   const roomNumber = roomId.substring(0, roomId.length - 1);
-                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'host' : 'participant'}` };
                 })}
               />
             </Box>
