@@ -245,11 +245,13 @@ const Home = () => {
         <>
           <h1 className={classes.text_header}>Research</h1>
           <p>
-            <a
-              href="https://drive.google.com/file/d/1nCFw9ovufjExgBBN1iuxRkvWWhP2jaK6/view?usp=sharing"
-              className={classes.text_link}
-            >
-              Novice challenges with MI
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3479510" className={classes.text_link}>
+              Scaffolding the Online Peer-support Experience: Novice Supporters' Strategies and Challenges
+            </a>
+          </p>
+          <p>
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3544548.3581551" className={classes.text_link}>
+              Facilitating Counselor Reflective Learning with a Real-time Annotation tool
             </a>
           </p>
         </>

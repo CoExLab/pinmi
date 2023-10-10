@@ -281,8 +281,8 @@ const Discussion = () => {
         return (
           <Box className={classes.videoButton}>
             <ColorLibPaper elevation={2} className={classes.description}>
-              <Typography variant="body2">Introduce yourself to your peer, who is also learning MI.</Typography>
-              <Typography variant="body2">How did today’s mock client session go?</Typography>
+              <Typography variant="body2">It's time for discussion with your peer.</Typography>
+              <Typography variant="body2">How did today’s session go?</Typography>
             </ColorLibPaper>
             <ColorLibGrayNextButton variant="contained" size="medium" onClick={() => handleButton(false)}>
               Let's talk about our pins

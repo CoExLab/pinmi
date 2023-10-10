@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
 
 const tutorialInfo = [
   {
-    text: 'Use pins to mark moments of MI strengths and opportunities in a conversation',
+    text: 'Use pins to mark moments of strengths and opportunities in a conversation',
     image: pinningPreview,
     alt: 'Pinning',
   },

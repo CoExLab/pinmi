@@ -25,13 +25,13 @@ function createData(name, role, fat, carbs, protein) {
 const TherapistRows = [
   createData('Your role', 'Host'),
   createData('Your peers role', 'Participant'),
-  createData('Your goal', 'Build rapport and analyze the client’s situation'),
+  createData('Your goal', 'Lead the session and pin moments you are doing well or poorly.'),
 ];
 
 const ClientRows = [
   createData('Your role', 'Participant'),
   createData('Your peers role', 'Host'),
-  createData('Your goal', 'Real play as a client and use pins to assess your peer’s MI skills'),
+  createData('Your goal', 'Role-play as a participant and use pins to assess your peer’s skills'),
 ];
 
 const Intro = () => {
@@ -45,7 +45,7 @@ const Intro = () => {
     <div>
       <Box align="center" m={6}>
         <Typography variant="h4" style={{ textAlign: 'left', width: '50%' }}>
-          Now, it’s time to step into the practice session and practice using open-ended questions.
+          Now, it’s time to step into the practice session.
         </Typography>
         <TableContainer>
           <Table className={classes.table} aria-label="simple table">
