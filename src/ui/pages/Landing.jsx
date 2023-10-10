@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import ColorLibButton from '../components/colorLibComponents/ColorLibButton';
 import ColorLibTextField from '../components/colorLibComponents/ColorLibTextField';
 import Navbar from '../components/Navbar';
+import AuthenticationBox from './AuthenticationBox';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
 import modal from './../../other/tutorial/modal.png';
@@ -374,29 +375,32 @@ const Landing = ({ justchat }) => {
           </div>
         )}
         {!firebaseUser && (
-          <Box m={1} display="inline">
-            <ColorLibTextField
-              id="outlined-basic"
-              label="Your Unique ID"
-              variant="outlined"
-              value={username}
-              onChange={e => {
-                setUsername(e.target.value);
-              }}
-            />
-          </Box>
-        )}
+          // <Box m={1} display="inline">
+          //   <ColorLibTextField
+          //     id="outlined-basic"
+          //     label="Your Unique ID"
+          //     variant="outlined"
+          //     value={username}
+          //     onChange={e => {
+          //       setUsername(e.target.value);
+          //     }}
+          //   />
+          // </Box>
 
-        <div className={classes.button_wrapper} style={{ paddingBottom: '0px' }}>
-          <ColorLibButton
-            variant="contained"
-            size="large"
-            onClick={setUser}
-            disabled={firebaseUser !== null && selectedRoom === null}
-          >
-            Let's get started!
-          </ColorLibButton>
-        </div>
+          <AuthenticationBox />
+        )}
+        {firebaseUser && (
+          <div className={classes.button_wrapper} style={{ paddingBottom: '0px' }}>
+            <ColorLibButton
+              variant="contained"
+              size="large"
+              onClick={setUser}
+              disabled={firebaseUser !== null && selectedRoom === null}
+            >
+              Let's get started!
+            </ColorLibButton>
+          </div>
+        )}
 
         {firebaseUser && (
           <div>
@@ -419,16 +423,18 @@ const Landing = ({ justchat }) => {
             </Box>
           </div>
         )}
-        <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
-          <ColorLibButton
-            variant="contained"
-            size="large"
-            onClick={setResume}
-            disabled={firebaseUser !== null && resumedRoom === null}
-          >
-            Resume session
-          </ColorLibButton>
-        </div>
+        {firebaseUser && (
+          <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
+            <ColorLibButton
+              variant="contained"
+              size="large"
+              onClick={setResume}
+              disabled={firebaseUser !== null && resumedRoom === null}
+            >
+              Resume session
+            </ColorLibButton>
+          </div>
+        )}
       </Container>
     </section>
   );
