@@ -19,6 +19,8 @@ import imgED from '../../assets/images/team_ED.jpeg';
 import imgYC from '../../assets/images/team_YC.jpeg';
 import imgML from '../../assets/images/team_ML.jpeg';
 import imgMA from '../../assets/images/team_MA.jpeg';
+import imgAN from '../../assets/images/team_AN.jpeg';
+import imgJL from '../../assets/images/team_JL.jpeg';
 
 const useStyles = makeStyles(theme => ({
   welcome_container: {
@@ -101,6 +103,8 @@ const teamMembers = [
   { name: 'Bob Kraut', email: 'robert.kraut@cmu.edu', image: imgBK, past: false },
   { name: 'Tiangying Chen', email: 'tianyinc@andrew.cmu.edu', image: imgTC, past: false },
   { name: 'Michael Xieyang Liu', email: 'xieyangl@cs.cmu.edu ', image: imgML, past: false },
+  { name: 'Alice (Fei) Nie', email: 'fnie@andrew.cmu.edu ', image: imgAN, past: false },
+  { name: 'Leo (Junyi) Liu', email: 'junyili2@andrew.cmu.edu ', image: imgJL, past: false },
   { name: 'Emily Ding', email: 'eding@andrew.cmu.edu', image: imgED, past: true },
   { name: 'Mansi Agarwal', email: 'mragarwa@andrew.cmu.edu ', image: imgMA, past: true },
   { name: 'Yo-Lei Chen', email: 'yoleic@andrew.cmu.edu', image: imgYC, past: true },

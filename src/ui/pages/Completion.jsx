@@ -80,8 +80,8 @@ const Completion = () => {
             You have successfully finished today’s session in Pin-MI.
           </Typography>
           <br />
-          <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/">
-            Exit Pin-MI before returning to Zoom/Teams
+          <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/Home">
+            Learn more about Pin-Mi
           </ColorLibButton>
         </Container>
       </div>
