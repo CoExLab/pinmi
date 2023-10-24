@@ -358,9 +358,9 @@ const DisscussionPrep = () => {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {
-              'Your partner has finished self reflection and is ready to discuss. Click the Join Discussion button below  to begin the discussion. It’s ok if you didn’t finish your notes on all the pins.'
-            }
+            {session.recordOnly
+              ? 'Your partner has ended the session. Click the End Session button below to end the session.'
+              : 'Your partner has finished self reflection and is ready to discuss. Click the Join Discussion button below  to begin the discussion. It’s ok if you didn’t finish your notes on all the pins.'}
           </DialogTitle>
           <DialogActions>
             <Box m={4}>
@@ -375,7 +375,7 @@ const DisscussionPrep = () => {
                 &nbsp; &nbsp; &nbsp; &nbsp;
                 <ColorLibNextButton variant="contained" size="medium" onClick={() => handleJoinDiscussion()} autoFocus>
                   {/* Begin peer-feedback discussion */}
-                  Join Discussion
+                  {session.recordOnly ? 'End Session' : 'Join Discussion'}
                 </ColorLibNextButton>
               </div>
             </Box>

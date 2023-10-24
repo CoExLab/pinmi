@@ -46,6 +46,9 @@ import { formatTime } from '../../../helper/helper';
 import { firebase } from '../../../storage/firebase';
 
 const useStyles = makeStyles(theme => ({
+  videoContainer: {
+    height: '60vh',
+  },
   imageIcon: {
     height: '120%',
   },
@@ -976,7 +979,9 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Leave role-play and begin self-reflection?'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {session.recordOnly ? 'Leave role-play?' : 'Leave role-play and begin self-reflection?'}
+        </DialogTitle>
         <DialogActions>
           <Box m={4}>
             <div
@@ -1010,10 +1015,6 @@ function VideoChatComponent(props) {
               // direction="row" align="center"
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
-              <ColorLibButton variant="outlined" size="medium" onClick={() => setNotifyBox(false)} autoFocus>
-                {/* Stay in role-play */}
-                OK
-              </ColorLibButton>
               &nbsp; &nbsp; &nbsp; &nbsp;
               <ColorLibCallEndButton
                 variant="contained"
@@ -1035,7 +1036,7 @@ function VideoChatComponent(props) {
         nextSection="Discussion Prep"
       />
 
-      <div className="video-container">
+      <div className={`video-container ${classes.videoContainer}`}>
         <div id="subscriber" className={`${isStreamSubscribed ? 'main-video' : 'additional-video'}`}>
           {isStreamSubscribed && renderToolbar()}
         </div>

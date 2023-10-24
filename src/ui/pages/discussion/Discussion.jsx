@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   videoButton: {
     position: 'absolute',
     right: '50px',
-    bottom: '-150px',
+    bottom: '10px',
     zIndex: 100,
   },
   description: {
