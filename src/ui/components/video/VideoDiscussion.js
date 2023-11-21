@@ -644,7 +644,10 @@ How did today’s mock client session go?
       class_name = 'mini-video-container';
     }
 
-    const containerStyle = CSSMode === 'full' ? { height: '75vh' } : {};
+    // To adjust the size of the video, change here
+
+    // const containerStyle = CSSMode === 'full' ? { height: '75vh' } : {};
+    const containerStyle = {};
 
     return (
       <>

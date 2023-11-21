@@ -343,7 +343,7 @@ const DisscussionPrep = () => {
                 &nbsp; &nbsp; &nbsp; &nbsp;
                 <ColorLibNextButton variant="contained" size="medium" onClick={() => handleJoinDiscussion()} autoFocus>
                   {/* Begin peer-feedback discussion */}
-                  Join Discussion
+                  {session.recordOnly ? 'End Session' : 'Join Discussion?'}
                 </ColorLibNextButton>
               </div>
             </Box>
