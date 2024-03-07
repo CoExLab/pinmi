@@ -58,10 +58,9 @@ export default function ButtonAppBar() {
             Record
           </ColorLibButton>
 
-          {/* <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">
             Review
-          </ColorLibButton> */}
-          {/* Disabled for UCRE class branch */}
+          </ColorLibButton>
 
           {/* <ColorLibButton variant="text" size="small" key="practice" className={classes.navbar_button}>
             Practice
