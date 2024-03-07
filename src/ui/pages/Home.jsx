@@ -144,35 +144,23 @@ const Home = () => {
       ),
     },
     {
-      header: 'Project',
-      image: pinningPreview,
+      header: 'The Work so Far',
       text: (
         <>
-          <h1 className={classes.text_header}>Problem Space</h1>
+          <h1 className={classes.text_header}>Research</h1>
           <p>
-            <span className={classes.text_highlight}>Minimally trained healthcare practitioners struggle</span> with:
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3479510" className={classes.text_link}>
+              Scaffolding the Online Peer-support Experience: Novice Supporters' Strategies and Challenges
+            </a>
           </p>
-          <ul>
-            <li>building rapport</li>
-            <li>analyzing the problem</li>
-            <li>provoking commitment</li>
-            <li>instilling sel-efficacy</li>
-          </ul>
-          <h1 className={classes.text_header}>Our Project Goal</h1>
           <p>
-            Improve the <span className={classes.text_highlight}>quality and efficiency</span> of Motivational
-            Interviewing Training
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3544548.3581551" className={classes.text_link}>
+              Facilitating Counselor Reflective Learning with a Real-time Annotation tool
+            </a>
           </p>
-          <h1 className={classes.text_header}>Duration</h1>
-          <p>Feb 2021 - Present (1 year)</p>
-          <br />
-          <a href="/" className={classes.page_link}>
-            <h1>
-              View Our Project <span>&#8594;</span>
-            </h1>
-          </a>
         </>
       ),
+      alt: 'Discussion Interface',
     },
     {
       header: 'People',
@@ -243,25 +231,25 @@ const Home = () => {
         </>
       ),
     },
-    {
-      header: 'The Work so Far',
-      text: (
-        <>
-          <h1 className={classes.text_header}>Research</h1>
-          <p>
-            <a href="https://dl.acm.org/doi/pdf/10.1145/3479510" className={classes.text_link}>
-              Scaffolding the Online Peer-support Experience: Novice Supporters' Strategies and Challenges
-            </a>
-          </p>
-          <p>
-            <a href="https://dl.acm.org/doi/pdf/10.1145/3544548.3581551" className={classes.text_link}>
-              Facilitating Counselor Reflective Learning with a Real-time Annotation tool
-            </a>
-          </p>
-        </>
-      ),
-      alt: 'Discussion Interface',
-    },
+    // {
+    //   header: 'The Work so Far',
+    //   text: (
+    //     <>
+    //       <h1 className={classes.text_header}>Research</h1>
+    //       <p>
+    //         <a href="https://dl.acm.org/doi/pdf/10.1145/3479510" className={classes.text_link}>
+    //           Scaffolding the Online Peer-support Experience: Novice Supporters' Strategies and Challenges
+    //         </a>
+    //       </p>
+    //       <p>
+    //         <a href="https://dl.acm.org/doi/pdf/10.1145/3544548.3581551" className={classes.text_link}>
+    //           Facilitating Counselor Reflective Learning with a Real-time Annotation tool
+    //         </a>
+    //       </p>
+    //     </>
+    //   ),
+    //   alt: 'Discussion Interface',
+    // },
     {
       header: 'Get Involved',
       text: (
