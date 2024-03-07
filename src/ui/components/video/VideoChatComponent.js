@@ -124,11 +124,11 @@ function VideoChatComponent(props) {
 
   const [addingPin, setAddingPin] = useState(false);
 
-  var line1 = 'situations where you struggled to use MI';
-  var line2 = 'instances of effective MI use ';
+  var line1 = 'moments when you did well in the conversation';
+  var line2 = 'opportunities for improvement';
   if (user.userMode === 'callee') {
-    line1 = 'situations where your peer struggled to use MI';
-    line2 = 'instances of effective MI use by your peer';
+    line1 = 'situations where your peer struggled';
+    line2 = 'instances of effective conversation with your peer';
   }
 
   const getPopperContent = index => {
@@ -933,9 +933,7 @@ function VideoChatComponent(props) {
                     <li>{line1}</li>
                     <li>{line2}</li>
                   </ul>
-                  <p>
-                    Your peer will also be pinning, and you will review and discuss all pins after the client session.
-                  </p>
+                  <p>Your peer will also be pinning, and you will review and discuss all pins after the session.</p>
                 </Typography>
               </>
             )}
@@ -947,7 +945,7 @@ function VideoChatComponent(props) {
                 onClick={() => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)}
                 autoFocus
               >
-                Join Now
+                Join now
               </ColorLibNextButton>
             </div>
           </div>
@@ -978,7 +976,9 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Leave role-play and begin self-reflection?'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {session.recordOnly ? 'Leave role-play?' : 'Leave role-play and begin self-reflection?'}
+        </DialogTitle>
         <DialogActions>
           <Box m={4}>
             <div
@@ -1012,10 +1012,6 @@ function VideoChatComponent(props) {
               // direction="row" align="center"
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
-              <ColorLibButton variant="outlined" size="medium" onClick={() => setNotifyBox(false)} autoFocus>
-                {/* Stay in role-play */}
-                OK
-              </ColorLibButton>
               &nbsp; &nbsp; &nbsp; &nbsp;
               <ColorLibCallEndButton
                 variant="contained"
@@ -1023,7 +1019,7 @@ function VideoChatComponent(props) {
                 onClick={() => handleFinishChat()}
                 disabled={!isInterviewStarted}
               >
-                {session.recordOnly ? 'End Session' : 'Begin Self-reflection'}
+                {session.recordOnly ? 'End session' : 'Begin self-reflection'}
               </ColorLibCallEndButton>
             </div>
           </Box>
@@ -1037,7 +1033,7 @@ function VideoChatComponent(props) {
         nextSection="Discussion Prep"
       />
 
-      <div className="video-container">
+      <div className={`video-container ${classes.videoContainer}`}>
         <div id="subscriber" className={`${isStreamSubscribed ? 'main-video' : 'additional-video'}`}>
           {isStreamSubscribed && renderToolbar()}
         </div>
@@ -1053,7 +1049,7 @@ function VideoChatComponent(props) {
           onClick={() => setOpenEnd(true)}
           disabled={!isInterviewStarted}
         >
-          {session.recordOnly ? 'End Session' : 'Leave Role-Play'}
+          {session.recordOnly ? 'End Session' : 'Leave Role-play'}
         </ColorLibCallEndButton>
         {/* {props.isArchiveHost ? (
           <Button onClick={() => handleStartArchive()} color="secondary" variant="contained" disabled={buttonDis}>

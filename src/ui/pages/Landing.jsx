@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import ColorLibButton from '../components/colorLibComponents/ColorLibButton';
 import ColorLibTextField from '../components/colorLibComponents/ColorLibTextField';
 import Navbar from '../components/Navbar';
+import AuthenticationBox from './AuthenticationBox';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
 import modal from './../../other/tutorial/modal.png';
@@ -66,7 +67,7 @@ const useStyles = makeStyles(theme => ({
 
 const tutorialInfo = [
   {
-    text: 'Use pins to mark moments of MI strengths and opportunities in a conversation',
+    text: 'Use pins to mark moments of strengths and opportunities in a conversation',
     image: pinningPreview,
     alt: 'Pinning',
   },
@@ -367,36 +368,39 @@ const Landing = ({ justchat }) => {
                   const roomId = user.id;
                   const role = roomId[roomId.length - 1];
                   const roomNumber = roomId.substring(0, roomId.length - 1);
-                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'host' : 'participant'}` };
                 })}
               />
             </Box>
           </div>
         )}
         {!firebaseUser && (
-          <Box m={1} display="inline">
-            <ColorLibTextField
-              id="outlined-basic"
-              label="Your Unique ID"
-              variant="outlined"
-              value={username}
-              onChange={e => {
-                setUsername(e.target.value);
-              }}
-            />
-          </Box>
-        )}
+          // <Box m={1} display="inline">
+          //   <ColorLibTextField
+          //     id="outlined-basic"
+          //     label="Your Unique ID"
+          //     variant="outlined"
+          //     value={username}
+          //     onChange={e => {
+          //       setUsername(e.target.value);
+          //     }}
+          //   />
+          // </Box>
 
-        <div className={classes.button_wrapper} style={{ paddingBottom: '0px' }}>
-          <ColorLibButton
-            variant="contained"
-            size="large"
-            onClick={setUser}
-            disabled={firebaseUser !== null && selectedRoom === null}
-          >
-            Let's get started!
-          </ColorLibButton>
-        </div>
+          <AuthenticationBox />
+        )}
+        {firebaseUser && (
+          <div className={classes.button_wrapper} style={{ paddingBottom: '0px' }}>
+            <ColorLibButton
+              variant="contained"
+              size="large"
+              onClick={setUser}
+              disabled={firebaseUser !== null && selectedRoom === null}
+            >
+              Let's get started!
+            </ColorLibButton>
+          </div>
+        )}
 
         {firebaseUser && (
           <div>
@@ -413,22 +417,24 @@ const Landing = ({ justchat }) => {
                   const roomId = user.id;
                   const role = roomId[roomId.length - 1];
                   const roomNumber = roomId.substring(0, roomId.length - 1);
-                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'therapist' : 'client'}` };
+                  return { value: roomId, label: `Room ${roomNumber}: ${role === 'a' ? 'host' : 'participant'}` };
                 })}
               />
             </Box>
           </div>
         )}
-        <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
-          <ColorLibButton
-            variant="contained"
-            size="large"
-            onClick={setResume}
-            disabled={firebaseUser !== null && resumedRoom === null}
-          >
-            Resume session
-          </ColorLibButton>
-        </div>
+        {firebaseUser && (
+          <div className={classes.button_wrapper} style={{ paddingBottom: '80px' }}>
+            <ColorLibButton
+              variant="contained"
+              size="large"
+              onClick={setResume}
+              disabled={firebaseUser !== null && resumedRoom === null}
+            >
+              Resume session
+            </ColorLibButton>
+          </div>
+        )}
       </Container>
     </section>
   );

@@ -23,7 +23,7 @@ function getConditionalContent(page) {
 
 function getConditionalButton(page, setPage, setButton) {
   const handleButton = () => {
-    setPage(page + 1);
+    setPage(page + 2);
     if (page === 2) setButton(true);
   };
   switch (page) {
@@ -32,7 +32,7 @@ function getConditionalButton(page, setPage, setButton) {
         <div>
           <Box align="center" m={2} mb={20}>
             <ColorLibNextButton variant="contained" size="medium" onClick={() => handleButton()}>
-              Review Information on Client
+              Begin live session
             </ColorLibNextButton>
           </Box>
         </div>
@@ -42,7 +42,7 @@ function getConditionalButton(page, setPage, setButton) {
         <div>
           <Box align="center" m={2} mb={20}>
             <ColorLibButton variant="contained" size="medium" onClick={() => handleButton()}>
-              Begin Live Session
+              Begin live session
             </ColorLibButton>
           </Box>
         </div>

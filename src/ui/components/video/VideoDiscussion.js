@@ -634,21 +634,24 @@ How did today’s mock client session go?
     var secondaryVideoCSSClass = '';
     var class_name = '';
 
-    if (CSSMode == 'full') {
+    if (CSSMode === 'full') {
       mainVideoCSSClass = 'main-video';
       secondaryVideoCSSClass = 'additional-video';
       class_name = 'video-container';
-    } else if (CSSMode == 'mini') {
+    } else if (CSSMode === 'mini') {
       mainVideoCSSClass = 'discussion-video-other';
       secondaryVideoCSSClass = 'discussion-video-other';
       class_name = 'mini-video-container';
     }
+
+    // To adjust the size of the video, change here
+
+    // const containerStyle = CSSMode === 'full' ? { height: '75vh' } : {};
+    const containerStyle = {};
+
     return (
       <>
-        {/* <Box pt = {10}>
-      {loadingStatus ? <LinearProgress /> : null}
-    </Box> */}
-        <div className={class_name}>
+        <div className={class_name} style={containerStyle}>
           <div id="subscriber" className={`${isStreamSubscribed ? mainVideoCSSClass : ''}`}>
             {isStreamSubscribed && renderToolbar()}
           </div>

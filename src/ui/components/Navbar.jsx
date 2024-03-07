@@ -46,12 +46,12 @@ export default function ButtonAppBar() {
             Pin-MI
           </Typography>
 
-          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
             Home
           </ColorLibButton>
 
-          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
-            Practice
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
+            About
           </ColorLibButton>
 
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/justchat">
