@@ -46,9 +46,9 @@ import { formatTime } from '../../../helper/helper';
 import { firebase } from '../../../storage/firebase';
 
 const useStyles = makeStyles(theme => ({
-  videoContainer: {
-    height: '60vh',
-  },
+  // videoContainer: {
+  //   height: '60vh',
+  // },
   imageIcon: {
     height: '120%',
   },
