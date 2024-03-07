@@ -256,6 +256,11 @@ function VideoChatComponent(props) {
   const [videoCallTimer, setVideoCallTimer] = useState(0);
   const classes = useStyles();
 
+  // In rare cases, users might click on join now multiple times due to internet lagging,
+  // which results in multiple video frames
+  // This variable is to prevent that by disabling the button once clicked
+  const [joinNowDisabled, setJoinNowDisabled] = useState(false);
+
   // //ATTEMPT TO PUT API CODE INTO THIS FUNCTION
   // const
 
@@ -642,6 +647,7 @@ function VideoChatComponent(props) {
   };
 
   const handleStartChat = async (setApiKey, setSessionId, setToken, baseURL) => {
+    setJoinNowDisabled(true);
     setOpen(false);
     console.log('loading info now...');
     setLoadingStatus(true);
@@ -947,6 +953,7 @@ function VideoChatComponent(props) {
                 size="medium"
                 onClick={() => handleStartChat(setApiKey, setVonageSessionID, setToken, baseURL)}
                 autoFocus
+                disabled={joinNowDisabled}
               >
                 Join now
               </ColorLibNextButton>
