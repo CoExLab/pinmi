@@ -43,19 +43,18 @@ export default function ButtonAppBar() {
       <AppBar className={classes.navbar} position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.icon}>
-            Pin-MI
+            MI
           </Typography>
 
-          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
+          {/* <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
             Home
-          </ColorLibButton>
-
-          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
-            About
-          </ColorLibButton>
+          </ColorLibButton> */}
 
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/justchat">
-            Record
+            Home
+          </ColorLibButton>
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
+            About
           </ColorLibButton>
 
           {/* <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Review">

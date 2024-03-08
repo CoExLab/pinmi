@@ -16,6 +16,7 @@ import Navbar from '../components/Navbar';
 import AuthenticationBox from './AuthenticationBox';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
+import MI from './../../other/tutorial/mi.png';
 import modal from './../../other/tutorial/modal.png';
 // import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
@@ -67,9 +68,9 @@ const useStyles = makeStyles(theme => ({
 
 const tutorialInfo = [
   {
-    text: 'Use pins to mark moments of strengths and opportunities in a conversation',
-    image: pinningPreview,
-    alt: 'Pinning',
+    text: 'Welcome to MI, a motivational interview platform for practicing MI skills with your peers.',
+    image: MI,
+    alt: 'MI',
   },
   // {
   //   text: 'during a practitioner-client role-playing session with a peer',
@@ -350,7 +351,11 @@ const Landing = ({ justchat }) => {
         </Typography>
         <br />
       </Container> */}
-      {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>}
+      {/* {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>} */}
+
+      {/* Only for justchat */}
+
+      {justchat === true && <>{tutorialInfo.map(tutorialSection)}</>}
 
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (

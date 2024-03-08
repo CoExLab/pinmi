@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Navbar from '../components/Navbar';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
+import nopin from './../../other/tutorial/nopin.png';
 import modal from './../../other/tutorial/modal.png';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -352,11 +353,11 @@ const Home = () => {
       <Navbar />
       <Container className={classes.welcome_container} maxWidth="md">
         <Typography variant="h1" className={classes.welcome_intro}>
-          Pin-Mi: A Platform for Training Motivational Interviewing
+          MI: A platform for Motivational Interviewing Training that simply motivational interviews.
         </Typography>
         <Grid item xs={6} className={classes.tutorial_grid}>
           <img
-            src={modal}
+            src={nopin}
             alt={'Role-playing session modal'}
             style={{
               width: '120%',
@@ -366,9 +367,12 @@ const Home = () => {
           />
         </Grid>
         <br />
+        <Typography variant="h1" className={classes.welcome_intro}>
+          All you have to do is talk, just talk!
+        </Typography>
       </Container>
-      {tutorialInfo.map(tutorialSection)}
-      <div className={classes.button_wrapper}></div>
+      {/* {tutorialInfo.map(tutorialSection)}
+      <div className={classes.button_wrapper}></div> */}
     </section>
   );
 };
