@@ -351,7 +351,14 @@ const Landing = ({ justchat }) => {
         </Typography>
         <br />
       </Container> */}
-      {/* {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>} */}
+      {justchat !== true && (
+        <Typography variant="h1" className={classes.welcome_intro}>
+          WARNING: You arrived at a wrong page. Please click on the Home button and do not continue on this page! Please
+          confirm that you are participating in the control group. This is platform MI, not Pin-MI.
+          <br />
+          WARNING: DO NOT CONTINUE ON THIS PAGE!
+        </Typography>
+      )}
 
       {/* Only for justchat */}
 
