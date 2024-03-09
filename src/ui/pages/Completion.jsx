@@ -80,8 +80,14 @@ const Completion = () => {
             You have successfully finished today’s session in Pin-MI.
           </Typography>
           <br />
-          <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/Home">
-            Learn more about Pin-Mi
+          {/* <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/Home"> */}
+          <ColorLibButton
+            className={classes.rescheduleButton}
+            variant="outlined"
+            size="large"
+            href="https://cmu.ca1.qualtrics.com/jfe/form/SV_4GCEbmwDr08iK5U"
+          >
+            Please finish this survey!
           </ColorLibButton>
         </Container>
       </div>

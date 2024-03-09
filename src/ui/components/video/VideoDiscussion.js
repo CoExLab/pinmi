@@ -654,9 +654,9 @@ How did today’s mock client session go?
         <div className={class_name} style={containerStyle}>
           <div id="subscriber" className={`${isStreamSubscribed ? mainVideoCSSClass : ''}`}>
             {isStreamSubscribed && renderToolbar()}
-          </div>
-          <div id="publisher" className={`${isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass}`}>
-            {!isStreamSubscribed && renderToolbar()}
+            <div id="publisher" className={`${isStreamSubscribed ? secondaryVideoCSSClass : mainVideoCSSClass}`}>
+              {!isStreamSubscribed && renderToolbar()}
+            </div>
           </div>
         </div>
       </>

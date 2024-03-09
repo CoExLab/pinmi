@@ -44,7 +44,7 @@ const Intro = () => {
   return (
     <div>
       <Box align="center" m={6}>
-        <Typography variant="h4" style={{ textAlign: 'left', width: '50%' }}>
+        <Typography variant="h4" style={{ width: '50%' }}>
           Now, it’s time to step into the practice session.
         </Typography>
         <TableContainer>
