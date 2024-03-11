@@ -77,11 +77,11 @@ const Completion = () => {
             Congratulations!
           </Typography>
           <Typography variant="h2" className={classes.innerText_content}>
-            You have successfully finished today’s session in Pin-MI.
+            You have successfully finished today’s session in MI.
           </Typography>
           <br />
           <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/Home">
-            Learn more about Pin-Mi
+            Learn more about Mi
           </ColorLibButton>
         </Container>
       </div>
