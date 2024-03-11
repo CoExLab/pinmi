@@ -280,7 +280,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
               <Typography>(visible to both you and your peer)</Typography>
             </Box>
             <Box textAlign="left">
-              <Typography>Is this strength or areas to improve?</Typography>
+              <Typography>Is this a strength or an area to improve?</Typography>
             </Box>
             <Box align="left">
               <ToggleButtonGroup
