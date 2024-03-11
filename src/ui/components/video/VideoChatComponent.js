@@ -1044,11 +1044,11 @@ function VideoChatComponent(props) {
       />
 
       <div className={`video-container ${classes.videoContainer}`}>
-        <div id="subscriber" className={`${isStreamSubscribed ? 'main-video' : 'additional-video'}`}>
+        <div id="subscriber" className={'main-video'}>
           {isStreamSubscribed && renderToolbar()}
-        </div>
-        <div id="publisher" className={`${isStreamSubscribed ? 'additional-video' : 'main-video'}`}>
-          {!isStreamSubscribed && renderToolbar()}
+          <div id="publisher" className={`${isStreamSubscribed ? 'additional-video' : 'main-video'}`}>
+            {!isStreamSubscribed && renderToolbar()}
+          </div>
         </div>
       </div>
 
