@@ -226,10 +226,10 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 value={curNoteInfo}
               />
               <Box fontStyle="italic" marginTop="16px">
-                <Typography variant="h3">Talk with your peer about:</Typography>
+                <Typography variant="h3">Talk with your peer about this Pin:</Typography>
               </Box>
               <Box textAlign="left" className={classes.title}>
-                <Typography>What would you categorize this pin as, and why?</Typography>
+                {/* <Typography>What would you categorize this pin as, and why?</Typography> */}
               </Box>
               <Box textAlign="left" className={classes.root}>
                 <div>Host: {pinType1}</div>
