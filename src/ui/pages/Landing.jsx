@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 
 const tutorialInfo = [
   {
-    text: 'Welcome to MI, a motivational interview platform for practicing MI skills with your peers.',
+    text: 'Welcome to MI, a platform for practicing MI skills with your peers.',
     image: MI,
     alt: 'MI',
   },
@@ -351,18 +351,10 @@ const Landing = ({ justchat }) => {
         </Typography>
         <br />
       </Container> */}
-      {justchat !== true && (
-        <Typography variant="h1" className={classes.welcome_intro}>
-          WARNING: You arrived at a wrong page. Please click on the Home button and do not continue on this page! Please
-          confirm that you are participating in the control group. This is platform MI, not Pin-MI.
-          <br />
-          WARNING: DO NOT CONTINUE ON THIS PAGE!
-        </Typography>
-      )}
 
       {/* Only for justchat */}
 
-      {justchat === true && <>{tutorialInfo.map(tutorialSection)}</>}
+      {justchat !== true && <>{tutorialInfo.map(tutorialSection)}</>}
 
       <Container className={classes.welcome_container} maxWidth="md">
         {firebaseUser && (

@@ -673,7 +673,7 @@ How did today’s mock client session go?
         <Dialog open={loading} onClose={() => {}}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>
             <Typography variant="h1" className={classes.welcome_intro}>
-              Saving Pin Information
+              Saving Discussion Information
             </Typography>
             <Box sx={{ p: 2 }}>
               <CircularProgress />

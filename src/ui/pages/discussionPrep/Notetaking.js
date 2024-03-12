@@ -5,7 +5,7 @@ import { formatTime } from '../../../helper/helper';
 import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Hidden, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { GroupIcon } from '@mui/icons-material';
 
@@ -83,8 +83,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     pins.length > 0 ? (user.userMode === 'caller' ? pins[0].callerPinNote : pins[0].calleePinNote) : '';
 
   //creating a reference for TextField Component
-  const noteValueRef = useRef(initialNote);
-  const perspectiveValueRef = useRef('');
+  // const noteValueRef = useRef(initialNote);
+  // const perspectiveValueRef = useRef('');
   const skillValueRef = useRef('');
 
   // set up states for four different questions
@@ -175,8 +175,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
       // console.log(noteValueRef); // default set to ''
       // console.log(perspectiveValueRef);
       //update pin values with the ones just edited by the user
-      setCurNoteInfo(noteValueRef.current.value);
-      setCurPerspectiveInfo(perspectiveValueRef.current.value);
+      // setCurNoteInfo(noteValueRef.current.value);
+      // setCurPerspectiveInfo(perspectiveValueRef.current.value);
       // setCurSkillInfo(skillValueRef.current.value);
 
       //save pin info in the local pins array
@@ -200,8 +200,8 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
       // console.log(noteValueRef); // default set to ''
       // console.log(perspectiveValueRef);
       //reset all the refs
-      noteValueRef.current.value = curNoteInfo;
-      perspectiveValueRef.current.value = curPerspectiveInfo;
+      // noteValueRef.current.value = curNoteInfo;
+      // perspectiveValueRef.current.value = curPerspectiveInfo;
       // console.log(noteValueRef);
       // console.log(perspectiveValueRef);
       // skillValueRef.current.value = curSkillInfo;
@@ -218,7 +218,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
     <Grid item xs={12} sm={8}>
       {pins.length > 0 && curPinIndex < pins.length && (
         <>
-          {curPinIndex !== -1 ? (
+          {/* {curPinIndex !== -1 ? (
             <Box
               sx={{
                 p: 2,
@@ -231,6 +231,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                       : 'peer'
                   ],
               }}
+              visibility={Hidden}
             >
               <Typography>
                 Pin {curPinIndex + 1} @ {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} | by{' '}
@@ -241,7 +242,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                   : 'peer'}
               </Typography>
             </Box>
-          ) : null}
+          ) : null} */}
           {/* </ColorLibPaper> */}
           <br />
           <ColorLibPaper
@@ -250,11 +251,11 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
             }
           >
             {/* <GroupIcon></GroupIcon> */}
-            <Box marginBottome={10}>
-              <Typography variant="h3">Personal Notes:</Typography>
-              <Typography>(only visible to you):</Typography>
-            </Box>
-            <ColorLibTextField
+            {/* <Box marginBottome={10} visibility={Hidden}> */}
+            {/* <Typography variant="h3" visibility={Hidden}>Personal Notes:</Typography>
+              <Typography>(only visible to you):</Typography> */}
+            {/* </Box> */}
+            {/* <ColorLibTextField
               id="outlined-secondary"
               fullWidth
               variant="outlined"
@@ -267,7 +268,17 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
               onChange={() => {
                 setCurNoteInfo(noteValueRef.current.value);
               }}
-            />
+            /> */}
+            <Box align="left">
+              <br />
+              <br />
+              <Typography>
+                Thank you for completing the role-play! You can find the audio recording above, and the transcription to
+                your left.
+              </Typography>
+              <br />
+              <br />
+            </Box>
           </ColorLibPaper>
           <br />
           <ColorLibPaper
@@ -275,14 +286,28 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
               pins[curPinIndex].creatorMode === 'default' ? 1 : pins[curPinIndex].creatorMode === user.userMode ? 4 : 3
             }
           >
-            <Box marginBottom={5}>
+            <Box align="left">
+              <br />
+              <br />
+              <Typography>
+                Now, you will discuss the performance of the role-play with your peer. Whenever you are ready, click the
+                button below and start reviewing with your peer.
+                <br />
+                <br />
+                You will find more information on the next page.
+              </Typography>
+              <br />
+              <br />
+            </Box>
+
+            {/* <Box marginBottom={5} visibility={Hidden}>
               <Typography variant="h3">Shared Notes:</Typography>
               <Typography>(visible to both you and your peer)</Typography>
             </Box>
-            <Box textAlign="left">
+            <Box textAlign="left" visibility={Hidden}>
               <Typography>Is this strength or areas to improve?</Typography>
-            </Box>
-            <Box align="left">
+            </Box> */}
+            {/* <Box align="left">
               <ToggleButtonGroup
                 className={classes.toggleGroup}
                 value={pinType}
@@ -297,9 +322,9 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
                   Area to Improve
                 </ToggleButton>
               </ToggleButtonGroup>
-            </Box>
+            </Box> */}
 
-            <Box textAlign="left">
+            {/* <Box textAlign="left">
               <Typography>Please explain your reason</Typography>
             </Box>
             <ColorLibTextField
@@ -312,7 +337,7 @@ const Notetaking = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinIndex
               value={curPerspectiveInfo}
               inputRef={perspectiveValueRef}
               onChange={() => setCurPerspectiveInfo(perspectiveValueRef.current.value)}
-            />
+            /> */}
 
             {/* <MISkillsSheet pinType={pinType} /> */}
             {/* <ColorLibTextField

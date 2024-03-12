@@ -202,7 +202,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
         <>
           {curPinIndex !== -1 ? (
             <ColorLibPaper elevation={1}>
-              {curPinIndex !== -1 ? (
+              {/* {curPinIndex !== -1 ? (
                 <Box fontStyle="italic">
                   <Typography>
                     The session was pinned at {formatTime(pins.map(pin => pin.pinTime)[curPinIndex])} by{' '}
@@ -213,8 +213,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                       : 'your peer'}
                   </Typography>
                 </Box>
-              ) : null}
-              <ColorLibTextField
+              ) : null} */}
+              {/* <ColorLibTextField
                 disabled
                 id="outlined-secondary"
                 label="Personal Notes..."
@@ -224,8 +224,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 rows={3}
                 margin="normal"
                 value={curNoteInfo}
-              />
-              <Box fontStyle="italic" marginTop="16px">
+              /> */}
+              {/* <Box fontStyle="italic" marginTop="16px">
                 <Typography variant="h3">Talk with your peer about:</Typography>
               </Box>
               <Box textAlign="left" className={classes.title}>
@@ -234,8 +234,8 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
               <Box textAlign="left" className={classes.root}>
                 <div>Host: {pinType1}</div>
                 <div>Participant: {pinType2}</div>
-              </Box>
-              <form className={classes.root} noValidate autoComplete="off">
+              </Box> */}
+              {/* <form className={classes.root} noValidate autoComplete="off">
                 <ColorLibTextField
                   disabled
                   id="outlined-secondary"
@@ -258,7 +258,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                   margin="normal"
                   value={curPerspectiveInfo2}
                 />
-              </form>
+              </form> */}
               {/* <Box textAlign="left">
                 <Typography>What would you categorize this pin as?</Typography>
               </Box> */}
@@ -303,7 +303,7 @@ const DissResponse = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInd
                 fullWidth
                 variant="outlined"
                 multiline
-                rows={3}
+                rows={15}
                 margin="normal"
                 value={curGoalInfo}
                 inputRef={goalValueRef}

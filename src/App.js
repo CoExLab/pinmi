@@ -134,8 +134,8 @@ const App = () => {
                   <ActiveStepProvider>
                     <PinsProvider>
                       <Route exact path="/content" component={Content} />
-                      <Route exact path="/justchat" render={() => <Landing justchat={true} />} />
-                      <Route exact path="/" render={() => <Landing justchat={true} />} />
+                      <Route exact path="/justchat" render={() => <Landing justchat={false} />} />
+                      <Route exact path="/" render={() => <Landing justchat={false} />} />
                     </PinsProvider>
                   </ActiveStepProvider>
                 </SessionProvider>

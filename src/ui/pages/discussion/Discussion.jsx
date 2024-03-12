@@ -285,7 +285,7 @@ const Discussion = () => {
               <Typography variant="body2">How did today’s session go?</Typography>
             </ColorLibPaper>
             <ColorLibGrayNextButton variant="contained" size="medium" onClick={() => handleButton(false)}>
-              Let's talk about our pins
+              Let's discuss!
             </ColorLibGrayNextButton>
           </Box>
         );

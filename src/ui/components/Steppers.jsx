@@ -135,7 +135,7 @@ const Steppers = () => {
 
   return (
     <div>
-      <Stepper
+      {/* <Stepper
         nonLinear
         className={classes.stepper}
         alternativeLabel
@@ -148,7 +148,7 @@ const Steppers = () => {
             <ColorLibLabel StepIconComponent={ColorlibStepIcon}>{label}</ColorLibLabel>
           </Step>
         ))}
-      </Stepper>
+      </Stepper> */}
     </div>
   );
 };

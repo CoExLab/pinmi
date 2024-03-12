@@ -67,7 +67,7 @@ export default function Loading(props) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', p: 10 }}>
       <Typography variant="h1" className={classes.welcome_intro}>
-        Loading Self-Reflection Prep
+        Waiting for your peer to end the call...
       </Typography>
       <Box sx={{ p: 2 }}>
         <CircularProgress />

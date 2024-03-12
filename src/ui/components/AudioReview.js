@@ -117,14 +117,27 @@ const AudioReview = ({ curPinIndex, setCurPinIndex, prevPinIndex, setPrevPinInde
     }
   };
 
+  // return (
+  //   <>
+  //   <br />
+  //   <br />
+  //   <br />
+  //   <br />
+
+  //   <Typography variant='h4'>
+  //   Now you will reflect on the experience with your peer.
+  //   Click on the button
+  //   below to join the discussion.
+  //  </Typography>
+  //  </>
+  //  );
+
   return (
     <Grid item xs={12}>
       {curActiveStep === 2 ? (
-        <Typography variant="h6">
-          Listen back to the session, add pins, and take notes to discuss with your peer.
-        </Typography>
+        <Typography variant="h6">Here's your recording.</Typography>
       ) : (
-        <>{session.recordOnly !== true && <Typography variant="h6">Review all pins with your peer</Typography>}</>
+        <>{session.recordOnly !== true && <Typography variant="h6"> Recording of your role-play</Typography>}</>
       )}
       <ColorLibAudioPlayer
         playerStatus={audioPlaying}

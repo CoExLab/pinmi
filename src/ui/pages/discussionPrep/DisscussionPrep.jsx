@@ -280,10 +280,10 @@ const DisscussionPrep = () => {
             textAlign: 'center',
           }}
         >
-          <Typography variant="body2">Recommended time left</Typography>
-          <Typography variant="h4" className={classes.tealText}>
+          {/* <Typography variant="body2">Recommended time left</Typography> */}
+          {/* <Typography variant="h4" className={classes.tealText}>
             {formatTime(countDown)}
-          </Typography>
+          </Typography> */}
         </div>
       )}
       <Container maxWidth="md">
@@ -357,11 +357,7 @@ const DisscussionPrep = () => {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">
-            {session.recordOnly
-              ? 'Your partner has ended the session. Click the End Session button below to end the session.'
-              : 'Your partner has finished self reflection and is ready to discuss. Click the Join Discussion button below  to begin the discussion. It’s ok if you didn’t finish your notes on all the pins.'}
-          </DialogTitle>
+          <DialogTitle id="alert-dialog-title">Click on the button below to join the discussion.</DialogTitle>
           <DialogActions>
             <Box m={4}>
               <div

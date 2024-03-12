@@ -46,13 +46,14 @@ export default function ButtonAppBar() {
             MI
           </Typography>
 
-          {/* <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
-            Home
-          </ColorLibButton> */}
-
-          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/justchat">
+          <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/">
             Home
           </ColorLibButton>
+
+          {/* <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/justchat">
+            Home2
+          </ColorLibButton> */}
+
           <ColorLibButton variant="text" size="small" className={classes.navbar_button} href="/Home">
             About
           </ColorLibButton>

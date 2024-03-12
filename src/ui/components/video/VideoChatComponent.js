@@ -21,7 +21,7 @@ import Snackbar from '@mui/material/Snackbar';
 
 import Webcam from 'react-webcam';
 
-import pinningClick from '../../../other/tutorial/pinning-click.png';
+import pinningClick from '../../../other/tutorial/mi.png';
 
 import ColorLibButton, { ColorLibNextButton, ColorLibCallEndButton } from '../colorLibComponents/ColorLibButton';
 import ColorLibTimeReminder from '../colorLibComponents/ColorLibTimeReminder';
@@ -127,12 +127,12 @@ function VideoChatComponent(props) {
 
   const [addingPin, setAddingPin] = useState(false);
 
-  var line1 = 'moments when you did well in the conversation';
-  var line2 = 'opportunities for improvement';
-  if (user.userMode === 'callee') {
-    line1 = 'situations where your peer struggled';
-    line2 = 'instances of effective conversation with your peer';
-  }
+  var line1 = 'Keep in mind the moments that you think are valuable';
+  var line2 = 'You will discuss the highlights with your peer after the call';
+  // if (user.userMode === 'callee') {
+  //   line1 = 'situations where your peer struggled';
+  //   line2 = 'instances of effective conversation with your peer';
+  // }
 
   const getPopperContent = index => {
     switch (index) {
@@ -612,7 +612,7 @@ function VideoChatComponent(props) {
         )}
         {session.recordOnly !== true && (
           <>
-            <Fab
+            {/* <Fab
               aria-describedby={'addPin'}
               aria-label="addPin"
               type="button"
@@ -626,8 +626,8 @@ function VideoChatComponent(props) {
               <Icon classes={{ root: classes.iconRoot }}>
                 <img className={classes.imageIcon} src={pin} alt="" />
               </Icon>
-            </Fab>
-            <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
+            </Fab> */}
+            {/* <Popper open={popperOpen} anchorEl={pinBtn.current} placement="right" style={{ zIndex: 3 }} transition>
               <ColorLibPaper elevation={2}>
                 <Typography variant="body2">{getPopperContent(popperContentIndex)}</Typography>
                 {instantNote(popperContentIndex)}
@@ -639,7 +639,7 @@ function VideoChatComponent(props) {
               autoHideDuration={2000}
               onClose={() => setOpenSaveSuccess(false)}
               message="The pin is saved."
-            />
+            /> */}
           </>
         )}
       </>
@@ -935,14 +935,14 @@ function VideoChatComponent(props) {
                     height: '80px',
                   }}
                 />
-                <Typography variant="h4">What is pinning for?</Typography>
+                <Typography variant="h4">Get ready for camera check!</Typography>
                 <Typography variant="body2" component="div">
-                  <p>Click on the pin to create time marks of</p>
+                  <p>You are about to begin the call with your peer.</p>
                   <ul style={{ fontWeight: 700 }}>
                     <li>{line1}</li>
                     <li>{line2}</li>
                   </ul>
-                  <p>Your peer will also be pinning, and you will review and discuss all pins after the session.</p>
+                  {/* <p>Your peer will also be pinning, and you will review and discuss all pins after the session.</p> */}
                 </Typography>
               </>
             )}
@@ -986,9 +986,7 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {session.recordOnly ? 'Leave role-play?' : 'Leave role-play and begin self-reflection?'}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Leave role play? </DialogTitle>
         <DialogActions>
           <Box m={4}>
             <div
@@ -1015,7 +1013,7 @@ function VideoChatComponent(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Your partner has started self-reflection'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Your partner ended the call'}</DialogTitle>
         <DialogActions>
           <Box m={4}>
             <div
@@ -1029,7 +1027,7 @@ function VideoChatComponent(props) {
                 onClick={() => handleFinishChat()}
                 disabled={!isInterviewStarted}
               >
-                {session.recordOnly ? 'End session' : 'Begin self-reflection'}
+                End Session
               </ColorLibCallEndButton>
             </div>
           </Box>
