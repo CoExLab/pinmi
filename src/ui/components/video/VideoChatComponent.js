@@ -299,6 +299,16 @@ function VideoChatComponent(props) {
     setIsStreamSubscribed(isSubscribed);
     if (isSubscribed && isSessionConnected && props.isArchiveHost) {
       handleStartArchive();
+    } else if (isSubscribed && isSessionConnected) {
+      // open the popper
+      setPopperOpen(true);
+      setTimeout(() => {
+        console.log(popperContentIndex);
+        // To make sure only close the popper when no pin is added yet
+        if (popperContentIndex === 0 && pins.length === 0) {
+          setPopperOpen(false);
+        }
+      }, 5000);
     }
   }, [isSubscribed]);
 
