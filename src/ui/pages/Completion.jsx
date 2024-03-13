@@ -87,7 +87,7 @@ const Completion = () => {
             size="large"
             href="https://cmu.ca1.qualtrics.com/jfe/form/SV_4GCEbmwDr08iK5U"
           >
-            Please finish this survey!
+            Click here for survey
           </ColorLibButton>
         </Container>
       </div>
