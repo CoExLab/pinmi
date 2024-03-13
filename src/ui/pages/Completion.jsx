@@ -80,8 +80,13 @@ const Completion = () => {
             You have successfully finished today’s session in MI.
           </Typography>
           <br />
-          <ColorLibButton className={classes.rescheduleButton} variant="outlined" size="large" href="/Home">
-            Learn more about Mi
+          <ColorLibButton
+            className={classes.rescheduleButton}
+            variant="outlined"
+            size="large"
+            href="https://cmu.ca1.qualtrics.com/jfe/form/SV_4GCEbmwDr08iK5U"
+          >
+            Click here for survey
           </ColorLibButton>
         </Container>
       </div>

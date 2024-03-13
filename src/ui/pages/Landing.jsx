@@ -16,7 +16,7 @@ import Navbar from '../components/Navbar';
 import AuthenticationBox from './AuthenticationBox';
 
 import pinningPreview from './../../other/tutorial/pinning-preview.gif';
-import MI from './../../other/tutorial/mi.png';
+import MI from './../../other/images/Mi-logo.svg';
 import modal from './../../other/tutorial/modal.png';
 // import discussionPrepPreview from './../../other/tutorial/discussionPrepPreview.png';
 import discussionPreview from './../../other/tutorial/discussionPreview.png';
