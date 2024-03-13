@@ -9,13 +9,12 @@
 .mini-video-container {
   position: fixed;
   height: 25vh;
-  width: 25%;
-  right: 0px;
+  right: 2%;
+  z-index: 3;
   .discussion-video-other {
     position: relative;
-    width: 160px;
-    height: 100%;
-    left: 45%;
+    width: 32vh;
+    height: 24vh;
     &:hover {
       .video-toolbar {
         opacity: 1;

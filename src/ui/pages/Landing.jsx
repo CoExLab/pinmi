@@ -319,8 +319,8 @@ const Landing = ({ justchat }) => {
           src={image}
           alt={alt}
           style={{
-            width: index === 0 ? '30%' : '90%',
-            marginLeft: index === 0 ? '100px' : '0',
+            width: index === 0 ? '75%' : '90%',
+            marginLeft: index === 0 ? '-20px' : '0',
           }}
         />
       </Grid>
